@@ -10,6 +10,8 @@ Route::group(['prefix' => '/v1/user'], function(){
     Route::post('register', 'Apis\User\UserRegister@doRegister');
     Route::post('login', 'Apis\User\UserRegister@doLogin');
 
+    //social login routes
+    Route::post('facebook', 'Apis\User\Facebook@authenticate');
 
 
     Route::group(['middleware' => 'userApiAuth'], function(){
