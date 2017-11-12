@@ -12,6 +12,7 @@ Route::group(['prefix' => '/v1/user'], function(){
 
     //social login routes
     Route::post('facebook', 'Apis\User\Facebook@authenticate');
+    Route::post('google', 'Apis\User\Google@authenticate');
 
 
     Route::group(['middleware' => 'userApiAuth'], function(){
