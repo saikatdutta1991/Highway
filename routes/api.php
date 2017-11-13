@@ -20,6 +20,9 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::post('otp/send', 'Apis\User\UserRegister@sendOtp');
         Route::post('otp/verify', 'Apis\User\UserRegister@verifydOtp');
 
+        Route::get('profile', 'Apis\User\UserProfile@getUserProfile');
+        Route::post('profile/update', 'Apis\User\UserProfile@updateUserProfile');
+
     });
 
 
