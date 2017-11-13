@@ -100,14 +100,7 @@ class Google extends Controller
         $email = $sUser->getEmail();
         $isEmailVerified = 0;
         if(!isset($email) || $email == '') {
-
-            if(!$request->has('email') || $request->email == '') {
-                return $this->api->json(false, 'EMAIL_ID_MISSING', 'Email id missing'); 
-            } else {
-                $email = $request->email;
-                $isEmailVerified = 0;
-            }
-           
+        	return $this->api->json(false, 'EMAIL_ID_MISSING', 'Email id missing'); 
         } else {
             $isEmailVerified = 1;
         }
