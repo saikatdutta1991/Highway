@@ -34,8 +34,8 @@ class Google extends Controller
     public function initConfig()
     {
         config(['services.google' => [
-            'client_id'     => $this->setting->get('google_client_id'),
-            'client_secret' => $this->setting->get('google_secret_key'),
+            'client_id'     => $this->setting->get('user_google_client_id'),
+            'client_secret' => $this->setting->get('user_google_secret_key'),
             'redirect' => ''
         ]]);
     }

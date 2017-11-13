@@ -34,9 +34,9 @@ class Facebook extends Controller
     public function initConfig()
     {
         config(['services.facebook' => [
-            'client_id'     => $this->setting->get('facebook_client_id'),
-            'client_secret' => $this->setting->get('facebook_secret_key'),
-            'redirect'      => $this->setting->get('facebook_redirect')
+            'client_id'     => $this->setting->get('user_facebook_client_id'),
+            'client_secret' => $this->setting->get('user_facebook_secret_key'),
+            'redirect'      => $this->setting->get('user_facebook_redirect')
         ]]);
     }
 
