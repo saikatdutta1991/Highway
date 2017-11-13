@@ -29,6 +29,42 @@ class Driver extends Model
 
 
     /**
+     * save profile photo from given photo url after download
+     */
+    public function downloadAndSavePhoto($url, $prefix, $save = false)
+    {
+        $utill = app('App\Repositories\Utill');
+
+        try {
+
+            $path = $this->profilePhotoSaveAbsPath();
+            $extension = $utill->getImageExtensionFromUrl($url);
+            $fileName = $this->generateProfilePhotoName($prefix, $extension);
+
+            $utill->downloadFile($url, $path.'/'.$fileName);
+
+        } catch(\Exception $e) {
+            \Log::info('DRIVER FILE DOWNLAOD SAVE ERROR');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+        }
+        
+        $this->profile_photo_path = $path;
+        $this->profile_photo_name = $fileName;
+        
+        if($save) {
+            $this->save();
+        }
+
+        return true;
+       
+    }
+
+
+
+
+    /**
      * save profile photo
      */
     public function savePhoto($uploadFile, $prefix, $save = false)

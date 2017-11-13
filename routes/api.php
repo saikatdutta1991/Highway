@@ -40,6 +40,11 @@ Route::group(['prefix' => '/v1/driver'], function(){
     Route::get('vehicle-types', 'Apis\Driver\DriverAuth@getVehicleTypes');
 
 
+    //social login routes
+    Route::post('facebook', 'Apis\Driver\Facebook@authenticate');
+    Route::post('google', 'Apis\Driver\Google@authenticate');
+
+
     //driver's authenticated routes
     Route::group(['middleware' => 'driverApiAuth'], function(){
 

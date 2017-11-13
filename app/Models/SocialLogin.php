@@ -37,6 +37,26 @@ class SocialLogin extends Model
     }
 
 
+    /**
+     * get driver by social login id
+     */
+    public function getDriverBySocialLoginId($socialId, $provider)
+    {
+        $uModel = app('App\Models\Driver');
+        return $uModel->join(
+            $this->getTableName(), 
+            $this->getTableName().'.entity_id', 
+            '=', 
+            $uModel->getTableName().'.id'
+        )
+        ->where('entity_type', strtoupper('driver'))
+        ->where('social_login_id', $socialId)
+        ->where('social_login_provider', strtoupper($provider))
+        ->select($uModel->getTableName().'.*')
+        ->first();
+    }
+
+
 
 
 }
