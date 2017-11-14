@@ -84,6 +84,9 @@ class Google extends Controller
             $user->last_accessed_ip = $request->ip();
             $user->save();
 
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
 
@@ -128,6 +131,9 @@ class Google extends Controller
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
 
@@ -163,6 +169,9 @@ class Google extends Controller
             $sLogin->social_login_id = $sUser->id;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
+
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;

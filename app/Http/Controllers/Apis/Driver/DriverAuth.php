@@ -115,6 +115,9 @@ class DriverAuth extends Controller
             $driver->savePhoto($request->photo, 'driver_');
             $driver->save();
 
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
@@ -193,6 +196,9 @@ class DriverAuth extends Controller
             ]);
         }
 
+
+        //save device token
+        $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
         //create and save accesstoken
         $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;

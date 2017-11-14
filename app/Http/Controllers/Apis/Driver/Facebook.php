@@ -93,6 +93,10 @@ class Facebook extends Controller
 
             $driver->save();
 
+
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
@@ -145,6 +149,10 @@ class Facebook extends Controller
             $sLogin->social_login_provider = 'FACEBOOK';
             $sLogin->save();
 
+
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
@@ -176,6 +184,10 @@ class Facebook extends Controller
         try {
 
             $driver->save();
+
+
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
             //create social login record, because social login record is not there 
             //against this driver

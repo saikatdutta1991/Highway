@@ -88,6 +88,9 @@ class UserRegister extends Controller
 
             $user->save();
 
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
 
@@ -163,6 +166,9 @@ class UserRegister extends Controller
             ]);
         }
 
+
+        //save device token
+        $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
         //create and save accesstoken
         $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;

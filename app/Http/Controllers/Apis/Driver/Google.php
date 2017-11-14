@@ -88,6 +88,9 @@ class Google extends Controller
 
             $driver->save();
 
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
@@ -139,6 +142,9 @@ class Google extends Controller
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
@@ -180,6 +186,10 @@ class Google extends Controller
             $sLogin->social_login_id = $sUser->id;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
+
+
+            //save device token
+            $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;

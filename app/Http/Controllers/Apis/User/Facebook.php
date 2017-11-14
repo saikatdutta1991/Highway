@@ -90,6 +90,10 @@ class Facebook extends Controller
             $user->last_accessed_ip = $request->ip();
             $user->save();
 
+
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
 
@@ -134,6 +138,10 @@ class Facebook extends Controller
             $sLogin->social_login_provider = 'FACEBOOK';
             $sLogin->save();
 
+
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
 
@@ -168,6 +176,9 @@ class Facebook extends Controller
             $sLogin->social_login_id = $sUser->id;
             $sLogin->social_login_provider = 'FACEBOOK';
             $sLogin->save();
+
+            //save device token
+            $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
 
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($user->id, 'user')->access_token;
