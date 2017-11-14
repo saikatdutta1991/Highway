@@ -186,5 +186,19 @@ class Api
 
 
 
+ 
+
+
+	/**
+	 * store log info with tag
+	 */
+	public static function Log($tag, $data)
+	{
+		\Log::info(strtoupper($tag));
+		\Log::info($data);
+	}
+
+
+
 
 }
