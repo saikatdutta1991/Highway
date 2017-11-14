@@ -54,6 +54,12 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('otp/send', 'Apis\Driver\DriverAuth@sendOtp');
         Route::post('otp/verify', 'Apis\Driver\DriverAuth@verifydOtp');
 
+
+        Route::get('profile', 'Apis\Driver\DriverProfile@getDriverProfile');
+        Route::post('profile/update', 'Apis\Driver\DriverProfile@updateDriverProfile');
+
+
+
     });
 
 
