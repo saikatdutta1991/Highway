@@ -28,19 +28,6 @@ class Google extends Controller
 
 
 
-    /**
-     * init config 
-     */
-    public function initConfig()
-    {
-        config(['services.google' => [
-            'client_id'     => $this->setting->get('user_google_client_id'),
-            'client_secret' => $this->setting->get('user_google_secret_key'),
-            'redirect' => ''
-        ]]);
-    }
-
-
 
     /**
      * retister or login user by google
@@ -48,18 +35,36 @@ class Google extends Controller
     public function authenticate(Request $request)
     {
 
+
+        //auth device type required for android or ios google client id
+        if(!$request->has('auth_device_type') || !in_array($request->auth_device_type, ['ANDROID', 'IOS']) ) {
+            return $this->api->json(false, 'AUTH_DEVICE_TYPE_MISSING', 'Auth device type is missing.');
+        }
+
         //check facebook token avail
         if(!$request->has('google_token')) {
             return $this->api->json(false, 'TOKEN_MISSING', 'Google token missing');
         }
 
-        $this->initConfig();
-
+        
         //fetch google user
         $token = $request->google_token;
         try
         {
-            $sUser = \Socialite::driver('google')->userFromToken($token);
+            if($request->auth_device_type == 'ANDROID') {
+                $clientId = $this->setting->get('user_android_google_login_client_id');
+            } else if($request->auth_device_type == 'IOS') {
+                $clientId = $this->setting->get('user_ios_google_login_client_id');
+            }
+
+            $client = new \Google_Client(['client_id' => $clientId]);
+
+            $payload = $client->verifyIdToken($token);
+            if($payload) {
+               $sUser = json_decode(json_encode($payload));
+            } else {
+                throw new \Exception('Invalid client id token.');
+            }
 
         } catch(\Exception $e) {
             \Log::info("GOOGLE_LOGIN_FETCH_USER_ERROR");
@@ -68,7 +73,7 @@ class Google extends Controller
         }
 
         //find user by google id
-        $user = $this->socialLogin->getUserBySocialLoginId($sUser->id, 'google');
+        $user = $this->socialLogin->getUserBySocialLoginId($sUser->sub, 'google');
 
         //if user found means already registerd by facebook
         //so login user
@@ -100,11 +105,11 @@ class Google extends Controller
 
 
         //if user could not found by google id, check user registerd by email
-        $email = $sUser->getEmail();
         $isEmailVerified = 0;
-        if(!isset($email) || $email == '') {
+        if(!isset($sUser->email) || $sUser->email == '') {
         	return $this->api->json(false, 'EMAIL_ID_MISSING', 'Email id missing'); 
         } else {
+            $email = $sUser->email;
             $isEmailVerified = 1;
         }
 
@@ -127,7 +132,7 @@ class Google extends Controller
             $sLogin = new $this->socialLogin;
             $sLogin->entity_id = $user->id;
             $sLogin->entity_type = 'USER';
-            $sLogin->social_login_id = $sUser->id;
+            $sLogin->social_login_id = $sUser->sub;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 
@@ -147,7 +152,7 @@ class Google extends Controller
         //user not found so register
         $user = new $this->user;
 
-        $name = explode(' ', $sUser->getName());
+        $name = explode(' ', $sUser->name);
         $user->fname = isset($name[0]) ? $name[0] : '';
         $user->lname = isset($name[1]) ? $name[1] : '';
         $user->email = $email;
@@ -166,7 +171,7 @@ class Google extends Controller
             $sLogin = new $this->socialLogin;
             $sLogin->entity_id = $user->id;
             $sLogin->entity_type = 'USER';
-            $sLogin->social_login_id = $sUser->id;
+            $sLogin->social_login_id = $sUser->sub;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 

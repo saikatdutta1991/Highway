@@ -29,37 +29,40 @@ class Google extends Controller
 
 
     /**
-     * init config 
-     */
-    public function initConfig()
-    {
-        config(['services.google' => [
-            'client_id'     => $this->setting->get('driver_google_client_id'),
-            'client_secret' => $this->setting->get('driver_google_secret_key'),
-            'redirect' => ''
-        ]]);
-    }
-
-
-
-    /**
      * retister or login driver by google
      */
     public function authenticate(Request $request)
     {
+
+        //auth device type required for android or ios google client id
+        if(!$request->has('auth_device_type') || !in_array($request->auth_device_type, ['ANDROID', 'IOS']) ) {
+            return $this->api->json(false, 'AUTH_DEVICE_TYPE_MISSING', 'Auth device type is missing.');
+        }
 
         //check facebook token avail
         if(!$request->has('google_token')) {
             return $this->api->json(false, 'TOKEN_MISSING', 'Google token missing');
         }
 
-        $this->initConfig();
 
         //fetch google driver
         $token = $request->google_token;
         try
         {
-            $sUser = \Socialite::driver('google')->userFromToken($token);
+            if($request->auth_device_type == 'ANDROID') {
+                $clientId = $this->setting->get('driver_android_google_login_client_id');
+            } else if($request->auth_device_type == 'IOS') {
+                $clientId = $this->setting->get('driver_ios_google_login_client_id');
+            }
+
+            $client = new \Google_Client(['client_id' => $clientId]);
+
+            $payload = $client->verifyIdToken($token);
+            if($payload) {
+               $sUser = json_decode(json_encode($payload));
+            } else {
+                throw new \Exception('Invalid client id token.');
+            }
 
         } catch(\Exception $e) {
             \Log::info("GOOGLE_LOGIN_FETCH_DRIVER_ERROR");
@@ -68,7 +71,7 @@ class Google extends Controller
         }
 
         //find driver by google id
-        $driver = $this->socialLogin->getDriverBySocialLoginId($sUser->id, 'google');
+        $driver = $this->socialLogin->getDriverBySocialLoginId($sUser->sub, 'google');
 
         //if driver found means already registerd by facebook
         //so login driver
@@ -84,7 +87,9 @@ class Google extends Controller
             $driver->last_accessed_ip = $request->ip();
 
             //save profile photo
-            $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');
+            if(isset($sUser->picture)) {
+                $driver->downloadAndSavePhoto($sUser->picture, 'driver_');
+            }
 
             $driver->save();
 
@@ -107,11 +112,11 @@ class Google extends Controller
 
 
         //if driver could not found by google id, check driver registerd by email
-        $email = $sUser->getEmail();
         $isEmailVerified = 0;
-        if(!isset($email) || $email == '') {
+        if(!isset($sUser->email) || $sUser->email == '') {
         	return $this->api->json(false, 'EMAIL_ID_MISSING', 'Email id missing'); 
         } else {
+            $email = $sUser->email;
             $isEmailVerified = 1;
         }
 
@@ -129,7 +134,9 @@ class Google extends Controller
             $driver->last_accessed_ip = $request->ip();
 
             //save profile photo
-            $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');
+            if(isset($sUser->picture)) {
+                $driver->downloadAndSavePhoto($sUser->picture, 'driver_');
+            }
 
             $driver->save();
 
@@ -138,7 +145,7 @@ class Google extends Controller
             $sLogin = new $this->socialLogin;
             $sLogin->entity_id = $driver->id;
             $sLogin->entity_type = 'DRIVER';
-            $sLogin->social_login_id = $sUser->id;
+            $sLogin->social_login_id = $sUser->sub;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 
@@ -161,7 +168,7 @@ class Google extends Controller
         //driver not found so register
         $driver = new $this->driver;
 
-        $name = explode(' ', $sUser->getName());
+        $name = explode(' ', $sUser->name);
         $driver->fname = isset($name[0]) ? $name[0] : '';
         $driver->lname = isset($name[1]) ? $name[1] : '';
         $driver->email = $email;
@@ -170,7 +177,9 @@ class Google extends Controller
         $driver->last_accessed_ip = $request->ip();
 
         //save profile photo
-        $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');
+        if(isset($sUser->picture)) {
+            $driver->downloadAndSavePhoto($sUser->picture, 'driver_');
+        }
         
         DB::beginTransaction();
 
@@ -183,7 +192,7 @@ class Google extends Controller
             $sLogin = new $this->socialLogin;
             $sLogin->entity_id = $driver->id;
             $sLogin->entity_type = 'DRIVER';
-            $sLogin->social_login_id = $sUser->id;
+            $sLogin->social_login_id = $sUser->sub;
             $sLogin->social_login_provider = 'GOOGLE';
             $sLogin->save();
 
@@ -211,7 +220,7 @@ class Google extends Controller
        
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
-            'user' => $user
+            'driver' => $driver
         ]);
 
 
