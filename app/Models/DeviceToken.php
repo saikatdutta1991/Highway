@@ -8,10 +8,10 @@ class DeviceToken extends Model
 {
 
     //constst device tokens device types list
-    public const ANDROID = 'ANDROID';
-    public const IOS = 'IOS';
-    public const WEB_CHROME = 'WEB_CHROME';
-    public const DEVICE_TYPES = ['ANDROID', 'IOS', 'WEB_CHROME'];
+    const ANDROID = 'ANDROID';
+    const IOS = 'IOS';
+    const WEB_CHROME = 'WEB_CHROME';
+    const DEVICE_TYPES = ['ANDROID', 'IOS', 'WEB_CHROME'];
 
 
     protected $table = 'push_notification_device_tokens';
