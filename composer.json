@@ -12,7 +12,8 @@
         "twilio/sdk": "4.12.0",
         "aloha/twilio": "*",
         "laravel/socialite": "*",
-        "google/apiclient": "*"
+        "google/apiclient": "*",
+        "wisembly/elephant.io": "*"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
