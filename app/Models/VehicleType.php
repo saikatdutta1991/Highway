@@ -37,6 +37,7 @@ class VehicleType extends Model
 
 
 
+
     /**
      * get all 
      */
@@ -45,6 +46,31 @@ class VehicleType extends Model
         $vTypes = config('vehicle_types');
         return $vTypes ? $vTypes : [];
 
+    }
+
+
+
+
+    /**
+     * remove vehicle type by code
+     */
+    public function removeType($code, &$errorCode = '')
+    {
+        $vType = $this->where('code', $code)->first();
+
+        if(!$vType) {
+            $errorCode = 'INVALID';
+            return false;
+        }
+
+        //deleteing from database
+        $vType->forceDelete();
+
+        //fetch all vehicle types and save
+        $this->saveToFile($this->all()->toArray());
+    
+        return true;
+        
     }
 
 
@@ -65,7 +91,7 @@ class VehicleType extends Model
         //add new vehicle type
         $vType = new $this;
         $vType->code = $code;
-        $vType->name = $type;
+        $vType->name = ucfirst($type);
         $vType->save();
 
         //fetch all vehicle types and save

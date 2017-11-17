@@ -20,4 +20,6 @@
   
   'firebase_cloud_messaging_server_key' => 'AAAAOKfg4EU:APA91bHxiCWs1M26_RaR0wo04ol8U5ucyEU4IKQjd0eAodEBUoIlYubKZpYbfbVElDxAA-rwXjlf2qEIXFIVnFI2CH-JfmdyHPCSptkiClAZV5o8FJ9tKP1Y_W8BpufcTZ1HlkKE1VGd',
   
+  'vehicle_ride_fare_tax_percentage' => '5.60' 
+
 );

@@ -9,6 +9,8 @@ Route::group(['prefix' => '/v1/user'], function(){
 
     Route::post('register', 'Apis\User\UserRegister@doRegister');
     Route::post('login', 'Apis\User\UserRegister@doLogin');
+    
+    Route::get('vehicle-types', 'Apis\User\UserRegister@getVehicleTypes');
 
     //social login routes
     Route::post('facebook', 'Apis\User\Facebook@authenticate');
@@ -22,6 +24,9 @@ Route::group(['prefix' => '/v1/user'], function(){
 
         Route::get('profile', 'Apis\User\UserProfile@getUserProfile');
         Route::post('profile/update', 'Apis\User\UserProfile@updateUserProfile');
+
+        Route::post('estimate-price/{vehicle_type_id}', 'Apis\User\PriceCalculator@estimatePrice');
+
 
     });
 

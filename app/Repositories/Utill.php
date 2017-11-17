@@ -80,4 +80,18 @@ class Utill
 
 
 
+    /**
+	* used to format amount to decimal two place precision
+	*
+	* @param numeric string|number $amount amount to be formated(3 -> 3.00)
+	*
+	* @return number formated as two decimal place(3.00)
+	*/
+	public function formatAmountDecimalTwo($amount = "")
+	{
+		return number_format(round($amount, 2), 2, '.', '');
+	}
+
+
+
 }
