@@ -266,7 +266,7 @@ class DriverAuth extends Controller
             $driver->is_mobile_number_verified = 1;
             $driver->save();
 
-            return $this->api->json(false, 'OTP_VERIFIED', 'Mobile verified successfully.');
+            return $this->api->json(true, 'OTP_VERIFIED', 'Mobile verified successfully.');
         }
 
         return $this->api->json(false, 'OTP_VERIFY_FAILED', 'Invalid otp code entered or expired.');
