@@ -39,7 +39,9 @@ module.exports = {
             database : 'highway'
         },
         
-        CLIENT_AUTHENTICATE_TIMEOUT : 2000
+        CLIENT_AUTHENTICATE_TIMEOUT : 2000,
+
+        DEBUG : true
 
     },
 
@@ -62,7 +64,10 @@ module.exports = {
             database : 'highway'
         },
 
-        CLIENT_AUTHENTICATE_TIMEOUT: 2000
+        CLIENT_AUTHENTICATE_TIMEOUT: 2000,
+
+
+        DEBUG: false
 
     },
 
