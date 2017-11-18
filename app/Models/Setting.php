@@ -76,4 +76,39 @@ class Setting extends Model
 
 
 
+
+    /**
+     * sync database with config file
+     */
+    public function syncWithConfigFile()
+    {
+        foreach($this->getAllSettings() as $sKey => $sValue) {
+            $s = $this->where('key', $sKey)->first() ?: new $this;
+            $s->key = $sKey;
+            $s->value = $sValue;
+            $s->save();
+        }
+    }
+
+
+
+
+
+    /**
+     * sysc with database
+     */
+    public function syncWithDatabase()
+    {
+        //fetch all settings and save
+        $settings = [];
+        foreach($this->all() as $s) {
+            $settings[$s->key] = $s->value;
+        }
+
+        $this->saveToFile($settings);   
+    }
+
+
+
+
 }

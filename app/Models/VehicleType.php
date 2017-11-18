@@ -120,6 +120,18 @@ class VehicleType extends Model
 
 
 
+    /**
+     * public function syncWith database
+     */
+    public function syncWithDatabase()
+    {
+        //fetch all vehicle types and save to file
+        $this->saveToFile($this->all()->toArray());
+    }
+
+
+
+
     /** 
      * clean stgring replaces all ' ' with '_' and remove all special chrs
      */
