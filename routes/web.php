@@ -16,6 +16,51 @@ Route::get('/', function () {
 });
 
 
+
+
+
+
+
+/**
+ * admin route goes here
+ */
+Route::group(['prefix' => 'admin'], function(){
+
+
+    Route::group(['middleware' => 'adminGuest'], function(){
+        
+        Route::get('/', function(){ return redirect()->route('admin-login'); });
+        Route::get('login', 'Admin\AuthController@showLogin')->name('admin-login');
+        Route::post('login', 'Admin\AuthController@doLogin');
+
+    });
+
+
+
+    Route::group(['middleware' => 'adminAuth'], function(){
+
+        Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
+        Route::get('logout', 'Admin\AuthController@doLogout');
+
+    });
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /***
  * this routes for debug purpose. Should be removed on production before going live
  */

@@ -59,5 +59,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'userApiAuth' => \App\Http\Middleware\UserApiAuth::class,
         'driverApiAuth' => \App\Http\Middleware\DriverApiAuth::class,
+        'adminAuth' => \App\Http\Middleware\AuthenticateAdmin::class,
+        'adminGuest' => \App\Http\Middleware\RedirectIfAuthenticatedAdmin::class,
     ];
 }
