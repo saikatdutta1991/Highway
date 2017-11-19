@@ -30,7 +30,7 @@
 
         #toggleProfile
         {
-            border: 3px solid white;
+            /* border: 3px solid white; */
         }
 
 
@@ -58,7 +58,8 @@
     
   <div class="profile">
     <button class="profile__avatar" id="toggleProfile">
-     <img src="{{url('admin_assets')}}/login_round_logo.jpg" alt="Avatar" /> 
+     <img src="{{url('admin_assets')}}/login_round_logo.png" alt="Avatar" /> 
+     <label style="color: white;font-size: 9px;position: relative;top: -4px;">Click Here</label>
     </button>
     <div class="profile__form">
     <form id="login-form" method="post" action="{{url('admin/login')}}">
