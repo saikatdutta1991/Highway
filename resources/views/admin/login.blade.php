@@ -43,6 +43,14 @@
             color: rgba(0, 0, 0, 0.52);
         }
 
+
+        .profile__avatar
+        {
+            overflow : initial;
+        }
+
+
+
     </style>
 </head>
 
@@ -58,8 +66,8 @@
     
   <div class="profile">
     <button class="profile__avatar" id="toggleProfile">
-     <img src="{{url('admin_assets')}}/login_round_logo.png" alt="Avatar" /> 
-     <label style="color: white;font-size: 9px;position: relative;top: -4px;">Click Here</label>
+     <img src="{{url('admin_assets')}}/login_round_logo.png?{{time()}}" alt="Avatar" /> 
+     <label style="color: white;font-size: 9px;">Click Here</label>
     </button>
     <div class="profile__form">
     <form id="login-form" method="post" action="{{url('admin/login')}}">

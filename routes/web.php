@@ -85,3 +85,11 @@ Route::get('sync-settings-with-file', function(){
     app('App\Models\Setting')->syncWithConfigFile();
 
 });
+
+
+Route::get('send-sms', function(){
+
+    dd(app('App\Repositories\Otp')->sendOTP('+91', '9093036897', 'hello', 1));
+
+});
+

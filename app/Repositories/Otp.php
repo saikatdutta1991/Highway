@@ -14,6 +14,7 @@ class Otp
 	{
 		$this->otpToken = $otpToken;
 		$this->setting = $setting;
+		$this->smsProvider = $this->setting->get('sms_provider')?:'twilio';
 	}
 
 
@@ -36,16 +37,92 @@ class Otp
 	}
 
 
+
+	/**
+	 *  returns msg99 send sms api jsonbody
+	 */
+	protected function buildMsg99JsonBody($countryCode, $mobileNo, $msgText)
+	{
+		$countryCode = ltrim($countryCode, '+');
+		$body = [
+			'sender' => 'SOCKET',
+			'route' => '4',
+			'country' => $countryCode,
+			'sms' => [
+				[
+					'message' => $msgText,
+					'to' => [$mobileNo]
+				]
+			]
+		];
+		
+		\Log::info('MSG99_BODY_DATA');
+		\Log::info($body);
+		
+		return json_encode($body);
+
+	}
+
+
     /**
      * send normal message to mobile number
      */
-	public function sendMessage($mobileNo, $message, &$error = null)
+	public function sendMessage($countryCode, $mobileNo, $message, &$error = null)
 	{
 		try{
 
-			$twilio = new Twilio($this->twilioSid(), $this->twilioToken(), $this->twilioFrom());
-			$twilio->message($mobileNo, $message);
+			if($this->smsProvider == 'twilio') {
 
+				$twilio = new Twilio($this->twilioSid(), $this->twilioToken(), $this->twilioFrom());
+				$twilio->message($countryCode.$mobileNo, $message);
+
+			}
+			// send sms via msg99 
+			else {
+
+				$curl = curl_init();
+
+				curl_setopt_array($curl, [
+  					CURLOPT_URL => "http://api.msg91.com/api/v2/sendsms",
+  					CURLOPT_RETURNTRANSFER => true,
+  					CURLOPT_ENCODING => "",
+  					CURLOPT_MAXREDIRS => 10,
+  					CURLOPT_TIMEOUT => 30,
+  					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  					CURLOPT_CUSTOMREQUEST => "POST",
+  					CURLOPT_POSTFIELDS => $this->buildMsg99JsonBody($countryCode, $mobileNo, $message),
+  					CURLOPT_SSL_VERIFYHOST => 0,
+  					CURLOPT_SSL_VERIFYPEER => 0,
+  					CURLOPT_HTTPHEADER => [
+						"authkey: ".$this->setting->get('msg99_auth_key'),
+						"content-type: application/json"
+					],
+				]);
+
+				$response = curl_exec($curl);
+				$err = curl_error($curl);
+
+				curl_close($curl);
+
+				if ($err) {
+					throw new \Exception($error);
+				} else {
+					
+					\Log::info("SEND MESSAGE msg99 response");
+					\Log::info($response);
+
+					$response = json_decode($response);
+					 
+					if($response->type == 'error') {
+						throw new \Exception($response->message, $response->code);
+					} 
+				}
+
+
+			}
+
+
+			
       	} catch(\Exception $e){
 			 $error = $e->getMessage();
 			 \Log::info("SEND MESSAGE");
@@ -77,7 +154,7 @@ class Otp
 
         $message = str_replace("{{otp_code}}", $otp->token, $message);
 
-        $ismsgsent = $this->sendMessage($otp->full_mobile_number, $message, $error);
+        $ismsgsent = $this->sendMessage($countryCode, $mobileNo, $message, $error);
 
         return $ismsgsent ? $otp->token : false;
 	}
