@@ -4,7 +4,7 @@
   0 => 
   array (
     'id' => 4,
-    'code' => 'Micro',
+    'code' => 'MICRO',
     'name' => 'Micro',
     'created_at' => '2017-11-17 19:43:11',
     'updated_at' => '2017-11-17 19:43:11',
@@ -13,7 +13,7 @@
   1 => 
   array (
     'id' => 5,
-    'code' => 'Mini',
+    'code' => 'MINI',
     'name' => 'Mini',
     'created_at' => '2017-11-17 19:43:11',
     'updated_at' => '2017-11-17 19:43:11',
@@ -22,7 +22,7 @@
   2 => 
   array (
     'id' => 6,
-    'code' => 'Prime',
+    'code' => 'PRIME',
     'name' => 'Prime',
     'created_at' => '2017-11-17 19:43:11',
     'updated_at' => '2017-11-17 19:43:11',
@@ -31,7 +31,7 @@
   3 => 
   array (
     'id' => 7,
-    'code' => 'Auto',
+    'code' => 'AUTO',
     'name' => 'Auto',
     'created_at' => '2017-11-17 19:43:11',
     'updated_at' => '2017-11-17 19:43:11',
@@ -40,7 +40,7 @@
   4 => 
   array (
     'id' => 8,
-    'code' => 'Sedan',
+    'code' => 'SEDAN',
     'name' => 'Sedan',
     'created_at' => '2017-11-17 19:47:59',
     'updated_at' => '2017-11-17 19:47:59',
@@ -49,7 +49,7 @@
   5 => 
   array (
     'id' => 9,
-    'code' => 'sub',
+    'code' => 'SUB',
     'name' => 'Sub',
     'created_at' => '2017-11-17 19:48:48',
     'updated_at' => '2017-11-17 19:48:48',

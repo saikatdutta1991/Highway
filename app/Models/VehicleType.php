@@ -82,7 +82,7 @@ class VehicleType extends Model
      */
     public function addType($type, &$errorCode = '')
     {
-        $code = $this->cleanString($type);
+        $code = strtoupper($this->cleanString($type));
         if($this->where('code', $code)->orWhere('name')->exists()) {
            $errorCode = 'EXISTS';
            return false;
@@ -139,7 +139,7 @@ class VehicleType extends Model
     {
         $string = str_replace(' ', '_', $string); // Replaces all spaces with hyphens
         $string = preg_replace('/[^A-Za-z0-9\_]/', '', $string); // Removes special chars.
-        return strtolower($string);
+        return $string;
     }
 
 

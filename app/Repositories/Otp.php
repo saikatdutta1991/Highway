@@ -39,13 +39,13 @@ class Otp
 
 
 	/**
-	 *  returns msg99 send sms api jsonbody
+	 *  returns msg91 send sms api jsonbody
 	 */
-	protected function buildMsg99JsonBody($countryCode, $mobileNo, $msgText)
+	protected function buildMsg91JsonBody($countryCode, $mobileNo, $msgText)
 	{
 		$countryCode = ltrim($countryCode, '+');
 		$body = [
-			'sender' => 'SOCKET',
+			'sender' => $this->setting->get('msg91_sender_id'),
 			'route' => '4',
 			'country' => $countryCode,
 			'sms' => [
@@ -56,7 +56,7 @@ class Otp
 			]
 		];
 		
-		\Log::info('MSG99_BODY_DATA');
+		\Log::info('MSG91_BODY_DATA');
 		\Log::info($body);
 		
 		return json_encode($body);
@@ -77,7 +77,7 @@ class Otp
 				$twilio->message($countryCode.$mobileNo, $message);
 
 			}
-			// send sms via msg99 
+			// send sms via msg91 
 			else {
 
 				$curl = curl_init();
@@ -90,11 +90,11 @@ class Otp
   					CURLOPT_TIMEOUT => 30,
   					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   					CURLOPT_CUSTOMREQUEST => "POST",
-  					CURLOPT_POSTFIELDS => $this->buildMsg99JsonBody($countryCode, $mobileNo, $message),
+  					CURLOPT_POSTFIELDS => $this->buildMsg91JsonBody($countryCode, $mobileNo, $message),
   					CURLOPT_SSL_VERIFYHOST => 0,
   					CURLOPT_SSL_VERIFYPEER => 0,
   					CURLOPT_HTTPHEADER => [
-						"authkey: ".$this->setting->get('msg99_auth_key'),
+						"authkey: ".$this->setting->get('msg91_auth_key'),
 						"content-type: application/json"
 					],
 				]);
@@ -108,7 +108,7 @@ class Otp
 					throw new \Exception($error);
 				} else {
 					
-					\Log::info("SEND MESSAGE msg99 response");
+					\Log::info("SEND MESSAGE msg91 response");
 					\Log::info($response);
 
 					$response = json_decode($response);

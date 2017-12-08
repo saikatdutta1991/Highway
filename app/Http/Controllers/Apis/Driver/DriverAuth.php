@@ -55,7 +55,20 @@ class DriverAuth extends Controller
             'mobile_number' => 'required|numeric',
             'photo' => 'required|image|mimes:jpg,jpeg,png',
             'vehicle_type' => 'required|in:'.implode(',', $this->vehicleType->allCodes()),
-            'vehicle_number' => 'required'
+            'vehicle_number' => 'required',
+            'vehicle_registration_certificate_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_contract_permit_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_insurance_certificate_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_fitness_certificate_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_lease_agreement_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
+            'vehicle_photo_first' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_photo_second' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_photo_third' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_photo_fourth' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_commercial_driving_license_plate_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'vehicle_police_verification_certificate_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'bank_passbook_or_canceled_check_photo' => 'required|image|mimes:jpg,jpeg,png',
+            'aadhaar_card_photo' => 'required|image|mimes:jpg,jpeg,png',
         ]);
 
 
@@ -73,6 +86,19 @@ class DriverAuth extends Controller
             ($e->has('photo')) ? $msg['photo'] = $e->get('photo')[0] : '';
             ($e->has('vehicle_type')) ? $msg['vehicle_type'] = $e->get('vehicle_type')[0] : '';
             ($e->has('vehicle_number')) ? $msg['vehicle_number'] = $e->get('vehicle_number')[0] : '';
+            ($e->has('vehicle_registration_certificate_photo')) ? $msg['vehicle_registration_certificate_photo'] = $e->get('vehicle_registration_certificate_photo')[0] : '';
+            ($e->has('vehicle_contract_permit_photo')) ? $msg['vehicle_contract_permit_photo'] = $e->get('vehicle_contract_permit_photo')[0] : '';
+            ($e->has('vehicle_insurance_certificate_photo')) ? $msg['vehicle_insurance_certificate_photo'] = $e->get('vehicle_insurance_certificate_photo')[0] : '';
+            ($e->has('vehicle_fitness_certificate_photo')) ? $msg['vehicle_fitness_certificate_photo'] = $e->get('vehicle_fitness_certificate_photo')[0] : '';
+            ($e->has('vehicle_lease_agreement_photo')) ? $msg['vehicle_lease_agreement_photo'] = $e->get('vehicle_lease_agreement_photo')[0] : '';
+            ($e->has('vehicle_photo_first')) ? $msg['vehicle_photo_first'] = $e->get('vehicle_photo_first')[0] : '';
+            ($e->has('vehicle_photo_second')) ? $msg['vehicle_photo_second'] = $e->get('vehicle_photo_second')[0] : '';
+            ($e->has('vehicle_photo_third')) ? $msg['vehicle_photo_third'] = $e->get('vehicle_photo_third')[0] : '';
+            ($e->has('vehicle_photo_fourth')) ? $msg['vehicle_photo_fourth'] = $e->get('vehicle_photo_fourth')[0] : '';
+            ($e->has('vehicle_commercial_driving_license_plate_photo')) ? $msg['vehicle_commercial_driving_license_plate_photo'] = $e->get('vehicle_commercial_driving_license_plate_photo')[0] : '';
+            ($e->has('vehicle_police_verification_certificate_photo')) ? $msg['vehicle_police_verification_certificate_photo'] = $e->get('vehicle_police_verification_certificate_photo')[0] : '';
+            ($e->has('bank_passbook_or_canceled_check_photo')) ? $msg['bank_passbook_or_canceled_check_photo'] = $e->get('bank_passbook_or_canceled_check_photo')[0] : '';
+            ($e->has('aadhaar_card_photo')) ? $msg['aadhaar_card_photo'] = $e->get('aadhaar_card_photo')[0] : '';
 
             return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
 
@@ -107,6 +133,26 @@ class DriverAuth extends Controller
         $driver->vehicle_type = $request->vehicle_type;
         $driver->vehicle_number = strtoupper($request->vehicle_number);
 
+        //by default is_approved will be 0
+        $driver->is_approved = 0;
+
+        //save extra images like rc photo, driving license photo etc.
+        $driver->saveExtraPhotos(
+            $request->vehicle_registration_certificate_photo, 
+            $request->vehicle_contract_permit_photo, 
+            $request->vehicle_insurance_certificate_photo, 
+            $request->vehicle_fitness_certificate_photo, 
+            $request->vehicle_lease_agreement_photo, 
+            $request->vehicle_photo_first, 
+            $request->vehicle_photo_second, 
+            $request->vehicle_photo_third, 
+            $request->vehicle_photo_fourth, 
+            $request->vehicle_commercial_driving_license_plate_photo, 
+            $request->vehicle_police_verification_certificate_photo, 
+            $request->bank_passbook_or_canceled_check_photo, 
+            $request->aadhaar_card_photo
+        );
+
 
         DB::beginTransaction();
 
@@ -135,6 +181,7 @@ class DriverAuth extends Controller
 
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
+        $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
 
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
@@ -205,6 +252,7 @@ class DriverAuth extends Controller
 
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
+        $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
 
         return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
             'accesss_token' => $accessToken,

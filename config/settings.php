@@ -22,8 +22,9 @@
   
   'vehicle_ride_fare_tax_percentage' => '5.60',
 
-  'sms_provider' => 'msg99',
+  'sms_provider' => 'msg91',
 
-  'msg99_auth_key' => '187213Al383QppsM5a298663',
+  'msg91_sender_id' => 'HIWAYV',
+  'msg91_auth_key' => '187213Al383QppsM5a298663',
 
 );
