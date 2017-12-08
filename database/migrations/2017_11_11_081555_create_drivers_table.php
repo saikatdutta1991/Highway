@@ -26,12 +26,56 @@ class CreateDriversTable extends Migration
             $table->string('full_mobile_number', 20);
             $table->tinyInteger('is_mobile_number_verified')->default(0);
             $table->string('status', 50)->default('ACTIVATED');
+            $table->string('status_reason', 128);
             $table->timestamp('last_access_time')->useCurrent();
             $table->ipAddress('last_accessed_ip');
             $table->string('profile_photo_path', 256);
             $table->string('profile_photo_name', 128);
             $table->string('vehicle_type', 128);
             $table->string('vehicle_number', 128);
+
+
+            $table->string('vehicle_rc_photo_path', 256);
+            $table->string('vehicle_rc_photo_name', 128);
+
+            $table->string('vehicle_contract_permit_photo_path', 256);
+            $table->string('vehicle_contract_permit_photo_name', 128);
+
+            $table->string('vehicle_insurance_certificate_photo_path', 256);
+            $table->string('vehicle_insurance_certificate_photo_name', 128);
+
+            $table->string('vehicle_fitness_certificate_photo_path', 256);
+            $table->string('vehicle_fitness_certificate_photo_name', 128);
+
+            $table->string('vehicle_lease_agreement_photo_path', 256);
+            $table->string('vehicle_lease_agreement_photo_name', 128);
+
+            $table->string('vehicle_photo_1_path', 256);
+            $table->string('vehicle_photo_1_name', 128);
+
+            $table->string('vehicle_photo_2_path', 256);
+            $table->string('vehicle_photo_2_name', 128);
+
+            $table->string('vehicle_photo_3_path', 256);
+            $table->string('vehicle_photo_3_name', 128);
+
+            $table->string('vehicle_photo_4_path', 256);
+            $table->string('vehicle_photo_4_name', 128);
+
+            $table->string('vehicle_commercial_driving_license_photo_path', 256);
+            $table->string('vehicle_commercial_driving_license_photo_name', 128);
+
+            $table->string('vehicle_police_verification_certificate_photo_path', 256);
+            $table->string('vehicle_police_verification_certificate_name', 128);
+
+            $table->string('bank_passbook_photo_path', 256);
+            $table->string('bank_passbook_photo_name', 128);
+
+            $table->string('aadhaar_card_photo_path', 256);
+            $table->string('aadhaar_card_photo_name', 128);
+
+
+            $table->tinyInteger('is_approved')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
