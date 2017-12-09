@@ -125,7 +125,7 @@
             /* Media Queries */
             @media screen and (max-width: 600px) {
             .email-container {
-            width: 100% !important;
+           /*  width: 100% !important; */
             margin: auto !important;
             }
             /* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
@@ -189,22 +189,24 @@
                         <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; background: #222222; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">
                         <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">{{$website_name}}</label>
                     </td>
-                </tr> -->
+                    </tr> -->
             </table>
             <!-- Email Header : END -->
             <!-- Email Body : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <!-- Hero Image, Flush : BEGIN -->
                 <tr>
-                    <td bgcolor="#ffffff" align="center" style="position:relative">
-                        <img src="{{url('images/email_templates/background.jpg')}}" width="600" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="g-img">
-                        <span style="position: absolute;top: 40%;width:100%;left:0px;">
-                            <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">{{$website_name}}</label>
-                        </span>
+                    <td rowspan="2" bgcolor="#ffffff" align="center" style="position:relative">
+                        <img src="{{url('images/email_templates/background.jpg')}}" width="600" height="" alt="alt_text" border="0" align="center" style=" max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="g-img">
                     </td>
                 </tr>
-                <!-- Hero Image, Flush : END -->
+                <tr>
+                    <td colspan="2">
+                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;"><img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">{{$website_name}}</label>
+                    </td>
+                </tr>
+            </table>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <!-- 1 Column Text + Button : BEGIN -->
                 <tr>
                     <td bgcolor="#ffffff" style="padding: 40px 40px 20px;">
@@ -231,8 +233,6 @@
                     </td>
                 </tr>
                 <!-- 1 Column Text + Button : END -->
-               
-                
             </table>
             <!-- Email Body : END -->
             <!-- Email Footer : BEGIN -->
@@ -248,7 +248,6 @@
                 </tr>
             </table>
             <!-- Email Footer : END -->
-           
         </center>
     </body>
 </html>
