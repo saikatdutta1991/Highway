@@ -27,4 +27,24 @@
   'msg91_sender_id' => 'HIWAYV',
   'msg91_auth_key' => '187213Al383QppsM5a298663',
 
+  'is_mail_send_activated' => 'true',
+
+  'mail_driver' => 'mailgun',
+  'mailgun_host' => 'smtp.mailgun.org',
+  'mailgun_port' => '26',
+  'mailgun_username' => 'postmaster@sandboxb73d8613caae4f0b8430eddcc6b28ba3.mailgun.org',
+  'mailgun_password' => '0482f2773777812378739053a305e2fb',
+  'mailgun_domain' => 'sandboxb73d8613caae4f0b8430eddcc6b28ba3.mailgun.org',
+  'mailgun_secret' => 'key-70a2ffb83575aa1a2572b5f18db4e1fb',
+
+  'email_support_from_address' => 'support@highway.com',
+  'email_from_name' => 'HighWay',
+  'email_bcc' => 'support@highway.com',
+
+  'website_name' => 'HighWay',
+  'website_logo_path' => 'images',
+  'website_logo_name' => 'website_logo.png',
+  'website_address' => '123 Fake Street, SpringField, OR, 97477 US',
+  'website_contact_number' => '(123) 456-7890',
+  'website_contact_email' => 'support@highway.com'
 );

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Apis\User;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Repositories\Email;
 use Hash;
 use App\Repositories\Otp;
 use Illuminate\Http\Request;
@@ -17,11 +18,12 @@ class UserRegister extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user, Otp $otp)
+    public function __construct(Api $api, User $user, Otp $otp, Email $email)
     {
         $this->api = $api;
         $this->user = $user;
         $this->otp = $otp;
+        $this->email = $email;
     }
 
 
@@ -105,7 +107,8 @@ class UserRegister extends Controller
             
         }
 
-        
+        //send welcome email through queue
+        $this->email->sendNewUserWelcomeEmail($user);
        
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,

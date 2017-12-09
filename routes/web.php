@@ -93,3 +93,15 @@ Route::get('send-sms', function(){
 
 });
 
+
+Route::get('send-email', function(){
+
+    
+    
+    $user = App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
+    return new \App\Mail\WelcomeUser($user);
+    app('App\Repositories\Email')->sendNewUserWelcomeEmail($user);
+
+
+});
+

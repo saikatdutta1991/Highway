@@ -111,4 +111,26 @@ class Setting extends Model
 
 
 
+
+    /**
+     * returns website logo path
+     */
+    public function generateWebsiteLogoPath()
+    {
+        return $this->get('website_logo_path');
+    }
+
+  
+
+
+    /**
+     * returns website logo url
+     */
+    public function websiteLogoUrl()
+    {
+        return url($this->get('website_logo_path') . '/' . $this->get('website_logo_name'));
+    }
+
+
+
 }
