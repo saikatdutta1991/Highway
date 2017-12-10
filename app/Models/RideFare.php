@@ -24,10 +24,13 @@ class RideFare extends Model
      */
     public function calculateFare($distance, $avgDuration)
     {
+        $utillRepo = app('App\Repositories\Utill');
+
         $fare = $this->calculateRideFare($distance, $avgDuration);
         $taxes = $this->calculateRideFareTax($fare);
         $accessFee = $this->access_fee;
         $total = $fare + $this->access_fee + $taxes;
+        $total = $utillRepo->formatAmountDecimalTwo($total);
 
         return [
             'ride_fare' => $fare,
@@ -58,7 +61,7 @@ class RideFare extends Model
         $taxPercentage = $tax = app('App\Models\Setting')->get('vehicle_ride_fare_tax_percentage');
         $taxPercentage = $taxPercentage == '' ? 0 : $taxPercentage;
         $taxes = $fare * ( $taxPercentage / 100 );
-        return $taxes;
+        return round($taxes, 2);
     }
 
 
