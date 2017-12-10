@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use App\Models\Driver;
+use App\Repositories\Email;
 use Hash;
 use App\Repositories\Otp;
 use Illuminate\Http\Request;
@@ -19,12 +20,13 @@ class DriverAuth extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, Driver $driver, VehicleType $vehicleType, Otp $otp)
+    public function __construct(Api $api, Driver $driver, VehicleType $vehicleType, Otp $otp, Email $email)
     {
         $this->api = $api;
         $this->driver = $driver;
         $this->vehicleType = $vehicleType;
         $this->otp = $otp;
+        $this->email = $email;
     }
 
 
@@ -182,6 +184,10 @@ class DriverAuth extends Controller
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
+
+
+        //send new driver registration mail
+        $this->email->sendNewDriverWelcomeEmail($driver);
 
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
