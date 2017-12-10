@@ -28,6 +28,14 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::post('estimate-price/{vehicle_type_id}', 'Apis\User\PriceCalculator@estimatePrice');
 
 
+        Route::get('ride-request/payment-modes', 'Apis\User\RideRequest@getPaymentModes');
+        Route::post('ride-request/update-payment-mode', 'Apis\User\RideRequest@updatePaymentMode');
+
+        Route::get('ride-request/check', 'Apis\User\RideRequest@checkRideRequest');
+        Route::post('ride-request/{ride_request_id}/cancel', 'Apis\User\RideRequest@cancelRideRequest');
+
+
+
     });
 
 

@@ -75,6 +75,8 @@ var io = socketio(server);
 
 io.on('connection', function (socket) {
 
+	console.log('New socket connected, Socket Id : ' + socket.id);
+	var socket_room = '';
 
 	if (config.DEBUG) {
 		try {
@@ -87,12 +89,16 @@ io.on('connection', function (socket) {
 			//update driver is_connected_to_socket column
 			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 1);
 
+			//join to room
+			socket_room = socket.auth_entity.type + '_' + socket.auth_entity.id;
+			socket.join(socket_room);
+			console.log('room : ', socket_room);
+
 
 		} catch (e) { }
 	}
 
-	console.log('New socket connected, Socket Id : ' + socket.id);
-	var socket_room = '';
+
 
 
 	/**
@@ -198,6 +204,21 @@ io.on('connection', function (socket) {
 
 			//update driver location
 			helper.updateDriverLocation(socket.auth_entity.id, data.latitude, data.longitude);
+
+			//if ride request is available send user also latitude longitude
+			if (data.ride_request_id) {
+				helper.getRideRequest(data.ride_request_id, socket.auth_entity.id, function (err, result) {
+					if (err && !result.length) return;
+					console.log('ride request fetched', result);
+					io.sockets.in('USER_' + result[0].user_id).emit('driver_location_updated', {
+						latitude: data.latitude,
+						longitude: data.longitude
+					});
+				});
+			}
+
+
+
 		} catch (e) {
 			console.log(e);
 			return;

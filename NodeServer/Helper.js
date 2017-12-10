@@ -27,6 +27,17 @@ module.exports = function (dbConn) {
     }
 
 
+    module.getRideRequest = function (rideRequestId, driverId, callback) {
+        var sql = "SELECT * FROM ride_requests WHERE "
+            + "id = " + rideRequestId + " AND "
+            + "driver_id = " + driverId;
+        console.log('fetch ride request query: ', sql)
+        module.conn.query(sql, function (err, result) {
+            callback(err, result);
+        });
+    }
+
+
     return module;
 
 };
