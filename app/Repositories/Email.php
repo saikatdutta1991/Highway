@@ -38,7 +38,7 @@ class Email
         }
 
         try {
-            $resCode = Mail::to($user->email)->send(new WelcomeUser($user));
+            $resCode = Mail::to($user->email)->queue(new WelcomeUser($user));
             \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
         
         } catch(\Exception $e) {
