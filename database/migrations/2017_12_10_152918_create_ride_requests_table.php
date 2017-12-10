@@ -34,7 +34,7 @@ class CreateRideRequestsTable extends Migration
             $table->timestamp('ride_start_time')->nullable();
             $table->timestamp('ride_end_time')->nullable();
 
-            $table->string('ride_status', 100)->default('CASH');
+            $table->string('ride_status', 100)->default('INITIATED');
             
             $table->string('payment_mode', 50)->default('CASH');
             $table->string('payment_status', 50)->default('NOT_PAID');
