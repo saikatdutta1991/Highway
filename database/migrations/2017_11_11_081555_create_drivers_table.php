@@ -27,6 +27,8 @@ class CreateDriversTable extends Migration
             $table->tinyInteger('is_mobile_number_verified')->default(0);
             $table->string('status', 50)->default('ACTIVATED');
             $table->string('status_reason', 128);
+            $table->boolean('is_available')->default(true);
+            $table->boolean('is_connected_to_socket')->default(false);
             $table->timestamp('last_access_time')->useCurrent();
             $table->ipAddress('last_accessed_ip');
             $table->string('profile_photo_path', 256);
