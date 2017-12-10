@@ -29,6 +29,8 @@ class CreateUsersTable extends Migration
             $table->timestamp('last_access_time')->useCurrent();
             $table->ipAddress('last_accessed_ip');
 
+            $table->decimal('rating', 1, 1)->default(0.0);
+
             $table->timestamps();
             $table->softDeletes();
 

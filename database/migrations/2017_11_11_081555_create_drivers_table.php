@@ -29,6 +29,7 @@ class CreateDriversTable extends Migration
             $table->string('status_reason', 128);
             $table->boolean('is_available')->default(true);
             $table->boolean('is_connected_to_socket')->default(false);
+            $table->decimal('rating', 1, 1)->default(0.0);
             $table->timestamp('last_access_time')->useCurrent();
             $table->ipAddress('last_accessed_ip');
             $table->string('profile_photo_path', 256);

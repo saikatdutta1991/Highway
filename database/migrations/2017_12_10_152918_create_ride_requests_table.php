@@ -41,6 +41,9 @@ class CreateRideRequestsTable extends Migration
 
             $table->bigInteger('ride_invoice_id')->default(0);
 
+            $table->integer('user_rating')->default(0);
+            $table->integer('driver_rating')->default(0);
+
             $table->timestamps();
             $table->softDeletes();
 
