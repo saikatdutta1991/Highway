@@ -46,8 +46,8 @@ class PriceCalculator extends Controller
             return $this->api->json(false, 'FARE_NOT_SET', 'Fare not set by admin. Try again');
         }
 
-        $fareData = $this->rideFare->calculateFare(
-            $rFare, $request->distance, intval($request->duration)
+        $fareData = $rFare->calculateFare(
+            intval($request->distance), intval($request->duration)
         );
 
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);

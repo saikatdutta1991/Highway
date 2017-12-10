@@ -63,6 +63,8 @@ conn.connect(function (err) {
 });
 
 
+var helper = require('./Helper')(conn);
+
 
 /* initializing socket io server */
 var io = socketio(server);
@@ -75,11 +77,18 @@ io.on('connection', function (socket) {
 
 
 	if (config.DEBUG) {
-		socket.auth_entity = {
-			id: socket.handshake.query.e_id,
-			type: socket.handshake.query.e_type.toUpperCase(),
-			access_token: socket.handshake.query.access_token
-		};
+		try {
+			socket.auth_entity = {
+				id: socket.handshake.query.e_id,
+				type: socket.handshake.query.e_type.toUpperCase(),
+				access_token: socket.handshake.query.access_token
+			};
+
+			//update driver is_connected_to_socket column
+			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 1);
+
+
+		} catch (e) { }
 	}
 
 	console.log('New socket connected, Socket Id : ' + socket.id);
@@ -163,6 +172,9 @@ io.on('connection', function (socket) {
 			socket.emit('authenticated', { message: 'You are authenticated' });
 		});
 
+		//update driver is_connected_to_socket column
+		helper.updateDriverSocketConnectionStatus(eId, 1);
+
 	});
 
 
@@ -184,15 +196,8 @@ io.on('connection', function (socket) {
 			//check data contains latitude and longitude
 			if (!data.latitude || !data.longitude || socket.auth_entity.type != 'DRIVER') return;
 
-			//check database for authenticated
-			var sql = "UPDATE drivers "
-				+ "SET latitude = " + data.latitude + ", longitude = " + data.longitude
-				+ " WHERE id = " + socket.auth_entity.id;
-
-			console.log('update driver location query : ' + sql);
-			conn.query(sql, function (err, result) {
-				console.log('update driver location response', err, result);
-			});
+			//update driver location
+			helper.updateDriverLocation(socket.auth_entity.id, data.latitude, data.longitude);
 		} catch (e) {
 			console.log(e);
 			return;
@@ -251,6 +256,14 @@ io.on('connection', function (socket) {
 	socket.on('disconnect', function (data) {
 		console.log('disconnect', socket_room);
 		socket.leave(socket_room);
+
+
+		//if driver disconnected change is connected to socket column to 0
+		if (socket.auth && socket.auth_entity.type == 'DRIVER') {
+			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 0);
+		}
+
+
 	});
 
 

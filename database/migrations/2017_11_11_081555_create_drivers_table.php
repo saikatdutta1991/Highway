@@ -37,6 +37,10 @@ class CreateDriversTable extends Migration
             $table->string('vehicle_number', 128);
 
 
+            $table->decimal('latitude', 10, 7)->default(0.0);
+            $table->decimal('longitude', 10, 7)->default(0.0);
+
+
             $table->string('vehicle_rc_photo_path', 256);
             $table->string('vehicle_rc_photo_name', 128);
 

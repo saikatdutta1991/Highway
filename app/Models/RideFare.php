@@ -22,25 +22,22 @@ class RideFare extends Model
      * $avgDuration in minute(s)
      * call this method if fare object fetched
      */
-    public function calculateFare($rFare, $distance, $avgDuration)
+    public function calculateFare($distance, $avgDuration)
     {
-        $fare = $this->calculateRideFare($rFare, $distance, $avgDuration);
+        $fare = $this->calculateRideFare($distance, $avgDuration);
         $taxes = $this->calculateRideFareTax($fare);
-        $accessFee = $rFare->access_fee;
-        $total = $fare + $rFare->access_fee + $taxes;
-        
-        //un setgings unnecessary properties
-        unset($rFare->access_fee);
-        unset($rFare->id);
-        unset($rFare->vehicle_type_id);
-        unset($rFare->created_at);
-        unset($rFare->updated_at);
-        unset($rFare->deleted_at);
-        unset($rFare->cancellation_fee);
+        $accessFee = $this->access_fee;
+        $total = $fare + $this->access_fee + $taxes;
 
         return [
             'ride_fare' => $fare,
-            'ride_fare_details' => $rFare->toArray(),
+            'ride_fare_details' => [
+                'base_price' => $this->base_price,
+                'first_distance' => $this->first_distance,
+                'first_distance_price' => $this->first_distance_price,
+                'after_first_distance_price' => $this->after_first_distance_price,
+                'wait_time_price' => $this->wait_time_price,
+            ],
             'access_fee' => $accessFee,
             'taxes' => $taxes,
             'total' => $total
@@ -61,7 +58,6 @@ class RideFare extends Model
         $taxPercentage = $tax = app('App\Models\Setting')->get('vehicle_ride_fare_tax_percentage');
         $taxPercentage = $taxPercentage == '' ? 0 : $taxPercentage;
         $taxes = $fare * ( $taxPercentage / 100 );
-        $taxes = $utillRepo->formatAmountDecimalTwo($taxes);
         return $taxes;
     }
 
@@ -72,27 +68,27 @@ class RideFare extends Model
     /**
      * calculate ride fare only
      */
-    public function calculateRideFare($rFare, $distance, $avgDuration)
+    public function calculateRideFare($distance, $avgDuration)
     {
         $utillRepo = app('App\Repositories\Utill');
 
         $fare = 0;
 
         //adding base price
-        $fare += $rFare->base_price;
+        $fare += $this->base_price;
 
         //checking first distance price (eg. first 2 km 10$)
-        if($distance >= $rFare->first_distance) {
-            $fare += $rFare->first_distance;
-            $distance -= $rFare->first_distance;
+        if($distance >= $this->first_distance) {
+            $fare += $this->first_distance_price;
+            $distance -= $this->first_distance;
         }
 
 
-        $fare += ($rFare->after_first_distance_price * $distance);
-        $fare += ($avgDuration * $rFare->wait_time_price);
+        $fare += ($this->after_first_distance_price * $distance);
+        $fare += ($avgDuration * $this->wait_time_price);
 
         //checking if cost is less than minimum price
-        $fare = ($fare < $rFare->minimum_price) ? $rFare->minimum_price : $fare;
+        $fare = ($fare < $this->minimum_price) ? $this->minimum_price : $fare;
         $fare = $utillRepo->formatAmountDecimalTwo($fare);
 
         return $fare;

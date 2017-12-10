@@ -13,15 +13,14 @@
 
 module.exports = {
 
-    IS_PRODUCTION : false,
+    IS_PRODUCTION: false,
 
 
-    getConfig()
-    {
-        return this.IS_PRODUCTION ?  this.PRODUCTION_CONFIGS : this.LOCAL_CONFIGS;
+    getConfig() {
+        return this.IS_PRODUCTION ? this.PRODUCTION_CONFIGS : this.LOCAL_CONFIGS;
     },
 
-    LOCAL_CONFIGS : {
+    LOCAL_CONFIGS: {
 
         SERVER_INTERNAL_COMMUNICATION_KEY: '123456789',
         SERVER_PORT: 3000,
@@ -32,20 +31,20 @@ module.exports = {
 
         BASE_URL: 'http://localhost/Highway/public', //without ritht '/'
 
-        mysql : {
-            host : 'localhost',
-            user : 'root',
-            password : 'root',
-            database : 'highway'
+        mysql: {
+            host: 'localhost',
+            user: 'root',
+            password: 'root',
+            database: 'highway'
         },
-        
-        CLIENT_AUTHENTICATE_TIMEOUT : 2000,
 
-        DEBUG : true
+        CLIENT_AUTHENTICATE_TIMEOUT: 2000,
+
+        DEBUG: true
 
     },
 
-    PRODUCTION_CONFIGS : {
+    PRODUCTION_CONFIGS: {
 
         SERVER_INTERNAL_COMMUNICATION_KEY: '123456789',
         SERVER_PORT: 3000,
@@ -61,7 +60,7 @@ module.exports = {
             host: 'localhost',
             user: 'root',
             password: 'root',
-            database : 'highway'
+            database: 'highway'
         },
 
         CLIENT_AUTHENTICATE_TIMEOUT: 2000,
@@ -71,5 +70,5 @@ module.exports = {
 
     },
 
-    
+
 }
