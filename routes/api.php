@@ -27,6 +27,7 @@ Route::group(['prefix' => '/v1/user'], function(){
 
         Route::post('estimate-price/{vehicle_type_id}', 'Apis\User\PriceCalculator@estimatePrice');
 
+        Route::get('nearby-drivers/{lat_long}/{vehicle_type?}', 'Apis\User\RideRequest@getNearbyDrivers');
 
         Route::get('ride-request/payment-modes', 'Apis\User\RideRequest@getPaymentModes');
         Route::post('ride-request/update-payment-mode', 'Apis\User\RideRequest@updatePaymentMode');

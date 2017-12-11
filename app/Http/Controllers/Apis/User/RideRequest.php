@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Apis\User;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Models\Driver;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
+use App\Models\Setting;
+use App\Repositories\Utill;
 use Validator;
-
+use App\Models\VehicleType;
 
 class RideRequest extends Controller
 {
@@ -17,10 +20,13 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, Ride $rideRequest)
+    public function __construct(Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
     {
+        $this->setting = $setting;
         $this->api = $api;
         $this->rideRequest = $rideRequest;
+        $this->vehicleType = $vehicleType;
+        $this->driver = $driver;
     }
 
 
@@ -138,6 +144,58 @@ class RideRequest extends Controller
 
         return $this->api->json(true, 'RIDE_REQUEST_CANCELED', 'Ride Request canceled successfully'); 
            
+    }
+
+
+
+
+    /**
+     * get nearby drivers 
+     * used for ride reqeust basically ?vehicle_type is optional
+     */
+    public function getNearbyDrivers(Request $request)
+    {
+
+        // taking latitude and longitude from request
+        try {
+            list($latitude, $longitude) = explode(',', $request->lat_long);
+        } catch(\Exception $e) {
+            return $this->api->json(false, 'LAT_LONG_FORMAT_INVALID', 'Latitude,longitude format invalid');
+        }
+
+
+        // validating vehicle type if exists
+        if($request->vehicle_type != '' && !in_array($request->vehicle_type, $this->vehicleType->allCodes())) {
+            return $this->api->json(false, 'VEHIVLE_TYPE_INVALID', 'Vehicle type is invalid.');
+        }
+        
+
+        $radious = $this->setting->get('ride_request_driver_search_radious')?:0;
+        $drivers = $this->driver->getNearbyDriversBuilder($latitude, $longitude, $radious);
+        
+        //if vehicle type is passed then filter drivers
+        if($request->vehicle_type) {
+            $drivers = $drivers->where($this->driver->getTableName().'.vehicle_type', $request->vehicle_type);
+        }
+
+        //filter drivers approved, available, connected to socket
+        $dt = $this->driver->getTableName();
+        $nearbyDriversDetails = $drivers->where($dt.'.is_approved', 1)
+        ->where($dt.'.is_available', 1)
+        ->where($dt.'.is_connected_to_socket', 1)
+        ->orderBy($dt.'.rating', 'desc')
+        ->select([
+            $dt.'.id',            
+            $dt.'.latitude',            
+            $dt.'.longitude',
+            $dt.'.vehicle_type',            
+        ])
+        ->take(50)->get();
+
+        return $this->api->json(true, 'NEARBY_DRIVERS', 'Nearby drivers', [
+            'drivers' => $nearbyDriversDetails
+        ]);
+
     }
 
 

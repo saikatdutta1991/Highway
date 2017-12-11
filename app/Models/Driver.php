@@ -614,8 +614,25 @@ class Driver extends Model
 
 
 
+    /**
+     * find nearby drivers for ride request 
+     * used by basically ride request
+     * returns laravel query builder
+     */
+    public function getNearbyDriversBuilder($latitude, $longitude, $radious, $radiousUnit = 'km')
+    {
 
+        $utillRepo = app('App\Repositories\Utill');
+     
+        list($minLat, $maxLat, $minLong, $maxLong) = $utillRepo->getRadiousLatitudeLongitude($latitude, $longitude, $radious, $radiousUnit);
 
+		return $this->where(function ($query) use ($minLat, $maxLat, $minLong, $maxLong) {
+            $query->whereBetween($this->table.'.latitude', [$minLat, $maxLat])
+            ->whereBetween($this->table.'.longitude', [$minLong, $maxLong]);  
+        });
+				
+	              
+    }
 
 
 

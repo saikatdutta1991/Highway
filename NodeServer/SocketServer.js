@@ -229,12 +229,39 @@ io.on('connection', function (socket) {
 
 
 
+	/**
+	 * sending ride request to driver
+	 * user sends ride request to driver directly with request id and user details
+	 */
+	socket.on('send_ride_request_driver', function (data) {
+
+		console.log('new ride request', data)
+
+		if (!data.request_id && !data.user_id && !data.driver_id && !data.user_fname && !data.user_lname
+			&& !data.pickup_latitude && !data.pickup_longitude) {
+			return;
+		}
+
+		//send request to driver
+		io.sockets.in('DRIVER_' + data.driver_id).emit('new_ride_request', data);
+
+	});
 
 
 
+	/**
+	 * reject new ride request from user by driver
+	 */
+	socket.on('reject_ride_request', function (data) {
 
+		if (!data.user_id && !data.request_id && !data.driver_id) {
+			reutrn;
+		}
 
+		//send request to user
+		io.sockets.in('USER_' + data.user_id).emit('ride_request_rejected', data);
 
+	});
 
 
 

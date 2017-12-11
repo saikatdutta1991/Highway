@@ -90,7 +90,37 @@ class Utill
 	public function formatAmountDecimalTwo($amount = "")
 	{
 		return number_format(round($amount, 2), 2, '.', '');
-	}
+    }
+    
+
+
+
+
+    /**
+     * calculate radious(min latitude, longitude and max latititude, longitude)
+     *  for a given distance and center latitude, longitude
+     */
+    public function getRadiousLatitudeLongitude($latitude, $longitude, $radious, $radiousUnit = 'km')
+    {
+        $radiousConst = $radiousUnit == "km" ? 111.045 : 69;
+
+        $latitude = number_format($latitude, 7, '.', '');
+		$longitude = number_format($longitude, 7, '.', '');
+
+        $minLatitude      = $latitude - ($radious / $radiousConst);
+        $maxLatitude      = $latitude + ($radious / $radiousConst);
+        
+		$minLongitude      = $longitude - ($radious / abs(cos(deg2rad($latitude)) * $radiousConst));
+		$maxLongitude      = $longitude + ($radious / abs(cos(deg2rad($latitude)) * $radiousConst));
+        
+        return [
+            number_format($minLatitude, 7, '.', ''),
+            number_format($maxLatitude, 7, '.', ''),
+            number_format($minLongitude, 7, '.', ''),
+            number_format($maxLongitude, 7, '.', ''),
+        ];
+		
+    }
 
 
 

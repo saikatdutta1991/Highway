@@ -46,5 +46,7 @@
   'website_logo_name' => 'website_logo.png',
   'website_address' => '123 Fake Street, SpringField, OR, 97477 US',
   'website_contact_number' => '(123) 456-7890',
-  'website_contact_email' => 'support@highway.com'
+  'website_contact_email' => 'support@highway.com',
+
+  'ride_request_driver_search_radious' => '5',
 );
