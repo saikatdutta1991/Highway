@@ -20,8 +20,9 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
+    public function __construct(Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
     {
+        $this->utill = $utill;
         $this->setting = $setting;
         $this->api = $api;
         $this->rideRequest = $rideRequest;
@@ -89,6 +90,7 @@ class RideRequest extends Controller
     {
         
         $rideRequest = $this->rideRequest
+        ->where('user_id', $request->auth_user->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
         ->first();
 
@@ -132,6 +134,7 @@ class RideRequest extends Controller
          *  or request status is not allowed to canceled
          */
         $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
+        ->where('user_id', $request->auth_user->id)
         ->whereIn('ride_status', $this->rideRequest->rideRequestCancelAllowedStatusList())
         ->first();
 
@@ -164,7 +167,7 @@ class RideRequest extends Controller
         }
 
 
-        // validating vehicle type if exists
+        // validatinrideRequestCancelAllowedStatusListg vehicle type if exists
         if($request->vehicle_type != '' && !in_array($request->vehicle_type, $this->vehicleType->allCodes())) {
             return $this->api->json(false, 'VEHIVLE_TYPE_INVALID', 'Vehicle type is invalid.');
         }
@@ -197,6 +200,88 @@ class RideRequest extends Controller
         ]);
 
     }
+
+
+
+
+
+
+    /**
+     * initiate ride requet 
+     * check if ongoing request is there dont allow to request
+     */
+    public function initiateRideRequest(Request $request)
+    {
+
+        /**
+         * check any ongoing request alreay exists or not 
+         * if so dont allow to create request
+         */
+        $rideRequest = $this->rideRequest
+        ->where('user_id', $request->auth_user->id)
+        ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
+        ->first();
+
+        if($rideRequest) {
+            return $this->api->json(false, 'ONGOING_REQUEST', 'Ongoing request already present');
+        }
+
+
+        /**
+         * validate ride request create 
+         */
+        list($latRegex, $longRegex) = $this->utill->regexLatLongValidate();
+        $validator = Validator::make($request->all(), [
+            'ride_vehicle_type' => 'required|in:'.implode(',', $this->vehicleType->allCodes()),
+            'source_address' => 'required|min:1|max:256', 
+            'source_latitude' => ['required', 'regex:'.$latRegex], 
+            'source_longitude' => ['required', 'regex:'.$longRegex], 
+            'destination_address' => 'required|min:1|max:256', 
+            'destination_latitude' => ['required', 'regex:'.$latRegex], 
+            'destination_longitude' => ['required', 'regex:'.$longRegex], 
+            'ride_distance' => 'required|numeric',
+            'ride_time' => 'required|numeric',
+            'estimated_fare' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'payment_mode' => 'required|in:'.implode(',', $this->rideRequest->getPaymentModes()),
+        ]);
+
+
+        if($validator->fails()) {
+            $msg = [];
+            foreach($validator->messages()->getMessages() as $key => $errArray) {
+                $msg[$key] = $errArray[0];
+            }
+
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
+        }
+
+        
+        $rideRequest = new $this->rideRequest;
+        $rideRequest->user_id = $request->auth_user->id;
+        $rideRequest->ride_vehicle_type = $request->ride_vehicle_type;
+        $rideRequest->source_address = $request->source_address;
+        $rideRequest->source_latitude = $request->source_latitude;
+        $rideRequest->source_longitude = $request->source_longitude;
+        $rideRequest->destination_address = $request->destination_address;
+        $rideRequest->destination_latitude = $request->destination_latitude;
+        $rideRequest->destination_longitude = $request->destination_longitude;
+        $rideRequest->ride_distance = $request->ride_distance;
+        $rideRequest->ride_time = $request->ride_time;
+        $rideRequest->estimated_fare = $request->estimated_fare;
+        $rideRequest->payment_mode = $request->payment_mode;
+        $rideRequest->ride_status = Ride::INITIATED;
+
+        $rideRequest->save();
+
+        return $this->api->json(true, 'RIDE_REQUEST_INITIATED', 'Ride request initiated successfully', [
+            'ride_request' => $rideRequest
+        ]);
+        
+    }
+
+
+
+
 
 
     

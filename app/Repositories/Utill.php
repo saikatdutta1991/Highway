@@ -124,4 +124,16 @@ class Utill
 
 
 
+
+    /**
+     * returns latitude, longitude validation regex
+     */
+    public function regexLatLongValidate()
+    {
+        return ['/^(\+|-)?[0-9]+[.][0-9]+$/', '/^(\+|-)?[0-9]+[.][0-9]+$/'];
+    }
+
+
+
+
 }

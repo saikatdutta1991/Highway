@@ -87,7 +87,10 @@ io.on('connection', function (socket) {
 			};
 
 			//update driver is_connected_to_socket column
-			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 1);
+			if (socket.auth_entity.type == 'DRIVER') {
+				helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 1);
+			}
+
 
 			//join to room
 			socket_room = socket.auth_entity.type + '_' + socket.auth_entity.id;
@@ -95,7 +98,7 @@ io.on('connection', function (socket) {
 			console.log('room : ', socket_room);
 
 
-		} catch (e) { }
+		} catch (e) { console.log('debug connction auth entity error') }
 	}
 
 
@@ -179,7 +182,9 @@ io.on('connection', function (socket) {
 		});
 
 		//update driver is_connected_to_socket column
-		helper.updateDriverSocketConnectionStatus(eId, 1);
+		if (socket.auth_entity.type == 'DRIVER') {
+			helper.updateDriverSocketConnectionStatus(eId, 1);
+		}
 
 	});
 
@@ -287,6 +292,7 @@ io.on('connection', function (socket) {
 			try {
 
 				room = data.entity_type.toUpperCase() + '_' + id;
+				console.log('send event to room ', room)
 				io.sockets.in(room).emit(data.event_type, data.data);
 
 			} catch (e) {
@@ -307,7 +313,7 @@ io.on('connection', function (socket) {
 
 
 		//if driver disconnected change is connected to socket column to 0
-		if (socket.auth && socket.auth_entity.type == 'DRIVER') {
+		if (socket.auth && socket.auth_entity && socket.auth_entity.type == 'DRIVER') {
 			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 0);
 		}
 

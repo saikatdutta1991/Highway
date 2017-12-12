@@ -36,6 +36,7 @@ class SocketIOClient
 			$this->client->emit('send_event', $data);
 
 			if($closeAfter) {
+				$this->is_init = false;
 				$this->client->close();
 			}
 			
@@ -51,6 +52,7 @@ class SocketIOClient
 
 	public function close()
 	{
+		$this->is_init = false;
 		$this->client->close();
 	}
 
