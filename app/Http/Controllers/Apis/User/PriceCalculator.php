@@ -46,8 +46,11 @@ class PriceCalculator extends Controller
             return $this->api->json(false, 'FARE_NOT_SET', 'Fare not set by admin. Try again');
         }
 
+        //convert distance meter into km
+        $distance = $request->distance / 1000;
+
         $fareData = $rFare->calculateFare(
-            intval($request->distance), intval($request->duration)
+            $distance, intval($request->duration)
         );
 
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);

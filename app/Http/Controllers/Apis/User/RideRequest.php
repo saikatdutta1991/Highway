@@ -10,6 +10,7 @@ use Hash;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
 use App\Models\Setting;
+use App\Repositories\SocketIOClient;
 use App\Repositories\Utill;
 use Validator;
 use App\Models\VehicleType;
@@ -20,8 +21,9 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
+    public function __construct(SocketIOClient $socketIOClient, Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
     {
+        $this->socketIOClient = $socketIOClient;
         $this->utill = $utill;
         $this->setting = $setting;
         $this->api = $api;
@@ -142,8 +144,52 @@ class RideRequest extends Controller
             return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request'); 
         }
 
-        $rideRequest->ride_status = Ride::USER_CANCELED;
-        $rideRequest->save();
+        //getting driver
+        $driver = $this->driver->find($rideRequest->driver_id);
+
+
+        try {
+            DB::beginTransaction();
+
+            //chaning driver availability to 1
+            $driver->is_available = 1;
+            $driver->save();
+
+            $rideRequest->ride_status = Ride::USER_CANCELED;
+            $rideRequest->save();
+
+            DB::commit();
+        } catch(\Exception $e){
+            DB::rollback();
+            return $this->api->json(false,'SEVER_ERROR', 'Internal server error try again.');
+        }
+
+        
+
+        // same notification data to be sent to user
+        $notificationData = [
+            'ride_request_id' => $rideRequest->id,
+            'ride_status' => $rideRequest->ride_status,
+        ];
+
+
+        /**
+         * send push notification to driver
+         */
+        $driver->sendPushNotification("User {$request->auth_user->fname} has canceled your ride request", $notificationData);
+
+
+        /**
+         * send socket push to driver
+         */
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $rideRequest->user_id,
+            'entity_type' => 'driver', //socket will make it uppercase
+            'event_type' => 'ride_request_status_changed',
+            'data' => $notificationData
+        ]);
+
+
 
         return $this->api->json(true, 'RIDE_REQUEST_CANCELED', 'Ride Request canceled successfully'); 
            
@@ -265,7 +311,7 @@ class RideRequest extends Controller
         $rideRequest->destination_address = $request->destination_address;
         $rideRequest->destination_latitude = $request->destination_latitude;
         $rideRequest->destination_longitude = $request->destination_longitude;
-        $rideRequest->ride_distance = $request->ride_distance;
+        $rideRequest->ride_distance = $request->ride_distance / 1000; //converting meter into km
         $rideRequest->ride_time = $request->ride_time;
         $rideRequest->estimated_fare = $request->estimated_fare;
         $rideRequest->payment_mode = $request->payment_mode;

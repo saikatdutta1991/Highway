@@ -59,6 +59,7 @@ class RideRequest extends Controller
 
         try {
 
+            DB::beginTransaction();
             //setting driver id in ride request table
             $rideRequest->driver_id = $authDriver->id;
             //chaning ride request status to driver accepted
@@ -69,7 +70,10 @@ class RideRequest extends Controller
             $authDriver->is_available = 0;
             $authDriver->save();
 
+            DB::commit();
+
         } catch(\Exception $e) {
+            DB::rollback();
             return $this->api->json(false,'SEVER_ERROR', 'Internal server error try again.');
         }
 
@@ -85,7 +89,10 @@ class RideRequest extends Controller
                 'vehicle_type' => $authDriver->vehicle_type,
                 'country_code' => $authDriver->country_code,
                 'mobile_number' => $authDriver->mobile_number,
-                'profile_photo_url' => $authDriver->profilePhotoUrl()
+                'vehicle_number' => $authDriver->vehicle_number,
+                'profile_photo_url' => $authDriver->profilePhotoUrl(),
+                'latitude' => $authDriver->latitude,
+                'longitude' => $authDriver->longitude,
             ]
         ];
 
@@ -104,7 +111,7 @@ class RideRequest extends Controller
         $this->socketIOClient->sendEvent([
             'to_ids' => $rideRequest->user_id,
             'entity_type' => 'user', //socket will make it uppercase
-            'event_type' => 'driver_accepted_ride_request',
+            'event_type' => 'ride_request_status_changed',
             'data' => $notificationData
         ]);
         
@@ -163,25 +170,70 @@ class RideRequest extends Controller
      */
     public function cancelRideRequest(Request $request)
     {
-        
+       
         /**
-         *  if request_id in invalid or request not belongs to user
+         *  if request_id in invalid or request not belongs to driver
          *  or request status is not allowed to canceled
          */
-       /*  $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
-        ->where('user_id', $request->auth_user->id)
-        ->whereIn('ride_status', $this->rideRequest->rideRequestCancelAllowedStatusList())
+        $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
+        ->where('driver_id', $request->auth_driver->id)
+        ->whereIn('ride_status', $this->rideRequest->driverRideRequestCancelAllowedStatusList())
         ->first();
 
         if(!$rideRequest) {
             return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request'); 
         }
 
-        $rideRequest->ride_status = Ride::USER_CANCELED;
-        $rideRequest->save();
+
+        $authDriver = $request->auth_driver;
+
+        try {
+
+            DB::beginTransaction();
+
+            $rideRequest->ride_status = Ride::DRIVER_CANCELED;
+            $rideRequest->save();
+
+            //chaning driver availability to 0
+            $authDriver->is_available = 1;
+            $authDriver->save();
+
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            return $this->api->json(false,'SEVER_ERROR', 'Internal server error try again.');
+        }
+
+
+        
+        // same notification data to be sent to user
+        $notificationData = [
+            'ride_request_id' => $rideRequest->id,
+            'ride_status' => $rideRequest->ride_status,
+        ];
+
+
+        /**
+         * send push notification to user
+         */
+        $user = $this->user->find($rideRequest->user_id);
+        $user->sendPushNotification("Driver {$authDriver->fname} has canceled your ride request", $notificationData);
+
+
+        /**
+         * send socket push to user
+         */
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $rideRequest->user_id,
+            'entity_type' => 'user', //socket will make it uppercase
+            'event_type' => 'ride_request_status_changed',
+            'data' => $notificationData
+        ]);
+
 
         return $this->api->json(true, 'RIDE_REQUEST_CANCELED', 'Ride Request canceled successfully'); 
-            */
+           
     }
 
 

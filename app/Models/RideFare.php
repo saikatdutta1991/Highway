@@ -30,7 +30,7 @@ class RideFare extends Model
         $taxes = $this->calculateRideFareTax($fare);
         $accessFee = $this->access_fee;
         $total = $fare + $this->access_fee + $taxes;
-        $total = $utillRepo->formatAmountDecimalTwo($total);
+        $total = round($total);
 
         return [
             'ride_fare' => $fare,

@@ -27,7 +27,7 @@ class CreateRideRequestsTable extends Migration
             $table->decimal('destination_latitude', 10, 7)->default(0.0);
             $table->decimal('destination_longitude', 10, 7)->default(0.0);
 
-            $table->integer('ride_distance')->default(0);
+            $table->decimal('ride_distance', 10, 1)->default(0.0);
             $table->integer('ride_time')->default(0);
             $table->decimal('estimated_fare', 10, 2)->default(0.00);
 

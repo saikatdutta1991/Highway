@@ -104,3 +104,12 @@ Route::get('send-email', function(){
 
 });
 
+
+Route::get('send_push', function(){
+
+    $user = \App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
+    dd($user->sendPushNotification("Testing", ['testing' => 'testing']));
+
+
+});
+

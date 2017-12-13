@@ -84,6 +84,16 @@ class RideRequest extends Model
 
 
 
+    /**
+     * returns allowed request status when request can be canceled by driver
+     * only after request accepted driver and before trip ended
+     */
+    public function driverRideRequestCancelAllowedStatusList()
+    {
+        return [self::DRIVER_ACCEPTED, self::DRIVER_STARTED, self::DRIVER_REACHED, self::TRIP_STARTED];
+    }
+
+
 
 
     /** 

@@ -18,7 +18,7 @@
   'driver_android_google_login_client_id' => '85164424473-e851fdf5okk7oje1qqanp9ld5f7uahh1.apps.googleusercontent.com',
   'driver_ios_google_login_client_id' => '85164424473-e851fdf5okk7oje1qqanp9ld5f7uahh1.apps.googleusercontent.com',
   
-  'firebase_cloud_messaging_server_key' => 'AAAAOKfg4EU:APA91bHxiCWs1M26_RaR0wo04ol8U5ucyEU4IKQjd0eAodEBUoIlYubKZpYbfbVElDxAA-rwXjlf2qEIXFIVnFI2CH-JfmdyHPCSptkiClAZV5o8FJ9tKP1Y_W8BpufcTZ1HlkKE1VGd',
+  'firebase_cloud_messaging_server_key' => 'AAAAE9Qx_Rk:APA91bFKKMpUpvxISwz703mxP41wwUE04qr93dyrgv92ju7JKuXiho8HkaV76S7aLfq2AvbjI_YQdVBVLWuWBBeI8xLGDIs8lQG-mrBqd_bVpqzbaZZyW7PFz3OrLGCW0PrLXCmCNm2z',
   
   'vehicle_ride_fare_tax_percentage' => '5.60',
 
