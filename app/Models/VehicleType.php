@@ -16,6 +16,18 @@ class VehicleType extends Model
 
 
     /**
+     * returns vehicle type id by code
+     */
+    public function getIdByCode($vCode)
+    {
+        $vTypes = config('vehicle_types') ? : [];
+        $vTCollection = collect(config('vehicle_types'));
+        $vType = collect($vTCollection->where('code', $vCode)->first());
+        return $vType->get('id', 0);
+    }
+
+
+    /**
      * get all vehicle codes 
      */
     public function allCodes()

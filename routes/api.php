@@ -72,10 +72,12 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::get('profile', 'Apis\Driver\DriverProfile@getDriverProfile');
         Route::post('profile/update', 'Apis\Driver\DriverProfile@updateDriverProfile');
 
+        Route::get('ride-request/check', 'Apis\Driver\RideRequest@checkRideRequest');
         Route::post('ride-request/accept', 'Apis\Driver\RideRequest@acceptRideRequest');
         Route::post('ride-request/{ride_request_id}/cancel', 'Apis\Driver\RideRequest@cancelRideRequest');
-
-
+        Route::post('ride-request/{ride_request_id}/change-ride-status', 'Apis\Driver\RideRequest@changeRideRequestStatus');
+        Route::post('ride-request/{ride_request_id}/start-trip', 'Apis\Driver\RideRequest@startRideRequest');
+        Route::post('ride-request/{ride_request_id}/end-trip', 'Apis\Driver\RideRequest@endRideRequest');
     });
 
 

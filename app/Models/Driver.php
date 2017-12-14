@@ -505,6 +505,28 @@ class Driver extends Model
     }
 
 
+    
+    /**
+     * public function get base64 image
+     */
+    public function getProfilePhotoBase64()
+    {
+        try {
+
+            $path = public_path($this->profile_photo_path.'/'.$this->profile_photo_name);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            return $base64;
+
+        } catch(\Exception $e) {
+            \Log::info('DRIVER_PROFILE_PHOTO_BASE64');
+            \Log::info($e->getMessage());
+            return '';
+        }
+    }
+
+
     /**
      * return string reason why account not activated
      */

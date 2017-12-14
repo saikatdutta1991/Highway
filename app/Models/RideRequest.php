@@ -13,6 +13,12 @@ class RideRequest extends Model
     const DEBIT_OR_CREDIT_CARD = 'DEBIT_OR_CREDIT_CARD';
     protected $paymentModes = [self::CASH, self::DEBIT_OR_CREDIT_CARD];
 
+    /**
+     * payment status list
+     */
+    const NOT_PAID = 'NOT_PAID';
+    const PAID = 'PAID';
+
 
     /**
      * ride request status list
@@ -106,6 +112,8 @@ class RideRequest extends Model
 
 
 
+   
+
     /**
      *  relatitionship with user
      */
@@ -113,6 +121,17 @@ class RideRequest extends Model
     {
         return $this->belongsTo('App\Models\User', 'user_id');
     }
+
+
+    /**
+     *  relatitionship with ride_request_invoices
+     */
+    public function invoice()
+    {
+        return $this->belongsTo('App\Models\RideRequestInvoice', 'ride_invoice_id');
+    }
+
+
 
 
     /**

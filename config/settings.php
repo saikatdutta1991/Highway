@@ -49,4 +49,6 @@
   'website_contact_email' => 'support@highway.com',
 
   'ride_request_driver_search_radious' => '5',
+  'currency_code' => 'INR',
+  'currency_symbol' => '₹',
 );

@@ -110,12 +110,20 @@ class RideRequest extends Controller
             'longitude' => $rideRequest->driver->longitude,
         ];
 
+        //take invoice if invoice is ready
+        $invoice = []; //init invoice array empty
+        if($rideRequest->ride_invoice_id != 0) {
+            $invoice = $rideRequest->invoice->toArray();
+            unset($rideRequest->invoice);
+        }
+
         //removing driver object relationship from ride request
         unset($rideRequest->driver);
 
         return $this->api->json(true, 'ONGOING_REQUEST', 'Ongoing request found', [
             'ride_request' => $rideRequest,
-            'driver' => $driver
+            'driver' => $driver,
+            'invoice' => $invoice,
         ]);
 
 
