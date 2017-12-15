@@ -43,7 +43,13 @@ class RideRequestInvoice extends Mailable
     public function build()
     {
         $this->setting = app('App\Models\Setting');
+        $this->utillRepo = app('UtillRepo');
        
+        $staticMapImage = $this->utillRepo->getBase64Image(app('UtillRepo')->getGoogleStaicMapImageConnectedPointsUrl([
+            [$this->rideRequest->source_latitude,$this->rideRequest->source_longitude],
+            [$this->rideRequest->destination_latitude,$this->rideRequest->destination_longitude]
+        ]), false);
+
         return $this->from(
             $this->setting->get('email_support_from_address'), 
             $this->setting->get('email_from_name')
@@ -53,7 +59,8 @@ class RideRequestInvoice extends Mailable
             'user' => $this->user,
             'driver' => $this->driver,
             'invoie' => $this->invoice,
-            'rideRequest' => $this->rideRequest
+            'rideRequest' => $this->rideRequest, 
+            'satic_map_image' => $staticMapImage
         ]);
         
     }

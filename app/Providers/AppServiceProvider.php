@@ -23,6 +23,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+
+        /**
+         * make App\Repositories\Utill singleton
+         */
+        $this->app->singleton('UtillRepo', function ($app) {
+            return $app->make('App\Repositories\Utill');
+        });
+
+
         $this->setting = app('App\Models\Setting');
         $this->setEmailSettings();
     }

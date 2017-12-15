@@ -116,11 +116,7 @@ Route::get('send_push', function(){
 
 Route::get('invoice-email', function(){
 
-    $rideRequest = \App\Models\RideRequest::find(1);
-    $user = \App\Models\User::find($rideRequest->user_id);
-    $driver = \App\Models\Driver::find($rideRequest->driver_id);
-    $invoice = \App\Models\RideRequestInvoice::find($rideRequest->ride_invoice_id);
-    return new App\Mail\RideRequestInvoice($rideRequest, $user, $driver, $invoice);
+   dd(app('App\Repositories\Email')->sendUserRideRequestInvoiceEmail());
 
 });
 

@@ -9,15 +9,25 @@ namespace App\Repositories;
 * @author  saikat
 */
 
+use App\Models\Setting;
+
 
 class Utill
 {
 
+    /**
+     * google static map base url
+     */
+    const GOOGLE_STATIC_MAP_BASE_URL = 'https://maps.googleapis.com/maps/api/staticmap';
+
+
+
 	/**
 	* initialize the the dependencies
 	*/
-	public function __construct()
+	public function __construct(Setting $setting)
 	{
+        $this->setting = $setting;
 	}
 
 
@@ -131,6 +141,63 @@ class Utill
     public function regexLatLongValidate()
     {
         return ['/^(\+|-)?[0-9]+[.][0-9]+$/', '/^(\+|-)?[0-9]+[.][0-9]+$/'];
+    }
+
+
+
+    /**
+     * generate url for google static map url 
+     * where two points will be connected with path
+     */
+    public function getGoogleStaicMapImageConnectedPointsUrl($points = [[12.891551,77.632795],[12.955839,77.714680]], $size = [200,200], $markerColors = ['green', 'red'], $markerLabels = ['S', 'D'], $scale = 2, $mapType = 'roadmap')
+    {
+        list($width, $height) = $size;
+        list($marker1Color, $marker2Color) = $markerColors;
+        list($point1, $point2) = $points;
+        list($label1, $label2) = $markerLabels;
+        $apiKey = $this->setting->get('google_maps_api_key');
+        $url = self::GOOGLE_STATIC_MAP_BASE_URL;
+        $queryString = http_build_query([
+            'key' => $apiKey,
+            'size' => $width.'x'.$height,
+            'maptype' => $mapType,
+            'markers' => 'label:'.$label1.'|color:'.$marker1Color.'|size:mid|'.implode(',', $point1).'&markers=label:'.$label2.'|color:'.$marker2Color.'|size:mid|'.implode(',', $point2),
+            'path' => 'color:0x0000ff|weight:5|'.implode(',', $point1).'|'.implode(',', $point2),
+        ]);
+
+        return $url.'?'.urldecode($queryString);
+
+    }
+
+
+
+
+    /**
+     * get base64 image
+     * need to pass path or url
+     * if url path then pass $isFIle
+     */
+    public function getBase64Image($path, $isFile = true)
+    {
+        try {
+
+            if($isFile) { 
+                $type = 'image/'.pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+            } else {
+                $data = file_get_contents($path);
+                $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
+                $type = $fileInfo->buffer($data);
+            }
+            
+            $base64 = 'data:' . $type . ';base64,' . base64_encode($data);
+            return $base64;
+
+        } catch(\Exception $e) {
+            \Log::info('PHOTO_BASE64');
+            \Log::info($e->getMessage());
+            return '';
+        }
     }
 
 

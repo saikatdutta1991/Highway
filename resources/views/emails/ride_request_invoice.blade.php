@@ -245,7 +245,7 @@
                 </tr>
                 <tr style="text-align:center">
                     <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <img src="{{url('ride_request_invoice_maps/test.png')}}" style="width:100%">
+                        <img src="{{$satic_map_image}}" style="width:100%">
                     </td>
                     <td bgcolor="#ffffff" style="vertical-align:top;padding: 0px 40px 0px 0px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                         
