@@ -42,12 +42,7 @@ class WelcomeUser extends Mailable
         )
         ->subject('Welcome to ' . $this->setting->get('website_name'). ' :)')
         ->view('emails.welcome_user')->with([
-            'user' => $this->user,
-            'website_logo_url' => $this->setting->websiteLogoUrl(),
-            'website_name' => $this->setting->get('website_name'),
-            'website_address' => $this->setting->get('website_address'),
-            'website_contact_number' => $this->setting->get('website_contact_number'),
-            'website_contact_email' => $this->setting->get('website_contact_email'),
+            'user' => $this->user            
         ]);
 
 

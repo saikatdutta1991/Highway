@@ -50,16 +50,11 @@ class RideRequestInvoice extends Mailable
         )
         ->subject('Welcome to ' . $this->setting->get('website_name'). ' :)')
         ->view('emails.ride_request_invoice')->with([
-            'website_logo_url' => $this->setting->websiteLogoUrl(),
-            'website_name' => $this->setting->get('website_name'),
-            'website_address' => $this->setting->get('website_address'),
-            'website_contact_number' => $this->setting->get('website_contact_number'),
-            'website_contact_email' => $this->setting->get('website_contact_email'),
-            'currency_symbol' => $this->setting->get('currency_symbol'),
             'user' => $this->user,
             'driver' => $this->driver,
             'invoie' => $this->invoice,
             'rideRequest' => $this->rideRequest
         ]);
+        
     }
 }
