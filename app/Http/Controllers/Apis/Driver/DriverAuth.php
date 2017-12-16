@@ -256,6 +256,12 @@ class DriverAuth extends Controller
         //create and save accesstoken
         $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
 
+
+        //save driver timezone
+        $driver->saveTimezone($request->timezone, true);
+        
+
+
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();

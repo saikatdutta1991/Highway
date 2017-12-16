@@ -51,5 +51,6 @@
   'ride_request_driver_search_radious' => '5',
   'currency_code' => 'INR',
   'currency_symbol' => '₹',
-  'google_maps_api_key' => 'AIzaSyC6AsBwEbj2cIgehe0OiutHNWC_1-t1LAo'
+  'google_maps_api_key' => 'AIzaSyC6AsBwEbj2cIgehe0OiutHNWC_1-t1LAo',
+  'default_user_driver_timezone' => 'Asia/Kolkata'
 );

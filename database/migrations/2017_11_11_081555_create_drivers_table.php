@@ -84,6 +84,8 @@ class CreateDriversTable extends Migration
 
             $table->tinyInteger('is_approved')->default(0);
 
+            $table->string('timezone', 50)->default();
+
             $table->timestamps();
             $table->softDeletes();
 

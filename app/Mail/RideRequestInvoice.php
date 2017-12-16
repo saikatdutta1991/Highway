@@ -15,11 +15,7 @@ class RideRequestInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
-
-    public $user;
-    public $driver;
     public $rideRequest;
-    public $invoice;
 
     /**
      * Create a new message instance.
@@ -27,12 +23,9 @@ class RideRequestInvoice extends Mailable
      * @return void
      */
     
-    public function __construct(RideRequest $rideRequest, User $user, Driver $driver, Invoice $invoice)
+    public function __construct(RideRequest $rideRequest)
     {
-        $this->user = $user;
-        $this->driver = $driver;
         $this->rideRequest = $rideRequest;
-        $this->invoice = $invoice;
     }
 
     /**
@@ -45,10 +38,10 @@ class RideRequestInvoice extends Mailable
         $this->setting = app('App\Models\Setting');
         $this->utillRepo = app('UtillRepo');
        
-        $staticMapImage = $this->utillRepo->getBase64Image(app('UtillRepo')->getGoogleStaicMapImageConnectedPointsUrl([
+        /* $staticMapImage = $this->utillRepo->getBase64Image(app('UtillRepo')->getGoogleStaicMapImageConnectedPointsUrl([
             [$this->rideRequest->source_latitude,$this->rideRequest->source_longitude],
             [$this->rideRequest->destination_latitude,$this->rideRequest->destination_longitude]
-        ]), false);
+        ]), false); */
 
         return $this->from(
             $this->setting->get('email_support_from_address'), 
@@ -56,11 +49,10 @@ class RideRequestInvoice extends Mailable
         )
         ->subject('Welcome to ' . $this->setting->get('website_name'). ' :)')
         ->view('emails.ride_request_invoice')->with([
-            'user' => $this->user,
-            'driver' => $this->driver,
-            'invoie' => $this->invoice,
-            'rideRequest' => $this->rideRequest, 
-            'satic_map_image' => $staticMapImage
+            'user' => $this->rideRequest->user,
+            'driver' => $this->rideRequest->driver,
+            'invoice' => $this->rideRequest->invoice,
+            'rideRequest' => $this->rideRequest
         ]);
         
     }

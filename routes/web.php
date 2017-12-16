@@ -113,10 +113,3 @@ Route::get('send_push', function(){
 
 });
 
-
-Route::get('invoice-email', function(){
-
-   dd(app('App\Repositories\Email')->sendUserRideRequestInvoiceEmail());
-
-});
-

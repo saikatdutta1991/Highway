@@ -169,6 +169,8 @@ class UserRegister extends Controller
             ]);
         }
 
+        //save iser timezone
+        $user->saveTimezone($request->timezone, true);
 
         //save device token
         $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);

@@ -26,6 +26,9 @@ class CreateRideRequestInvoicesTable extends Migration
             $table->decimal('tax', 10, 2)->default(0.00);
             $table->decimal('total', 10, 2)->default(0.00);
 
+            $table->string('invoice_map_image_path', 256);
+            $table->string('invoice_map_image_name', 128);
+
             $table->timestamps();
             $table->softDeletes();
 

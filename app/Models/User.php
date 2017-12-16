@@ -129,7 +129,18 @@ class User extends Model
     }
 
 
+    /**
+     * set user timezone
+     */
+    public function saveTimezone($timezone = '', $save = false)
+    {
+        $this->timezone = app('UtillRepo')->getTimezone($timezone);
+        if($save) {
+            $this->save();
+        }
 
+        return $this->timezone;
+    }
 
 
 

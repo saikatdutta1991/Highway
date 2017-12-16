@@ -32,7 +32,7 @@ class Email
     /**
      * send new user registration email
      */
-    public function sendUserRideRequestInvoiceEmail()
+    public function sendUserRideRequestInvoiceEmail($rideRequest)
     {
         //if email send is not active from admin panel return from here
         if(!$this->isEmailSendActive()) {
@@ -41,14 +41,8 @@ class Email
         }
 
         try {
-
-
-            $rideRequest = \App\Models\RideRequest::find(1);
-            $user = \App\Models\User::find($rideRequest->user_id);
-            $driver = \App\Models\Driver::find($rideRequest->driver_id);
-            $invoice = \App\Models\RideRequestInvoice::find($rideRequest->ride_invoice_id);
-        
-            $resCode = Mail::to($user->email)->send(new \App\Mail\RideRequestInvoice($rideRequest, $user, $driver, $invoice));
+            
+            $resCode = Mail::to($rideRequest->user->email)->send(new \App\Mail\RideRequestInvoice($rideRequest));
             \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
         
         } catch(\Exception $e) {

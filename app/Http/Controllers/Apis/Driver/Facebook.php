@@ -91,6 +91,9 @@ class Facebook extends Controller
             //save profile photo
             $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');
 
+            //save driver timezone
+            $driver->timezone = $driver->saveTimezone($request->timezone);
+            
             $driver->save();
 
 
@@ -138,6 +141,10 @@ class Facebook extends Controller
             //save profile photo
             $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');
 
+
+            //save driver timezone
+            $driver->timezone = $driver->saveTimezone($request->timezone);
+
             $driver->save();
 
             //create social login record, because social login record is not there 
@@ -175,6 +182,9 @@ class Facebook extends Controller
         $driver->is_email_verified = $isEmailVerified;
         $driver->last_access_time = date('Y-m-d H:i:s');
         $driver->last_accessed_ip = $request->ip();
+
+        //save driver timezone
+        $driver->timezone = $driver->saveTimezone($request->timezone);
        
         //save profile photo
         $driver->downloadAndSavePhoto($sUser->avatar_original, 'driver_');

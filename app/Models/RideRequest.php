@@ -143,4 +143,21 @@ class RideRequest extends Model
     }
 
 
+    /**
+     * ride request start time
+     */
+    public function getStartTime($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->ride_start_time)->setTimezone($timezone)->format('h:i a');
+    }
+
+    /**
+     * ride request start time
+     */
+    public function getEndTime($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->ride_end_time)->setTimezone($timezone)->format('h:i a');
+    }
+
+
 }

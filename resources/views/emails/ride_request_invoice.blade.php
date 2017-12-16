@@ -245,7 +245,7 @@
                 </tr>
                 <tr style="text-align:center">
                     <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <img src="{{$satic_map_image}}" style="width:100%">
+                        <img src="{{$invoice->getStaticMapUrl()}}" style="width:100%">
                     </td>
                     <td bgcolor="#ffffff" style="vertical-align:top;padding: 0px 40px 0px 0px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                         
@@ -283,7 +283,7 @@
                 <tr>
                     <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                         <div style="border-top: 1px solid #b1a8a8;padding-top: 10px;">
-                        <img src="{{$driver->getProfilePhotoBase64()}}" style="width:70px;float: left;margin-right:10px">
+                        <img src="{{$driver->profilePhotoUrl()}}" style="width:70px;float: left;margin-right:10px">
                         <div>
                             <label>Driver Name : <span>{{$driver->fname.' '.$driver->lname}}</span></label>
                             <br>
@@ -312,6 +312,25 @@
                     </td>
                     <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                     {{$rideRequest->destination_address}}
+                    </td>
+                </tr>
+            </table>
+
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
+                <tr style="">
+                    <td bgcolor="#ffffff" style="padding:10px 40px 10px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: black;font-weight:700">
+                    Ride start time
+                    </td>
+                    <td bgcolor="#ffffff" style="padding:10px 40px 10px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color:black;font-weight:700">
+                    Ride end time
+                    </td>
+                </tr>
+                <tr style="background-color: #d2d0d0;color:#353535">
+                    <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                    {{$rideRequest->getStartTime($user->timezone)}}
+                    </td>
+                    <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                    {{$rideRequest->getEndTime($user->timezone)}}
                     </td>
                 </tr>
             </table>

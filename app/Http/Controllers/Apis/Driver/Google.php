@@ -91,6 +91,9 @@ class Google extends Controller
                 $driver->downloadAndSavePhoto($sUser->picture, 'driver_');
             }
 
+            //save driver timezone
+            $driver->saveTimezone($request->timezone);
+
             $driver->save();
 
             //save device token
@@ -138,6 +141,9 @@ class Google extends Controller
                 $driver->downloadAndSavePhoto($sUser->picture, 'driver_');
             }
 
+            //save driver timezone
+            $driver->saveTimezone($request->timezone);
+
             $driver->save();
 
             //create social login record, because social login record is not there 
@@ -175,6 +181,9 @@ class Google extends Controller
         $driver->is_email_verified = $isEmailVerified;
         $driver->last_access_time = date('Y-m-d H:i:s');
         $driver->last_accessed_ip = $request->ip();
+
+        //save driver timezone
+        $driver->saveTimezone($request->timezone);
 
         //save profile photo
         if(isset($sUser->picture)) {

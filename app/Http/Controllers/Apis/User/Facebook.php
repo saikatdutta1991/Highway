@@ -88,6 +88,10 @@ class Facebook extends Controller
 
             $user->last_access_time = date('Y-m-d H:i:s');
             $user->last_accessed_ip = $request->ip();
+            
+            //save user timezone
+            $user->timezone = $user->saveTimezone($request->timezone);
+
             $user->save();
 
 
@@ -127,6 +131,10 @@ class Facebook extends Controller
 
             $user->last_access_time = date('Y-m-d H:i:s');
             $user->last_accessed_ip = $request->ip();
+
+            //save user timezone
+            $user->timezone = $user->saveTimezone($request->timezone);
+
             $user->save();
 
             //create social login record, because social login record is not there 
@@ -161,6 +169,8 @@ class Facebook extends Controller
         $user->is_email_verified = $isEmailVerified;
         $user->last_access_time = date('Y-m-d H:i:s');
         $user->last_accessed_ip = $request->ip();
+        //save user timezone
+        $user->timezone = $user->saveTimezone($request->timezone);
         
         DB::beginTransaction();
 

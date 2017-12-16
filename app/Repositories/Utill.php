@@ -60,6 +60,16 @@ class Utill
 
 
 
+    /**
+     * generate photo name
+     */
+    public function generatePhotoName($prefix, $ext)
+    {
+        $ext = '.'.str_replace('.', '', $ext);
+        return $prefix.'_'.md5(uniqid(mt_rand(), true)).'_'.time().$ext;
+    }
+
+
 
 
     /**
@@ -201,6 +211,15 @@ class Utill
     }
 
 
+
+
+    /**
+     * validate and returns timezone
+     */
+    public function getTimezone($timezone)
+    {
+        return !in_array($timezone, config('timezones') ?: []) ? $this->setting->get('default_user_driver_timezone') : $timezone; 
+    }
 
 
 }

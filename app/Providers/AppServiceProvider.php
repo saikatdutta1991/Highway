@@ -26,15 +26,36 @@ class AppServiceProvider extends ServiceProvider
 
 
         /**
+         * making App\Models\Setting singleton
+         */
+        $this->app->singleton('App\Models\Setting', function ($app) {
+            return new \App\Models\Setting();
+        });
+
+
+        /**
          * make App\Repositories\Utill singleton
          */
         $this->app->singleton('UtillRepo', function ($app) {
             return $app->make('App\Repositories\Utill');
         });
+        $this->app->singleton('App\Repositories\Utill', function ($app) {
+            return new \App\Repositories\Utill(app('App\Models\Setting'));
+        });
+
+
+        
+        /**
+         * make App\Repositories\Email single ton
+         */
+        $this->app->singleton('App\Repositories\Email', function ($app) {
+            return new \App\Repositories\Email(app('App\Models\Setting'));
+        });
 
 
         $this->setting = app('App\Models\Setting');
         $this->setEmailSettings();
+        
     }
 
     /**

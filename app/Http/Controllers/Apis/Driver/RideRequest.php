@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Apis\Driver;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Repositories\Email;
 use Illuminate\Http\Request;
 use App\Models\RideFare;
 use App\Models\RideRequest as Ride;
@@ -20,8 +21,9 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user)
+    public function __construct(Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user)
     {
+        $this->email = $email;
         $this->vehicleType = $vehicleType;
         $this->rideFare = $rideFare;
         $this->rideInvoice = $rideInvoice;
@@ -438,13 +440,14 @@ class RideRequest extends Controller
             $invoice->tax = $fare['taxes'];
             $invoice->total = $fare['total'];
 
+            list($invoiceImagePath, $invoiceImageName) = $invoice->saveInvoiceMapImage($rideRequest);
+            $invoice->invoice_map_image_path = $invoiceImagePath;
+            $invoice->invoice_map_image_name = $invoiceImageName;
+
             //if cash payment mode then payment_status paid
             if($rideRequest->payment_mode == Ride::CASH) {
                 $rideRequest->payment_status = Ride::PAID;
                 $invoice->payment_status = Ride::PAID;
-
-                //send invoice if paid
-
             }
 
             $invoice->save();
@@ -463,6 +466,11 @@ class RideRequest extends Controller
         }
 
 
+        //send invoice if paid
+        if($rideRequest->payment_status = Ride::PAID) {
+            $this->email->sendUserRideRequestInvoiceEmail($rideRequest);
+        }
+        
 
         // same notification data to be sent to user
         $notificationData = [
@@ -490,6 +498,11 @@ class RideRequest extends Controller
         ]);
 
 
+
+        /**
+         * dont call invoice save method after this
+         */
+        $invoice->map_url = $invoice->getStaticMapUrl();
 
         return $this->api->json(true, 'RIDE_REQUEST_ENDED', 'Ride request ended successfully', [
             'ride_request' => $rideRequest,

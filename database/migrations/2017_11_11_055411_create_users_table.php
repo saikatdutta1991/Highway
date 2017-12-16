@@ -31,6 +31,8 @@ class CreateUsersTable extends Migration
 
             $table->decimal('rating', 1, 1)->default(0.0);
 
+            $table->string('timezone', 50)->default();
+
             $table->timestamps();
             $table->softDeletes();
 
