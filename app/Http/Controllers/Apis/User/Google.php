@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Apis\User;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Repositories\Email;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -18,8 +19,9 @@ class Google extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user, SocialLogin $socialLogin, Setting $setting)
+    public function __construct(Email $email, Api $api, User $user, SocialLogin $socialLogin, Setting $setting)
     {
+        $this->email = $email;
         $this->api = $api;
         $this->user = $user;
         $this->socialLogin = $socialLogin;
@@ -193,7 +195,9 @@ class Google extends Controller
         }
 
         
-       
+        //send welcome email through queue
+        $this->email->sendNewUserWelcomeEmail($user);
+
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
             'user' => $user

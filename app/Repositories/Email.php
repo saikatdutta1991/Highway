@@ -42,7 +42,7 @@ class Email
 
         try {
             
-            $resCode = Mail::to($rideRequest->user->email)->send(new \App\Mail\RideRequestInvoice($rideRequest));
+            $resCode = Mail::to($rideRequest->user->email)->queue(new \App\Mail\RideRequestInvoice($rideRequest));
             \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
         
         } catch(\Exception $e) {

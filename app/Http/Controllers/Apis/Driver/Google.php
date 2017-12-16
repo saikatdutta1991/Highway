@@ -223,6 +223,8 @@ class Google extends Controller
             
         }
 
+        //send new driver registration mail
+        $this->email->sendNewDriverWelcomeEmail($driver);
         
         //don't call save on driver object
         $driver->profile_photo_url = $driver->profilePhotoUrl();
