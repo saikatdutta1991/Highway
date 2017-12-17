@@ -38,6 +38,9 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::post('ride-request/initiate', 'Apis\User\RideRequest@initiateRideRequest');
         Route::post('ride-request/{ride_request_id}/rate-driver', 'Apis\User\RideRequest@rateDriver');
 
+        Route::get('ride-requests/histories', 'Apis\User\RideRequest@getHistories')->name('ride_request_histories');
+
+
     });
 
 
@@ -80,6 +83,8 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('ride-request/{ride_request_id}/start-trip', 'Apis\Driver\RideRequest@startRideRequest');
         Route::post('ride-request/{ride_request_id}/end-trip', 'Apis\Driver\RideRequest@endRideRequest');
         Route::post('ride-request/{ride_request_id}/rate-user', 'Apis\Driver\RideRequest@rateUser');
+
+        Route::get('ride-requests/histories', 'Apis\Driver\RideRequest@getHistories')->name('ride_request_histories');
     });
 
 

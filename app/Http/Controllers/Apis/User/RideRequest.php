@@ -393,6 +393,34 @@ class RideRequest extends Controller
     }   
 
 
+
+
+
+    /**
+     * this returns ride request histories
+     */
+    public function getHistories(Request $request)
+    {
+        //takes completed, user cancelled, driver cancelled ride requests
+        $rideRequests = $this->rideRequest->where('user_id', $request->auth_user->id)
+        ->whereIn('ride_status', [Ride::COMPLETED, Ride::USER_CANCELED, Ride::DRIVER_CANCELED])
+        ->with(['driver', 'invoice'])
+        ->paginate(100);
+
+        return $this->api->json(true, 'RIDE_REQUEST_HISTORIES', 'Ride request histories', [
+            'ride_requests'=> $rideRequests->items(),
+            'paging' => [
+                'total' => $rideRequests->total(),
+                'has_more' => $rideRequests->hasMorePages(),
+                'next_page_url' => $rideRequests->nextPageUrl()?:'',
+                'count' => $rideRequests->count(),
+            ]
+        ]);
+
+
+    }
+
+
     
 
 }

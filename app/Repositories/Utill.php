@@ -222,4 +222,39 @@ class Utill
     }
 
 
+
+
+    /**
+     * returns pagination details 
+     * takes route name and lengthAwarepaginator(laravel) object 
+     */
+    public function createPagination($route, $lengthAwarepaginator)
+	{
+		$paging = [
+            "total" => $lengthAwarepaginator->total(),
+            "more_pages" => $lengthAwarepaginator->hasMorePages(),
+            "prevous_page_url" => "",
+            "next_page_url"    => ""
+        ];
+
+        $cur_page = $lengthAwarepaginator->currentPage();
+
+        $last_page = $lengthAwarepaginator->lastPage();
+
+        $next_page_url = ($last_page > $cur_page) ? url($route.'?page='.($cur_page+1)) : "";
+        $paging['next_page_url'] = $next_page_url;
+
+        if ($cur_page > 1) {
+            $paging['prevous_page_url'] = url($route.'?page='.($cur_page-1));
+        } else {
+            $paging['prevous_page_url'] = "";
+        }
+
+        return $paging;
+	}
+
+
+
+
+
 }
