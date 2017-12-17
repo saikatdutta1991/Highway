@@ -58,7 +58,7 @@ class Api
 	public function unknownErrResponse()
 	{
 		return response()->json(
-			$this->createResponse(false, 'UNKNOWN_ERROR', 'Unknown error')
+			$this->createResponse(false, 'UNKNOWN_ERROR', 'Server error. Try after sometime.')
 		);
 	}
 

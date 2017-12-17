@@ -36,6 +36,7 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::post('ride-request/{ride_request_id}/cancel', 'Apis\User\RideRequest@cancelRideRequest');
 
         Route::post('ride-request/initiate', 'Apis\User\RideRequest@initiateRideRequest');
+        Route::post('ride-request/{ride_request_id}/rate-driver', 'Apis\User\RideRequest@rateDriver');
 
     });
 
@@ -78,6 +79,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('ride-request/{ride_request_id}/change-ride-status', 'Apis\Driver\RideRequest@changeRideRequestStatus');
         Route::post('ride-request/{ride_request_id}/start-trip', 'Apis\Driver\RideRequest@startRideRequest');
         Route::post('ride-request/{ride_request_id}/end-trip', 'Apis\Driver\RideRequest@endRideRequest');
+        Route::post('ride-request/{ride_request_id}/rate-user', 'Apis\Driver\RideRequest@rateUser');
     });
 
 

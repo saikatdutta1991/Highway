@@ -21,6 +21,12 @@ class RideRequest extends Model
 
 
     /**
+     * rating array const
+     */
+    const RATINGS = [1, 2, 3, 4, 5];
+
+
+    /**
      * ride request status list
      */
     const INITIATED = 'INITIATED'; //when first ride request is created
@@ -111,6 +117,15 @@ class RideRequest extends Model
     }
 
 
+    /** 
+     * returns ride request status list when ride is not ongoing for driver
+     */
+    public function notOngoigRideRequestStatusListDriver()
+    {
+        return [self::INITIATED, self::COMPLETED, self::USER_CANCELED, self::DRIVER_CANCELED, self::TRIP_ENDED];
+    }
+
+
 
    
 
@@ -158,6 +173,79 @@ class RideRequest extends Model
     {
         return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->ride_end_time)->setTimezone($timezone)->format('h:i a');
     }
+
+
+
+
+    /**
+     * rating for this request and 
+     * calculate driver rating and ride request rating
+     */
+    public function calculateDriverRating($ratingValue)
+    {   
+        
+        //check if already rating given or not
+        if( in_array($this->driver_rating, self::RATINGS)) {
+            return [$this->driver_rating, $this->driver->rating];
+        }
+
+
+        $selects = [
+            'SUM('.$this->getTableName().'.driver_rating) AS driver_rating_sum',
+            'COUNT('.$this->getTableName().'.id) AS ride_request_count'
+        ];
+
+        //find total number of requests and sum of total ratings
+        $rating =$this->where('driver_id', $this->driver->id)->whereIn('driver_rating', self::RATINGS)
+        ->selectRaw(implode(',', $selects))->first();
+
+        //increment rating count and sum with new
+        $rating->ride_request_count += 1;
+        $rating->driver_rating_sum = $rating->driver_rating_sum + intval($ratingValue);
+        
+        //calculating rating
+        $updatedRating = $rating->driver_rating_sum / $rating->ride_request_count;
+
+        return [$ratingValue, $updatedRating];
+
+    }
+
+
+
+
+    /**
+     * rating for this request and 
+     * calculate user rating and ride request rating
+     */
+    public function calculateUserRating($ratingValue)
+    {   
+        
+        //check if already rating given or not
+        if( in_array($this->user_rating, self::RATINGS)) {
+            return [$this->user_rating, $this->user->rating];
+        }
+
+
+        $selects = [
+            'SUM('.$this->getTableName().'.user_rating) AS user_rating_sum',
+            'COUNT('.$this->getTableName().'.id) AS ride_request_count'
+        ];
+
+        //find total number of requests and sum of total ratings
+        $rating =$this->where('user_id', $this->user->id)->whereIn('user_rating', self::RATINGS)
+        ->selectRaw(implode(',', $selects))->first();
+
+        //increment rating count and sum with new
+        $rating->ride_request_count += 1;
+        $rating->user_rating_sum = $rating->user_rating_sum + intval($ratingValue);
+        
+        //calculating rating
+        $updatedRating = $rating->user_rating_sum / $rating->ride_request_count;
+
+        return [$ratingValue, $updatedRating];
+
+    }
+
 
 
 }

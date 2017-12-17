@@ -141,7 +141,8 @@ class RideRequest extends Controller
         
         $rideRequest = $this->rideRequest
         ->where('user_id', $request->auth_driver->id)
-        ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
+        ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())
+        ->orWhere('user_rating', 0)
         ->first();
 
         if(!$rideRequest) {
@@ -447,6 +448,7 @@ class RideRequest extends Controller
             //if cash payment mode then payment_status paid
             if($rideRequest->payment_mode == Ride::CASH) {
                 $rideRequest->payment_status = Ride::PAID;
+                $rideRequest->ride_status = Ride::COMPLETED;
                 $invoice->payment_status = Ride::PAID;
             }
 
@@ -511,6 +513,62 @@ class RideRequest extends Controller
 
     }
 
+
+
+
+
+    /**
+     * give rating to user and complete the request
+     */
+    public function rateUser(Request $request)
+    {
+
+        //find ride request 
+        $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
+        ->where('driver_id', $request->auth_driver->id)
+        ->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
+        ->first();
+
+
+        if(!$rideRequest || !$rideRequest->user) {
+            return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
+        }
+
+        //validate rating number
+        if(!$request->has('rating') || !in_array($request->rating, Ride::RATINGS)) {
+            return $this->api->json(false, 'INVALID_RATING', 'You must have give rating within '.implode(',', Ride::RATINGS));
+        }
+
+
+        //updatig both driver and ride request table
+        try {
+
+            list($ratingValue, $userRating) = $rideRequest->calculateUserRating($request->rating);
+
+            \DB::beginTransaction();
+
+            //saving ride request rating
+            $rideRequest->user_rating = $ratingValue;
+            $rideRequest->save();  
+
+            //saving driver rating
+            $user = $rideRequest->user;
+            $user->rating = $userRating;
+            $user->save();
+
+            \DB::commit();
+
+        } catch(\Exception $e) {
+            \DB::rollback();
+            \Log::info('USER_RATING');
+            \Log::info($e->getMessage());
+            return $this->api->unknownErrResponse();
+        }
+        
+
+        return $this->api->json(true, 'RATED', 'User rated successfully.');
+
+    }   
 
 
 

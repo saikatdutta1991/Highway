@@ -94,11 +94,13 @@ class RideRequest extends Controller
         $rideRequest = $this->rideRequest
         ->where('user_id', $request->auth_user->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
+        ->orWhere('driver_rating', 0)
         ->first();
 
         if(!$rideRequest) {
             return $this->api->json(false, 'NO_ONGOING_REQUEST_FOUND', 'No ongoing request');
         }
+        
 
         $driver = [
             'id' => $rideRequest->driver->id,
@@ -336,6 +338,59 @@ class RideRequest extends Controller
 
 
 
+
+    /**
+     * give rating to driver and complete the request
+     */
+    public function rateDriver(Request $request)
+    {
+
+        //find ride request 
+        $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
+        ->where('user_id', $request->auth_user->id)
+        ->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
+        ->first();
+
+
+        if(!$rideRequest || !$rideRequest->driver) {
+            return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
+        }
+
+        //validate rating number
+        if(!$request->has('rating') || !in_array($request->rating, Ride::RATINGS)) {
+            return $this->api->json(false, 'INVALID_RATING', 'You must have give rating within '.implode(',', Ride::RATINGS));
+        }
+
+
+        //updatig both driver and ride request table
+        try {
+
+            list($ratingValue, $driverRating) = $rideRequest->calculateDriverRating($request->rating);
+
+            \DB::beginTransaction();
+
+            //saving ride request rating
+            $rideRequest->driver_rating = $ratingValue;
+            $rideRequest->save();  
+
+            //saving driver rating
+            $driver = $rideRequest->driver;
+            $driver->rating = $driverRating;
+            $driver->save();
+
+            \DB::commit();
+
+        } catch(\Exception $e) {
+            \DB::rollback();
+            \Log::info('DRIVER_RATING');
+            \Log::info($e->getMessage());
+            return $this->api->unknownErrResponse();
+        }
+        
+
+        return $this->api->json(true, 'RATED', 'Driver rated successfully.');
+
+    }   
 
 
     
