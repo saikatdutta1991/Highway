@@ -91,7 +91,7 @@
 
                     <div class="row m-t-5 m-b-5 align-center" style="display:none" id="error-div">
                         <div class="col-xs-12" style="margin-bottom:0;margin-top:0">
-                            <span class="font-bold col-red font-15" id="login-msg"></span>
+                            <span class="font-bold col-red font-12" id="login-msg"></span>
                         </div>
                     </div>
 
