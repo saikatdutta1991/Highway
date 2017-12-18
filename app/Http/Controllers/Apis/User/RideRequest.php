@@ -405,6 +405,7 @@ class RideRequest extends Controller
         $rideRequests = $this->rideRequest->where('user_id', $request->auth_user->id)
         ->whereIn('ride_status', [Ride::COMPLETED, Ride::USER_CANCELED, Ride::DRIVER_CANCELED])
         ->with(['driver', 'invoice'])
+        ->orderBy('updated_at', 'desc')
         ->paginate(100);
 
         return $this->api->json(true, 'RIDE_REQUEST_HISTORIES', 'Ride request histories', [
