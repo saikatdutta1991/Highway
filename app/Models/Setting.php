@@ -132,5 +132,14 @@ class Setting extends Model
     }
 
 
+    /**
+     * returns website favicon url
+     */
+    public function websiteFavIconUrl()
+    {
+        return url($this->get('website_fav_icon_path') . '/' . $this->get('website_fav_icon_name'));
+    }
+
+
 
 }

@@ -31,7 +31,9 @@ class GlobalViewComposer
          * sharing common variable for all views
          */
         $view->with('website_logo_url', $this->setting->websiteLogoUrl())
+        ->with('website_fav_icon_url', $this->setting->websiteFavIconUrl())
         ->with('website_name', $this->setting->get('website_name'))
+        ->with('website_title', $this->setting->get('website_title'))
         ->with('website_address', $this->setting->get('website_address'))
         ->with('website_contact_number', $this->setting->get('website_contact_number'))
         ->with('website_contact_email', $this->setting->get('website_contact_email'))

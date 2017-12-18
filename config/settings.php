@@ -41,9 +41,12 @@
   'email_from_name' => 'HighWay',
   'email_bcc' => 'support@highway.com',
 
-  'website_name' => 'HighWay',
+  'website_name' => 'HighWay Trip',
+  'website_title' => 'HighWay Trip',
   'website_logo_path' => 'images',
   'website_logo_name' => 'website_logo.png',
+  'website_fav_icon_name' => 'website_logo.png',
+  'website_fav_icon_path' => 'images',
   'website_address' => '123 Fake Street, SpringField, OR, 97477 US',
   'website_contact_number' => '(123) 456-7890',
   'website_contact_email' => 'support@highway.com',

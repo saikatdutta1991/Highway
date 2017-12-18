@@ -1,124 +1,149 @@
 <!DOCTYPE html>
-<html >
+<html>
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Highway Trip Admin LOGIN</title>
-    <link rel="stylesheet" href="{{url('admin_assets')}}/css/style.css">
-    <style type="text/css">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Admin Panel | {{$website_title}}</title>
+    <!-- Favicon-->
+    <link rel="icon" href="{{$website_fav_icon_url}}" type="image/x-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap Core Css -->
+    <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Waves Effect Css -->
+    <link href="{{url('admin_assets/admin_bsb')}}/plugins/node-waves/waves.css" rel="stylesheet" />
+
+    <!-- Animation Css -->
+    <link href="{{url('admin_assets/admin_bsb')}}/plugins/animate-css/animate.css" rel="stylesheet" />
+
+    <!-- Custom Css -->
+    <link href="{{url('admin_assets/admin_bsb')}}/css/style.css" rel="stylesheet">
+
+    <style>
         body
         {
             background: url('{{url('admin_assets')}}/background.jpg');
             background-position: center;
             background-repeat: no-repeat;
-            background-size: cover;
+          /*   background-size: cover; */
         }
-        .btn
-        {
-            background: #ec511f;
-        }
-
-        #logo-title
-        {
-            color: white;
-            font-weight: 700;
-            text-shadow: 0px 0px 1px white;
-            font-size: 20px;
-            font-family: sans-serif;
-
-        }
-
-        #toggleProfile
-        {
-            /* border: 3px solid white; */
-        }
-
-
-        .input 
-        {
-            padding: 5px;
-        }
-
-        .input:focus + .label, input:valid + .label{
-            color: rgba(0, 0, 0, 0.52);
-        }
-
-
-        .profile__avatar
-        {
-            overflow : initial;
-        }
-
-
-
     </style>
+
 </head>
 
-<body>
-  <!--Google Font - Work Sans-->
-<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,700' rel='stylesheet' type='text/css'>
+<body class="login-page">
+    <div class="login-box">
+        <div class="logo">
+            <a href="javascript:void(0);">{{$website_title}}</b></a>
+            <small>Admin Panel {{$website_title}}</small>
+        </div>
+        <div class="card">
+            <div class="body">
+                <form id="login-form" method="POST">
+                    <input type="hidden" name="_token" value="{{csrf_token()}}">
+                    <div class="msg">Sign in to start your session</div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">person</i>
+                        </span>
+                        <div class="form-line">
+                            <input type="text" class="form-control" name="email" placeholder="Email" required autofocus>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">lock</i>
+                        </span>
+                        <div class="form-line">
+                            <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-8 p-t-5" style="visibility:hidden">
+                            <input type="checkbox" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
+                            <label for="rememberme">Remember Me</label>
+                        </div>
+                        <div class="col-xs-4">
+                            <button class="btn btn-block bg-pink waves-effect" type="submit">SIGN IN</button>
+                        </div>
+                    </div>
 
-<div class="container">
-    
-    <div style="text-align: center;margin-bottom: 10px;">
-        <label id="logo-title">HIGHWAY TRIP ADMIN PANEL</label>
+                    <div class="row m-t-0 m-b-0" style="display:none" id="preloader-container">
+                        <div class="col-xs-12 align-center" style="margin-bottom:0;margin-top:0">
+                            <div class="preloader pl-size-xs">
+                                <div class="spinner-layer pl-red">
+                                    <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="circle-clipper right">
+                                        <div class="circle"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row m-t-5 m-b-5 align-center" style="display:none" id="error-div">
+                        <div class="col-xs-12" style="margin-bottom:0;margin-top:0">
+                            <span class="font-bold col-red font-15" id="login-msg"></span>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Jquery Core Js -->
+    <script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core Js -->
+    <script src="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap/js/bootstrap.js"></script>
+
+    <!-- Waves Effect Plugin Js -->
+    <script src="{{url('admin_assets/admin_bsb')}}/plugins/node-waves/waves.js"></script>
+
+    <!-- Validation Plugin Js -->
+    <!-- <script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-validation/jquery.validate.js"></script> -->
+
+    <!-- Custom Js -->
+    <script src="{{url('admin_assets/admin_bsb')}}/js/admin.js"></script>
     
-  <div class="profile">
-    <button class="profile__avatar" id="toggleProfile">
-     <img src="{{url('admin_assets')}}/login_round_logo.png?{{time()}}" alt="Avatar" /> 
-     <label style="color: white;font-size: 9px;">Click Here</label>
-    </button>
-    <div class="profile__form">
-    <form id="login-form" method="post" action="{{url('admin/login')}}">
-        <input type="hidden" name="_token" value="{{csrf_token()}}">
-      <div class="profile__fields">
-        <div class="field">
-          <input type="text" id="fieldUser" class="input" name="email"/>
-          <label for="fieldUser" class="label">Email</label>
-        </div>
-        <div class="field">
-          <input type="password" id="fieldPassword" class="input" name="password"/>
-          <label for="fieldPassword" class="label">Password</label>
-        </div>
-
-       
-        <div class="profile__footer" style="text-align: center">
-          <button class="btn" type="submit"><img id="loader" src="{{url('admin_assets')}}/gear.gif" style="width: 16px;display: none;"> Login</button><br>
-          <label id="error-level" style="font-size:10px;color:red;display:none">*<span>Invalid email</span></label>
-        </div>
-      </div>
-    </form>
-
-     </div>
-  </div>
-</div>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script  src="{{url('admin_assets')}}/js/index.js"></script>
-
     <script type="text/javascript">
 
         function showLoader()
         {
-            $("#loader").fadeIn();
+            $("#preloader-container").fadeIn();
         }
 
         function hideLoader()
         {
-            $("#loader").fadeOut();
+            $("#preloader-container").fadeOut();
         }
     
         function hideError()
         {
-            $("#error-level").fadeOut();
+            $("#error-div").fadeOut();
         }
 
-        function showError(text, color='red')
+        function showError(text)
         {
-            $("#error-level").find('span').text(text)
-            $("#error-level").css('color', color).fadeIn()
-        }        
+            $("#error-div").fadeIn();
+            $("#login-msg").removeClass('col-green').addClass('col-red').text(text);
+        }     
+        
+        
+        function showSuccesMessage(message)
+        {
+            $("#error-div").fadeIn();
+            $("#login-msg").removeClass('col-red').addClass('col-green').text(message);
+        }
 
 
 
@@ -143,20 +168,19 @@
 
 
                     if(!response.success) {
-                        showError(response.text);
+                        showError('*'+response.text);
                     } else if(response.success){
-                        showError('Loggin! redirecting to dashboard', 'green');
-
+                        showSuccesMessage('Logged in!! Wait while redirecting to dashboard');
                         setTimeout(function(){
                             window.location.reload();
-                        });
+                        }, 2000);
                         
                     }
 
                    
                 }).fail(function(response) {
                     hideLoader();
-                    showError('Unknown server error. Contact to you server admin');
+                    showError('*Unknown server error. Contact to you server admin');
                 });
 
 
@@ -172,4 +196,5 @@
 
 
 </body>
+
 </html>
