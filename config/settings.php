@@ -50,10 +50,13 @@
   'website_address' => '123 Fake Street, SpringField, OR, 97477 US',
   'website_contact_number' => '(123) 456-7890',
   'website_contact_email' => 'support@highway.com',
+  'website_company_name' => 'Highway Trip PVT. LTD.',
+  'website_copyright' => '2016 - 2017',
 
   'ride_request_driver_search_radious' => '5',
   'currency_code' => 'INR',
   'currency_symbol' => '₹',
   'google_maps_api_key' => 'AIzaSyC6AsBwEbj2cIgehe0OiutHNWC_1-t1LAo',
-  'default_user_driver_timezone' => 'Asia/Kolkata'
+  'default_user_driver_timezone' => 'Asia/Kolkata',
+  'default_timezone' => 'Asia/Kolkata',
 );

@@ -24,6 +24,11 @@ class UserApiAuth
 
         if($user = $this->api->shouldPassThrough('user', $accessToken)) {
 
+            //setting last access time user
+            $user->last_access_time = date('Y-m-d H:i:s');
+            $user->save();
+
+
             //adding auth_user with $request
             $request->request->add(['auth_user' => $user]);
             return $next($request);

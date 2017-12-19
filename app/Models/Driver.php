@@ -662,5 +662,12 @@ class Driver extends Model
     }
 
 
+    /**
+     * returns registerd on formater date(created_at)
+     */
+    public function registeredOn($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
+    }
 
 }

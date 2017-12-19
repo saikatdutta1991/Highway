@@ -4,6 +4,7 @@ namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
 use App\Models\Setting;
+use Auth;
 
 class GlobalViewComposer
 {
@@ -37,7 +38,30 @@ class GlobalViewComposer
         ->with('website_address', $this->setting->get('website_address'))
         ->with('website_contact_number', $this->setting->get('website_contact_number'))
         ->with('website_contact_email', $this->setting->get('website_contact_email'))
-        ->with('currency_symbol', $this->setting->get('currency_symbol'));
-        
+        ->with('currency_symbol', $this->setting->get('currency_symbol'))
+        ->with('website_company_name', $this->setting->get('website_company_name'))
+        ->with('website_copyright', $this->setting->get('website_copyright'))
+        ->with('default_timezone', $this->setting->get('default_timezone'));
+
+
+        $this->shareAdminDetails($view);
+
     }
+
+
+    /**
+     * share admin details if admin login
+     */
+    protected function shareAdminDetails(View $view)
+    {
+        //check if admin is loggin
+        if(!Auth::guard('admin')->user()) {
+            return;
+        }
+
+        $view->with('admin', Auth::guard('admin')->user());
+
+    }
+
+
 }
