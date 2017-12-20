@@ -29,10 +29,17 @@
             <ul class="list">
                 <li class="header">MAIN NAVIGATION</li>
                 <li class="active">
-                    <a href="index.html">
+                    <a href="{{url('admin/dashboard')}}">
                     <i class="material-icons">home</i>
                     <span>Dashboard</span>
                     </a>
+                </li>
+                <li class="active">
+                    <a href="{{url('admin/drivers')}}">
+                    <i class="material-icons">drive_eta</i>
+                    <span>Drivers</span>
+                    </a>
+                </li>
                 <!-- </li>
                 <li>
                     <a href="pages/typography.html">
