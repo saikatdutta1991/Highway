@@ -6,199 +6,351 @@
 @endsection
 @section('content')
 <div class="container-fluid">
-    <div class="block-header">
-        <h2>DRIVERS</h2>
-    </div>
-    <!-- With Material Design Colors -->
-    <div class="row clearfix">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="card">
-                <div class="header">
-                    <h2>
-                        LIST OF ALL DRIVERS
-                        <small>You can see all drivers. You can sort by created, name, email etc. Filter drivers by Name, Email etc.</small>
-                    </h2>
-                    
-                    <ul class="header-dropdown m-r--5">
-                        <li class="dropdown">
-                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <i class="material-icons">more_vert</i>
+<div class="block-header">
+    <h2>DRIVERS</h2>
+</div>
+<!-- With Material Design Colors -->
+<div class="row clearfix">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+        <div class="header">
+            <h2>
+                LIST OF ALL DRIVERS
+                <small>You can see all drivers. You can sort by created, name, email etc. Filter drivers by Name, Email etc.</small>
+            </h2>
+            <ul class="header-dropdown m-r--5">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="left" title="Advance menu">
+                    <i class="material-icons">more_vert</i>
+                    </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="javascript:void(0);"><i class="material-icons">sort</i>SORT BY</a></li>
+                        <li role="seperator" class="divider"></li>
+                        <li class="sort-by" data-order-by="created_at" data-order="asc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">sort_by_alpha</i>Created (Asc)
+                            @if($order_by=="created_at" && $order =='asc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
                             </a>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a href="javascript:void(0);"><i class="material-icons">sort</i>SORT BY</a></li>
-                                <li role="seperator" class="divider"></li>
-                                <li class="sort-by" data-order-by="created_at" data-order="asc"><a href="javascript:void(0);"><i class="material-icons">sort_by_alpha</i>Created(Asc)</a></li>
-                                <li class="sort-by" data-order-by="created_at" data-order="desc"><a href="javascript:void(0);"><i class="material-icons">filter_list</i>Created(Desc)</a></li>
-                                <li class="sort-by" data-order-by="fname" data-order="asc"><a href="javascript:void(0);"><i class="material-icons">sort_by_alpha</i>Name(Asc)</a></li>
-                                <li class="sort-by" data-order-by="fname" data-order="desc"><a href="javascript:void(0);"><i class="material-icons">filter_list</i>Name(Desc)</a></li>
-                                <li class="sort-by" data-order-by="email" data-order="asc"><a href="javascript:void(0);"><i class="material-icons">sort_by_alpha</i>Email(Asc)</a></li>
-                                <li class="sort-by" data-order-by="email" data-order="desc"><a href="javascript:void(0);"><i class="material-icons">filter_list</i> Email(Desc)</a></li>
-                                <li role="seperator" class="divider"></li>
-                                <li><a href="javascript:void(0);">Send pushnotification</a></li>
-                                <li><a href="javascript:void(0);">Send email</a></li>
-                                <li role="seperator" class="divider"></li>
-                                <li data-toggle="collapse" 
-                                    data-target="#search-form" 
-                                    aria-expanded="false"
-                                    aria-controls="collapseExample"><a href="javascript:void(0);"><i class="material-icons">search</i>Search</a>
-                                </li>
-                            </ul>
+                        </li>
+                        <li class="sort-by" data-order-by="created_at" data-order="desc">
+                            <a href="javascript:void(0);"><i class="material-icons">filter_list</i>Created (Desc)
+                            @if($order_by=="created_at" && $order =='desc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li class="sort-by" data-order-by="fname" data-order="asc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">sort_by_alpha</i>Name (Asc)
+                            @if($order_by=="fname" && $order =='asc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li class="sort-by" data-order-by="fname" data-order="desc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">filter_list</i>Name (Desc)
+                            @if($order_by=="fname" && $order =='desc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li class="sort-by" data-order-by="email" data-order="asc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">sort_by_alpha</i>Email (Asc)
+                            @if($order_by=="email" && $order =='asc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li class="sort-by" data-order-by="email" data-order="desc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">filter_list</i> Email (Desc)
+                            @if($order_by=="email" && $order =='desc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li role="seperator" class="divider"></li>
+                        <li><a href="javascript:void(0);" id="send-pushnotification-menu-btn">Send pushnotification</a></li>
+                        <li><a href="javascript:void(0);">Send email</a></li>
+                        <li role="seperator" class="divider"></li>
+                        <li data-toggle="collapse" 
+                            data-target="#search-form" 
+                            aria-expanded="false"
+                            aria-controls="collapseExample"><a href="javascript:void(0);"><i class="material-icons">search</i>Search</a>
                         </li>
                     </ul>
-                </div>
-                <!-- Select -->
-                <div class="row clearfix collapse" id="search-form">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="card">
-                            <div class="header">
-                                <h2>
-                                    SEARCH DRIVERS
-                                    <small>Enter your search keyword Eg. name, id, mobile etc. and select specific search type</small>
-                                </h2>
-                            </div>
-                            <div class="body">
-                                <div class="row clearfix">
-                                    <div class="col-sm-6">
-                                        <div class="form-group form-float">
-                                            <div class="form-line">
-                                                <input type="text" class="form-control">
-                                                <label class="form-label">Type your search keyword</label>
-                                            </div>
+                </li>
+            </ul>
+        </div>
+        <!-- Select -->
+        <div class="row clearfix collapse @if($search_by != '' && $skwd != '') in @endif" id="search-form">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <!-- <div class="header">
+                        <h2>
+                            SEARCH DRIVERS
+                            <small>Enter your search keyword Eg. name, id, mobile etc. and select specific search type</small>
+                        </h2>
+                        </div> -->
+                    <div class="body">
+                        <form action="" method="GET" id="driver-search-form">
+                            <div class="row clearfix">
+                                <div class="col-sm-5">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="skwd" value="{{$skwd}}" autofocus onfocus="this.select()">
+                                            <label class="form-label">Type your search keyword</label>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <select class="form-control show-tick">
-                                            <option value="">-- Search by --</option>
-                                            <option value="fname">Name</option>
-                                            <option value="email">Email</option>
-                                            <option value="full_mobile_number">Mobile</option>
-                                            <option value="vehicle_number">Vehicle no.</option>
-                                            <option value="created_at">Created time</option>
-                                            <option value="id">Identification number</option>
-                                        </select>
-                                    </div>
                                 </div>
-                                <button type="button" class="btn pull-right bg-purple btn-circle waves-effect waves-circle waves-float">
-                                <i class="material-icons">search</i>
-                                </button>
+                                <div class="col-sm-5">
+                                    <select class="form-control show-tick" name="search_by">
+                                        <!-- <option value="">-- Search by --</option> -->
+                                        <option value="fname" @if($search_by == "fname") selected @endif>Name</option>
+                                        <option value="email" @if($search_by == "email") selected @endif>Email</option>
+                                        <option value="full_mobile_number" @if($search_by == "full_mobile_number") selected @endif>Mobile</option>
+                                        <option value="vehicle_number" @if($search_by == "vehicle_number") selected @endif>Vehicle no.</option>
+                                        <option value="created_at" @if($search_by == "created_at") selected @endif>Created time</option>
+                                        <option value="id" @if($search_by == "id") selected @endif>Identification number</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2 text-center">
+                                    <button type="submit" class="btn bg-deep-orange waves-effect" data-toggle="tooltip" data-placement="left" title="Hit enter or click to search">
+                                    <i class="material-icons">search</i>
+                                    <span>SEARCH</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
+                        <small>Enter your search keyword Eg. name, id, mobile etc. and select specific search type</small>
                     </div>
                 </div>
-                <!-- #END# Select --><small>
-                <div class="body table-responsive">
-                    @if($drivers->count() == 0)
-                    <div class="alert bg-pink">
-                        No drivers found
-                    </div>
-                    @else
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr>
-                                <th>#ID</th>
-                                <th>NAME</th>
-                                <th>EMAIL</th>
-                                <th>MOBILE</th>
-                                <!-- <th>VEHICLE NO.</th> -->
-                                <th>RATING</th>
-                                <th>REGISTERD</th>
-                                <th>APPROVED</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($drivers as $driver)
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="md_checkbox_22" class="filled-in chk-col-pink" checked />
-                                    <label for="md_checkbox_22">{{$driver->id}}</label>
-                                </th>
-                                <td>{{$driver->fname.' '.$driver->lname}}</td>
-                                <td>{{$driver->email}}</td>
-                                <td>{{$driver->full_mobile_number}}</td>
-                                <!-- <td>{{$driver->vehicle_number}}</td> -->
-                                <td>{{$driver->rating}}</td>
-                                <td>{{$driver->registeredOn($default_timezone)}}</td>
-                                <td>
-                                    @if($driver->is_approved == 1)
-                                    <span class="label bg-green">Approved</span>
-                                    @else
-                                    <span class="label bg-blue">Pending</span>
-                                    @endif
-                                </td>
-                                <td>
-                                 
-                                    <li class="dropdown" style="list-style: none;">
-                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                                            <i class="material-icons">more_vert</i>
-                                        </a>
-                                        <ul class="dropdown-menu pull-right">
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Approve</a></li>
-                                            <li><a href="javascript:void(0);" class=" waves-effect waves-block">Edit</a></li>
-                                        </ul>
-                                    </li>
-                                    
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
-                    <div class="row pull-right">
+            </div>
+        </div>
+        <!-- #END# Select -->
+        <small>
+            <div class="body table-responsive">
+                @if($drivers->count() == 0)
+                <div class="alert bg-pink">
+                    No drivers found
+                </div>
+                @else
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>NAME</th>
+                            <th>EMAIL</th>
+                            <th>MOBILE</th>
+                            <!-- <th>VEHICLE NO.</th> -->
+                            <th>RATING</th>
+                            <th>REGISTERD</th>
+                            <th>APPROVED</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($drivers as $driver)
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="md_checkbox_22" class="filled-in chk-col-pink" checked />
+                                <label for="md_checkbox_22">{{$driver->id}}</label>
+                            </th>
+                            <td>{{$driver->fname.' '.$driver->lname}}</td>
+                            <td>{{$driver->email}}</td>
+                            <td>{{$driver->full_mobile_number}}</td>
+                            <!-- <td>{{$driver->vehicle_number}}</td> -->
+                            <td>{{$driver->rating}}</td>
+                            <td>{{$driver->registeredOn($default_timezone)}}</td>
+                            <td>
+                                @if($driver->is_approved == 1)
+                                <span class="label bg-green">Approved</span>
+                                @else
+                                <span class="label bg-blue">Pending</span>
+                                @endif
+                            </td>
+                            <td>
+                                <li class="dropdown" style="list-style: none;">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                    <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Approve</a></li>
+                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Edit</a></li>
+                                    </ul>
+                                </li>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+                <div class="row pull-right">
                     {!! $drivers->appends(request()->all())->render() !!}
                     <div>
-                </div></small>
-            </div>
+                    </div>
+        </small>
+        </div>
         </div>
     </div>
     <!-- #END# With Material Design Colors -->
 </div>
+<!-- For Material Design Colors -->
+<div class="modal fade" id="send-pushnotification-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Send push notification(s)</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="send-pushnotification-form">
+                    <div class="row clearfix">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            <label for="email_address_2">Title</label>
+                        </div>
+                        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" autofocus class="form-control" placeholder="Enter your push notification title" name="title">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5 form-control-label">
+                            <label for="email_address_2">Message</label>
+                        </div>
+                        <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" placeholder="Enter your push notification message" name="message">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <br>
+                        <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
+                            <input type="checkbox" id="remember_me_3" name="send_all" class="filled-in chk-col-pink">
+                            <label for="remember_me_3">Send All Drivers (It may take long time)</label>
+                        </div>
+                    </div>
+                </form>
+                <div class=" m-t-30" id="push-notification-progressbar-div">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                    <small>Sending push notification(s) in progress : <span id="push-notification-progress-status"></span><small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="pushnotification-send-btn">SEND</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('bottom')
-<script src="{{url('admin_assets/admin_bsb')}}/js/pages/forms/basic-form-elements.js"></script>
 <script>
-
-// Read a page's GET URL variables and return them as an associative array.
-function getUrlVars()
-{
-    var url = location.search;
-    var qs = url.substring(url.indexOf('?') + 1).split('&');
-    for(var i = 0, result = {}; i < qs.length; i++){
-        qs[i] = qs[i].split('=');
-        duric = decodeURIComponent(qs[i][1]);
-        if(qs[i][0] == undefined || qs[i][0] == '' || duric == undefined || duric == '')
-        continue;
-        result[qs[i][0]] = decodeURIComponent(qs[i][1]);
+    $("#send-pushnotification-menu-btn").on('click', function(){
+        $("#push-notification-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+        $("#push-notification-progressbar-div").hide();
+        $("#send-pushnotification-form").find("input[name='title']").val('')
+        $("#send-pushnotification-form").find("input[name='message']").val('')
+        $("#send-pushnotification-form").find("input[name='send_all']").prop('checked', false)
+        $("#send-pushnotification-modal").modal("show");
+    
+    });
+    
+    var pushnotificationSSE = null;
+    $("#pushnotification-send-btn").on('click', function(){
+        if(pushnotificationSSE) {
+            pushnotificationSSE.close();
+        }
+    
+    
+        $("#push-notification-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+        $("#push-notification-progressbar-div").fadeIn();
+    
+        pushnotificationSSE = new EventSource("{{url('admin/drivers/send-pushnotification')}}");
+        pushnotificationSSE.onmessage = function(event) {
+            console.log(event.data);
+            var data = JSON.parse(event.data)
+            if(data.done == data.total) {
+                pushnotificationSSE.close();
+    
+                setTimeout(function(){
+                    $("#send-pushnotification-modal").modal("hide");
+                    swal("Push notification(s) sent", "", "success");
+                }, 2000)
+                
+            }
+            $("#push-notification-progress-status").text(data.done+' out of ' + data.total)
+            $("#push-notification-progressbar-div").find('.progress > .progress-bar').css('width', data.percent+'%')
+            
+        };
+    });
+    
+    
+    $("#driver-search-form").on('submit', function(event){
+    
+        event.preventDefault()
+        
+        var formDataArray = $(this).serializeArray();
+        var finalObj = getUrlVars(); 
+        formDataArray.map(function(obj){
+            var temp = {};
+            temp[obj.name] =  obj.value;
+            finalObj = Object.assign(finalObj, temp);
+        });
+        
+        var url = '{{url("admin/drivers")}}' + objectToQueryString(finalObj);
+        console.log(url)
+        window.location.href = url;
+    
+    })
+    
+    
+    
+    // Read a page's GET URL variables and return them as an associative array.
+    function getUrlVars()
+    {
+        var url = location.search;
+        var qs = url.substring(url.indexOf('?') + 1).split('&');
+        for(var i = 0, result = {}; i < qs.length; i++){
+            qs[i] = qs[i].split('=');
+            duric = decodeURIComponent(qs[i][1]);
+            if(qs[i][0] == undefined || qs[i][0] == '' || duric == undefined || duric == '')
+            continue;
+            result[qs[i][0]] = decodeURIComponent(qs[i][1]);
+        }
+        return result;
     }
-    return result;
-}
-
-
-function objectToQueryString(obj) 
-{
-   var query = Object.keys(obj)
-       .filter(key => obj[key] !== '' && obj[key] !== null)
-       .map(key => key + '=' + obj[key])
-       .join('&');
-   return query.length > 0 ? '?' + query : null;
-}
-
-
-$(".sort-by").on('click', function(){
     
-    var order_by = $(this).data('order-by');
-    var order = $(this).data('order');
-    var urlVars = getUrlVars();
-    urlVars.order_by=order_by;
-    urlVars.order=order;
-
-    var url = '{{url("admin/drivers")}}' + objectToQueryString(urlVars);
     
-    console.log(url)
-    window.location.href = url;
-   
-
-});
-
+    function objectToQueryString(obj) 
+    {
+       var query = Object.keys(obj)
+           .filter(key => obj[key] !== '' && obj[key] !== null)
+           .map(key => key + '=' + obj[key])
+           .join('&');
+       return query.length > 0 ? '?' + query : null;
+    }
+    
+    
+    $(".sort-by").on('click', function(){
+        
+        var order_by = $(this).data('order-by');
+        var order = $(this).data('order');
+        var urlVars = getUrlVars();
+        urlVars.order_by=order_by;
+        urlVars.order=order;
+    
+        var url = '{{url("admin/drivers")}}' + objectToQueryString(urlVars);
+        
+        console.log(url)
+        window.location.href = url;
+       
+    
+    });
+    
+    
+    
+    
 </script>
 @endsection

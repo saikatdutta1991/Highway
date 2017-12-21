@@ -18,6 +18,8 @@
         <link href="{{url('admin_assets/admin_bsb')}}/plugins/animate-css/animate.css" rel="stylesheet" />
         <!-- Morris Chart Css-->
         <link href="{{url('admin_assets/admin_bsb')}}/plugins/morrisjs/morris.css" rel="stylesheet" />
+        <!-- Sweetalert Css -->
+        <link href="{{url('admin_assets/admin_bsb')}}/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
         <!-- Custom Css -->
         <link href="{{url('admin_assets/admin_bsb')}}/css/style.css" rel="stylesheet">
         <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
@@ -92,6 +94,13 @@
         <script src="{{url('admin_assets/admin_bsb')}}/js/pages/index.js"></script>
         <!-- Demo Js -->
         <script src="{{url('admin_assets/admin_bsb')}}/js/demo.js"></script>
+        <script src="{{url('admin_assets/admin_bsb')}}/js/pages/ui/tooltips-popovers.js"></script>
+        <!-- Bootstrap Notify Plugin Js -->
+        <script src="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-notify/bootstrap-notify.js"></script>
+        <script src="{{url('admin_assets/admin_bsb')}}/js/pages/ui/notifications.js"></script>
+        <!-- SweetAlert Plugin Js -->
+        <script src="{{url('admin_assets/admin_bsb')}}/plugins/sweetalert/sweetalert.min.js"></script>
+        <!-- showNotification('bg-black', 'testing', 'top', 'right', 'animated flipInX', 'animated flipOutX'); -->
         @yield('bottom')
     </body>
 </html>

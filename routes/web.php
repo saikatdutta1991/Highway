@@ -41,6 +41,7 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
         Route::get('drivers', 'Admin\Driver@showDrivers')->name('admin-drivers');
+        Route::get('drivers/send-pushnotification', 'Admin\Driver@sendPushnotification');
         Route::get('logout', 'Admin\AuthController@doLogout');
 
     });
