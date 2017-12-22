@@ -47,7 +47,7 @@ class RideRequestInvoice extends Mailable
             $this->setting->get('email_support_from_address'), 
             $this->setting->get('email_from_name')
         )
-        ->subject('Welcome to ' . $this->setting->get('website_name'). ' :)')
+        ->subject($this->setting->get('website_name').' ride invoice')
         ->view('emails.ride_request_invoice')->with([
             'user' => $this->rideRequest->user,
             'driver' => $this->rideRequest->driver,
