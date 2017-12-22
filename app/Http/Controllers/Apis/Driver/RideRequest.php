@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use App\Models\RideFare;
 use App\Models\RideRequest as Ride;
 use App\Models\RideRequestInvoice as RideInvoice;
+use App\Models\Setting;
 use App\Repositories\SocketIOClient;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\VehicleType;
 use Validator;
@@ -21,8 +23,10 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user)
+    public function __construct(Setting $setting, Transaction $transaction, Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user)
     {
+        $this->setting = $setting;
+        $this->transaction = $transaction;
         $this->email = $email;
         $this->vehicleType = $vehicleType;
         $this->rideFare = $rideFare;
@@ -432,6 +436,7 @@ class RideRequest extends Controller
             $rideRequest->ride_end_time = date('Y-m-d H:i:s');
             $rideRequest->ride_status = Ride::TRIP_ENDED;   
 
+            
             //creting invoice
             $invoice = new $this->rideInvoice;
             $invoice->invoice_reference = $this->rideInvoice->generateInvoiceReference();
@@ -440,6 +445,7 @@ class RideRequest extends Controller
             $invoice->access_fee = $fare['access_fee'];
             $invoice->tax = $fare['taxes'];
             $invoice->total = $fare['total'];
+            $invoice->currency_type = $this->setting->get('currency_code');
 
             list($invoiceImagePath, $invoiceImageName) = $invoice->saveInvoiceMapImage($rideRequest);
             $invoice->invoice_map_image_path = $invoiceImagePath;
@@ -450,6 +456,18 @@ class RideRequest extends Controller
                 $rideRequest->payment_status = Ride::PAID;
                 $rideRequest->ride_status = Ride::COMPLETED;
                 $invoice->payment_status = Ride::PAID;
+
+                //create transaction because payment successfull here
+                $transaction = new $this->transaction;
+                $transaction->amount = $fare['total'];
+                $transaction->currency_type = $this->setting->get('currency_code');
+                $transaction->gateway = Ride::CASH;
+                $transaction->status = Transaction::SUCCESS;
+                $transaction->save();
+
+                //add transaciton_table_id in invoice
+                $invoice->transaction_table_id = $transaction->id;
+
             }
 
             $invoice->save();

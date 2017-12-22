@@ -20,6 +20,7 @@ class CreateRideRequestInvoicesTable extends Migration
             $table->string('payment_mode', 50)->default('CASH');
             $table->string('payment_status', 50)->default('NOT_PAID');
             $table->bigInteger('transaction_table_id')->unsigned()->default(0);
+            $table->string('currency_type', 50)->default('USD');
 
             $table->decimal('ride_fare', 10, 2)->default(0.00);
             $table->decimal('access_fee', 10, 2)->default(0.00);
