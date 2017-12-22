@@ -81,12 +81,9 @@
         <script src="{{url('admin_assets/admin_bsb')}}/plugins/morrisjs/morris.js"></script>
         <!-- ChartJs -->
         <script src="{{url('admin_assets/admin_bsb')}}/plugins/chartjs/Chart.bundle.js"></script>
-        <!-- Flot Charts Plugin Js -->
-        <script src="{{url('admin_assets/admin_bsb')}}/plugins/flot-charts/jquery.flot.js"></script>
-        <script src="{{url('admin_assets/admin_bsb')}}/plugins/flot-charts/jquery.flot.resize.js"></script>
-        <script src="{{url('admin_assets/admin_bsb')}}/plugins/flot-charts/jquery.flot.pie.js"></script>
-        <script src="{{url('admin_assets/admin_bsb')}}/plugins/flot-charts/jquery.flot.categories.js"></script>
-        <script src="{{url('admin_assets/admin_bsb')}}/plugins/flot-charts/jquery.flot.time.js"></script>
+        
+        <!-- Jquery Validation Plugin Css -->
+        <script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-validation/jquery.validate.js"></script>
         <!-- Sparkline Chart Plugin Js -->
         <script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-sparkline/jquery.sparkline.js"></script>
         <!-- Custom Js -->

@@ -68,33 +68,71 @@ class Driver extends Controller
      */
     public function sendPushnotification(Request $request)
     {
+        
+        $response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() use($request){
 
-        $response = new \Symfony\Component\HttpFoundation\StreamedResponse(function() {
-         
-            for($i=0;$i<=5;$i++) {
+            $title = $request->title;
+            $message = $request->message;
+            $currentCount = 0;
+
+            /**
+             * if send_all on then send push notification to all drivers
+             */
+            if($request->has('send_all') && $request->send_all == 'on') {
+
+                //count all drivers
+                $driversCount = $this->driver->count();
                 
-                $time = date('r');
-                $percent = ($i / 5) * 100;
-                $json = json_encode(['total' => 5, 'done' => $i, 'percent' => $percent]);
-                echo "data: {$json}\n\n";
-                ob_flush();
-                flush();
-                
-                sleep(1);
+
+                //chunking drivers from db 100 each chunk
+                $this->driver->select(['id'])->chunk(100, function ($drivers) use($driversCount, $title, $message, $currentCount) {
+                    foreach ($drivers as $driver) {
+                        $driver->sendPushNotification($title, $message);
+                        
+                        //calculate percentage
+                        $percent = (++$currentCount / $driversCount) * 100;
+                        $json = json_encode(['total' => $driversCount, 'done' => $currentCount, 'percent' => $percent]);
+                        echo "data: {$json}\n\n";
+                        ob_flush();
+                        flush();
+                    }
+
+                });
 
             }
+            //send_all not present to send one by one selected drivers 
+            else {
+
+                //count all selected drivers
+                $drivers = $driver = $this->driver->whereIn('id', explode('|', $request->ids))->select(['id'])->get();;
+                $driversCount = $drivers->count();
+
+
+                foreach ($drivers as $driver) {
+                    
+                    $driver->sendPushNotification($title, $message);
+                    
+                    //calculate percentage
+                    $percent = (++$currentCount / $driversCount) * 100;
+                    $json = json_encode(['total' => $driversCount, 'done' => $currentCount, 'percent' => $percent]);
+                    echo "data: {$json}\n\n";
+                    ob_flush();
+                    flush();
+                }
+
+
+            }
+
+
+
         });
+            
+            
 
         $response->headers->set('Content-Type', 'text/event-stream');
         return $response;
 
-
     }
-
-
-
-
-
 
 
 

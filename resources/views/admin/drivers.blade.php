@@ -3,6 +3,20 @@
 @section('top-header')
 <!-- Bootstrap Select Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+<style>
+#driver-list-id-header-checkbox-label:after
+{
+    top : 6px;
+}
+#driver-list-id-header-checkbox-label:before
+{
+    margin-top: 8px;
+}
+.driver-image
+{
+    border-radius: 50%;
+}
+</style>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -130,7 +144,11 @@
                 <table class="table table-condensed">
                     <thead>
                         <tr>
-                            <th>#ID</th>
+                            <th>
+                                <input type="checkbox" class="filled-in chk-col-pink" id="checkbox-driver-id-header"/>
+                                <label style="font-weight: 700;margin-bottom: 0px;line-height: 33px;" for="checkbox-driver-id-header" id="driver-list-id-header-checkbox-label">#ID</label>
+                                <!-- #ID -->
+                            </th>
                             <th>NAME</th>
                             <th>EMAIL</th>
                             <th>MOBILE</th>
@@ -145,8 +163,8 @@
                         @foreach($drivers as $driver)
                         <tr>
                             <th>
-                                <input type="checkbox" id="md_checkbox_22" class="filled-in chk-col-pink" checked />
-                                <label for="md_checkbox_22">{{$driver->id}}</label>
+                                <input type="checkbox" id="checkbox-driver-id-{{$driver->id}}" class="filled-in chk-col-pink driver-list-id-checkbox" data-driver-id="{{$driver->id}}"/>
+                                <label for="checkbox-driver-id-{{$driver->id}}">{{$driver->id}}</label>
                             </th>
                             <td>{{$driver->fname.' '.$driver->lname}}</td>
                             <td>{{$driver->email}}</td>
@@ -203,7 +221,7 @@
                         <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
                             <div class="form-group">
                                 <div class="form-line">
-                                    <input type="text" autofocus class="form-control" placeholder="Enter your push notification title" name="title">
+                                    <input type="text" required autofocus class="form-control" placeholder="Enter your push notification title" name="title">
                                 </div>
                             </div>
                         </div>
@@ -215,7 +233,7 @@
                         <div class="col-lg-10 col-md-10 col-sm-8 col-xs-7">
                             <div class="form-group">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" placeholder="Enter your push notification message" name="message">
+                                    <input type="text" required class="form-control" placeholder="Enter your push notification message" name="message">
                                 </div>
                             </div>
                         </div>
@@ -223,8 +241,8 @@
                     <div class="row clearfix">
                         <br>
                         <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
-                            <input type="checkbox" id="remember_me_3" name="send_all" class="filled-in chk-col-pink">
-                            <label for="remember_me_3">Send All Drivers (It may take long time)</label>
+                            <input type="checkbox" id="all_drivers_push_check" name="send_all" class="filled-in chk-col-pink">
+                            <label for="all_drivers_push_check">Send All Drivers (It may take long time)</label>
                         </div>
                     </div>
                 </form>
@@ -247,6 +265,78 @@
 @endsection
 @section('bottom')
 <script>
+
+    var driverIds = [];
+    var totalDriverIdCheckboxs = $(".driver-list-id-checkbox").length;
+
+    //trigger checked or not checked all checkboxs
+    $("#checkbox-driver-id-header").on('change', function(){
+        $(".driver-list-id-checkbox").prop('checked', $(this).is(':checked')).change();
+    });
+
+
+    $(".driver-list-id-checkbox").on('change', function(){
+
+        //driver id 
+        var driverId = $(this).data('driver-id');
+        var index = driverIds.indexOf(driverId);
+
+        //if checked and not in array then push
+        if($(this).is(':checked')) {
+
+            if(index < 0) {
+                driverIds.push(driverId)
+
+                //check header if all checkboxes checked
+                if(driverIds.length == totalDriverIdCheckboxs) {
+                    $("#checkbox-driver-id-header").prop('checked', true)
+                }
+
+            }
+            
+        } else {
+
+            if(index > -1) {
+                driverIds.splice(index, 1)
+
+                //uncheck header if any checkboxes unchecked
+                if(driverIds.length < totalDriverIdCheckboxs) {
+                    $("#checkbox-driver-id-header").prop('checked', false)
+                }
+
+            }
+        }
+
+
+        console.log(driverIds)
+    });
+
+
+
+
+    $('#send-pushnotification-form').validate({
+        rules: {
+            'title': {
+                required: true,
+                maxlength : 100
+            },
+            'message': {
+                required: true,
+                maxlength : 250
+            }
+        },
+        highlight: function (input) {
+            $(input).parents('.form-line').addClass('error');
+        },
+        unhighlight: function (input) {
+            $(input).parents('.form-line').removeClass('error');
+        },
+        errorPlacement: function (error, element) {
+            $(element).parents('.form-group').append(error);
+        }
+    });
+
+    
     $("#send-pushnotification-menu-btn").on('click', function(){
         $("#push-notification-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
         $("#push-notification-progressbar-div").hide();
@@ -256,9 +346,32 @@
         $("#send-pushnotification-modal").modal("show");
     
     });
-    
+    //$("#send-pushnotification-menu-btn").click();
     var pushnotificationSSE = null;
     $("#pushnotification-send-btn").on('click', function(){
+
+        if(!$('#send-pushnotification-form').valid()) {
+            return;
+        }
+
+
+        if(!driverIds.length && !$("#all_drivers_push_check").is(':checked')) {
+            $("#send-pushnotification-modal").modal("hide");
+            showNotification('bg-black', 'Please Select atleast one driver from drivers list', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            return;
+        }
+
+
+        var formDataArray = $("#send-pushnotification-form").serializeArray();
+        var finalObj = {ids:driverIds.join('|')};
+        formDataArray.map(function(obj){
+            var temp = {};
+            temp[obj.name] =  obj.value;
+            finalObj = Object.assign(finalObj, temp);
+        });
+
+        console.log(finalObj)
+
         if(pushnotificationSSE) {
             pushnotificationSSE.close();
         }
@@ -267,7 +380,10 @@
         $("#push-notification-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
         $("#push-notification-progressbar-div").fadeIn();
     
-        pushnotificationSSE = new EventSource("{{url('admin/drivers/send-pushnotification')}}");
+
+        var sseUrl = "{{url('admin/drivers/send-pushnotification')}}"+objectToQueryString(finalObj);
+
+        pushnotificationSSE = new EventSource(sseUrl);
         pushnotificationSSE.onmessage = function(event) {
             console.log(event.data);
             var data = JSON.parse(event.data)
