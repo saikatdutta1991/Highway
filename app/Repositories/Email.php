@@ -6,6 +6,8 @@ use Mail;
 use App\Models\Setting;
 use App\Mail\WelcomeUser;
 use App\Mail\WelcomeDriver;
+use App\Mail\DriverAccountApproved;
+use App\Mail\DriverAccountDisapproved;
 
 class Email 
 {
@@ -116,6 +118,64 @@ class Email
 
 
 
+
+    /**
+     * send driver account approved email
+     */    
+    public function sendDriverAccountApproved($driver)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            $resCode = Mail::to($driver->email)->queue(new DriverAccountApproved($driver));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+
+        return true;
+        
+    }
+
+
+
+
+
+    /**
+     * send driver account disapproved email
+     */    
+    public function sendDriverAccountDisapproved($driver, $message)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            $resCode = Mail::to($driver->email)->queue(new DriverAccountDisapproved($driver, $message));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+
+        return true;
+        
+    }
 
 
 

@@ -28,17 +28,25 @@
         <div class="menu">
             <ul class="list">
                 <li class="header">MAIN NAVIGATION</li>
-                <li class="active">
+                <li class="@yield('dashboard_active')">
                     <a href="{{url('admin/dashboard')}}">
                     <i class="material-icons">home</i>
                     <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="active">
-                    <a href="{{url('admin/drivers')}}">
+                <li class="@yield('driver_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">drive_eta</i>
                     <span>Drivers</span>
                     </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('driver_list_active')">
+                            <a href="{{url('admin/drivers')}}">List View</a>
+                        </li>
+                        <li class="@yield('driver_map_active')">
+                            <a href="{{url('admin/drivers/map')}}">Map View</a>
+                        </li>
+                    </ul>
                 </li>
                 <!-- </li>
                 <li>

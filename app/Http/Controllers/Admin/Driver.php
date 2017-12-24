@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
+use App\Repositories\Email;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\Driver as DriverModel;
@@ -16,8 +17,9 @@ class Driver extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, DriverModel $driver)
+    public function __construct(Email $email, Api $api, DriverModel $driver)
     {
+        $this->email = $email;
         $this->api = $api;
         $this->driver = $driver;
     }
@@ -34,19 +36,28 @@ class Driver extends Controller
         
         try {
 
+
+            //if search_by & keyword presend then only apply filter
+            $search_by = $request->search_by;
+            $skwd = $request->skwd;
+            $location_name = $request->location_name;
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+
+            //check location name available then search by location
+            if($location_name != '' && $search_by == 'location' && $latitude != '' && $longitude != '') {
+                $drivers = $this->driver->getNearbyDriversBuilder($latitude, $longitude, $request->radius);
+            } else if($request->search_by != '' && $request->search_by != 'location' && $request->skwd != '') {
+                $drivers = $drivers->where($request->search_by, 'like', '%'.$request->skwd.'%')->orWhere('lname', 'like', '%'.$request->skwd.'%');
+            }
+
+
             //check if order_by is present
             $order_by = ($request->order_by == '' || $request->order_by == 'created_at') ? 'created_at' : $request->order_by;
             //if order(asc | desc) not present take desc default
             $order = ($request->order == '' || $request->order == 'desc') ? 'desc' : 'asc';
             $drivers = $drivers->orderBy($order_by, $order);
 
-
-            //if search_by & keyword presend then only apply filter
-            $search_by = $request->search_by;
-            $skwd = $request->skwd;
-            if($request->search_by != '' && $request->skwd != '') {
-                $drivers = $drivers->where($request->search_by, 'like', '%'.$request->skwd.'%')->orWhere('lname', 'like', '%'.$request->skwd.'%');
-            }
 
             $drivers = $drivers->paginate(100)->setPath('drivers');
 
@@ -55,7 +66,7 @@ class Driver extends Controller
             $drivers = $this->driver->take(100)->paginate(2)->setPath('drivers');
         }
         
-        return view('admin.drivers', compact('drivers', 'order_by', 'order', 'search_by', 'skwd'));
+        return view('admin.drivers', compact('drivers', 'order_by', 'order', 'search_by', 'skwd', 'location_name', 'latitude', 'longitude'));
 
     }
 
@@ -133,6 +144,91 @@ class Driver extends Controller
         return $response;
 
     }
+
+
+
+
+
+
+    /**
+     * approved or disapprove driver
+     */
+    public function approveDriver(Request $request)
+    {
+        $driver = $this->driver->find($request->driver_id);
+        $isApprove = intval($request->is_approve);
+        
+
+        //approve driver
+        if($isApprove == 1) {
+            $driver->is_approved = 1;
+            $driver->save();
+            
+            //send email driver has approved
+            $this->email->sendDriverAccountApproved($driver);
+            return $this->api->json(true, 'DRIVER_APPROVED', 'Driver approved');
+        }
+        //disapprove driver and take message(reason) from admin 
+        else if($isApprove == 0) {
+
+            $driver->is_approved = 0;
+            $driver->save();
+
+            //send email driver has disapproved
+            $message = $request->message;
+            $this->email->sendDriverAccountDisapproved($driver, $message);
+
+            return $this->api->json(true, 'DRIVER_DISAPPROVED', 'Driver disapproved');
+        }
+
+
+    }
+
+
+
+
+    /**
+     * show and search drivers on map
+     */
+    public function showDriversOnMap(Request $request)
+    {
+        return view('admin.drivers_on_map');
+    }
+
+
+
+
+
+
+    /**
+     * show driver and edit
+     */
+    public function showDriver(Request $request)
+    {
+        $driver = $this->driver->find($request->driver_id);
+        return view('admin.edit_driver', compact('driver'));
+    }
+
+
+
+
+    /**
+     * get nearby drivers
+     */
+    public function getNearbyDrivers(Request $request)
+    {
+        $cLat = $request->current_latitude;
+        $cLng = $request->current_longitude;
+        $radius = $request->has('radius') ? $request->radius : 100;
+        $drivers = $this->driver->getNearbyDriversBuilder($cLat, $cLng, $radius)
+        ->select(['id', 'latitude', 'longitude', 'vehicle_number', 'fname', 'lname', 'full_mobile_number'])->get();
+
+        return $this->api->json(true, 'DRIVERS', 'Drivers fetched', [
+            'drivers' => $drivers,
+        ]);
+
+    }
+
 
 
 

@@ -1,5 +1,7 @@
 @extends('admin.layouts.master')
 @section('title', 'Drivers')
+@section('driver_active', 'active')
+@section('driver_list_active', 'active')
 @section('top-header')
 <!-- Bootstrap Select Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
@@ -16,6 +18,10 @@
 {
     border-radius: 50%;
 }
+.edit-driver-btn
+{
+    text-decoration:none;
+}
 </style>
 @endsection
 @section('content')
@@ -30,7 +36,7 @@
         <div class="header">
             <h2>
                 LIST OF ALL DRIVERS
-                <small>You can see all drivers. You can sort by created, name, email etc. Filter drivers by Name, Email etc.</small>
+                <small>You can see all drivers. You can sort by created, name, email etc. Filter drivers by Name, Email etc. Click on driver name to edit</small>
             </h2>
             <ul class="header-dropdown m-r--5">
                 <li class="dropdown">
@@ -75,9 +81,21 @@
                             @if($order_by=="email" && $order =='desc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
                             </a>
                         </li>
+                        <li class="sort-by" data-order-by="rating" data-order="asc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">sort_by_alpha</i>Rating (Asc)
+                            @if($order_by=="rating" && $order =='asc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
+                        <li class="sort-by" data-order-by="rating" data-order="desc">
+                            <a href="javascript:void(0);">
+                            <i class="material-icons">filter_list</i>Rating (Desc)
+                            @if($order_by=="rating" && $order =='desc')<span class="glyphicon glyphicon-ok check-mark pull-right"></span>@endif
+                            </a>
+                        </li>
                         <li role="seperator" class="divider"></li>
                         <li><a href="javascript:void(0);" id="send-pushnotification-menu-btn">Send pushnotification</a></li>
-                        <li><a href="javascript:void(0);">Send email</a></li>
+                        <!-- <li><a href="javascript:void(0);">Send email</a></li> -->
                         <li role="seperator" class="divider"></li>
                         <li data-toggle="collapse" 
                             data-target="#search-form" 
@@ -89,7 +107,7 @@
             </ul>
         </div>
         <!-- Select -->
-        <div class="row clearfix collapse @if($search_by != '' && $skwd != '') in @endif" id="search-form">
+        <div class="row clearfix collapse @if($search_by != '' && $skwd != '' || ($search_by == 'location' && $location_name != '' ) ) in @endif" id="search-form">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <!-- <div class="header">
@@ -104,7 +122,11 @@
                                 <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="text" class="form-control" name="skwd" value="{{$skwd}}" autofocus onfocus="this.select()">
+                                            <input type="text" class="form-control" name="skwd" value="{{$skwd}}">
+                                            <input type="text" class="form-control" autocomplete="off" name="location_name" value="{{$location_name}}">
+                                            <input type="hidden" class="form-control" name="latitude" value="{{$latitude}}">
+                                            <input type="hidden" class="form-control" name="longitude" value="{{$longitude}}">
+                                            <input type="hidden" class="form-control" name="radius" value="500">
                                             <label class="form-label">Type your search keyword</label>
                                         </div>
                                     </div>
@@ -118,6 +140,7 @@
                                         <option value="vehicle_number" @if($search_by == "vehicle_number") selected @endif>Vehicle no.</option>
                                         <option value="created_at" @if($search_by == "created_at") selected @endif>Created time</option>
                                         <option value="id" @if($search_by == "id") selected @endif>Identification number</option>
+                                        <option value="location" @if($search_by == "location") selected @endif>Location</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2 text-center">
@@ -152,11 +175,11 @@
                             <th>NAME</th>
                             <th>EMAIL</th>
                             <th>MOBILE</th>
-                            <!-- <th>VEHICLE NO.</th> -->
+                            <th>VEHICLE NO.</th>
                             <th>RATING</th>
                             <th>REGISTERD</th>
                             <th>APPROVED</th>
-                            <th></th>
+                            <!-- <th></th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -166,20 +189,18 @@
                                 <input type="checkbox" id="checkbox-driver-id-{{$driver->id}}" class="filled-in chk-col-pink driver-list-id-checkbox" data-driver-id="{{$driver->id}}"/>
                                 <label for="checkbox-driver-id-{{$driver->id}}">{{$driver->id}}</label>
                             </th>
-                            <td>{{$driver->fname.' '.$driver->lname}}</td>
+                            <td><a data-toggle="tooltip" data-placement="left" title="Click to edit driver" href="javascript:void(0)" class="edit-driver-btn" data-driver-id="{{$driver->id}}">{{$driver->fname.' '.$driver->lname}}</a></td>
                             <td>{{$driver->email}}</td>
                             <td>{{$driver->full_mobile_number}}</td>
-                            <!-- <td>{{$driver->vehicle_number}}</td> -->
+                            <td>{{$driver->vehicle_number}}</td>
                             <td>{{$driver->rating}}</td>
                             <td>{{$driver->registeredOn($default_timezone)}}</td>
                             <td>
-                                @if($driver->is_approved == 1)
-                                <span class="label bg-green">Approved</span>
-                                @else
-                                <span class="label bg-blue">Pending</span>
-                                @endif
+                                <div class="switch approve-switch">
+                                    <label><input type="checkbox" data-driver-id="{{$driver->id}}" @if($driver->is_approved==1) checked @endif><span class="lever switch-col-deep-orange"></span></label>
+                                </div>                             
                             </td>
-                            <td>
+                            <!-- <td>
                                 <li class="dropdown" style="list-style: none;">
                                     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
                                     <i class="material-icons">more_vert</i>
@@ -189,7 +210,7 @@
                                         <li><a href="javascript:void(0);" class=" waves-effect waves-block">Edit</a></li>
                                     </ul>
                                 </li>
-                            </td>
+                            </td> -->
                         </tr>
                         @endforeach
                     </tbody>
@@ -265,6 +286,119 @@
 @endsection
 @section('bottom')
 <script>
+
+
+    /**
+        edit driver link click handler
+     */
+     $(".edit-driver-btn").on('click', function(){
+
+        var driverId = $(this).data('driver-id');
+        console.log(driverId)
+        var url = "{{url('admin/drivers')}}/"+driverId;
+        window.open(url, '_blank');
+
+     });
+
+
+    /**
+        approve or disapprove swtich handler
+    */
+
+    $(".approve-switch input[type='checkbox']").on('change', function(){
+
+        var csrf_token = "{{csrf_token()}}";
+        var driverId = $(this).data('driver-id');
+        var isApprove = $(this).is(":checked") ? 1 : 0;
+        var url = "{{url('admin/drivers')}}/"+driverId+'/approve/'+isApprove;
+        var curElem = this;
+        console.log(url)
+
+        if(isApprove) {        
+            
+            $.post(url, {_token:csrf_token}, function(response){
+                console.log(response)
+                if(response.success) {
+                    
+                    showNotification('bg-black', 'Driver approved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                   
+                }                 
+            }).fail(function(response) {
+                $(curElem).prop('checked', false);
+               
+                showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+               
+            });
+            
+        } 
+        //disapprove driver show alert message first
+        else {
+
+            swal({
+                title: "Are you really want to disappove this driver",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, disapprve",
+                cancelButtonText: "No, cancel please",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    
+                    swal({
+                        title: "Email Notification",
+                        text: "Driver will get email notificaiton",
+                        type: "input",
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        animation: "slide-from-top",
+                        inputPlaceholder: "Type reason for disapprove"
+                    }, function (inputValue) {
+                        if (inputValue === false) {
+                            $(curElem).prop('checked', true);
+                            return false;
+                        } 
+
+                        if (inputValue === "") {
+                            swal.showInputError("You must enter reason"); return false
+                        }
+                        
+                        $.post(url, {_token:csrf_token, message:inputValue}, function(response){
+                            console.log(response)
+                            if(response.success) {
+                                showNotification('bg-black', 'Driver disapproved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                            }
+                                        
+                        }).fail(function(response) {
+                            $(curElem).prop('checked', true);
+                            showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                        });
+                        console.log('disapprove clled')
+                        swal.close();
+
+                    });
+                } else {
+                    $(curElem).prop('checked', true);
+                }  
+
+
+            });
+
+
+
+        }
+ 
+       
+        
+    })
+
+
+
+
+
+
 
     var driverIds = [];
     var totalDriverIdCheckboxs = $(".driver-list-id-checkbox").length;
@@ -464,9 +598,55 @@
        
     
     });
+
+
+    $('#driver-search-form select[name="search_by"]').on('change', function(){
+
+        //if search by location show location autocomplete or skwd
+        console.log('searby changed', $(this).val())
+        var skwdElem = $('#driver-search-form input[name="skwd"]');
+        var lnElem = $('#driver-search-form input[name="location_name"]');
+        if($(this).val() == 'location') {
+            skwdElem.hide();
+            skwdElem.val('');
+            lnElem.show();
+            lnElem.focus().select();
+            lnElem.attr('placeholder', '');            
+        } else {
+            skwdElem.show().focus().select();            
+            lnElem.hide();
+            lnElem.val('')
+            $('#driver-search-form input[name="longitude"]').val('')
+            $('#driver-search-form input[name="location_name"]').val('');
+        }
+
+    }).change();
     
-    
+
+    function initAutocomplete()
+    {
+        console.log('initAutocomplete')
+        autocomplete = new google.maps.places.Autocomplete(document.querySelector('input[name="location_name"'));
+        autocomplete.addListener('place_changed', function(){
+            var place = autocomplete.getPlace();
+            try {
+                
+                currLatitude = place.geometry.location.lat();
+                currLongitude = place.geometry.location.lng();
+                document.querySelector('input[name="latitude"').value = currLatitude;
+                document.querySelector('input[name="longitude"').value = currLongitude;
+
+            } catch(e) {
+                document.querySelector('input[name="location_name"').value=''
+                showNotification('bg-black', 'Select loction from dropdow', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            }
+            
+            console.log('place chnged', place)
+        });
+    }
     
     
 </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key}}&libraries=places&callback=initAutocomplete"></script>
 @endsection

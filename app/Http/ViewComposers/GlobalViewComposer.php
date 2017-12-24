@@ -41,7 +41,9 @@ class GlobalViewComposer
         ->with('currency_symbol', $this->setting->get('currency_symbol'))
         ->with('website_company_name', $this->setting->get('website_company_name'))
         ->with('website_copyright', $this->setting->get('website_copyright'))
-        ->with('default_timezone', $this->setting->get('default_timezone'));
+        ->with('default_timezone', $this->setting->get('default_timezone'))
+        ->with('google_maps_api_key', $this->setting->get('google_maps_api_key'))
+        ->with('distance_unit', $this->setting->get('distance_unit'));
 
 
         $this->shareAdminDetails($view);
