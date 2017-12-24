@@ -112,6 +112,11 @@ io.on('connection', function (socket) {
 		&& socket.handshake.query.server_key
 		&& socket.handshake.query.server_key == config.SERVER_INTERNAL_COMMUNICATION_KEY) {
 		socket.auth = true;
+
+		socket_room = 'admin'.toUpperCase();
+		socket.join(socket_room);
+		console.log('room : ', socket_room);
+
 		console.log('from server connection');
 	} else {
 
@@ -221,6 +226,14 @@ io.on('connection', function (socket) {
 					});
 				});
 			}
+
+
+			//send location to admin
+			io.sockets.in('ADMIN').emit('driver_location_updated', {
+				latitude: data.latitude,
+				longitude: data.longitude,
+				driver_id: socket.auth_entity.id
+			});
 
 
 
