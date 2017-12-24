@@ -408,6 +408,11 @@ class RideRequest extends Controller
         ->orderBy('updated_at', 'desc')
         ->paginate(100);
 
+
+        $rideRequests->map(function($rideRequest){
+            $rideRequest->driver['profile_photo_url'] = $rideRequest->driver->profilePhotoUrl();
+        });
+
         return $this->api->json(true, 'RIDE_REQUEST_HISTORIES', 'Ride request histories', [
             'ride_requests'=> $rideRequests->items(),
             'paging' => [
