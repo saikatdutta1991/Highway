@@ -132,7 +132,7 @@
                     <h2>
                         <i class="material-icons" style="vertical-align:sub">account_circle</i>
                         DRIVER PROFILE
-                        @if($driver->is_approved == 0)
+                        @if($driver->is_approved == 1)
                         <i class="material-icons col-green" data-toggle="tooltip" data-placement="left" title="Driver approved" style="vertical-align: sub;">done_all</i>
                         @else
                         <i class="material-icons col-grey" data-toggle="tooltip" data-placement="left" title="Driver not approved" style="vertical-align: sub;">done_all</i>
