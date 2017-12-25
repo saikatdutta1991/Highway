@@ -478,7 +478,7 @@ class Driver extends Model
     {
         return [
             'vehicle_rc_photo_url' => url($this->vehicle_rc_photo_path.'/'.$this->vehicle_rc_photo_name),
-            'vehicle_contract_permit_photo_url' => url($this->vehicle_contract_permit_photo_path.'/'.$this->vehicle_contract_permit_photo_path),
+            'vehicle_contract_permit_photo_url' => url($this->vehicle_contract_permit_photo_path.'/'.$this->vehicle_contract_permit_photo_name),
             'vehicle_insurance_certificate_photo_url' => url($this->vehicle_insurance_certificate_photo_path.'/'.$this->vehicle_insurance_certificate_photo_name),
             'vehicle_fitness_certificate_photo_url' => url($this->vehicle_fitness_certificate_photo_path.'/'.$this->vehicle_fitness_certificate_photo_name),
             'vehicle_lease_agreement_photo_url' => url($this->vehicle_lease_agreement_photo_path.'/'.$this->vehicle_lease_agreement_photo_name),

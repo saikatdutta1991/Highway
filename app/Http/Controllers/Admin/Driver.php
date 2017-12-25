@@ -9,6 +9,7 @@ use Hash;
 use Illuminate\Http\Request;
 use App\Models\Driver as DriverModel;
 use Validator;
+use App\Models\VehicleType;
 
 
 class Driver extends Controller
@@ -17,8 +18,9 @@ class Driver extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Email $email, Api $api, DriverModel $driver)
+    public function __construct(VehicleType $vehicleType, Email $email, Api $api, DriverModel $driver)
     {
+        $this->vehicleType = $vehicleType;
         $this->email = $email;
         $this->api = $api;
         $this->driver = $driver;
@@ -205,8 +207,9 @@ class Driver extends Controller
      */
     public function showDriver(Request $request)
     {
+        $vehicleTypes = $this->vehicleType->allTypes();
         $driver = $this->driver->find($request->driver_id);
-        return view('admin.edit_driver', compact('driver'));
+        return view('admin.edit_driver', compact('driver', 'vehicleTypes'));
     }
 
 
