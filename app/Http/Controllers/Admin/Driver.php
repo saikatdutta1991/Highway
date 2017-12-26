@@ -164,6 +164,10 @@ class Driver extends Controller
         //approve driver
         if($isApprove == 1) {
             $driver->is_approved = 1;
+
+            //make driver avaialbe
+            $driver->is_available = 1;
+
             $driver->save();
             
             //send email driver has approved

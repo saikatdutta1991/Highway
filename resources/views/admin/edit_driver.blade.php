@@ -33,6 +33,8 @@
     #aniimated-thumbnials > div > a > img 
     {
         margin-bottom : 0px;
+        height: 200px;
+        width: 100%;
     }
     #aniimated-thumbnials > div
     {
