@@ -109,6 +109,8 @@ class Facebook extends Controller
 
             return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
                 'accesss_token' => $accessToken,
+                'currency_code' => $this->setting->get('currency_code'),
+                'currency_symbol' => $this->setting->get('currency_symbol'),
                 'driver' => $driver
             ]);
 
@@ -168,6 +170,8 @@ class Facebook extends Controller
 
             return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
                 'accesss_token' => $accessToken,
+                'currency_code' => $this->setting->get('currency_code'),
+                'currency_symbol' => $this->setting->get('currency_symbol'),
                 'driver' => $driver
             ]);
         }
@@ -230,6 +234,8 @@ class Facebook extends Controller
        
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
             'driver' => $driver
         ]);
 

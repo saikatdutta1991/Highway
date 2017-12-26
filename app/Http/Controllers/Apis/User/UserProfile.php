@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use Hash;
 use Illuminate\Http\Request;
+use App\Models\Setting;
 use Validator;
 use App\Models\User;
 
@@ -16,8 +17,9 @@ class UserProfile extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user)
+    public function __construct(Setting $setting, Api $api, User $user)
     {
+        $this->setting = $setting;
         $this->api = $api;
         $this->user = $user;
     }
@@ -35,7 +37,9 @@ class UserProfile extends Controller
         $user->is_old_password_required = $user->password == '' ? false : true;
 
         return $this->api->json(true, 'PROFILE', 'Profile fetched', [
-            'user' => $user
+            'user' => $user,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
         ]);
 
     }
@@ -154,7 +158,9 @@ class UserProfile extends Controller
         $user->is_old_password_required = $user->password == '' ? false : true;
 
         return $this->api->json(true, 'PROFILE_UPDATED', 'Profile updated successfully.', [
-            'user' => $user
+            'user' => $user,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
         ]);
 
     }

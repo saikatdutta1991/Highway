@@ -9,6 +9,7 @@ use Hash;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Driver;
+use App\Models\Setting;
 use App\Models\VehicleType;
 
 class DriverProfile extends Controller
@@ -17,8 +18,9 @@ class DriverProfile extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, Driver $driver, VehicleType $vehicleType)
+    public function __construct(Setting $setting, Api $api, Driver $driver, VehicleType $vehicleType)
     {
+        $this->setting = $setting;
         $this->api = $api;
         $this->driver = $driver;
         $this->vehicleType = $vehicleType;
@@ -40,7 +42,9 @@ class DriverProfile extends Controller
 
 
         return $this->api->json(true, 'PROFILE', 'Profile fetched', [
-            'driver' => $driver
+            'driver' => $driver,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
         ]);
 
     }
@@ -227,7 +231,9 @@ class DriverProfile extends Controller
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
 
         return $this->api->json(true, 'PROFILE_UPDATED', 'Profile updated successfully.', [
-            'driver' => $driver
+            'driver' => $driver,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
         ]);
 
     }

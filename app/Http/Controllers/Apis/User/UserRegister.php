@@ -9,6 +9,7 @@ use App\Repositories\Email;
 use Hash;
 use App\Repositories\Otp;
 use Illuminate\Http\Request;
+use App\Models\Setting;
 use Validator;
 use App\Models\User;
 
@@ -18,8 +19,9 @@ class UserRegister extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user, Otp $otp, Email $email)
+    public function __construct(Setting $setting, Api $api, User $user, Otp $otp, Email $email)
     {
+        $this->setting = $setting;
         $this->api = $api;
         $this->user = $user;
         $this->otp = $otp;
@@ -112,6 +114,8 @@ class UserRegister extends Controller
        
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
             'user' => $user
         ]);
 
@@ -180,6 +184,8 @@ class UserRegister extends Controller
 
         return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
             'accesss_token' => $accessToken,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
             'user' => $user
         ]);
 

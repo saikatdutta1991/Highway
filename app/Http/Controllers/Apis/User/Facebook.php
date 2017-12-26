@@ -105,6 +105,8 @@ class Facebook extends Controller
 
             return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
                 'accesss_token' => $accessToken,
+                'currency_code' => $this->setting->get('currency_code'),
+                'currency_symbol' => $this->setting->get('currency_symbol'),
                 'user' => $user
             ]);
 
@@ -157,6 +159,8 @@ class Facebook extends Controller
 
             return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
                 'accesss_token' => $accessToken,
+                'currency_code' => $this->setting->get('currency_code'),
+                'currency_symbol' => $this->setting->get('currency_symbol'),
                 'user' => $user
             ]);
         }
@@ -211,6 +215,8 @@ class Facebook extends Controller
         $this->email->sendNewUserWelcomeEmail($user);
         return $this->api->json(true, 'REGISTER_SUCCESS', 'You have registered successfully.', [
             'accesss_token' => $accessToken,
+            'currency_code' => $this->setting->get('currency_code'),
+            'currency_symbol' => $this->setting->get('currency_symbol'),
             'user' => $user
         ]);
 
