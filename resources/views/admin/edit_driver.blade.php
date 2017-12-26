@@ -455,6 +455,10 @@
                 },
                 success : function(data) {
                     if(!data.success) {
+                        $("#uploadPhoto").val('')
+                        $("#custom-photo-selcet-text").val('')
+                        $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+                        $("#photo-upload-progress-status").text('0%');
                         showNotification('bg-black', data.data.photo, 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
                     } else {
     
