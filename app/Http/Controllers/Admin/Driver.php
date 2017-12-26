@@ -238,5 +238,36 @@ class Driver extends Controller
 
 
 
+    /**
+     * change driver photo
+     */
+    public function changeDriverPhoto(Request $request)
+    {
+        $driver = $this->driver->find($request->driver_id);
+        //this checking wont happend because admin will not hack the website
+        if(!$driver) {return;}
+
+        $validator = \Validator::make($request->all(), [
+            'photo' => 'required|image|mimes:jpg,jpeg,png',
+        ]);
+
+        if($validator->fails()) {
+            $e = $validator->errors();
+            $msg = [];
+            ($e->has('photo')) ? $msg['photo'] = $e->get('photo')[0] : '';
+            return $this->api->json(false, 'PHOTO_VALIDATION_ERROR', 'Photo validation error', $msg);
+        }
+
+        $driver->savePhoto($request->photo, 'driver_');
+        $driver->save();
+
+        return $this->api->json(true, 'PHOTO_CHANGED', 'Photo changed successfully', [
+            'profile_photo_url' => $driver->profilePhotoUrl()
+        ]);
+
+    }
+
+
+
 
 }

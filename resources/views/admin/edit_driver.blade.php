@@ -12,23 +12,23 @@
 <style>
     .profile-photo 
     {
-    width: 200px;
-    height: 200px;
-    /* border-radius: 50%; */
-    border: 2px solid #fb483a;
+        width: 200px;
+        height: 200px;
+        /* border-radius: 50%; */
+        border: 2px solid #fb483a;
     }
     .my-custom-class-for-label 
     {
-    display:inline-block;
-    text-align:center;
-    border: 1px solid #eb3a44;
-    border-radius: 5px;
-    background: #fee1d7;
-    text-align: center;
-    line-height: 20px;
-    font-weight: bold;
-    font-size: 14px;
-    color: green;
+        display:inline-block;
+        text-align:center;
+        border: 1px solid #eb3a44;
+        border-radius: 5px;
+        background: #fee1d7;
+        text-align: center;
+        line-height: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        color: green;
     }
     #aniimated-thumbnials > div > a > img 
     {
@@ -134,11 +134,8 @@
                     <h2>
                         <i class="material-icons" style="vertical-align:sub">account_circle</i>
                         DRIVER PROFILE
-                        @if($driver->is_approved == 1)
-                        <i class="material-icons col-green" data-toggle="tooltip" data-placement="left" title="Driver approved" style="vertical-align: sub;">done_all</i>
-                        @else
-                        <i class="material-icons col-grey" data-toggle="tooltip" data-placement="left" title="Driver not approved" style="vertical-align: sub;">done_all</i>
-                        @endif
+                        <i class="material-icons col-green" style="@if($driver->is_approved == 0) display:none @endif" id="driver-approve-icon" data-toggle="tooltip" data-placement="left" title="Driver approved" style="vertical-align: sub;">done_all</i>
+                        <i class="material-icons col-grey" style="@if($driver->is_approved == 1) display:none @endif" id="driver-disapprove-icon" data-toggle="tooltip" data-placement="left" title="Driver not approved" style="vertical-align: sub;">done_all</i>
                     </h2>
                     <small>Here you can view, edit, update driver details</small>
                     <ul class="header-dropdown m-r--5">
@@ -148,12 +145,9 @@
                             </a>
                             <ul class="dropdown-menu pull-right">
                                 <li><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-deep-orange">save</i> Save Profile</a></li>
-                                @if($driver->is_approved == 0)
-                                <li><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-green">verified_user</i> Approve</a></li>
-                                @else
-                                <li><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-red">verified_user</i> Disapprove</a></li>
-                                @endif
-                                <li><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-pink">file_upload</i> Change Picture</a></li>
+                                <li data-driver-id="{{$driver->id}}" style="@if($driver->is_approved == 1) display:none !important @endif" data-is-approve = "1" class="approve-switch"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-green">verified_user</i> Approve</a></li>
+                                <li data-driver-id="{{$driver->id}}" style="@if($driver->is_approved == 0) display:none !important @endif" data-is-approve = "0" class="approve-switch"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-red">verified_user</i> Disapprove</a></li>
+                                <li id="profile-photo-upload-menu-item"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-pink">file_upload</i> Change Picture</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -162,7 +156,7 @@
                     <div class="alert bg-green" style="display:none" id="profile-update-alert"></div>
                     <div class="row clearfix">
                         <div class="col-sm-4">
-                            <img src="{{$driver->profilePhotoUrl()}}" class="img-responsive thumbnail" >
+                            <img id="profile-img" src="{{$driver->profilePhotoUrl()}}" class="img-responsive thumbnail" >
                             <i class="material-icons col-green" style="position: absolute;top: -10px;border-radius: 50%;background: white;" data-toggle="tooltip" data-placement="left" title="Avaiable">fiber_manual_record</i>
                         </div>
                         <div class="col-sm-4">
@@ -293,7 +287,7 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_insurance_certificate_photo_url']}}">
                             </a>
                             <small>Vehicle Insurance Certificate photo</small>
-                        </div>                        
+                        </div>
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_fitness_certificate_photo_url']}}" data-sub-html="Vehicle Fitness Certificate Photo">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_fitness_certificate_photo_url']}}">
@@ -363,6 +357,47 @@
     </div>
 </div>
 </div>
+<div class="modal fade" id="profile-photo-upload-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">UPLOAD DRIVER PHOTO</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="upload-photo-form" method="POST" enctype="multipart/form-data">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">
+                                <i class="material-icons col-pink" id="custom-photo-selcet-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Click icon and select photo">add_a_photo</i>
+                                </span>
+                                <div class="form-line">
+                                    <input id="uploadPhoto" type="file" style="display:none"/>
+                                    <input type="text" id="custom-photo-selcet-text" class="form-control" placeholder="Click icon and select photo">
+                                </div>
+                                <span class="input-group-addon">
+                                <i class="material-icons col-pink" id="custom-photo-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="" id="photo-upload-progressbar-div">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                    <small>Photo upload progress status: <span id="photo-upload-progress-status">0%</span><small>
+                </div>
+            </div>
+            <div class="modal-footer">               
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsecti
 @endsection
 @section('bottom')
 <!-- Dropzone Plugin Js -->
@@ -371,6 +406,205 @@
 <script src="{{url('admin_assets/admin_bsb')}}/plugins/light-gallery/js/lightgallery-all.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 <script>
+    $(function () {
+    
+        /**
+            upload profile photo
+         */
+        $("#custom-photo-upload-btn").on('click', function(){
+    
+            
+            if(!$("#uploadPhoto")[0].files.length) {
+                showNotification('bg-black', 'Select photo first', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+    
+            $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#photo-upload-progress-status").text('0%');
+    
+            var form_data = new FormData();
+         form_data.append("photo", $("#uploadPhoto")[0].files[0])
+         form_data.append("_token", "{{csrf_token()}}")
+    
+            var url = "{{url('admin/drivers')}}/{{$driver->id}}/change-photo";  
+    
+            console.log(url)
+    
+            $.ajax({
+                url: url,
+                cache: false,
+                async: true,
+                contentType: false,
+                processData:false,
+                data: form_data,                 
+                type: 'POST',
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+    
+                            var percentage = Math.floor((e.loaded / e.total) * 100)
+    
+                            $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', percentage+'%')
+                            $("#photo-upload-progress-status").text(percentage+'%');
+                            console.log(percentage);
+                        }
+                    };
+                    return xhr;
+                },
+                success : function(data) {
+                    if(!data.success) {
+                        showNotification('bg-black', data.data.photo, 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                    } else {
+    
+                        $("#profile-img").attr('src', '')
+                        $("#profile-img").attr('src', data.data.profile_photo_url)
+    
+                        setTimeout(function(){
+                            $("#profile-photo-upload-modal").modal('hide')
+                            swal("Driver profile photo changed successfully", "", "success");
+                        }, 1000)
+                    }
+                },
+                error : function(){
+                    $("#uploadPhoto").val('')
+                    $("#custom-photo-selcet-text").val('')
+                    showNotification('bg-black', 'Unknown server error', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                }
+            })
+    
+    
+        })
+    
+    
+        $("#profile-photo-upload-menu-item").on('click', function(){
+            $("#uploadPhoto").val('')
+            $("#custom-photo-selcet-text").val('')
+            $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#photo-upload-progress-status").text('0%');
+            $("#profile-photo-upload-modal").modal('show')
+    
+        });
+    
+        $("#custom-photo-selcet-btn").on('click', function(){
+            $("#uploadPhoto").trigger('click');
+        });
+    
+        $("#uploadPhoto").on('change', function(e){
+            $("#custom-photo-selcet-text").val(e.target.files[0].name);     
+            $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#photo-upload-progress-status").text('0%');       
+        })
+    
+    
+    
+        
+        $(".approve-switch").on('click', function(){
+    
+            var csrf_token = "{{csrf_token()}}";
+            var driverId = $(this).data('driver-id');
+            var isApprove = $(this).data('is-approve')
+            var url = "{{url('admin/drivers')}}/"+driverId+'/approve/'+isApprove;
+            var curElem = this;
+            console.log(url)
+    
+            if(isApprove) {        
+            
+            $.post(url, {_token:csrf_token}, function(response){
+                console.log(response)
+                if(response.success) {
+                    
+                    showNotification('bg-black', 'Driver approved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    $("#driver-approve-icon").show();
+                    $("#driver-disapprove-icon").hide();
+                    $(".approve-switch[data-is-approve='1']").attr('style', 'display:none !important')
+                    $(".approve-switch[data-is-approve='0']").show();
+                }                 
+            }).fail(function(response) {
+                $(curElem).prop('checked', false);
+               
+                showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+               
+            });
+            
+        } 
+        //disapprove driver show alert message first
+        else {
+    
+            swal({
+                title: "Are you really want to disappove this driver",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, disapprve",
+                cancelButtonText: "No, cancel please",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    
+                    swal({
+                        title: "Email Notification",
+                        text: "Driver will get email notificaiton",
+                        type: "input",
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        animation: "slide-from-top",
+                        inputPlaceholder: "Type reason for disapprove"
+                    }, function (inputValue) {
+                        if (inputValue === false) {
+                            $(curElem).prop('checked', true);
+                            return false;
+                        } 
+    
+                        if (inputValue === "") {
+                            swal.showInputError("You must enter reason"); return false
+                        }
+                        
+                        $.post(url, {_token:csrf_token, message:inputValue}, function(response){
+                            console.log(response)
+                            if(response.success) {
+                                showNotification('bg-black', 'Driver disapproved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                                $("#driver-approve-icon").hide();
+                                $("#driver-disapprove-icon").show();
+                                $(".approve-switch[data-is-approve='1']").show();
+                                $(".approve-switch[data-is-approve='0']").attr('style', 'display:none !important')
+                            }
+                                        
+                        }).fail(function(response) {
+                            $(curElem).prop('checked', true);
+                            showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                        });
+                        console.log('disapprove clled')
+                        swal.close();
+    
+                    });
+                } else {
+                    $(curElem).prop('checked', true);
+                }  
+    
+    
+            });
+    
+    
+    
+        }
+    
+    
+    
+        });
+    
+    
+    });
+    
+    
+    
+    
+    
+    
+    
     var socket = null;
     socket = io('{{config("socket_server.socket_url")}}?server_key={{config("socket_server.server_internal_communication_key")}}');
     socket.on('connect', function(){

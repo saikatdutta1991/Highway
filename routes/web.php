@@ -47,6 +47,7 @@ Route::group(['prefix' => 'admin'], function(){
         
         Route::post('drivers/{driver_id}/approve/{is_approve}', 'Admin\Driver@approveDriver');
         Route::get('drivers/{driver_id}', 'Admin\Driver@showDriver');
+        Route::post('drivers/{driver_id}/change-photo', 'Admin\Driver@changeDriverPhoto');
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 
