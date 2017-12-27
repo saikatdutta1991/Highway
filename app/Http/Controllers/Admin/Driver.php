@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Driver as DriverModel;
 use Validator;
 use App\Models\VehicleType;
+use App\Models\Setting;
 
 
 class Driver extends Controller
@@ -18,8 +19,9 @@ class Driver extends Controller
     /**
      * init dependencies
      */
-    public function __construct(VehicleType $vehicleType, Email $email, Api $api, DriverModel $driver)
+    public function __construct(Setting $setting, VehicleType $vehicleType, Email $email, Api $api, DriverModel $driver)
     {
+        $this->setting = $setting;
         $this->vehicleType = $vehicleType;
         $this->email = $email;
         $this->api = $api;
@@ -265,6 +267,99 @@ class Driver extends Controller
             'profile_photo_url' => $driver->profilePhotoUrl()
         ]);
 
+    }
+
+
+
+    /**
+     * update driver profile
+     */
+    public function updateDriverProfile(Request $request)
+    {
+
+        $driver = $this->driver->find($request->driver_id);
+        //this checking wont happend because admin will not hack the website
+        if(!$driver) {return;}
+
+        
+        /**
+         * append + before moblie number if present
+         */
+        if($request->has('mobile_number')) {
+            $request->request->add(['mobile_number' => '+'.str_replace('+', '', $request->mobile_number)]);
+        }
+        
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|max:128',
+            'last_name' => 'required|max:128',
+            'email' => 'required|email|max:128|unique:'.$this->driver->getTable().',email,'.$driver->id,
+            'mobile_number' => 'required|regex:/^[+][0-9]+[-][0-9]+$/',
+            'service_type' => 'required|in:'.implode(',', $this->vehicleType->allCodes()),
+            'vehicle_number' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            
+            $messages = [];
+            foreach($validator->errors()->getMessages() as $attr => $errArray) {
+                $messages[$attr] = $errArray[0];
+            }
+            
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $messages);
+
+        }
+
+
+        /**
+         * check mobile number
+         */
+        list($country_code, $mobile_number) = explode('-', $request->mobile_number);
+        if($this->driver->where('full_mobile_number', $country_code.$mobile_number)->where('id', '<>', $driver->id)->exists()) {
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', [
+                'mobile_number' => 'This mobile number already used by another driver'
+            ]);
+        }
+
+
+        $driver->fname = ucfirst(trim($request->first_name));
+        $driver->lname = ucfirst(trim($request->last_name));
+        $driver->email = trim($request->email);
+        $driver->country_code = $country_code;
+        $driver->mobile_number = $mobile_number;
+        $driver->full_mobile_number = $driver->fullMobileNumber();
+        $driver->vehicle_type = $request->service_type;
+        $driver->vehicle_number = strtoupper($request->vehicle_number);
+
+        $driver->save();
+
+        return $this->api->json(true, 'UPDATED', 'Profile updated successfully', [
+            'driver' => $driver
+        ]);
+
+
+    }
+
+
+
+
+    /**
+     * reset driver password
+     * send email and sms with new password
+     */
+    public function resetDriverPassword(Request $request)
+    {
+        $driver = $this->driver->find($request->driver_id);
+        $newPassword = rand(100000, 999999);
+        $driver->password = \Hash::make($request->password);
+        $driver->save();
+
+        //send password via sms
+        $driver->sendPasswordResetSms($newPassword);
+        //send passwrod via email
+        $driver->sendDriverPasswordResetAdmin($newPassword);
+
+        return $this->api->json(true, 'PASSWORD_RESET', 'Password reset successfully.');
+      
     }
 
 

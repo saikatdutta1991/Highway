@@ -220,10 +220,7 @@ io.on('connection', function (socket) {
 				helper.getRideRequest(data.ride_request_id, socket.auth_entity.id, function (err, result) {
 					if (err && !result.length) return;
 					console.log('ride request fetched', result);
-					io.sockets.in('USER_' + result[0].user_id).emit('driver_location_updated', {
-						latitude: data.latitude,
-						longitude: data.longitude
-					});
+					io.sockets.in('USER_' + result[0].user_id).emit('driver_location_updated', data);
 				});
 			}
 

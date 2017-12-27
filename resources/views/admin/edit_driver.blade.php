@@ -12,33 +12,33 @@
 <style>
     .profile-photo 
     {
-        width: 200px;
-        height: 200px;
-        /* border-radius: 50%; */
-        border: 2px solid #fb483a;
+    width: 200px;
+    height: 200px;
+    /* border-radius: 50%; */
+    border: 2px solid #fb483a;
     }
     .my-custom-class-for-label 
     {
-        display:inline-block;
-        text-align:center;
-        border: 1px solid #eb3a44;
-        border-radius: 5px;
-        background: #fee1d7;
-        text-align: center;
-        line-height: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        color: green;
+    display:inline-block;
+    text-align:center;
+    border: 1px solid #eb3a44;
+    border-radius: 5px;
+    background: #fee1d7;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    color: green;
     }
     #aniimated-thumbnials > div > a > img 
     {
-        margin-bottom : 0px;
-        height: 200px;
-        width: 100%;
+    margin-bottom : 0px;
+    height: 200px;
+    width: 100%;
     }
     #aniimated-thumbnials > div
     {
-        text-align : center;
+    text-align : center;
     }
 </style>
 @endsection
@@ -144,94 +144,101 @@
                             <i class="material-icons">more_vert</i>
                             </a>
                             <ul class="dropdown-menu pull-right">
-                                <li><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-deep-orange">save</i> Save Profile</a></li>
+                                <li data-driver-id="{{$driver->id}}" id="profile-update-menu-item"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons">save</i> Save profile</a></li>
                                 <li data-driver-id="{{$driver->id}}" style="@if($driver->is_approved == 1) display:none !important @endif" data-is-approve = "1" class="approve-switch"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-green">verified_user</i> Approve</a></li>
                                 <li data-driver-id="{{$driver->id}}" style="@if($driver->is_approved == 0) display:none !important @endif" data-is-approve = "0" class="approve-switch"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-red">verified_user</i> Disapprove</a></li>
-                                <li id="profile-photo-upload-menu-item"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-pink">file_upload</i> Change Picture</a></li>
+                                <li id="profile-photo-upload-menu-item"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons">file_upload</i> Change picture</a></li>
+                                <li id="password-reset-menu-item"><a href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">https</i> Reset password</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
                 <div class="body">
-                    <div class="alert bg-green" style="display:none" id="profile-update-alert"></div>
+                    <div class="alert bg-pink" style="display:none" id="profile-update-alert"></div>
                     <div class="row clearfix">
                         <div class="col-sm-4">
                             <img id="profile-img" src="{{$driver->profilePhotoUrl()}}" class="img-responsive thumbnail" >
                             <i class="material-icons col-green" style="position: absolute;top: -10px;border-radius: 50%;background: white;" data-toggle="tooltip" data-placement="left" title="Avaiable">fiber_manual_record</i>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" placeholder="Frist Name" name="first_name" value="{{$driver->fname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                        <form id="driver-profile-form">
+                            {!! csrf_field() !!}
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">perm_identity</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" placeholder="Frist Name" name="first_name" value="{{$driver->fname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" placeholder="Last Name"  name="last_name" value="{{$driver->lname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" placeholder="Last Name"  name="last_name" value="{{$driver->lname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <i class="material-icons">email</i>
-                                </span>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" placeholder="Email" name="email" value="{{$driver->email}}">
-                                </div>
-                                <span class="input-group-addon">
-                                @if($driver->is_email_verified)
-                                <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Email verified">done_all</i>
-                                @else 
-                                <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Email not verified">done_all</i>
-                                @endif
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <i class="material-icons">phone</i>
-                                </span>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="mobile_number" value="{{$driver->country_code}}-{{$driver->mobile_number}}"placeholder="Mobile Number" data-toggle="tooltip" data-placement="left" title="+[countrycode][-][mobileno] eg: +91-9093034785">
-                                </div>
-                                <span class="input-group-addon">
-                                @if($driver->is_mobile_number_verified)
-                                <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Mobile number verified">done_all</i>
-                                @else 
-                                <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Mobile number not verified">done_all</i>
-                                @endif
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <i class="material-icons">view_headline</i>
-                                </span>
-                                <div class="form-line">
-                                    <input type="text" class="form-control" placeholder="Vehicle Number" name="vehicle_number" value="{{$driver->vehicle_number}}" onkeyup="this.value=this.value.toUpperCase()">
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">email</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" placeholder="Email" name="email" value="{{$driver->email}}">
+                                    </div>
+                                    <span class="input-group-addon">
+                                    @if($driver->is_email_verified)
+                                    <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Email verified">done_all</i>
+                                    @else 
+                                    <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Email not verified">done_all</i>
+                                    @endif
+                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                <i class="material-icons">directions_bus</i>    
-                                </span>
-                                <div class="form-line">
-                                    <select class="form-control show-tick">
-                                        <option value="">-- Saervice Type --</option>
-                                        @foreach($vehicleTypes as $type)
-                                        <option @if($type['code'] == $driver->vehicle_type) selected @endif value="{{$type['code']}}">{{$type['name']}}</option>
-                                        @endforeach
-                                    </select>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">phone</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="mobile_number" value="{{$driver->country_code}}-{{$driver->mobile_number}}"placeholder="Mobile Number" data-toggle="tooltip" data-placement="left" title="+[countrycode][-][mobileno] eg: +91-9093034785">
+                                    </div>
+                                    <span class="input-group-addon">
+                                    @if($driver->is_mobile_number_verified)
+                                    <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Mobile number verified">done_all</i>
+                                    @else 
+                                    <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Mobile number not verified">done_all</i>
+                                    @endif
+                                    </span>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">view_headline</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" placeholder="Vehicle Number" name="vehicle_number" value="{{$driver->vehicle_number}}" onkeyup="this.value=this.value.toUpperCase()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">directions_bus</i>    
+                                    </span>
+                                    <div class="form-line">
+                                        <select class="form-control show-tick" name="service_type">
+                                            <option value="">-- Saervice Type --</option>
+                                            @foreach($vehicleTypes as $type)
+                                            <option @if($type['code'] == $driver->vehicle_type) selected @endif value="{{$type['code']}}">{{$type['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -373,7 +380,7 @@
                                 </span>
                                 <div class="form-line">
                                     <input id="uploadPhoto" type="file" style="display:none"/>
-                                    <input type="text" id="custom-photo-selcet-text" class="form-control" placeholder="Click icon and select photo">
+                                    <input type="text" id="custom-photo-selcet-text" class="form-control" placeholder="Click icon and select photo" disabled>
                                 </div>
                                 <span class="input-group-addon">
                                 <i class="material-icons col-pink" id="custom-photo-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
@@ -406,7 +413,89 @@
 <script src="{{url('admin_assets/admin_bsb')}}/plugins/light-gallery/js/lightgallery-all.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 <script>
+    var driverId = {{$driver->id}};
+    var csrf_token = "{{csrf_token()}}";
     $(function () {
+    
+    
+        /**
+         * password reset
+         */
+        $("#password-reset-menu-item").on('click', function(){
+    
+            swal({
+                title: "Are you really want to reset password?",
+                text: "New password will be sent to driver via emal and sms",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, reset",
+                cancelButtonText: "No, cancel please",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    
+                    var url = "{{url('admin/drivers')}}/"+driverId+'/reset-password';
+    
+                    $.post(url, {_token:csrf_token}, function(response){
+                        console.log(response)
+                        setTimeout(function(){
+                            swal("Driver password reset. New password also sent via email and sms.", "", "success");
+                        }, 1000)
+                                    
+                    }).fail(function(response) {
+                        showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    });
+            
+                    swal.close();
+    
+    
+                } 
+    
+            });
+    
+    
+        });
+    
+    
+    
+    
+    
+        /**
+         * profile update menu item
+         */
+        $("#profile-update-menu-item").on('click', function(){
+    
+            var driverId = $(this).data('driver-id');
+            var url = "{{url('admin/drivers')}}/"+driverId+'/update';
+            var data = $("#driver-profile-form").serializeArray();
+    
+            console.log(url, data)
+    
+            $("#profile-update-alert").hide()
+    
+            $.post(url, data, function(response){
+                console.log(response)
+                if(response.success) {
+                    $("#profile-update-alert").hide()
+                    showNotification('bg-black', 'Driver profile updated successfully.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    return;
+                } 
+    
+                //failed 
+                $("#profile-update-alert").text(response.data[Object.keys(response.data)[0]]).show()
+    
+            })
+            .fail(function(response) {
+                showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            });
+    
+        });
+    
+    
+    
+    
     
         /**
             upload profile photo
@@ -423,8 +512,8 @@
             $("#photo-upload-progress-status").text('0%');
     
             var form_data = new FormData();
-         form_data.append("photo", $("#uploadPhoto")[0].files[0])
-         form_data.append("_token", "{{csrf_token()}}")
+            form_data.append("photo", $("#uploadPhoto")[0].files[0])
+            form_data.append("_token", "{{csrf_token()}}")
     
             var url = "{{url('admin/drivers')}}/{{$driver->id}}/change-photo";  
     
@@ -641,7 +730,7 @@
     {
         
         $.getScript("https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key}}&libraries=places", function(){
-            $.getScript("https://cdn.sobekrepository.org/includes/gmaps-markerwithlabel/1.9.1/gmaps-markerwithlabel-1.9.1.min.js", function(){
+            $.getScript("{{url('admin_assets/js')}}/gmaps-markerwithlabel-1.9.1.min.js", function(){
                 initMap();
             })
             

@@ -179,4 +179,33 @@ class Email
 
 
 
+
+    /**
+     * send driver password reset by admin
+     */
+    public function sendDriverPasswordResetAdmin($driver, $newPassword)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            $resCode = Mail::to($driver->email)->queue(new \App\Mail\DriverPasswordResetAdmin($driver, $newPassword));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+
+        return true;
+        
+    }
+
+
 }

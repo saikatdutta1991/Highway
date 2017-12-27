@@ -670,4 +670,41 @@ class Driver extends Model
         return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
     }
 
+
+
+
+    /**
+     * send sms
+     */
+    public function sendSms($message, &$error = null)
+    {
+       return app('App\Repositories\Otp')->sendMessage($this->country_code, $this->mobile_number, $message, $error);
+    }
+
+
+
+    /**
+     * send password reset sms
+     */
+    public function sendPasswordResetSms($newPassword)
+    {
+        $websiteName = app('App\Models\Setting')->get('website_name');
+        $smsText = <<<SMS_TEXT
+        Your {$websiteName} password has been reset by admin. New password is : {$newPassword}
+        \nPlease change your password after login.
+SMS_TEXT;
+        $this->sendSms($smsText);
+    }
+
+
+
+    /**
+     * send password reset email
+     */
+    public function sendDriverPasswordResetAdmin($newPassword)
+    {
+        return app('App\Repositories\Email')->sendDriverPasswordResetAdmin($this, $newPassword);
+    }
+
+
 }
