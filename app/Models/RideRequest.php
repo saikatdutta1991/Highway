@@ -249,4 +249,28 @@ class RideRequest extends Model
 
 
 
+
+    /**
+     * driver total money payments earned
+     */
+    public function revenueGenerated($driverId, $paymentModes = null)
+    {
+        $rritn = app('App\Models\RideRequestInvoice')->getTable();
+
+        $queryBuilder = $this->join($rritn, $this->table.'.ride_invoice_id', '=', $rritn.'.id')
+        ->where($this->table.'.driver_id', $driverId)
+        ->where($this->table.'.ride_status', self::COMPLETED);
+
+        if(is_array($paymentModes)) {
+            $queryBuilder =  $queryBuilder->whereIn($this->table.'.payment_mode', $paymentModes);
+        } else if(is_string($paymentModes)) {
+            $queryBuilder =  $queryBuilder->where($this->table.'.payment_mode', $paymentModes);
+        }
+
+        return $queryBuilder->sum($rritn.'.total');
+
+    }
+
+
+
 }

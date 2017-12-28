@@ -55,7 +55,7 @@
                 </div>
                 <div class="content">
                     <div class="text">TOTAL REQUESTS</div>
-                    <div class="number count-to" data-from="0" data-to="1" data-speed="1000" data-fresh-interval="20">1</div>
+                    <div class="number count-to" data-from="0" data-to="{{$totalDriverRequests}}" data-speed="1000" data-fresh-interval="20">1</div>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="content">
                     <div class="text">USER CANCELED</div>
-                    <div class="number count-to" data-from="0" data-to="4" data-speed="1000" data-fresh-interval="20">4</div>
+                    <div class="number count-to" data-from="0" data-to="{{$totalUserCanceledRequests}}" data-speed="1000" data-fresh-interval="20">4</div>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="content">
                     <div class="text">DRIVER CANCELED</div>
-                    <div class="number count-to" data-from="0" data-to="2" data-speed="1000" data-fresh-interval="20">2</div>
+                    <div class="number count-to" data-from="0" data-to="{{$totalDriverCanceledRequests}}" data-speed="1000" data-fresh-interval="20">2</div>
                 </div>
             </div>
         </div>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="content">
                     <div class="text">CASH PAYMENTS</div>
-                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number">{{$totalCashPaymentEarned}}</div>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="content">
                     <div class="text">PAYU PAYMENTS</div>
-                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number">{{$totalPayuPaymentEarned}}</div>
                 </div>
             </div>
         </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="content">
                     <div class="text">TOTAL REVENUE</div>
-                    <div class="number count-to" data-from="0" data-to="64.00" data-speed="1000" data-fresh-interval="20">64</div>
+                    <div class="number">{{$totalCashPaymentEarned+$totalPayuPaymentEarned}}</div>
                 </div>
             </div>
         </div>
@@ -364,7 +364,8 @@
     </div>
 </div>
 </div>
-<div class="modal fade" id="profile-photo-upload-modal" tabindex="-1" role="dialog">
+<div class="modal fade" id="profile-photo-upload-modal" tabindex="-1" role="dialog" data-backdrop="static"
+   data-keyboard="false">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -399,7 +400,7 @@
                 </div>
             </div>
             <div class="modal-footer">               
-                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+                <button type="button" class="btn btn-link waves-effect" id="profile-photo-cancel">CANCEL</button>
             </div>
         </div>
     </div>
@@ -441,7 +442,7 @@
                     $.post(url, {_token:csrf_token}, function(response){
                         console.log(response)
                         setTimeout(function(){
-                            swal("Driver password reset. New password also sent via email and sms.", "", "success");
+                            swal("Driver password reset", "<<New password also sent via email and sms>>", "success");
                         }, 1000)
                                     
                     }).fail(function(response) {
@@ -464,7 +465,7 @@
     
         /**
          * profile update menu item
-         */
+         */       
         $("#profile-update-menu-item").on('click', function(){
     
             var driverId = $(this).data('driver-id');
@@ -473,18 +474,18 @@
     
             console.log(url, data)
     
-            $("#profile-update-alert").hide()
+            $("#profile-update-alert").slideUp()
     
             $.post(url, data, function(response){
                 console.log(response)
                 if(response.success) {
-                    $("#profile-update-alert").hide()
+                    $("#profile-update-alert").slideUp()
                     showNotification('bg-black', 'Driver profile updated successfully.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
                     return;
                 } 
     
                 //failed 
-                $("#profile-update-alert").text(response.data[Object.keys(response.data)[0]]).show()
+                $("#profile-update-alert").text(response.data[Object.keys(response.data)[0]]).slideDown()
     
             })
             .fail(function(response) {
@@ -500,6 +501,16 @@
         /**
             upload profile photo
          */
+        var xhr = null;
+        $("#profile-photo-cancel").on('click', function(){
+
+            $("#profile-photo-upload-modal").modal('hide')
+
+            try {
+                xhr.abort();
+            } catch(e){}
+            
+        })
         $("#custom-photo-upload-btn").on('click', function(){
     
             
@@ -507,7 +518,7 @@
                 showNotification('bg-black', 'Select photo first', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
                 return;
             }
-    
+
             $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
             $("#photo-upload-progress-status").text('0%');
     
@@ -518,8 +529,9 @@
             var url = "{{url('admin/drivers')}}/{{$driver->id}}/change-photo";  
     
             console.log(url)
+
     
-            $.ajax({
+            xhr = $.ajax({
                 url: url,
                 cache: false,
                 async: true,
@@ -587,7 +599,14 @@
         });
     
         $("#uploadPhoto").on('change', function(e){
-            $("#custom-photo-selcet-text").val(e.target.files[0].name);     
+
+            if(e.target.files[0].size > 1024 * 1024 * 2) {
+                showNotification('bg-black', 'Photo size must be within 2MB', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+
+            $("#custom-photo-selcet-text").val(e.target.files[0].name);   
             $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
             $("#photo-upload-progress-status").text('0%');       
         })

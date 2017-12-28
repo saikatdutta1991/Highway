@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\Email;
 use Hash;
 use Illuminate\Http\Request;
+use App\Models\RideRequest as Ride;
+use App\Models\RideRequestInvoice;
 use App\Models\Driver as DriverModel;
 use Validator;
 use App\Models\VehicleType;
@@ -19,8 +21,10 @@ class Driver extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Setting $setting, VehicleType $vehicleType, Email $email, Api $api, DriverModel $driver)
+    public function __construct(RideRequestInvoice $rideRequestInvoice, Ride $rideRequest, Setting $setting, VehicleType $vehicleType, Email $email, Api $api, DriverModel $driver)
     {
+        $this->rideRequestInvoice = $rideRequestInvoice;
+        $this->rideRequest = $rideRequest;
         $this->setting = $setting;
         $this->vehicleType = $vehicleType;
         $this->email = $email;
@@ -215,7 +219,19 @@ class Driver extends Controller
     {
         $vehicleTypes = $this->vehicleType->allTypes();
         $driver = $this->driver->find($request->driver_id);
-        return view('admin.edit_driver', compact('driver', 'vehicleTypes'));
+
+        //total requests count
+        $totalDriverRequests = $this->rideRequest->where('driver_id', $driver->id)->where('ride_status', Ride::COMPLETED)->count();
+        $totalUserCanceledRequests = $this->rideRequest->where('driver_id', $driver->id)->where('ride_status', Ride::USER_CANCELED)->count();
+        $totalDriverCanceledRequests = $this->rideRequest->where('driver_id', $driver->id)->where('ride_status', Ride::DRIVER_CANCELED)->count();
+      
+        $totalCashPaymentEarned = $this->rideRequest->revenueGenerated($driver->id, Ride::CASH);
+        $totalPayuPaymentEarned = $this->rideRequest->revenueGenerated($driver->id, Ride::PAYU);
+
+        return view('admin.edit_driver', compact('driver', 'vehicleTypes',
+            'totalDriverRequests', 'totalUserCanceledRequests', 'totalDriverCanceledRequests',
+            'totalCashPaymentEarned', 'totalPayuPaymentEarned'
+        ));
     }
 
 
