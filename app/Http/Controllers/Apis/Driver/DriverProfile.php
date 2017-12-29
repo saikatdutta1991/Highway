@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use Hash;
+use App\Repositories\PushNotification;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Driver;
@@ -25,6 +26,33 @@ class DriverProfile extends Controller
         $this->driver = $driver;
         $this->vehicleType = $vehicleType;
     }
+
+
+
+
+
+    /**
+     * update firebase push notification token
+     */
+    public function updatePushToken(Request $request)
+    {
+
+        /**
+         * validate device type and token should not be null
+         */
+        if(!in_array($request->device_type, PushNotification::deviceTypes()) && $request->device_token == '') {
+            return $this->api->json(false, 'INVALID_PARAMS', 'Parameters invalid or missing');
+        }
+
+
+        $driver = $request->auth_driver;
+
+        //save device token
+        $driver->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
+        return $this->api->json(true, 'PUSH_TOKEN_UPDATED', 'Push token updated');
+    }
+
 
 
 

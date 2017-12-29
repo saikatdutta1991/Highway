@@ -12,6 +12,14 @@ namespace App\Repositories;
 */
 class PushNotification
 {
+
+	/**
+	 * push notification device types
+	 */
+	const ANDROID = 'ANDROID';
+	const IOS = 'IOS';
+
+
 	/**
 	* firebase server to autenticate and to send 
 	*/
@@ -274,7 +282,17 @@ class PushNotification
 	    }
 	    
 	    return $response;
-    }
+	}
+	
+
+
+	/**
+	 * returns device types
+	 */
+	public static function deviceTypes()
+	{
+		return [self::ANDROID, self::IOS];
+	}
     
     
 }

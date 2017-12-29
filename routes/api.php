@@ -19,6 +19,7 @@ Route::group(['prefix' => '/v1/user'], function(){
 
     Route::group(['middleware' => 'userApiAuth'], function(){
 
+        Route::post('push-token/update', 'Apis\User\UserProfile@updatePushToken');
         Route::post('otp/send', 'Apis\User\UserRegister@sendOtp');
         Route::post('otp/verify', 'Apis\User\UserRegister@verifydOtp');
 
@@ -72,7 +73,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('otp/send', 'Apis\Driver\DriverAuth@sendOtp');
         Route::post('otp/verify', 'Apis\Driver\DriverAuth@verifydOtp');
 
-
+        Route::post('push-token/update', 'Apis\Driver\DriverProfile@updatePushToken');
         Route::get('profile', 'Apis\Driver\DriverProfile@getDriverProfile');
         Route::post('profile/update', 'Apis\Driver\DriverProfile@updateDriverProfile');
 

@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use Hash;
+use App\Repositories\PushNotification;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use Validator;
@@ -23,6 +24,33 @@ class UserProfile extends Controller
         $this->api = $api;
         $this->user = $user;
     }
+
+
+
+    /**
+     * update firebase push notification token
+     */
+    public function updatePushToken(Request $request)
+    {
+
+        /**
+         * validate device type and token should not be null
+         */
+        if(!in_array($request->device_type, PushNotification::deviceTypes()) && $request->device_token == '') {
+            return $this->api->json(false, 'INVALID_PARAMS', 'Parameters invalid or missing');
+        }
+
+
+        $user = $request->auth_user;
+
+        //save device token
+        $user->addOrUpdateDeviceToken($request->device_type, $request->device_token);
+
+        return $this->api->json(true, 'PUSH_TOKEN_UPDATED', 'Push token updated');
+    }
+
+
+
 
 
 
