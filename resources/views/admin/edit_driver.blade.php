@@ -601,6 +601,8 @@
         $("#uploadPhoto").on('change', function(e){
 
             if(e.target.files[0].size > 1024 * 1024 * 2) {
+                $("#uploadPhoto").val('')
+                $("#custom-photo-selcet-text").val('')
                 showNotification('bg-black', 'Photo size must be within 2MB', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
                 return;
             }
