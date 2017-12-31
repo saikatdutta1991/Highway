@@ -70,10 +70,11 @@ class AppServiceProvider extends ServiceProvider
 
             config([
                 'mail.driver'              => 'mandrill',
-                'mail.host'                => $this->setting->get('mandril_host'),
-                'mail.port'                => intval($this->setting->get('mandril_port')),
-                'mail.username'            => $this->setting->get('mandril_username'),   
-                'services.mandrill.secret' => $this->setting->get('mandril_secret')
+                'mail.host'                => $this->setting->get('mandrill_host'),
+                'mail.port'                => intval($this->setting->get('mandrill_port')),
+                'mail.username'            => $this->setting->get('mandrill_username'),   
+                'services.mandrill.secret' => $this->setting->get('mandrill_secret'),
+                'mail.encryption'          => $this->setting->get('mandrill_encryption')
             ]);
 
 
@@ -97,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
                 'mail.port'         => intval($this->setting->get('mailgun_port')),
                 'mail.username'     => $this->setting->get('mailgun_username'),
                 'mail.password'     => $this->setting->get('mailgun_password'),
+                'mail.encryption'   => $this->setting->get('mailgun_encryption'),
             ]);
 
 

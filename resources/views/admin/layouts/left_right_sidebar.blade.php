@@ -48,6 +48,17 @@
                         </li>
                     </ul>
                 </li>
+                <li class="@yield('settings_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">settings</i>
+                    <span>Settings</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('settings_email_active')">
+                            <a href="{{url('admin/settings/email')}}">Email</a>
+                        </li>
+                    </ul>
+                </li>
                 <!-- </li>
                 <li>
                     <a href="pages/typography.html">
