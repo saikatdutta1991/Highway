@@ -57,6 +57,9 @@
                         <li class="@yield('settings_email_active')">
                             <a href="{{url('admin/settings/email')}}">Email</a>
                         </li>
+                        <li class="@yield('settings_sms_active')">
+                            <a href="{{url('admin/settings/sms')}}">Sms</a>
+                        </li>
                     </ul>
                 </li>
                 <!-- </li>

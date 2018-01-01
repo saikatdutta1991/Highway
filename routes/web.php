@@ -54,6 +54,9 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('settings/email', 'Admin\Setting@showEmailSetting');
         Route::post('settings/email/save', 'Admin\Setting@saveEmailSettings');
         Route::post('settings/email/test', 'Admin\Setting@testEmail');
+        Route::get('settings/sms', 'Admin\Setting@showSmsSetting');
+        Route::post('settings/sms/save', 'Admin\Setting@saveSmsSetting');
+        Route::post('settings/sms/test', 'Admin\Setting@testSms');
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 

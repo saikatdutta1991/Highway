@@ -107,4 +107,70 @@ class Setting extends Controller
 
 
 
+
+    /**
+     * show sms settings
+     */
+    public function showSmsSetting()
+    {
+        $setting = $this->setting;
+        return view('admin.sms_settings', compact('setting'));
+    }
+
+
+
+
+
+    /**
+     * save sms settings
+     */
+    public function saveSmsSetting(Request $request)
+    {
+
+        if($request->has('sms_provider')) {
+            $this->setting->set('sms_provider', trim($request->sms_provider));
+        }
+
+        //if twilio_sid is there save twilio credentials
+        if($request->has('twilio_sid') && $request->twilio_sid != '') {
+            $this->setting->set('twilio_sid', trim($request->twilio_sid));
+            $this->setting->set('twilio_token', trim($request->twilio_token));
+            $this->setting->set('twilio_from', trim($request->twilio_from));
+        }
+
+        //if msg91 sender id is there , save msg91 credentials 
+        if($request->has('msg91_sender_id') && $request->msg91_sender_id != '') {
+            $this->setting->set('msg91_sender_id', trim($request->msg91_sender_id));
+            $this->setting->set('msg91_auth_key', trim($request->msg91_auth_key));
+        }
+
+        return $this->api->json(true, 'SMS_SETTINGS_SAVED', 'Sms settings saved');
+
+    }
+
+
+
+    /**
+     * send test sms
+     */
+    public function testSms(Request $request)
+    {
+        $toNumber = trim($request->to_number);
+        list($countryCode, $mobileNo) = explode('-', $toNumber);
+        $message = 'Test sms from '.$this->setting->get('website_name');
+        $err = null;
+        $success = app('App\Repositories\Otp')->sendMessage($countryCode, $mobileNo, $message, $err);
+        
+        if($success) {
+            return $this->api->json(true, "SMS_SEND_SUCCESS", 'Sms send successful');
+        } else {
+            return $this->api->json(false, "SMS_SEND_ERROR", 'Sms send failed', [
+                'error_message' => $err . ' --credentials might be wrong'
+            ]);
+        }
+
+    }
+
+
+
 }
