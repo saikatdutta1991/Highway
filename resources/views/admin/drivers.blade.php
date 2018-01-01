@@ -164,7 +164,7 @@
                     No drivers found
                 </div>
                 @else
-                <table class="table table-condensed">
+                <table class="table table-condensed table-hover">
                     <thead>
                         <tr>
                             <th>
