@@ -55,4 +55,31 @@
     'updated_at' => '2017-11-17 19:48:48',
     'deleted_at' => NULL,
   ),
+  6 => 
+  array (
+    'id' => 10,
+    'code' => 'UPDATE_TESTING',
+    'name' => 'Update Testing',
+    'created_at' => '2018-01-02 19:07:25',
+    'updated_at' => '2018-01-02 20:07:30',
+    'deleted_at' => NULL,
+  ),
+  7 => 
+  array (
+    'id' => 11,
+    'code' => 'NEW_TESTING',
+    'name' => 'New Testing',
+    'created_at' => '2018-01-02 20:07:53',
+    'updated_at' => '2018-01-02 20:07:53',
+    'deleted_at' => NULL,
+  ),
+  8 => 
+  array (
+    'id' => 12,
+    'code' => 'MIGRATION',
+    'name' => 'Migration',
+    'created_at' => '2018-01-02 20:18:21',
+    'updated_at' => '2018-01-02 20:18:21',
+    'deleted_at' => NULL,
+  ),
 );

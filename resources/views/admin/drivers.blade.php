@@ -29,6 +29,59 @@
 <div class="block-header">
     <h2>DRIVERS</h2>
 </div>
+<!-- Widgets -->
+<div class="row clearfix">
+    
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-pink hover-expand-effect">
+            <div class="icon">
+                <i class="material-icons">timeline</i>
+            </div>
+            <div class="content">
+                <div class="text">JOINED TODAY</div>
+                <div class="number count-to" data-from="0" data-to="{{$todaysDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-red hover-expand-effect">
+            <div class="icon">
+                <i class="material-icons">timeline</i>
+            </div>
+            <div class="content">
+                <div class="text">THIS MONTH</div>
+                <div class="number count-to" data-from="0" data-to="{{$thisMonthDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-purple hover-expand-effect">
+            <div class="icon">
+                <i class="material-icons">timeline</i>
+            </div>
+            <div class="content">
+                <div class="text">THIS YEAR</div>
+                <div class="number count-to" data-from="0" data-to="{{$thisYearDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-green hover-expand-effect">
+            <div class="icon">
+                <i class="material-icons">timeline</i>
+            </div>
+            <div class="content">
+                <div class="text">TOTAL APPROVED</div>
+                <div class="number count-to" data-from="0" data-to="{{$totalApprovedDivers}}" data-speed="1000" data-fresh-interval="20"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- #END# Widgets -->
 <!-- With Material Design Colors -->
 <div class="row clearfix">
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -169,7 +222,7 @@
                         <tr>
                             <th>
                                 <input type="checkbox" class="filled-in chk-col-pink" id="checkbox-driver-id-header"/>
-                                <label style="font-weight: 700;margin-bottom: 0px;line-height: 33px;" for="checkbox-driver-id-header" id="driver-list-id-header-checkbox-label">#ID</label>
+                                <label style="font-weight: 700;margin-bottom: 0px;line-height: 33px;" for="checkbox-driver-id-header" id="driver-list-id-header-checkbox-label"></label>
                                 <!-- #ID -->
                             </th>
                             <th>NAME</th>
@@ -187,7 +240,7 @@
                         <tr>
                             <th>
                                 <input type="checkbox" id="checkbox-driver-id-{{$driver->id}}" class="filled-in chk-col-pink driver-list-id-checkbox" data-driver-id="{{$driver->id}}"/>
-                                <label for="checkbox-driver-id-{{$driver->id}}">{{$driver->id}}</label>
+                                <label for="checkbox-driver-id-{{$driver->id}}"></label>
                             </th>
                             <td><a data-toggle="tooltip" data-placement="left" title="Click to edit driver" href="javascript:void(0)" class="edit-driver-btn" data-driver-id="{{$driver->id}}">{{$driver->fname.' '.$driver->lname}}</a></td>
                             <td>{{$driver->email}}</td>

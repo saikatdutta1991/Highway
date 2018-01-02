@@ -33,6 +33,9 @@ class Service extends Controller
     public function showServices()
     {
         $services = $this->vehicleType->allTypes();
+        
+        //sort by descdending created timestamp
+        $services = collect($services)->sortByDesc('created_at')->toArray();
 
         //calculate count of each services by drivers
         foreach($services as $index => $service) {
@@ -42,6 +45,59 @@ class Service extends Controller
 
         return view('admin.services', compact('services'));
     }
+
+
+
+    /**
+     * add new service type
+     */
+    public function addService(Request $request)
+    {
+
+        //validation service name
+        if($request->service_name == '' || !in_array($request->_action, ["update", 'add'])) {
+            return $this->api->json(false, 'MISSING_PARAMTERS', 'Missing parameters');
+        }
+
+        switch ($request->_action) {
+            case 'add':
+                
+                $error = '';
+                $serviceType = $this->vehicleType->addType($request->service_name, $error);
+
+                //check if service already exists
+                if($serviceType === false && $error == 'EXISTS') {
+                    return $this->api->json(false, 'EXISTS', 'Service already exists');
+                }
+
+                return $this->api->json(true, 'ADDED', 'Service created successfully', [
+                    'service_type' => $serviceType
+                ]);
+            
+                break;
+
+            case 'update':
+                $error = '';
+                $serviceType = $this->vehicleType->find($request->service_id);
+                $serviceType = $serviceType->updateServiceType($request->service_name, $error);
+                
+                //check if service already exists
+                if($serviceType === false && $error == 'EXISTS') {
+                    return $this->api->json(false, 'EXISTS', 'Service name already exists for another');
+                }
+
+                return $this->api->json(true, 'UPDATED', 'Service updated successfully', [
+                    'service_type' => $serviceType
+                ]);
+            
+                break;
+        }
+
+        
+
+
+    }
+
 
 
 

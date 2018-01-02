@@ -51,7 +51,8 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('drivers/{driver_id}/update', 'Admin\Driver@updateDriverProfile');
         Route::post('drivers/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword');
 
-        Route::get('services/types', 'Admin\Service@showServices');
+        Route::get('services', 'Admin\Service@showServices');
+        Route::post('services/add', 'Admin\Service@addService');
         
         Route::get('settings/email', 'Admin\Setting@showEmailSetting');
         Route::post('settings/email/save', 'Admin\Setting@saveEmailSettings');

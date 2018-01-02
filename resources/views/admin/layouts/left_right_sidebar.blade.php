@@ -49,18 +49,10 @@
                     </ul>
                 </li>
                 <li class="@yield('services_active')">
-                    <a href="javascript:void(0);" class="menu-toggle">
+                    <a href="{{url('admin/services')}}">
                     <i class="material-icons">dialpad</i>
                     <span>Services</span>
                     </a>
-                    <ul class="ml-menu">
-                        <li class="@yield('service_types_active')">
-                            <a href="{{url('admin/services/types')}}">Types</a>
-                        </li>
-                        <li class="@yield('service_fare_active')">
-                            <a href="{{url('admin/services/fares')}}">Fares</a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="@yield('settings_active')">
                     <a href="javascript:void(0);" class="menu-toggle">

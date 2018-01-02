@@ -88,6 +88,39 @@ class VehicleType extends Model
 
 
 
+    /**
+     * update service type by id
+     */
+    public function updateServiceType($newName, &$errorCode = '')
+    {
+        //check new service new name exists or not for other services
+        $code = strtoupper($this->cleanString($newName));
+        $service = $this->where(function($query) use($code, $newName) {
+            $query->where('code', $code)->orWhere('name', $newName);
+        })->where('id', '<>', $this->id)->exists();
+
+        if($service) {
+           $errorCode = 'EXISTS';
+           return false;
+        }
+
+
+        $this->code = $code;
+        $this->name = ucfirst($newName);
+        $this->save();
+
+        //fetch all vehicle types and save
+        $this->saveToFile($this->all()->toArray());
+    
+        return $this;
+
+
+    }
+
+
+
+
+
 
     /**
      * add new vehicle type and save to settings file
@@ -95,7 +128,7 @@ class VehicleType extends Model
     public function addType($type, &$errorCode = '')
     {
         $code = strtoupper($this->cleanString($type));
-        if($this->where('code', $code)->orWhere('name')->exists()) {
+        if($this->where('code', $code)->orWhere('name', $type)->exists()) {
            $errorCode = 'EXISTS';
            return false;
         }

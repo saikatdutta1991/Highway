@@ -74,7 +74,16 @@ class Driver extends Controller
             $drivers = $this->driver->take(100)->paginate(2)->setPath('drivers');
         }
         
-        return view('admin.drivers', compact('drivers', 'order_by', 'order', 'search_by', 'skwd', 'location_name', 'latitude', 'longitude'));
+        $todaysDrivers = $this->driver->where('created_at', date('Y-m-d'))->count();
+        $thisMonthDrivers = $this->driver->where('created_at', 'like', date('Y-m').'%')->count();
+        $thisYearDrivers = $this->driver->where('created_at', 'like', date('Y').'%')->count();
+        $totalApprovedDivers = $this->driver->where('is_approved', 1)->count();
+
+
+        return view('admin.drivers', compact(
+            'drivers', 'order_by', 'order', 'search_by', 'skwd', 'location_name', 'latitude', 'longitude',
+            'todaysDrivers', 'thisMonthDrivers', 'thisYearDrivers', 'totalApprovedDivers'
+        ));
 
     }
 
