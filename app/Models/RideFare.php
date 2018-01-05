@@ -116,7 +116,7 @@ class RideFare extends Model
         $rFare->base_price = isset($data['base_price']) ? $data['base_price'] : 0.00;
         $rFare->first_distance = isset($data['first_distance']) ? $data['first_distance'] : 0;
         $rFare->first_distance_price = isset($data['first_distance_price']) ? $data['first_distance_price'] : 0.00;
-        $rFare->after_first_distance_price = isset($data['after_first_distance_price']) ? $data['after_first_distance_price_per_km'] : 0.00;
+        $rFare->after_first_distance_price = isset($data['after_first_distance_price']) ? $data['after_first_distance_price'] : 0.00;
         $rFare->wait_time_price = isset($data['wait_time_price']) ? $data['wait_time_price'] : 0.00;
         $rFare->cancellation_fee = isset($data['cancellation_fee']) ? $data['cancellation_fee'] : 0.00;
 
