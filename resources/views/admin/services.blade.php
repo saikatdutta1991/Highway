@@ -360,14 +360,34 @@
     })
 
 
+   
+    var paddingBottom = 0;
+    $('.table-responsive').on('shown.bs.dropdown', function (e) {
+        var $table = $(this),
+            $menu = $(e.target).find('.dropdown-menu'),
+            tableOffsetHeight = $table.offset().top + $table.height(),
+            menuOffsetHeight = $menu.offset().top + $menu.outerHeight(true);
+
+        paddingBottom = $(this).css("padding-bottom");
+        
+        if (menuOffsetHeight > tableOffsetHeight)
+            $table.css("padding-bottom", menuOffsetHeight - tableOffsetHeight + 50);
+    });
+
+    $('.table-responsive').on('hide.bs.dropdown', function () {
+        $(this).css("padding-bottom", paddingBottom);
+    })
+    
+
+
     //make boostrap dropdown overflow out of responsive table
-    $('.table-responsive').on('show.bs.dropdown', function () {
+    /* $('.table-responsive').on('show.bs.dropdown', function () {
         $('.table-responsive').css( "overflow", "inherit" );
     });
 
     $('.table-responsive').on('hide.bs.dropdown', function () {
         $('.table-responsive').css( "overflow", "auto" );
-    })
+    }) */
 
 
     $(".service-delete-btn").on('click', function(){

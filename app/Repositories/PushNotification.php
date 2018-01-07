@@ -267,7 +267,7 @@ class PushNotification
 			"notification" => $this->buildNotification(),
 			"priority" => $this->priority,
 			'content_available' => $this->content_available,
-	        'data' => $this->buildNotification()
+	        'data' => $this->notifCustomPayload
 	    ];
 	    $fields = json_encode($fields);
 	    $headers = [

@@ -34,6 +34,12 @@
                     <span>Dashboard</span>
                     </a>
                 </li>
+                <li class="@yield('users_active')">
+                    <a href="{{url('admin/users')}}">
+                    <i class="material-icons">people</i>
+                    <span>Users</span>
+                    </a>
+                </li>
                 <li class="@yield('driver_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">drive_eta</i>
@@ -60,11 +66,23 @@
                     <span>Settings</span>
                     </a>
                     <ul class="ml-menu">
+                        <li class="@yield('settings_general_active')">
+                            <a href="{{url('admin/settings/general')}}">General</a>
+                        </li>
                         <li class="@yield('settings_email_active')">
                             <a href="{{url('admin/settings/email')}}">Email</a>
                         </li>
                         <li class="@yield('settings_sms_active')">
                             <a href="{{url('admin/settings/sms')}}">Sms</a>
+                        </li>
+                        <li class="@yield('settings_firebase_active')">
+                            <a href="{{url('admin/settings/firebase')}}">Firebase</a>
+                        </li>
+                        <li class="@yield('settings_facebook_active')">
+                            <a href="{{url('admin/settings/facebook')}}">Facebook</a>
+                        </li>
+                        <li class="@yield('settings_google_active')">
+                            <a href="{{url('admin/settings/google')}}">Google</a>
                         </li>
                     </ul>
                 </li>

@@ -270,6 +270,14 @@ class RideRequest extends Controller
     {
 
         /**
+         * clear all previous initiated ride reuqests
+         */
+        $this->rideRequest
+            ->where('user_id', $request->auth_user->id)
+            ->where('ride_status', Ride::INITIATED)->forceDelete();
+
+
+        /**
          * check any ongoing request alreay exists or not 
          * if so dont allow to create request
          */

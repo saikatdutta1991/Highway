@@ -62,6 +62,15 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('settings/sms', 'Admin\Setting@showSmsSetting');
         Route::post('settings/sms/save', 'Admin\Setting@saveSmsSetting');
         Route::post('settings/sms/test', 'Admin\Setting@testSms');
+        Route::get('settings/firebase', 'Admin\Setting@showFirebaseSetting');
+        Route::post('settings/firebase/save', 'Admin\Setting@saveFirebaseSetting');
+        Route::get('settings/facebook', 'Admin\Setting@showFacebookSetting');
+        Route::post('settings/facebook/save', 'Admin\Setting@saveFacebookSetting');
+        Route::get('settings/google', 'Admin\Setting@showGoogleSetting');
+        Route::post('settings/google/save', 'Admin\Setting@saveGoogleSetting');
+        Route::post('settings/google/map-key/save', 'Admin\Setting@saveGoogleMapKey');
+        Route::get('settings/general', 'Admin\Setting@showGeneralSetting');
+        Route::post('settings/general/website/save', 'Admin\Setting@saveGeneralSettings');
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 
@@ -129,9 +138,19 @@ Route::get('send-email', function(){
 
 
 Route::get('send_push', function(){
+    
+    /* $pushHelper = new \App\Repositories\PushNotification;
+        $res = $pushHelper->setTitle('Test Push notification')
+        ->setBody('Message Body')
+        ->setIcon('logo')
+        ->setClickAction('')
+        ->setCustomPayload(['custom_data' => ''])
+        ->setPriority(\App\Repositories\PushNotification::HIGH)
+        ->setContentAvailable(true)
+        ->setDeviceTokens(request()->token)
+        ->push();
 
-    $user = \App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
-    dd($user->sendPushNotification("Testing", ['testing' => 'testing']));
+        dd($res); */
 
 
 });

@@ -396,7 +396,7 @@
                             <span class="sr-only"></span>
                         </div>
                     </div>
-                    <small>Photo upload progress status: <span id="photo-upload-progress-status">0%</span><small>
+                    <small>Photo upload progress status: <span id="photo-upload-progress-status">0%</span></small>
                 </div>
             </div>
             <div class="modal-footer">               
