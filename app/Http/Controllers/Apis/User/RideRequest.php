@@ -113,6 +113,8 @@ class RideRequest extends Controller
             'mobile_number' => $rideRequest->driver->mobile_number,
             'latidue' => $rideRequest->driver->latitude,
             'longitude' => $rideRequest->driver->longitude,
+            'profile_photo_url' => $rideRequest->driver->profilePhotoUrl(),
+            'vehicle_number' => $rideRequest->driver->vehicle_number,
         ];
 
         //take invoice if invoice is ready
