@@ -94,7 +94,10 @@ class RideRequest extends Controller
         $rideRequest = $this->rideRequest
         ->where('user_id', $request->auth_user->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
-        ->orWhere('driver_rating', 0)
+        ->orWhere(function($query){
+            $query->where('ride_status', Ride::COMPLETED)
+                ->where('driver_rating', 0);
+        })
         ->first();
 
         if(!$rideRequest) {
