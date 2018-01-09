@@ -105,6 +105,7 @@ class RideRequest extends Controller
                 'profile_photo_url' => $authDriver->profilePhotoUrl(),
                 'latitude' => $authDriver->latitude,
                 'longitude' => $authDriver->longitude,
+                'rating' => $authDriver->rating,
             ]
         ];
 
@@ -147,8 +148,8 @@ class RideRequest extends Controller
         ->where('user_id', $request->auth_driver->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())
         ->orWhere(function($query){
-            $query->where('ride_status', Ride::TRIP_ENDED)
-                ->where('driver_rating', 0);
+            $query->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
+                ->where('user_rating', 0);
         })
         ->first();
 
@@ -162,7 +163,8 @@ class RideRequest extends Controller
             'fname' => $rideRequest->user->fname,
             'lname' => $rideRequest->user->lname,
             'country_code' => $rideRequest->user->country_code,
-            'mobile_number' => $rideRequest->user->mobile_number
+            'mobile_number' => $rideRequest->user->mobile_number,
+            'rating' => $rideRequest->user->rating,
         ];
 
         //take invoice if invoice is ready
