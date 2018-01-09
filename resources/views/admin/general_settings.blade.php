@@ -162,34 +162,34 @@
                 <div class="body">
                     <div class="row clearfix">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                            <img id="website-logo" src="{{$setting->websiteLogoUrl()}}" class="img-responsive" style="display: inline-block;">
+                            <img id="logo-image" src="{{$setting->websiteLogoUrl()}}" class="img-responsive" style="display: inline-block;">
                         </div>
                     </div>
-                    <form class="form-horizontal" id="upload-photo-form" method="POST" enctype="multipart/form-data">
+                    <form class="form-horizontal" id="upload-logo-form" method="POST" enctype="multipart/form-data">
                         <div class="row clearfix">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="input-group input-group-md">
                                     <span class="input-group-addon">
-                                    <i class="material-icons col-pink" id="custom-photo-selcet-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Click icon and select photo">add_a_photo</i>
+                                    <i class="material-icons col-pink" id="custom-logo-selcet-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Click icon and select photo">add_a_photo</i>
                                     </span>
                                     <div class="form-line">
-                                        <input id="uploadPhoto" type="file" style="display:none"/>
-                                        <input type="text" id="custom-photo-selcet-text" class="form-control" placeholder="Click icon and select photo" disabled>
+                                        <input id="uploadLogo" type="file" style="display:none"/>
+                                        <input type="text" id="custom-logo-selcet-text" class="form-control" placeholder="Click icon and select photo" disabled>
                                     </div>
                                     <span class="input-group-addon">
-                                    <i class="material-icons col-pink" id="custom-photo-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
+                                    <i class="material-icons col-pink" id="custom-logo-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <div class="" id="photo-upload-progressbar-div">
+                    <div class="" id="logo-upload-progressbar-div">
                         <div class="progress">
                             <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                                 <span class="sr-only"></span>
                             </div>
                         </div>
-                        <small>Photo upload progress status: <span id="photo-upload-progress-status">0%</span></small>
+                        <small>Photo upload progress status: <span id="logo-upload-progress-status">0%</span></small>
                     </div>
                 </div>
             </div>
@@ -206,34 +206,34 @@
                 <div class="body">
                     <div class="row clearfix">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                            <img id="website-logo" src="{{$setting->websiteFavIconUrl()}}" class="img-responsive" style="display: inline-block;">
+                            <img id="favicon-image" src="{{$setting->websiteFavIconUrl()}}" class="img-responsive" style="display: inline-block;">
                         </div>
                     </div>
-                    <form class="form-horizontal" id="upload-photo-form" method="POST" enctype="multipart/form-data">
+                    <form class="form-horizontal" id="upload-favicon-form" method="POST" enctype="multipart/form-data">
                         <div class="row clearfix">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="input-group input-group-md">
                                     <span class="input-group-addon">
-                                    <i class="material-icons col-pink" id="custom-photo-selcet-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Click icon and select photo">add_a_photo</i>
+                                    <i class="material-icons col-pink" id="custom-favicon-selcet-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Click icon and select photo">add_a_photo</i>
                                     </span>
                                     <div class="form-line">
-                                        <input id="uploadPhoto" type="file" style="display:none"/>
-                                        <input type="text" id="custom-photo-selcet-text" class="form-control" placeholder="Click icon and select photo" disabled>
+                                        <input id="uploadFavicon" type="file" style="display:none"/>
+                                        <input type="text" id="custom-favicon-selcet-text" class="form-control" placeholder="Click icon and select photo" disabled>
                                     </div>
                                     <span class="input-group-addon">
-                                    <i class="material-icons col-pink" id="custom-photo-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
+                                    <i class="material-icons col-pink" id="custom-favicon-upload-btn" style="cursor:pointer" data-toggle="tooltip" data-placement="left" title="Upload photo">file_upload</i>
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <div class="" id="photo-upload-progressbar-div">
+                    <div class="" id="favicon-upload-progressbar-div">
                         <div class="progress">
                             <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                                 <span class="sr-only"></span>
                             </div>
                         </div>
-                        <small>Photo upload progress status: <span id="photo-upload-progress-status">0%</span></small>
+                        <small>Photo upload progress status: <span id="favicon-upload-progress-status">0%</span></small>
                     </div>
                 </div>
             </div>
@@ -249,6 +249,203 @@
 <script>
     $(document).ready(function(){
         autosize($('textarea'));
+
+
+
+        /**
+            upload favicon photo
+         */
+        var xhr = null;
+        $("#custom-favicon-upload-btn").on('click', function(){
+    
+            
+            if(!$("#uploadFavicon")[0].files.length) {
+                showNotification('bg-black', 'Select photo first', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+            $("#favicon-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#favicon-upload-progress-status").text('0%');
+    
+            var form_data = new FormData();
+            form_data.append("photo", $("#uploadFavicon")[0].files[0])
+            form_data.append("_token", "{{csrf_token()}}")
+    
+            var url = "{{url('admin/settings/general/website/favicon/save')}}";  
+    
+            console.log(url)
+
+    
+            xhr = $.ajax({
+                url: url,
+                cache: false,
+                async: true,
+                contentType: false,
+                processData:false,
+                data: form_data,                 
+                type: 'POST',
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+    
+                            var percentage = Math.floor((e.loaded / e.total) * 100)
+    
+                            $("#favicon-upload-progressbar-div").find('.progress > .progress-bar').css('width', percentage+'%')
+                            $("#favicon-upload-progress-status").text(percentage+'%');
+                            console.log(percentage);
+                        }
+                    };
+                    return xhr;
+                },
+                success : function(data) {
+                    if(!data.success) {
+                        $("#uploadFavicon").val('')
+                        $("#custom-favicon-selcet-text").val('')
+                        $("#favicon-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+                        $("#favicon-upload-progress-status").text('0%');
+                        showNotification('bg-black', data.data.photo, 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                    } else {
+    
+                        $("#favicon-image").attr('src', '')
+                        $("#favicon-image").attr('src', data.data.favicon_url)
+
+                    }
+                },
+                error : function(){
+                    $("#uploadFavicon").val('')
+                    $("#custom-favicon-selcet-text").val('')
+                    $("#favicon-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+                    $("#favicon-upload-progress-status").text('0%');
+                    showNotification('bg-black', 'Unknown server error', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                }
+            })
+    
+    
+        })
+    
+    
+        $("#custom-favicon-selcet-btn").on('click', function(){
+            $("#uploadFavicon").trigger('click');
+        });
+    
+        $("#uploadFavicon").on('change', function(e){
+
+            if(e.target.files[0].size > 1024 * 1024 * 2) {
+                $("#uploadFavicon").val('')
+                $("#custom-favicon-selcet-text").val('')
+                showNotification('bg-black', 'Photo size must be within 2MB', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+
+            $("#custom-favicon-selcet-text").val(e.target.files[0].name);   
+            $("#favicon-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#favicon-upload-progress-status").text('0%');       
+        })
+
+
+
+
+
+        /**
+            upload logo photo
+         */
+        var xhr = null;
+        $("#custom-logo-upload-btn").on('click', function(){
+    
+            
+            if(!$("#uploadLogo")[0].files.length) {
+                showNotification('bg-black', 'Select photo first', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+            $("#logo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#logo-upload-progress-status").text('0%');
+    
+            var form_data = new FormData();
+            form_data.append("photo", $("#uploadLogo")[0].files[0])
+            form_data.append("_token", "{{csrf_token()}}")
+    
+            var url = "{{url('admin/settings/general/website/logo/save')}}";  
+    
+            console.log(url)
+
+    
+            xhr = $.ajax({
+                url: url,
+                cache: false,
+                async: true,
+                contentType: false,
+                processData:false,
+                data: form_data,                 
+                type: 'POST',
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.upload.onprogress = function (e) {
+                        // For uploads
+                        if (e.lengthComputable) {
+    
+                            var percentage = Math.floor((e.loaded / e.total) * 100)
+    
+                            $("#logo-upload-progressbar-div").find('.progress > .progress-bar').css('width', percentage+'%')
+                            $("#logo-upload-progress-status").text(percentage+'%');
+                            console.log(percentage);
+                        }
+                    };
+                    return xhr;
+                },
+                success : function(data) {
+                    if(!data.success) {
+                        $("#uploadLogo").val('')
+                        $("#custom-logo-selcet-text").val('')
+                        $("#logo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+                        $("#logo-upload-progress-status").text('0%');
+                        showNotification('bg-black', data.data.photo, 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                    } else {
+    
+                        $("#logo-image").attr('src', '')
+                        $("#logo-image").attr('src', data.data.logo_url)
+
+                    }
+                },
+                error : function(){
+                    $("#uploadLogo").val('')
+                    $("#custom-logo-selcet-text").val('')
+                    $("#logo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+                    $("#logo-upload-progress-status").text('0%');
+                    showNotification('bg-black', 'Unknown server error', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                }
+            })
+    
+    
+        })
+    
+    
+        $("#custom-logo-selcet-btn").on('click', function(){
+            $("#uploadLogo").trigger('click');
+        });
+    
+        $("#uploadLogo").on('change', function(e){
+
+            if(e.target.files[0].size > 1024 * 1024 * 2) {
+                $("#uploadLogo").val('')
+                $("#custom-logo-selcet-text").val('')
+                showNotification('bg-black', 'Photo size must be within 2MB', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+
+            $("#custom-logo-selcet-text").val(e.target.files[0].name);   
+            $("#logo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
+            $("#logo-upload-progress-status").text('0%');       
+        })
+
+
+
+
+
     
     
         var general_website_save_url = '{{url("admin/settings/general/website/save")}}'

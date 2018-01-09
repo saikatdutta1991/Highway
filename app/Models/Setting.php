@@ -132,12 +132,46 @@ class Setting extends Model
     }
 
 
+
+    /**
+     * upload and save website logo
+     */
+    public function saveWebsiteLogo($uploadFile, $prefix = 'logo_')
+    {
+        $fileName = app('UtillRepo')->generatePhotoName($prefix, $uploadFile->extension());
+        $path = $this->get('website_logo_path');
+        $uploadFile->storeAs($path, $fileName);
+        
+        $this->set('website_logo_name', $fileName);
+        return url($this->get('website_logo_path') . '/' . $fileName);
+    }
+    
+
+
+
+
+
     /**
      * returns website favicon url
      */
     public function websiteFavIconUrl()
     {
         return url($this->get('website_fav_icon_path') . '/' . $this->get('website_fav_icon_name'));
+    }
+
+
+
+    /**
+     * upload and save website logo
+     */
+    public function saveWebsiteFavicon($uploadFile, $prefix = 'favicon_')
+    {
+        $fileName = app('UtillRepo')->generatePhotoName($prefix, $uploadFile->extension());
+        $path = $this->get('website_fav_icon_path');
+        $uploadFile->storeAs($path, $fileName);
+        
+        $this->set('website_fav_icon_name', $fileName);
+        return url($this->get('website_fav_icon_path') . '/' . $fileName);
     }
 
 

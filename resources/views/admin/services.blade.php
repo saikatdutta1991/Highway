@@ -181,7 +181,7 @@
                         <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="minimun_price">
+                                    <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="minimun_price">
                                     <label class="form-label">Mininum Price({{$currency_symbol}})</label>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@
                         <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_price">
+                                    <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_price">
                                     <label class="form-label">Base Price({{$currency_symbol}})</label>
                                 </div>
                             </div>
@@ -197,7 +197,7 @@
                         <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee">
+                                    <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee">
                                     <label class="form-label">Acess Fee({{$currency_symbol}})</label>
                                 </div>
                             </div>
@@ -205,7 +205,7 @@
                         <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="wait_time_price">
+                                    <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="wait_time_price">
                                     <label class="form-label">Wait Time Charge({{$currency_symbol}})</label>
                                 </div>
                             </div>
@@ -217,7 +217,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">First</span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" value="0" onblur="this.value=parseInt(this.value)" name="first_distance">
+                                        <input type="number" class="form-control" value="0" min="0" onblur="this.value=parseInt(this.value)" name="first_distance">
                                     </div>
                                     <span class="input-group-addon">{{$distance_unit}}</span>
                                 </div>
@@ -226,7 +226,7 @@
                             <div class="col-sm-4">
                                 <div class="input-group">
                                     <div class="form-line">
-                                        <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="first_distance_price"> 
+                                        <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="first_distance_price"> 
                                     </div>
                                     <span class="input-group-addon">{{$currency_symbol}}</span>
                                 </div>
@@ -236,7 +236,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">then</span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" value="0.00" onblur="this.value=parseFloat(this.value).toFixed(2)" name="after_first_distance_price">
+                                        <input type="number" class="form-control" value="0.00" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="after_first_distance_price">
                                     </div>
                                     <span class="input-group-addon">{{$currency_symbol}}/{{$distance_unit}}</span>
                                 </div>

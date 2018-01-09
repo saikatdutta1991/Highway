@@ -1,24 +1,23 @@
 @extends('admin.layouts.master')
-@section('title', 'Drivers')
-@section('driver_active', 'active')
-@section('driver_list_active', 'active')
+@section('title', 'Users')
+@section('users_active', 'active')
 @section('top-header')
 <!-- Bootstrap Select Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 <style>
-#driver-list-id-header-checkbox-label:after
+#user-list-id-header-checkbox-label:after
 {
     top : 6px;
 }
-#driver-list-id-header-checkbox-label:before
+#user-list-id-header-checkbox-label:before
 {
     margin-top: 8px;
 }
-.driver-image
+.user-image
 {
     border-radius: 50%;
 }
-.edit-driver-btn
+.edit-user-btn
 {
     text-decoration:none;
 }
@@ -27,11 +26,10 @@
 @section('content')
 <div class="container-fluid">
 <div class="block-header">
-    <h2>DRIVERS</h2>
+    <h2>USERS</h2>
 </div>
 <!-- Widgets -->
 <div class="row clearfix">
-    
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-pink hover-expand-effect">
             <div class="icon">
@@ -39,11 +37,10 @@
             </div>
             <div class="content">
                 <div class="text">JOINED TODAY</div>
-                <div class="number count-to" data-from="0" data-to="{{$todaysDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="number count-to" data-from="0" data-to="{{$todaysUsers}}" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
-
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-red hover-expand-effect">
             <div class="icon">
@@ -51,11 +48,10 @@
             </div>
             <div class="content">
                 <div class="text">THIS MONTH</div>
-                <div class="number count-to" data-from="0" data-to="{{$thisMonthDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="number count-to" data-from="0" data-to="{{$thisMonthUsers}}" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
-
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-purple hover-expand-effect">
             <div class="icon">
@@ -63,23 +59,21 @@
             </div>
             <div class="content">
                 <div class="text">THIS YEAR</div>
-                <div class="number count-to" data-from="0" data-to="{{$thisYearDrivers}}" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="number count-to" data-from="0" data-to="{{$thisYearUsers}}" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
-
     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="info-box bg-green hover-expand-effect">
             <div class="icon">
                 <i class="material-icons">timeline</i>
             </div>
             <div class="content">
-                <div class="text">TOTAL APPROVED</div>
-                <div class="number count-to" data-from="0" data-to="{{$totalApprovedDivers}}" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="text">TOTAL</div>
+                <div class="number count-to" data-from="0" data-to="{{$totalUsers}}" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>
-
 </div>
 <!-- #END# Widgets -->
 <!-- With Material Design Colors -->
@@ -88,8 +82,8 @@
     <div class="card">
         <div class="header">
             <h2>
-                LIST OF ALL DRIVERS
-                <small>You can see all drivers. You can sort by created, name, email etc. Filter drivers by Name, Email etc. Click on driver name to edit</small>
+                LIST OF ALL USERS
+                <small>You can see all users. You can sort by created, name, email etc. Filter users by Name, Email etc. Click on user name to edit</small>
             </h2>
             <ul class="header-dropdown m-r--5">
                 <li class="dropdown">
@@ -160,40 +154,27 @@
             </ul>
         </div>
         <!-- Select -->
-        <div class="row clearfix collapse @if($search_by != '' && $skwd != '' || ($search_by == 'location' && $location_name != '' ) ) in @endif" id="search-form">
+        <div class="row clearfix collapse @if($search_by != '' && $skwd != '' ) in @endif" id="search-form">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
-                    <!-- <div class="header">
-                        <h2>
-                            SEARCH DRIVERS
-                            <small>Enter your search keyword Eg. name, id, mobile etc. and select specific search type</small>
-                        </h2>
-                        </div> -->
                     <div class="body">
-                        <form action="" method="GET" id="driver-search-form">
+                        <form action="" method="GET" id="user-search-form">
                             <div class="row clearfix">
                                 <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                             <input type="text" class="form-control" name="skwd" value="{{$skwd}}">
-                                            <input type="text" class="form-control" autocomplete="off" name="location_name" value="{{$location_name}}">
-                                            <input type="hidden" class="form-control" name="latitude" value="{{$latitude}}">
-                                            <input type="hidden" class="form-control" name="longitude" value="{{$longitude}}">
-                                            <input type="hidden" class="form-control" name="radius" value="500">
                                             <label class="form-label">Type your search keyword</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-5">
                                     <select class="form-control show-tick" name="search_by">
-                                        <!-- <option value="">-- Search by --</option> -->
-                                        <option value="fname" @if($search_by == "fname") selected @endif>Name</option>
-                                        <option value="email" @if($search_by == "email") selected @endif>Email</option>
-                                        <option value="full_mobile_number" @if($search_by == "full_mobile_number") selected @endif>Mobile</option>
-                                        <option value="vehicle_number" @if($search_by == "vehicle_number") selected @endif>Vehicle no.</option>
-                                        <!-- <option value="created_at" @if($search_by == "created_at") selected @endif>Created time</option> -->
-                                        <option value="id" @if($search_by == "id") selected @endif>Identification number</option>
-                                        <option value="location" @if($search_by == "location") selected @endif>Location</option>
+                                    <option value="name" @if($search_by == "name") selected @endif>Name</option>
+                                    <option value="email" @if($search_by == "email") selected @endif>Email</option>
+                                    <option value="full_mobile_number" @if($search_by == "full_mobile_number") selected @endif>Mobile</option>
+                                    <option value="created_at" @if($search_by == "created_at") selected @endif>Joined Date(Y-m-d)</option>
+                                    <option value="id" @if($search_by == "id") selected @endif>Identification number</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2 text-center">
@@ -212,65 +193,48 @@
         <!-- #END# Select -->
         <small>
             <div class="body table-responsive">
-                @if($drivers->count() == 0)
+                @if($users->count() == 0)
                 <div class="alert bg-pink">
-                    No drivers found
+                    No users found
                 </div>
                 @else
                 <table class="table table-condensed table-hover">
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox" class="filled-in chk-col-pink" id="checkbox-driver-id-header"/>
-                                <label style="font-weight: 700;margin-bottom: 0px;line-height: 33px;" for="checkbox-driver-id-header" id="driver-list-id-header-checkbox-label"></label>
+                                <input type="checkbox" class="filled-in chk-col-pink" id="checkbox-user-id-header"/>
+                                <label style="font-weight: 700;margin-bottom: 0px;line-height: 33px;" for="checkbox-user-id-header" id="user-list-id-header-checkbox-label"></label>
                                 <!-- #ID -->
                             </th>
                             <th>NAME</th>
                             <th>EMAIL</th>
                             <th>MOBILE</th>
-                            <th>VEHICLE NO.</th>
                             <th>RATING</th>
+                            <th>RIDES</th>
                             <th>REGISTERD</th>
-                            <th>APPROVED</th>
                             <!-- <th></th> -->
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($drivers as $driver)
+                        @foreach($users as $user)
                         <tr>
                             <th>
-                                <input type="checkbox" id="checkbox-driver-id-{{$driver->id}}" class="filled-in chk-col-pink driver-list-id-checkbox" data-driver-id="{{$driver->id}}"/>
-                                <label for="checkbox-driver-id-{{$driver->id}}"></label>
+                                <input type="checkbox" id="checkbox-user-id-{{$user->id}}" class="filled-in chk-col-pink user-list-id-checkbox" data-user-id="{{$user->id}}"/>
+                                <label for="checkbox-user-id-{{$user->id}}"></label>
                             </th>
-                            <td><a data-toggle="tooltip" data-placement="left" title="Click to edit driver" href="javascript:void(0)" class="edit-driver-btn" data-driver-id="{{$driver->id}}">{{$driver->fname.' '.$driver->lname}}</a></td>
-                            <td>{{$driver->email}}</td>
-                            <td>{{$driver->full_mobile_number}}</td>
-                            <td>{{$driver->vehicle_number}}</td>
-                            <td>{{$driver->rating}}</td>
-                            <td>{{$driver->registeredOn($default_timezone)}}</td>
-                            <td>
-                                <div class="switch approve-switch">
-                                    <label><input type="checkbox" data-driver-id="{{$driver->id}}" @if($driver->is_approved==1) checked @endif><span class="lever switch-col-deep-orange"></span></label>
-                                </div>                             
-                            </td>
-                            <!-- <td>
-                                <li class="dropdown" style="list-style: none;">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                                    <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Approve</a></li>
-                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Edit</a></li>
-                                    </ul>
-                                </li>
-                            </td> -->
+                            <td><a data-toggle="tooltip" data-placement="left" title="Click to edit user" href="javascript:void(0)" class="edit-user-btn" data-user-id="{{$user->id}}">{{$user->fname.' '.$user->lname}}</a></td>
+                            <td>{{$user->email}}</td>
+                            <td>{{$user->full_mobile_number}}</td>
+                            <td>{{$user->rating}}</td>
+                            <td>{{$user->rideRequests()->where('ride_status', "COMPLETED")->count()}}</td>
+                            <td>{{$user->registeredOn($default_timezone)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 @endif
                 <div class="row pull-right">
-                    {!! $drivers->appends(request()->all())->render() !!}
+                    {!! $users->appends(request()->all())->render() !!}
                     <div>
                     </div>
         </small>
@@ -315,8 +279,8 @@
                     <div class="row clearfix">
                         <br>
                         <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
-                            <input type="checkbox" id="all_drivers_push_check" name="send_all" class="filled-in chk-col-pink">
-                            <label for="all_drivers_push_check">Send All Drivers (It may take long time)</label>
+                            <input type="checkbox" id="all_users_push_check" name="send_all" class="filled-in chk-col-pink">
+                            <label for="all_users_push_check">Send All Users (It may take long time)</label>
                         </div>
                     </div>
                 </form>
@@ -326,7 +290,7 @@
                             <span class="sr-only"></span>
                         </div>
                     </div>
-                    <small>Sending push notification(s) in progress : <span id="push-notification-progress-status"></span><small>
+                    <small>Sending push notification(s) in progress : <span id="push-notification-progress-status"></span></small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -340,143 +304,49 @@
 @section('bottom')
 <script>
 
+$(document).ready(function(){
+
 
     /**
-        edit driver link click handler
+        edit user link click handler
      */
-     $(".edit-driver-btn").on('click', function(){
+     $(".edit-user-btn").on('click', function(){
 
-        var driverId = $(this).data('driver-id');
-        console.log(driverId)
-        var url = "{{url('admin/drivers')}}/"+driverId;
+        var userId = $(this).data('user-id');
+        console.log(userId)
+        var url = "{{url('admin/users')}}/"+userId;
         window.open(url, '_blank');
 
      });
 
 
-    /**
-        approve or disapprove swtich handler
-    */
-
-    $(".approve-switch input[type='checkbox']").on('change', function(){
-
-        var csrf_token = "{{csrf_token()}}";
-        var driverId = $(this).data('driver-id');
-        var isApprove = $(this).is(":checked") ? 1 : 0;
-        var url = "{{url('admin/drivers')}}/"+driverId+'/approve/'+isApprove;
-        var curElem = this;
-        console.log(url)
-
-        if(isApprove) {        
-            
-            $.post(url, {_token:csrf_token}, function(response){
-                console.log(response)
-                if(response.success) {
-                    
-                    showNotification('bg-black', 'Driver approved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
-                   
-                }                 
-            }).fail(function(response) {
-                $(curElem).prop('checked', false);
-               
-                showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
-               
-            });
-            
-        } 
-        //disapprove driver show alert message first
-        else {
-
-            swal({
-                title: "Are you really want to disappove this driver",
-                text: "",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, disapprve",
-                cancelButtonText: "No, cancel please",
-                closeOnConfirm: false,
-                closeOnCancel: true
-            }, function (isConfirm) {
-                if (isConfirm) {
-                    
-                    swal({
-                        title: "Email Notification",
-                        text: "Driver will get email notificaiton",
-                        type: "input",
-                        showCancelButton: true,
-                        closeOnConfirm: false,
-                        animation: "slide-from-top",
-                        inputPlaceholder: "Type reason for disapprove"
-                    }, function (inputValue) {
-                        if (inputValue === false) {
-                            $(curElem).prop('checked', true);
-                            return false;
-                        } 
-
-                        if (inputValue === "") {
-                            swal.showInputError("You must enter reason"); return false
-                        }
-                        
-                        $.post(url, {_token:csrf_token, message:inputValue}, function(response){
-                            console.log(response)
-                            if(response.success) {
-                                showNotification('bg-black', 'Driver disapproved successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
-                            }
-                                        
-                        }).fail(function(response) {
-                            $(curElem).prop('checked', true);
-                            showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
-                        });
-                        console.log('disapprove clled')
-                        swal.close();
-
-                    });
-                } else {
-                    $(curElem).prop('checked', true);
-                }  
+    
 
 
-            });
-
-
-
-        }
- 
-       
-        
-    })
-
-
-
-
-
-
-
-    var driverIds = [];
-    var totalDriverIdCheckboxs = $(".driver-list-id-checkbox").length;
+    var userIds = [];
+    var totalUserIdCheckboxs = $(".user-list-id-checkbox").length;
 
     //trigger checked or not checked all checkboxs
-    $("#checkbox-driver-id-header").on('change', function(){
-        $(".driver-list-id-checkbox").prop('checked', $(this).is(':checked')).change();
+    $("#checkbox-user-id-header").on('change', function(){
+        $(".user-list-id-checkbox").prop('checked', $(this).is(':checked')).change();
     });
 
 
-    $(".driver-list-id-checkbox").on('change', function(){
+    $(".user-list-id-checkbox").on('change', function(){
 
-        //driver id 
-        var driverId = $(this).data('driver-id');
-        var index = driverIds.indexOf(driverId);
+        //user id 
+        var userId = $(this).data('user-id');
+        var index = userIds.indexOf(userId);
 
         //if checked and not in array then push
         if($(this).is(':checked')) {
 
             if(index < 0) {
-                driverIds.push(driverId)
+                userIds.push(userId)
 
                 //check header if all checkboxes checked
-                if(driverIds.length == totalDriverIdCheckboxs) {
-                    $("#checkbox-driver-id-header").prop('checked', true)
+                if(userIds.length == totalUserIdCheckboxs) {
+                    $("#checkbox-user-id-header").prop('checked', true)
                 }
 
             }
@@ -484,18 +354,18 @@
         } else {
 
             if(index > -1) {
-                driverIds.splice(index, 1)
+                userIds.splice(index, 1)
 
                 //uncheck header if any checkboxes unchecked
-                if(driverIds.length < totalDriverIdCheckboxs) {
-                    $("#checkbox-driver-id-header").prop('checked', false)
+                if(userIds.length < totalUserIdCheckboxs) {
+                    $("#checkbox-user-id-header").prop('checked', false)
                 }
 
             }
         }
 
 
-        console.log(driverIds)
+        console.log(userIds)
     });
 
 
@@ -542,15 +412,15 @@
         }
 
 
-        if(!driverIds.length && !$("#all_drivers_push_check").is(':checked')) {
+        if(!userIds.length && !$("#all_users_push_check").is(':checked')) {
             $("#send-pushnotification-modal").modal("hide");
-            showNotification('bg-black', 'Please Select atleast one driver from drivers list', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            showNotification('bg-black', 'Please Select atleast one user from users list', 'top', 'right', 'animated flipInX', 'animated flipOutX');
             return;
         }
 
 
         var formDataArray = $("#send-pushnotification-form").serializeArray();
-        var finalObj = {ids:driverIds.join('|')};
+        var finalObj = {ids:userIds.join('|')};
         formDataArray.map(function(obj){
             var temp = {};
             temp[obj.name] =  obj.value;
@@ -568,9 +438,13 @@
         $("#push-notification-progressbar-div").fadeIn();
     
 
-        var sseUrl = "{{url('admin/drivers/send-pushnotification')}}"+objectToQueryString(finalObj);
+        var sseUrl = "{{url('admin/users/send-pushnotification')}}"+objectToQueryString(finalObj);
 
         pushnotificationSSE = new EventSource(sseUrl);
+        pushnotificationSSE.addEventListener('error', function(e) {
+            $("#send-pushnotification-modal").modal("hide");
+            showNotification('bg-black', 'Internal server error try later', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        }, false);
         pushnotificationSSE.onmessage = function(event) {
             console.log(event.data);
             var data = JSON.parse(event.data)
@@ -590,7 +464,7 @@
     });
     
     
-    $("#driver-search-form").on('submit', function(event){
+    $("#user-search-form").on('submit', function(event){
     
         event.preventDefault()
         
@@ -602,40 +476,13 @@
             finalObj = Object.assign(finalObj, temp);
         });
         
-        var url = '{{url("admin/drivers")}}' + objectToQueryString(finalObj);
+        var url = '{{url("admin/users")}}' + objectToQueryString(finalObj);
         console.log(url)
         window.location.href = url;
     
     })
-    
-    
-    
-    // Read a page's GET URL variables and return them as an associative array.
-    function getUrlVars()
-    {
-        var url = location.search;
-        var qs = url.substring(url.indexOf('?') + 1).split('&');
-        for(var i = 0, result = {}; i < qs.length; i++){
-            qs[i] = qs[i].split('=');
-            duric = decodeURIComponent(qs[i][1]);
-            if(qs[i][0] == undefined || qs[i][0] == '' || duric == undefined || duric == '')
-            continue;
-            result[qs[i][0]] = decodeURIComponent(qs[i][1]);
-        }
-        return result;
-    }
-    
-    
-    function objectToQueryString(obj) 
-    {
-       var query = Object.keys(obj)
-           .filter(key => obj[key] !== '' && obj[key] !== null)
-           .map(key => key + '=' + obj[key])
-           .join('&');
-       return query.length > 0 ? '?' + query : null;
-    }
-    
-    
+
+
     $(".sort-by").on('click', function(){
         
         var order_by = $(this).data('order-by');
@@ -644,62 +491,43 @@
         urlVars.order_by=order_by;
         urlVars.order=order;
     
-        var url = '{{url("admin/drivers")}}' + objectToQueryString(urlVars);
+        var url = '{{url("admin/users")}}' + objectToQueryString(urlVars);
         
         console.log(url)
         window.location.href = url;
        
     
     });
-
-
-    $('#driver-search-form select[name="search_by"]').on('change', function(){
-
-        //if search by location show location autocomplete or skwd
-        console.log('searby changed', $(this).val())
-        var skwdElem = $('#driver-search-form input[name="skwd"]');
-        var lnElem = $('#driver-search-form input[name="location_name"]');
-        if($(this).val() == 'location') {
-            skwdElem.hide();
-            skwdElem.val('');
-            lnElem.show();
-            lnElem.focus().select();
-            lnElem.attr('placeholder', '');            
-        } else {
-            skwdElem.show().focus().select();            
-            lnElem.hide();
-            lnElem.val('')
-            $('#driver-search-form input[name="longitude"]').val('')
-            $('#driver-search-form input[name="location_name"]').val('');
-        }
-
-    }).change();
+   
+});
     
 
-    function initAutocomplete()
-    {
-        console.log('initAutocomplete')
-        autocomplete = new google.maps.places.Autocomplete(document.querySelector('input[name="location_name"'));
-        autocomplete.addListener('place_changed', function(){
-            var place = autocomplete.getPlace();
-            try {
-                
-                currLatitude = place.geometry.location.lat();
-                currLongitude = place.geometry.location.lng();
-                document.querySelector('input[name="latitude"').value = currLatitude;
-                document.querySelector('input[name="longitude"').value = currLongitude;
-
-            } catch(e) {
-                document.querySelector('input[name="location_name"').value=''
-                showNotification('bg-black', 'Select loction from dropdow', 'top', 'right', 'animated flipInX', 'animated flipOutX');
-            }
-            
-            console.log('place chnged', place)
-        });
+// Read a page's GET URL variables and return them as an associative array.
+function getUrlVars()
+{
+    var url = location.search;
+    var qs = url.substring(url.indexOf('?') + 1).split('&');
+    for(var i = 0, result = {}; i < qs.length; i++){
+        qs[i] = qs[i].split('=');
+        duric = decodeURIComponent(qs[i][1]);
+        if(qs[i][0] == undefined || qs[i][0] == '' || duric == undefined || duric == '')
+        continue;
+        result[qs[i][0]] = decodeURIComponent(qs[i][1]);
     }
+    return result;
+}
+
+
+function objectToQueryString(obj) 
+{
+    var query = Object.keys(obj)
+        .filter(key => obj[key] !== '' && obj[key] !== null)
+        .map(key => key + '=' + obj[key])
+        .join('&');
+    return query.length > 0 ? '?' + query : null;
+}
     
     
 </script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key}}&libraries=places&callback=initAutocomplete"></script>
+    
 @endsection

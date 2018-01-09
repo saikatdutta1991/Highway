@@ -295,4 +295,31 @@ class Setting extends Controller
         return $this->api->json(true, 'GENERAL_WEBSITE_SETTINGS_SAVED', 'Website settings saved');
     }
 
+
+
+    /**
+     * save website logo
+     */
+    public function saveWebsiteLogo(Request $request)
+    {
+        $url = $this->setting->saveWebsiteLogo($request->photo);
+        return $this->api->json(true, 'PHOTO_SAVED', 'Website logo saved', [
+            'logo_url' => $url,
+        ]);
+    }
+
+
+    /**
+     * upload and save website favicon
+     */
+    public function saveWebsiteFavicon(Request $request)
+    {
+        $url = $this->setting->saveWebsiteFavicon($request->photo);
+        return $this->api->json(true, 'PHOTO_SAVED', 'Website favicon saved', [
+            'favicon_url' => $url
+        ]);
+    }
+
+
+
 }

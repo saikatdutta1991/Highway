@@ -40,6 +40,10 @@ Route::group(['prefix' => 'admin'], function(){
     Route::group(['middleware' => 'adminAuth'], function(){
 
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
+
+        Route::get('users', 'Admin\User@showUsers')->name('admin-users');
+        Route::get('users/send-pushnotification', 'Admin\User@sendPushnotification');
+
         Route::get('drivers', 'Admin\Driver@showDrivers')->name('admin-drivers');
         Route::get('drivers/map', 'Admin\Driver@showDriversOnMap')->name('admin-drivers-map');
         Route::get('drivers/nearby', 'Admin\Driver@getNearbyDrivers')->name('admin-nearby-drivers');
@@ -71,6 +75,8 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('settings/google/map-key/save', 'Admin\Setting@saveGoogleMapKey');
         Route::get('settings/general', 'Admin\Setting@showGeneralSetting');
         Route::post('settings/general/website/save', 'Admin\Setting@saveGeneralSettings');
+        Route::post('settings/general/website/logo/save', 'Admin\Setting@saveWebsiteLogo');
+        Route::post('settings/general/website/favicon/save', 'Admin\Setting@saveWebsiteFavicon');
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 

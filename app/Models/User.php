@@ -36,6 +36,16 @@ class User extends Model
 
 
 
+    /**
+     * relationship with ride_requests table
+     */
+    public function rideRequests()
+    {
+        return $this->hasMany('App\Models\RideRequest', 'user_id');
+    }
+
+
+
 
     /**
      * save push notification device token
