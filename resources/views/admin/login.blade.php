@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <title>Admin Panel | {{$website_title}}</title>
+        <meta name="theme-color" content="black">
         <!-- Favicon-->
         <link rel="icon" href="{{$website_fav_icon_url}}" type="image/x-icon">
         <!-- Google Fonts -->
