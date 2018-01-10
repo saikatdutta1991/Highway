@@ -42,7 +42,10 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
 
         Route::get('users', 'Admin\User@showUsers')->name('admin-users');
+        Route::get('users/{user_id}', 'Admin\User@showUser');
         Route::get('users/send-pushnotification', 'Admin\User@sendPushnotification');
+        Route::post('users/{user_id}/update', 'Admin\User@updateUserProfile');
+        Route::post('users/{user_id}/reset-password', 'Admin\User@resetUserPassword');
 
         Route::get('drivers', 'Admin\Driver@showDrivers')->name('admin-drivers');
         Route::get('drivers/map', 'Admin\Driver@showDriversOnMap')->name('admin-drivers-map');

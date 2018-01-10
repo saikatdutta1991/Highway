@@ -208,4 +208,36 @@ class Email
     }
 
 
+
+
+    /**
+     * send user password reset by admin
+     */
+    public function sendUserPasswordResetAdmin($user, $newPassword)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            $resCode = Mail::to($user->email)->queue(new \App\Mail\UserPasswordResetAdmin($user, $newPassword));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :'.$user->email);
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+
+        return true;
+        
+    }
+
+
+
+
 }

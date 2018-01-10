@@ -446,7 +446,7 @@
                         }, 1000)
                                     
                     }).fail(function(response) {
-                        showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                        showNotification('bg-black', 'Unknown server error.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
                     });
             
                     swal.close();
@@ -691,7 +691,7 @@
                                         
                         }).fail(function(response) {
                             $(curElem).prop('checked', true);
-                            showNotification('bg-black', 'Unknown server error. Failed to disapprove driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                            showNotification('bg-black', 'Unknown server error. Failed to update driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
                         });
                         console.log('disapprove clled')
                         swal.close();

@@ -89,6 +89,26 @@ class User extends Controller
 
 
 
+    /**
+     * show user and edit
+     */
+    public function showUser(Request $request)
+    {
+        $user = $this->user->find($request->user_id);
+
+        //total requests count
+        $totalCompletedRequests = $this->rideRequest->where('user_id', $user->id)->where('ride_status', Ride::COMPLETED)->count();
+        $totalCanceledRequests = $this->rideRequest->where('user_id', $user->id)->where('ride_status', Ride::USER_CANCELED)->count();
+
+        return view('admin.edit_user', compact('user',
+            'totalCompletedRequests', 'totalCanceledRequests'
+        ));
+    }
+
+
+
+
+
 
     /**
      * send push notification to users by server-send-event javascript
@@ -159,6 +179,94 @@ class User extends Controller
         $response->headers->set('Content-Type', 'text/event-stream');
         return $response;
 
+    }
+
+
+
+
+    /**
+     * update user profile
+     */
+    public function updateUserProfile(Request $request)
+    {
+
+        $user = $this->user->find($request->user_id);
+        //this checking wont happend because admin will not hack the website
+        if(!$user) {return;}
+
+        /**
+         * append + before moblie number if present
+         */
+        if($request->has('mobile_number')) {
+            $request->request->add(['mobile_number' => '+'.str_replace('+', '', $request->mobile_number)]);
+        }
+
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|max:128',
+            'last_name' => 'required|max:128',
+            'email' => 'required|email|max:128|unique:'.$this->user->getTable().',email,'.$user->id,
+            'mobile_number' => 'required|regex:/^[+][0-9]+[-][0-9]+$/',
+        ]);
+
+        if($validator->fails()) {
+
+            $messages = [];
+            foreach($validator->errors()->getMessages() as $attr => $errArray) {
+                $messages[$attr] = $errArray[0];
+            }
+
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $messages);
+
+        }
+
+
+        /**
+         * check mobile number
+         */
+        list($country_code, $mobile_number) = explode('-', $request->mobile_number);
+        if($this->user->where('full_mobile_number', $country_code.$mobile_number)->where('id', '<>', $user->id)->exists()) {
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', [
+                'mobile_number' => 'This mobile number already used by another user'
+            ]);
+        }
+
+        
+        $user->fname = ucfirst(trim($request->first_name));
+        $user->lname = ucfirst(trim($request->last_name));
+        $user->email = trim($request->email);
+        $user->country_code = $country_code;
+        $user->mobile_number = $mobile_number;
+        $user->full_mobile_number = $user->fullMobileNumber();
+
+        $user->save();
+    
+        return $this->api->json(true, 'PROFILE_UPDATED', 'Profile updated successfully.');
+
+    }
+
+
+
+
+
+    /**
+     * reset user password
+     * send email and sms with new password
+     */
+    public function resetUserPassword(Request $request)
+    {
+        $user = $this->user->find($request->user_id);
+        $newPassword = rand(100000, 999999);
+        $user->password = \Hash::make($request->password);
+        $user->save();
+
+        //send password via sms
+        $user->sendPasswordResetSms($newPassword);
+        //send passwrod via email
+        $user->sendPasswordResetAdmin($newPassword);
+
+        return $this->api->json(true, 'PASSWORD_RESET', 'Password reset successfully.');
+      
     }
 
 
