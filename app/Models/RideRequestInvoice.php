@@ -31,6 +31,15 @@ class RideRequestInvoice extends Model
 
 
 
+    /**
+     * public function transaction
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction', 'transaction_table_id');
+    }
+
+
 
     /**
      * returns invoice static image url

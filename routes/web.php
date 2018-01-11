@@ -58,6 +58,11 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('drivers/{driver_id}/update', 'Admin\Driver@updateDriverProfile');
         Route::post('drivers/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword');
 
+
+        Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests');
+
+
+
         Route::get('services', 'Admin\Service@showServices');
         Route::post('services/add', 'Admin\Service@addService');
         Route::get('services/{service_id}/ridefare', 'Admin\Service@getRideFare');

@@ -464,6 +464,7 @@ class RideRequest extends Controller
 
                 //create transaction because payment successfull here
                 $transaction = new $this->transaction;
+                $transaction->trans_id = $invoice->invoice_reference;
                 $transaction->amount = $fare['total'];
                 $transaction->currency_type = $this->setting->get('currency_code');
                 $transaction->gateway = Ride::CASH;

@@ -18,4 +18,26 @@ class Transaction extends Model
         return $this->table;
     }
 
+
+
+    /**
+     * parent transaction relation
+     */
+    public function childTransactions()
+    {
+        return $this->hasMany('App\Models\Transaction', 'trans_parent_id');
+    }
+
+
+
+    /**
+     * parent transaciton relation
+     */
+    public function parentTransaction()
+    {
+        return $this->belongsTo('App\Models\Transaction', 'trans_parent_id');
+    }
+
+
+
 }

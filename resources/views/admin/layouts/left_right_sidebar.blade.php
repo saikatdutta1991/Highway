@@ -34,6 +34,20 @@
                     <span>Dashboard</span>
                     </a>
                 </li>
+                <li class="@yield('rides_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">send</i>
+                    <span>Rides</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('intracity_rides_active')">
+                            <a href="{{url('admin/rides/intracity')}}">Inside City</a>
+                        </li>
+                        <li class="@yield('intercity_rides_active')">
+                            <a href="{{url('')}}">Outside City</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="@yield('users_active')">
                     <a href="{{url('admin/users')}}">
                     <i class="material-icons">people</i>
