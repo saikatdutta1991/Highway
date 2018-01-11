@@ -122,7 +122,7 @@
                             <td><a data-toggle="tooltip" data-placement="left" title="" href="javascript:void(0)" class="" >{{$ride->user->fname.' '.$ride->user->lname}}</a></td>
                             <td><a data-toggle="tooltip" data-placement="left" title="" href="javascript:void(0)" class="" >{{$ride->user->fname.' '.$ride->user->lname}}</a></td>
                             <td>{{$ride->ride_vehicle_type}}</td>
-                            <td>
+                            <td style="max-width: 200px;">
                                 <i class="material-icons col-green" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>
                                 {{$ride->source_address}} @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}} {{date('d M Y', strtotime($ride->ride_start_time))}}@endif
                                 <br><span>|</span><br>
