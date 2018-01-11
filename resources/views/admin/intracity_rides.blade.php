@@ -122,8 +122,13 @@
                             <td><a data-toggle="tooltip" data-placement="left" title="" href="javascript:void(0)" class="" >{{$ride->user->fname.' '.$ride->user->lname}}</a></td>
                             <td><a data-toggle="tooltip" data-placement="left" title="" href="javascript:void(0)" class="" >{{$ride->user->fname.' '.$ride->user->lname}}</a></td>
                             <td>{{$ride->ride_vehicle_type}}</td>
-                            <td><i class="material-icons col-green" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>{{$ride->source_address}} @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}} {{date('d M Y', strtotime($ride->ride_start_time))}}@endif<br><span>|</span><br><i class="material-icons col-red" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>{{$ride->destination_address}} @if($ride->ride_end_time)<br>{{$ride->getStartTime($default_timezone)}} {{date('d M Y', strtotime($ride->ride_end_time))}}@endif</td>
-                            <td><i data-toggle="tooltip" data-placement="left" title="@if($ride->invoice->payment_status == 'PAID') Paid @else Not paid @endif" class="material-icons @if($ride->invoice->payment_status == 'PAID') col-green @else col-red @endif" style="font-size:10px;vertical-align:middle;">fiber_manual_record</i>{{$currency_symbol}}{{$ride->invoice->total}}</td>
+                            <td>
+                                <i class="material-icons col-green" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>
+                                {{$ride->source_address}} @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}} {{date('d M Y', strtotime($ride->ride_start_time))}}@endif
+                                <br><span>|</span><br>
+                                <i class="material-icons col-red" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>{{$ride->destination_address}} @if($ride->ride_end_time)<br>{{$ride->getStartTime($default_timezone)}} {{date('d M Y', strtotime($ride->ride_end_time))}}@endif
+                            </td>
+                            <td><i data-toggle="tooltip" data-placement="left" title="@if($ride->invoice && $ride->invoice->payment_status == 'PAID') Paid @else Not paid @endif" class="material-icons @if($ride->invoice && $ride->invoice->payment_status == 'PAID') col-green @else col-red @endif" style="font-size:10px;vertical-align:middle;">fiber_manual_record</i>@if($ride->invoice){{$currency_symbol}}{{$ride->invoice->total}}@else {{$ride->estimated_fare}} @endif</td>
                             <td>{{$ride->ride_status}}</td>
                             <td>
                                 <li class="dropdown" style="list-style: none;">
