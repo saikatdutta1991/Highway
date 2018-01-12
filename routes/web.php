@@ -60,6 +60,7 @@ Route::group(['prefix' => 'admin'], function(){
 
 
         Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests');
+        Route::get('rides/intracity/{ride_request_id}/details', 'Admin\RideRequest@showIntracityRideRequestDetails');
 
 
 
