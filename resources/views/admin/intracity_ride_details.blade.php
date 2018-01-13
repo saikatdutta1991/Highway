@@ -44,6 +44,10 @@
                                             <td>Mobile</td>
                                             <td class="text-right"><small>{{$ride->user->full_mobile_number}}</small></td>
                                         </tr>
+                                        <tr>
+                                            <td>Driver Rated</td>
+                                            <td class="text-right"><small>{{$ride->driver_rating}}</small></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -76,6 +80,10 @@
                                             <td>Mobile</td>
                                             <td class="text-right"><small>{{$ride->driver->full_mobile_number}}</small></td>
                                         </tr>
+                                         <tr>
+                                            <td>User Rated</td>
+                                            <td class="text-right"><small>{{$ride->user_rating}}</small></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -104,8 +112,17 @@
                                                     <td><i class="material-icons col-red font-12">fiber_manual_record</i>{{$ride->destination_address}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Time: @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}}@endif</td>
-                                                    <td>@if($ride->ride_end_time)<br>{{$ride->getStartTime($default_timezone)}}@endif</td>
+                                                    <td>Start Time: @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}}@endif</td>
+                                                    <td>End Time: @if($ride->ride_end_time)<br>{{$ride->getStartTime($default_timezone)}}@endif</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Request Time: {{$ride->created_at->setTimezone($default_timezone)->format('h:i a')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Duration: {{$ride->ride_time}} minute</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Distance Traveled: {{$ride->ride_distance}} km</td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="2">Date:
@@ -116,7 +133,7 @@
                                                         @endif
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr class="font-bold col-teal">
                                                     <td colspan="2">Ride Status:
                                                         {{$ride->ride_status}}
                                                     </td>
@@ -136,7 +153,7 @@
                 <div class="row clearfix">
                     <div class="col-sm-12">
                         <div class="card">
-                            <div class="body">
+                            <div class="body table-responsive">
                                 <div class="row clearfix">
                                     <div class="col-sm-12">
                                         <table class="table table-bordered">

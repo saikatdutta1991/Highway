@@ -52,20 +52,13 @@
                     </h2>
                     <ul class="header-dropdown m-r--5">
                         <li>
-                            <a href="javascript:void(0);" data-toggle="tooltip" data-placement="left" title="Add new service" id="add-service-btn">
-                            <i class="material-icons col-pink">add</i>
-                            </a>
+                            <button id="add-service-btn" type="button" data-toggle="tooltip" data-placement="left" title="Add new service" class="font-bold btn bg-red btn-block btn-xs waves-effect">
+                                <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>New Service
+                            </button>
                         </li>
-                        <!-- <li class="dropdown">
-                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons">more_vert</i>
-                            </a>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a href="javascript:void(0);">Action</a></li>
-                                <li><a href="javascript:void(0);">Another action</a></li>
-                                <li><a href="javascript:void(0);">Something else here</a></li>
-                            </ul>
-                            </li> -->
+                        <li>
+                            <button type="button" id="tax-percentage-button" data-toggle="tooltip" data-placement="left" title="Set ride service tax percentage" class="font-bold btn bg-red btn-block btn-xs waves-effect">Service Tax</button>
+                        </li>
                     </ul>
                 </div>
                 <div class="body table-responsive">
@@ -268,14 +261,74 @@
     </div>
 </div>
 <!-- ride fare -->
+
+<!-- intracity tax percentage -->
+<div class="modal fade" id="ride_fare_tax_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="smallModalLabel">RIDE SERVICE TAX</h4>
+                <small>This tax percentage will be added to any types of ride services</small>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <form id="ride_tax_form">
+                        <input type="hidden" name="_token" value="{{csrf_token()}}">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="number" class="form-control" value="{{$rideTaxPecentage}}" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_percentage">
+                                    <label class="form-label">Tax Percentage(%)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="tax-percentage-save-btn">SAVE</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- intracity tax percentage -->
+
+
 @endsection
 @section('bottom')
 <script>
 
+    
 
     var service_add_url = "{{url('admin/services/add')}}";
     var service_fare_base = "{{url('admin/services')}}";
     var csrf_token = "{{csrf_token()}}";
+    var save_tax_percentage = "{{url('admin/services/tax/save')}}";
+
+    $("#tax-percentage-button").on('click', function(){
+        $("#ride_fare_tax_modal").modal('show')
+    })
+
+
+    $("#tax-percentage-save-btn").on('click', function(){
+
+        var data = $('#ride_tax_form').serializeArray();
+        console.log(data)
+        $.post(save_tax_percentage, data, function(response){
+
+            if(response.success) {
+                $("#ride_fare_tax_modal").modal('hide')
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            } 
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Contact to developer', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
+    })
     
 
     $("#service-fare-save-btn").on('click', function(){

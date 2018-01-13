@@ -44,8 +44,23 @@ class Service extends Controller
             $services[$index]['used_by_driver'] = $this->driver->where('vehicle_type', $service['code'])->count();
         }
 
+        $rideTaxPecentage = $this->setting->get('vehicle_ride_fare_tax_percentage');
+        return view('admin.services', compact('services', 'rideTaxPecentage'));
+    }
 
-        return view('admin.services', compact('services'));
+
+
+    /**
+     * save ride tax percentage
+     */
+    public function saveRideTaxPercentage(Request $request)
+    {
+        if($request->tax_percentage < 0) {
+            return $this->api->json(false, 'DELETED', 'Failed to save service tax percentage');
+        }
+
+        $this->setting->set('vehicle_ride_fare_tax_percentage', $request->tax_percentage);
+        return $this->api->json(true, 'SAVED', 'Service tax percentage saved successfully');
     }
 
 

@@ -68,6 +68,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('services/add', 'Admin\Service@addService');
         Route::get('services/{service_id}/ridefare', 'Admin\Service@getRideFare');
         Route::post('services/{service_id}/ridefare', 'Admin\Service@createOrUpdateRideFare');
+        Route::post('services/tax/save', 'Admin\Service@saveRideTaxPercentage');
         
         Route::get('settings/email', 'Admin\Setting@showEmailSetting');
         Route::post('settings/email/save', 'Admin\Setting@saveEmailSettings');
