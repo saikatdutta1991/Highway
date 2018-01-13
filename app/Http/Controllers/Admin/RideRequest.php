@@ -72,7 +72,7 @@ class RideRequest extends Controller
      */
     public function showIntracityRideRequestDetails(Request $request)
     {
-        $ride = $this->rideRequest->find($request->ride_request_id)->with(
+        $ride = $this->rideRequest->where('id', $request->ride_request_id)->with(
             'user', 'driver', 'invoice'
         )->first();
             
