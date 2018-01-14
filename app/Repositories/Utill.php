@@ -120,24 +120,23 @@ class Utill
      * calculate radious(min latitude, longitude and max latititude, longitude)
      *  for a given distance and center latitude, longitude
      */
-    public function getRadiousLatitudeLongitude($latitude, $longitude, $radious, $radiousUnit = 'km')
+    public function getRadiousLatitudeLongitude($latitude, $longitude, $radius, $radiusUnit = 'km')
     {
-        $radiousConst = $radiousUnit == "km" ? 111.045 : 69;
+        $radiusConst = $radiusUnit == "km" ? 111.045 : 69;
 
         $latitude = number_format($latitude, 7, '.', '');
 		$longitude = number_format($longitude, 7, '.', '');
 
-        $minLatitude      = $latitude - ($radious / $radiousConst);
-        $maxLatitude      = $latitude + ($radious / $radiousConst);
-        
-		$minLongitude      = $longitude - ($radious / abs(cos(deg2rad($latitude)) * $radiousConst));
-		$maxLongitude      = $longitude + ($radious / abs(cos(deg2rad($latitude)) * $radiousConst));
+        $minlng      = $longitude - ($radius / abs(cos(deg2rad($latitude)) * $radiusConst));
+		$maxlng      = $longitude + ($radius / abs(cos(deg2rad($latitude)) * $radiusConst));
+		$minlat      = $latitude - ($radius / $radiusConst);
+		$maxlat      = $latitude + ($radius / $radiusConst);
         
         return [
-            number_format($minLatitude, 7, '.', ''),
-            number_format($maxLatitude, 7, '.', ''),
-            number_format($minLongitude, 7, '.', ''),
-            number_format($maxLongitude, 7, '.', ''),
+            number_format($minlat, 7, '.', ''),
+            number_format($maxlat, 7, '.', ''),
+            number_format($minlng, 7, '.', ''),
+            number_format($maxlng, 7, '.', ''),
         ];
 		
     }
@@ -254,6 +253,15 @@ class Utill
 	}
 
 
+
+
+    /**
+     * change datetime string to UTC
+     */
+    public function timestampStringToUTC($datetimeString)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $datetimeString)->timezone('UTC');
+    }
 
 
 

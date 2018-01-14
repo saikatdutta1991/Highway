@@ -32,14 +32,22 @@ Route::group(['prefix' => '/v1/user'], function(){
 
         Route::get('ride-request/payment-modes', 'Apis\User\RideRequest@getPaymentModes');
         Route::post('ride-request/update-payment-mode', 'Apis\User\RideRequest@updatePaymentMode');
-
         Route::get('ride-request/check', 'Apis\User\RideRequest@checkRideRequest');
         Route::post('ride-request/{ride_request_id}/cancel', 'Apis\User\RideRequest@cancelRideRequest');
-
         Route::post('ride-request/initiate', 'Apis\User\RideRequest@initiateRideRequest');
         Route::post('ride-request/{ride_request_id}/rate-driver', 'Apis\User\RideRequest@rateDriver');
-
         Route::get('ride-requests/histories', 'Apis\User\RideRequest@getHistories')->name('ride_request_histories');
+
+
+
+        /**
+         * intercity trip routes
+         */
+        Route::group(['prefix' => 'trips'], function(){
+
+            Route::get('search', 'Apis\User\Trip@searchTrips');
+
+        }); 
 
 
     });
@@ -86,6 +94,23 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('ride-request/{ride_request_id}/rate-user', 'Apis\Driver\RideRequest@rateUser');
 
         Route::get('ride-requests/histories', 'Apis\Driver\RideRequest@getHistories')->name('ride_request_histories');
+
+
+        /**
+         * intercity trip routes
+         */
+        Route::group(['prefix' => 'trips'], function(){
+
+            Route::get('/', 'Apis\Driver\Trip@getTrips');
+            Route::post('create', 'Apis\Driver\Trip@createTrip');
+            Route::post('{trip_id}/delete', 'Apis\Driver\Trip@deleteTrip');
+            Route::post('{trip_id}/pickup-points/{pickup_point_id}/delete', 'Apis\Driver\Trip@deleteTripPickupPoint');
+            Route::post('{trip_id}/pickup-points/add', 'Apis\Driver\Trip@addPickupPoint');
+
+        }); 
+
+
+
     });
 
 
