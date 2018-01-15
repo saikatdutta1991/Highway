@@ -13,7 +13,19 @@ class Trip extends Model
     const BOOKED = "BOOKED";
     const DRIVER_REACHED = "DRIVER_REACHED";
     const TRIP_STARTED = "TRIP_STARTED";
-    const TRIP_CANCELED = "TRIP_CANCELED";
+    const TRIP_CANCELED = "TRIP_CANCELED"; //canceled by driver 
+
+
+
+    const CASH = 'CASH'; //default payment mode
+    const PAYU = 'PAYU'; //payu payment mode
+    const PAYMENT_MODES = [self::CASH, self::PAYU];
+
+    /**
+     * payment status list
+     */
+    const NOT_PAID = 'NOT_PAID';
+    const PAID = 'PAID';
 
 
     protected $table = 'trips';
@@ -40,6 +52,7 @@ class Trip extends Model
         
         return $date;
     }
+
 
 
 
@@ -123,6 +136,27 @@ class Trip extends Model
         $this->where('id', $tripId)->forceDelete();
         app('App\Models\TripPoint')->where('trip_id', $tripId)->forceDelete();
         return true;
+    }
+
+
+
+    /**
+     * get trip date formated string d-m-Y
+     */
+    public function tripFormatedDateString()
+    {
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
+        return $date->formatLocalized('%d-%m-%Y');
+    }
+
+
+    /**
+     * get trip time formated string am pm
+     */
+    public function tripFormatedTimeString()
+    {
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
+        return $date->format('h:i A');
     }
 
 

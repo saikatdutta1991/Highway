@@ -18,7 +18,7 @@ class CreateTripPointsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('trip_id')->unsigned();
             $table->bigInteger('trip_points_parent_id')->unsigned()->default(0);
-            $table->integer('seats');
+            $table->integer('seats_booked');
 
             $table->string('source_address', 256);
             $table->decimal('source_latitude', 10, 7)->default(0.0);
@@ -29,6 +29,7 @@ class CreateTripPointsTable extends Migration
 
             $table->decimal('estimated_trip_distance', 10, 1)->default(0.0);
             $table->integer('estimated_trip_time')->default(0);
+            $table->decimal('estimated_fare', 10, 2)->default(0.00);
             $table->timestamp('trip_start_time')->nullable();
             $table->timestamp('trip_end_time')->nullable();
             $table->string('trip_status', 128);

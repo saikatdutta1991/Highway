@@ -27,6 +27,15 @@ class User extends Model
     }
 
 
+    /**
+     * returns full name
+     */
+    public function fullname()
+    {
+        return $this->fname.' '.$this->lname;
+    }
+
+
 
 
     public function reasonNotActivated()

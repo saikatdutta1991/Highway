@@ -12,6 +12,7 @@ use App\Repositories\SocketIOClient;
 use App\Models\Trip as TripModel;
 use App\Models\TripPoint;
 use App\Repositories\Utill;
+use App\Models\UserTrip;
 use Validator;
 
 class Trip extends Controller
@@ -20,8 +21,9 @@ class Trip extends Controller
     /**
      * init dependencies
      */
-    public function __construct(TripPoint $tripPoint, TripModel $trip, Utill $utill, Setting $setting, Email $email, Api $api, SocketIOClient $socketIOClient)
+    public function __construct(UserTrip $userTrip, TripPoint $tripPoint, TripModel $trip, Utill $utill, Setting $setting, Email $email, Api $api, SocketIOClient $socketIOClient)
     {
+        $this->userTrip = $userTrip;
         $this->tripPoint = $tripPoint;
         $this->trip = $trip;
         $this->utill = $utill;
@@ -71,8 +73,10 @@ class Trip extends Controller
         //matching trip not canceled or started or completed
         $trips = $trips->whereNotIn("{$this->tripPoint->getTableName()}.trip_status", [TripModel::COMPLETED, TripModel::TRIP_STARTED]);
 
-        if($date = $this->trip->createDate($request->date)) {
-            $trips = $trips->where("{$tripTable}.trip_date_time", 'like', $date->toDateString().'%');
+        $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_user->timezone);
+
+        if(is_array($dateRange)) {
+            $trips = $trips->whereBetween("{$tripTable}.trip_date_time", $dateRange);
         }
 
         $trips = $trips->select("{$this->tripPoint->getTableName()}.*")
@@ -87,6 +91,124 @@ class Trip extends Controller
 
 
     }
+
+
+
+
+
+    /**
+     * book trip by trip id and point id too
+     */
+    public function bookTrip(Request $request)
+    {
+        
+        $paymentMode = in_array($request->payment_mode, TripModel::PAYMENT_MODES) ? $request->payment_mode : TripModel::CASH;
+
+        //find trip point by id
+        $tripPoint = $this->tripPoint->where('trip_id', $request->trip_id)
+        ->where('id', $request->trip_point_id)
+        ->whereNotIn('trip_status', [TripModel::COMPLETED, TripModel::TRIP_STARTED])
+        ->first();
+        
+        if(!$tripPoint) {
+            return $this->api->json(false, "INVALID", 'You are not allowed to book this trip');
+        }
+
+
+        //if seats not not available
+        if($tripPoint->trip->seats_available == 0) {
+            return $this->api->json(false, 'NO_SEATS_AVAILABLE', "No seats available for this trip");
+        }
+
+        //check if user has already booked this trip alredy or not
+        if($this->userTrip->where('trip_id', $tripPoint->trip->id)->where('trip_point_id', $tripPoint->id)->exists()) {
+            return $this->api->json(false, 'ALREADY_BOOKED', 'You have already booked this trip');
+        }
+
+
+
+        try {
+
+            DB::beginTransaction();
+            
+            //making trip point status to booked
+            $tripPoint->trip_status == TripModel::BOOKED;
+            //in seats_booked +1
+            $tripPoint->seats_booked += 1;
+            $tripPoint->save();
+
+            //making trip status booked
+            $trip = $tripPoint->trip;
+            $trip->trip_status = TripModel::BOOKED;
+            //making trip available seats -1
+            $trip->seats_available -= 1;
+            $trip->save();
+
+            //inserting user trip record
+            $userTrip = new $this->userTrip;
+            $userTrip->user_id = $request->auth_user->id;
+            $userTrip->trip_id = $trip->id;
+            $userTrip->trip_point_id = $tripPoint->id;
+            $userTrip->trip_status = TripModel::BOOKED;
+            $userTrip->payment_mode = $paymentMode;
+            $userTrip->payment_status = TripModel::NOT_PAID;
+            $userTrip->trip_invoice_id = 0;
+            $userTrip->user_rating = 0;
+            $userTrip->driver_rating = 0;
+            
+            $userTrip->save();
+            
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('BOOK_TRIP_ERROR', $e->getMessage());
+            return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+        }
+
+
+        //send push notification and sms to driver
+        $driver = $trip->driver;
+        $user = $request->auth_user;
+        $msgBody = "{$user->fullname()} has booked trip({$trip->trip_name}) from {$tripPoint->source_address}";
+        $driver->sendPushNotification($trip->trip_name.' trip has been booked', $msgBody);
+        $driver->sendSms($msgBody);
+        
+        //send sms to user and email
+        $user->sendSms("Your trip has been booked. From : {$tripPoint->source_address} | To : {$tripPoint->destination_address} on {$tripPoint->trip->tripFormatedDateString()} at {$tripPoint->trip->tripFormatedTimeString()}");
+
+        return $this->api->json(true, 'TRIP_BOOKED', 'Trip booked', [
+            'user_trip' => $userTrip
+        ]);
+
+
+    }
+
+
+
+
+
+
+    /**
+     * returns booked trips those are not canceled or user canceled
+     */
+    public function getBookedTrips(Request $request)
+    {
+        $trips = $this->userTrip->where('user_id', $request->auth_user->id)
+        ->whereNotIn('trip_status', [UserTrip::USER_CANCELED, TripModel::TRIP_CANCELED])
+        ->with('trip', 'tripPoint')
+        ->get();
+
+        return $this->api->json(true, 'BOOKED_TRIPS', 'Booked trips', [
+            'trips' => $trips
+        ]);
+
+
+    }
+
+
+
+
 
 
 

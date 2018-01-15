@@ -258,10 +258,33 @@ class Utill
     /**
      * change datetime string to UTC
      */
-    public function timestampStringToUTC($datetimeString)
+    public function timestampStringToUTC($datetimeString, $timezone)
     {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $datetimeString)->timezone('UTC');
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $datetimeString, $timezone)->timezone('UTC');
     }
+
+
+
+    /**
+     * returns utc timestamp range for a particular date when date is in local
+     * dateString format is Y-m-d
+     */
+    public function utcDateRange($dateString, $timezone)
+    {
+        try {
+
+            return [
+                $this->timestampStringToUTC($dateString.' 00:00:00', $timezone)->toDateTimeString(),
+                $this->timestampStringToUTC($dateString.' 11:59:59', $timezone)->toDateTimeString()
+            ];
+
+        } catch(\Exception $e) {
+            return false;
+        }
+        
+    }
+
+
 
 
 

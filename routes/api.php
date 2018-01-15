@@ -46,6 +46,8 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::group(['prefix' => 'trips'], function(){
 
             Route::get('search', 'Apis\User\Trip@searchTrips');
+            Route::post('book', 'Apis\User\Trip@bookTrip');
+            Route::get('booked', 'Apis\User\Trip@getBookedTrips');
 
         }); 
 

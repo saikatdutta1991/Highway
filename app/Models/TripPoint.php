@@ -28,6 +28,14 @@ class TripPoint extends Model
     }
 
 
+    /**
+     * all user bookings
+     */
+    public function userBookings()
+    {
+        return $this->hasMany('App\Models\UserTrip', 'trip_point_id');
+    }
+
 
     /**
      * trip pickup point key rules
