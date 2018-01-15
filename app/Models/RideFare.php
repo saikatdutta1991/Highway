@@ -91,7 +91,7 @@ class RideFare extends Model
         $fare += ($avgDuration * $this->wait_time_price);
 
         //checking if cost is less than minimum price
-        $fare = ($fare < $this->minimum_price) ? $this->minimum_price : $fare;
+        $fare = ($fare < $this->minimun_price) ? $this->minimun_price : $fare;
         $fare = $utillRepo->formatAmountDecimalTwo($fare);
 
         return $fare;
