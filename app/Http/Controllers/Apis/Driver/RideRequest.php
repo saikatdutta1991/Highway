@@ -418,7 +418,7 @@ class RideRequest extends Controller
             return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request'); 
         }
         
-        if(!$request->has('ride_distance') || !$request->has('ride_time')) {
+        if(!$request->has('ride_distance')) {
             return $this->api->json(false, 'PARAMTERS_ARE_MISSING', 'Some input parameters are missing');
         }
 
@@ -428,7 +428,11 @@ class RideRequest extends Controller
         //getting rideFare object by vehicle type id
         $vTypeId = $this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type);
         $rideFare = $this->rideFare->where('vehicle_type_id', $vTypeId)->first();
-        $fare = $rideFare->calculateFare($request->ride_distance, $request->ride_time);
+
+        $rideEndTime = date('Y-m-d H:i:s');
+        $rideTime = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
+        
+        $fare = $rideFare->calculateFare($request->ride_distance, $rideTime);
 
         
         try{
@@ -436,9 +440,9 @@ class RideRequest extends Controller
 
             //updating ride request table
             $rideRequest->ride_distance = $request->ride_distance;
-            $rideRequest->ride_time = $request->ride_time;
+            $rideRequest->ride_time = $rideTime;
             $rideRequest->estimated_fare = $fare['total'];
-            $rideRequest->ride_end_time = date('Y-m-d H:i:s');
+            $rideRequest->ride_end_time = $rideEndTime;
             $rideRequest->ride_status = Ride::TRIP_ENDED;   
 
             

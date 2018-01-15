@@ -265,4 +265,19 @@ class Utill
 
 
 
+
+    /**
+     * calculate timestamp string difference in minute
+     */
+    public function getDiffMinute($fromTime, $toTime)
+    {
+        $fromTime = strtotime($fromTime);
+        $toTime = strtotime($toTime);
+    
+        return $minute = round(abs($toTime - $fromTime) / 60);
+    }
+
+
+
+
 }
