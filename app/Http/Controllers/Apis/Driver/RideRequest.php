@@ -145,7 +145,7 @@ class RideRequest extends Controller
     {
         
         $rideRequest = $this->rideRequest
-        ->where('user_id', $request->auth_driver->id)
+        ->where('driver_id', $request->auth_driver->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())
         ->orWhere(function($query){
             $query->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
@@ -608,7 +608,7 @@ class RideRequest extends Controller
     public function getHistories(Request $request)
     {
         //takes trip ended, user cancelled, driver cancelled ride requests
-        $rideRequests = $this->rideRequest->where('user_id', $request->auth_driver->id)
+        $rideRequests = $this->rideRequest->where('driver_id', $request->auth_driver->id)
         ->whereIn('ride_status', [Ride::COMPLETED, Ride::TRIP_ENDED, Ride::USER_CANCELED, Ride::DRIVER_CANCELED])
         ->with(['user', 'invoice'])
         ->orderBy('updated_at', 'desc')
