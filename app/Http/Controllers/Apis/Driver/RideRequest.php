@@ -115,7 +115,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Driver {$authDriver->fname} has accepted your ride request", $notificationData);
+        $user->sendPushNotification("Your ride accepted", "Driver {$authDriver->fname} has accepted your ride request", $notificationData);
 
 
         /**
@@ -237,9 +237,10 @@ class RideRequest extends Controller
         /**
          * send push notification to user
          */
+        $pushNotificationTitle = ($request->status == Ride::DRIVER_STARTED) ? "Driver is on the way" : "Driver reached";
         $pushNotificationText = ($request->status == Ride::DRIVER_STARTED) ? "Driver {$authDriver->fname} is on the way" : "Driver {$authDriver->fname} has reached the location";
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification($pushNotificationText, $notificationData);
+        $user->sendPushNotification($pushNotificationTitle, $pushNotificationText, $notificationData);
 
 
         /**
@@ -316,7 +317,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Driver {$authDriver->fname} has canceled your ride request", $notificationData);
+        $user->sendPushNotification("Driver canceled ride", "Driver {$authDriver->fname} has canceled your ride request", $notificationData);
 
 
         /**
@@ -376,7 +377,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Trip has been started", $notificationData);
+        $user->sendPushNotification("Ride started", "Your trip has been started. Enjoy your ride.", $notificationData);
 
 
         /**
@@ -514,7 +515,8 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Your trip has been ended. Please make payment of ".$invoice->total, $notificationData);
+        $currencySymbol = $this->setting->get('currency_symbol');
+        $user->sendPushNotification("Your ride ended", "Your ride has ended. Please make payment of {$currencySymbol}".$invoice->total, $notificationData);
 
 
         /**
