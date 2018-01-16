@@ -584,6 +584,14 @@ class RideRequest extends Controller
             $user->rating = $userRating;
             $user->save();
 
+
+            //making availble driver
+            $driver = $rideRequest->driver;
+            $driver->is_available = 1;
+            $driver->save();
+
+
+
             \DB::commit();
 
         } catch(\Exception $e) {
