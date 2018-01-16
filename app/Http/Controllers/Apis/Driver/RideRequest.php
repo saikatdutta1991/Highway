@@ -517,7 +517,7 @@ class RideRequest extends Controller
         $user = $this->user->find($rideRequest->user_id);
         $currencySymbol = $this->setting->get('currency_symbol');
         $user->sendPushNotification("Your ride ended", "Your ride has ended. Please make payment of {$currencySymbol}".$invoice->total, $notificationData);
-
+        $user->sendSms("We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
 
         /**
          * send socket push to user
