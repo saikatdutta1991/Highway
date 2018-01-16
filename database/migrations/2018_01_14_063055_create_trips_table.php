@@ -28,7 +28,7 @@ class CreateTripsTable extends Migration
             $table->decimal('destination_latitude', 10, 7)->default(0.0);
             $table->decimal('destination_longitude', 10, 7)->default(0.0);
 
-            $table->timestamp('trip_date_time');
+            $table->timestamp('trip_date_time')->nullable();
             $table->string('trip_status', 128);
 
             $table->timestamps();
