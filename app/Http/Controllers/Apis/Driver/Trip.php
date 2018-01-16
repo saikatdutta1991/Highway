@@ -317,11 +317,14 @@ class Trip extends Controller
         ->where('driver_id', $request->auth_driver->id)
         ->whereNotIn('trip_status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED]);
 
-        if(!$date = $this->trip->createDate($request->date)) {
-            $trips = $trips->where('trip_date_time', 'like', $date->toDateString().'%');
+        
+        $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_driver->timezone);
+
+        if(is_array($dateRange)) {
+            $trips = $trips->whereBetween('trip_date_time', $dateRange);
         }
-        //else take all trips after current date
-        else {
+        //else take all trips after current date 
+        else{
             $trips = $trips->where('trip_date_time', '>=', date('Y-m-d H:i:s'));
         }
 

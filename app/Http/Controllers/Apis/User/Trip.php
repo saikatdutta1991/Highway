@@ -76,7 +76,13 @@ class Trip extends Controller
         $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_user->timezone);
 
         if(is_array($dateRange)) {
-            $trips = $trips->whereBetween("{$tripTable}.trip_date_time", $dateRange);
+            $trips = $trips->whereBetween("{$tripTable}.trip_date_time", $dateRange)
+            //and greater than current date time
+            ->where("{$tripTable}.trip_date_time", '>=', date('Y-m-d H:i:s'));
+        }
+        //fetch all trips beyond curren datetime 
+        else {
+            $trips = $trips->where("{$tripTable}.trip_date_time", ">=", date('Y-m-d H:i:s'));
         }
 
         $trips = $trips->select("{$this->tripPoint->getTableName()}.*")
@@ -126,7 +132,6 @@ class Trip extends Controller
         }
 
 
-
         try {
 
             DB::beginTransaction();
@@ -135,6 +140,7 @@ class Trip extends Controller
             $tripPoint->trip_status == TripModel::BOOKED;
             //in seats_booked +1
             $tripPoint->seats_booked += 1;
+            $tripPoint->trip_status = TripModel::BOOKED;
             $tripPoint->save();
 
             //making trip status booked

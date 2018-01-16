@@ -274,12 +274,18 @@ class PushNotification
 	        'Authorization: key=' . $this->serverKey,
 	        'Content-Type: application/json'
 	    ];
-	    $response = $this->postURL($this->fcmURL, $headers, $fields);
+		$response = $this->postURL($this->fcmURL, $headers, $fields);
+		
+		\Log::info('PUSH NOTIFICATION FIREBASE');
+		\Log::info($response);
+
 	    if($resType == self::STDCLASS) {
 	    	return json_decode($response);
 	    } else if($resType == self::ARRY) {
 	    	return json_decode($response, true);
-	    }
+		}
+		
+		
 	    
 	    return $response;
 	}
