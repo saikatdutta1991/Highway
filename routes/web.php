@@ -42,8 +42,8 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
 
         Route::get('users', 'Admin\User@showUsers')->name('admin-users');
-        Route::get('users/{user_id}', 'Admin\User@showUser');
         Route::get('users/send-pushnotification', 'Admin\User@sendPushnotification');
+        Route::get('users/{user_id}', 'Admin\User@showUser');        
         Route::post('users/{user_id}/update', 'Admin\User@updateUserProfile');
         Route::post('users/{user_id}/reset-password', 'Admin\User@resetUserPassword');
 
@@ -155,7 +155,7 @@ Route::get('send-email', function(){
 
 Route::get('send_push', function(){
     
-    /* $pushHelper = new \App\Repositories\PushNotification;
+    $pushHelper = new \App\Repositories\PushNotification;
         $res = $pushHelper->setTitle('Test Push notification')
         ->setBody('Message Body')
         ->setIcon('logo')
@@ -166,7 +166,7 @@ Route::get('send_push', function(){
         ->setDeviceTokens(request()->token)
         ->push();
 
-        dd($res); */
+        dd($res);
 
 
 });
