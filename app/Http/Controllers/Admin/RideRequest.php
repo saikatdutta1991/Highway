@@ -37,7 +37,8 @@ class RideRequest extends Controller
     public function showIntracityRideRequests(Request $request)
     {
 
-        $rides = $this->rideRequest->with('user', 'driver', 'invoice');
+        $rides = $this->rideRequest->with('user', 'driver', 'invoice')
+        ->whereNotIn('ride_status', [Ride::INITIATED]);
 
         //search for only particular user rides
         if($request->user_id != '') {
