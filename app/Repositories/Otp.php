@@ -46,6 +46,7 @@ class Otp
 		$countryCode = ltrim($countryCode, '+');
 		$body = [
 			'sender' => $this->setting->get('msg91_sender_id'),
+			'unicode' => '1',
 			'route' => '4',
 			'country' => $countryCode,
 			'sms' => [
