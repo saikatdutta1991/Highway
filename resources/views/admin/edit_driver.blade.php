@@ -405,7 +405,6 @@
         </div>
     </div>
 </div>
-@endsecti
 @endsection
 @section('bottom')
 <!-- Dropzone Plugin Js -->
