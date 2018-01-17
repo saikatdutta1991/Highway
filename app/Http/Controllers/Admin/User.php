@@ -257,7 +257,7 @@ class User extends Controller
     {
         $user = $this->user->find($request->user_id);
         $newPassword = rand(100000, 999999);
-        $user->password = \Hash::make($request->password);
+        $user->password = \Hash::make($newPassword);
         $user->save();
 
         //send password via sms
