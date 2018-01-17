@@ -221,6 +221,8 @@ class RideRequest extends Controller
      */
     public function getNearbyDrivers(Request $request)
     {
+        //put log
+        Api::log('NEARBY_DRIVERS_API', $request->all());
 
         // taking latitude and longitude from request
         try {
@@ -257,6 +259,8 @@ class RideRequest extends Controller
             $dt.'.vehicle_type',            
         ])
         ->take(50)->get();
+
+        Api::log('NEARBY_DRIVERS_API_DRIVERS', $nearbyDriversDetails->toArray());
 
         return $this->api->json(true, 'NEARBY_DRIVERS', 'Nearby drivers', [
             'drivers' => $nearbyDriversDetails
