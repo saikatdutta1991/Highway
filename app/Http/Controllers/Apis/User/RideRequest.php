@@ -193,7 +193,7 @@ class RideRequest extends Controller
         /**
          * send push notification to driver
          */
-        $driver->sendPushNotification("Ride canceled", "User {$request->auth_user->fname} has canceled your ride request", $notificationData);
+        $driver->sendPushNotification("Ride canceled", "User {$request->auth_user->fname} has canceled your ride request");
 
 
         /**
