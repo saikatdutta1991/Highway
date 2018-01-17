@@ -8,6 +8,7 @@ use App\Mail\WelcomeUser;
 use App\Mail\WelcomeDriver;
 use App\Mail\DriverAccountApproved;
 use App\Mail\DriverAccountDisapproved;
+use App\Mail\CommonTemplate;
 
 class Email 
 {
@@ -237,6 +238,33 @@ class Email
         
     }
 
+
+
+    /**
+     * send common email
+     */
+    public function sendCommonEmail($toEmail, $welcomename, $subject, $messageBody)
+    {
+         //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            $resCode = Mail::to($toEmail)->send(new CommonTemplate($welcomename, $subject, $messageBody));
+            \Log::info('COMMON MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('COMMON MAIL PUSHED TO QUEUE ERROR :'.$toEmail);
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+
+        return true;
+    }
 
 
 

@@ -145,9 +145,7 @@ Route::get('send-sms', function(){
 Route::get('send-email', function(){
 
     
-    
-    $user = App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
-    app('App\Repositories\Email')->sendNewUserWelcomeEmail($user);
+    //dd(app('App\Repositories\Email')->sendCommonEmail('saikatdutta1991@gmail.com', '$welcomename', '$subject', '$messageBody'));
 
 
 });
