@@ -375,7 +375,7 @@ class Driver extends Controller
     {
         $driver = $this->driver->find($request->driver_id);
         $newPassword = rand(100000, 999999);
-        $driver->password = \Hash::make($request->password);
+        $driver->password = \Hash::make($newPassword);
         $driver->save();
 
         //send password via sms
