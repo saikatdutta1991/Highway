@@ -624,6 +624,14 @@ class RideRequest extends Controller
         ->orderBy('updated_at', 'desc')
         ->paginate(100);
 
+        $rideRequests->map(function($rideRequest){
+            
+            if($rideRequest->invoice) {
+                $rideRequest->invoice['map_url'] = $rideRequest->invoice->getStaticMapUrl();
+            }
+            
+        });
+
         return $this->api->json(true, 'RIDE_REQUEST_HISTORIES', 'Ride request histories', [
             'ride_requests'=> $rideRequests->items(),
             'paging' => [

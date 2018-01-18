@@ -430,6 +430,11 @@ class RideRequest extends Controller
 
 
         $rideRequests->map(function($rideRequest){
+            
+            if($rideRequest->invoice) {
+                $rideRequest->invoice['map_url'] = $rideRequest->invoice->getStaticMapUrl();
+            }
+            
             $rideRequest->driver['profile_photo_url'] = $rideRequest->driver->profilePhotoUrl();
         });
 
