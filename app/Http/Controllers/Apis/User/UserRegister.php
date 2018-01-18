@@ -272,5 +272,97 @@ class UserRegister extends Controller
 
 
 
+    /**
+     * send password reset code to mobile and email
+     */
+    public function sendPasswordReset(Request $request)
+    {
+
+        //creating full mobile number
+        $full_mobile_number = $request->country_code.$request->mobile_number;
+        $user = $this->user->where('full_mobile_number', $full_mobile_number)->first();
+
+        if(!$user) {
+            return $this->api->json(false, 'MOBILE_NUMBER_NOT_EXIST', 'Entered mobile number does not exist in our database.');
+        }
+
+
+
+        //crate otp entry
+        $otp = $this->otp->createOtpToken($user->country_code, $user->mobile_number);
+
+        $contactEmail = $this->setting->get('website_contact_email');
+        $messageText = "Your password reset one time password(OTP) is : {{otp_code}}. If you receives this mail or sms multiple times then contact to our support {$contactEmail}";
+        $messageText = str_replace('{{otp_code}}', $otp->token, $messageText);
+
+        //send otp via sms
+        $this->otp->sendMessage($user->country_code, $user->mobile_number, $messageText);
+        // send otp via email
+        $this->email->sendCommonEmail($user->email, $user->fname, 'Password reset OTP', $messageText);
+
+        return $this->api->json(true, 'PASSWORD_RESET_OTP_SENT', 'Password reset otp sent. Check you registerd mobile and email.');
+
+
+    }
+
+
+
+
+    /**
+     * reset password
+     */
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'country_code' => 'required|regex:/^[+].+$/', 
+            'mobile_number' => 'required|numeric',
+            'new_password' => 'required|min:6|max:100',
+            'otp_code' => 'required'
+        ]);
+
+        //if validation fails
+        if($validator->fails()) {
+            
+            $errors = [];
+            foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
+                $errors[$fieldName] = $msgArr[0];
+            }
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the details', [
+                'errors' => $errors
+            ]);
+        }
+
+
+        //creating full mobile number
+        $full_mobile_number = $request->country_code.$request->mobile_number;
+        $user = $this->user->where('full_mobile_number', $full_mobile_number)->first();
+
+
+        if(!$user) {
+            return $this->api->json(false, 'MOBILE_NUMBER_NOT_EXIST', 'Entered mobile number does not exist in our database.');
+        }
+
+
+        if($this->otp->verifyOTP($user->country_code, $user->mobile_number, $request->otp_code)){
+
+            //verify mobile number
+            $user->is_mobile_number_verified = 1;
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            //send password confirmamtion sms
+            $this->otp->sendMessage($user->country_code, $user->mobile_number, 'Your password has been reset');
+            // send otp via email
+            $this->email->sendCommonEmail($user->email, $user->fname, 'Password reset', 'Your password has been reset');
+
+            return $this->api->json(true, 'PASSWORD_RESET', 'Your password reset successful');
+        }
+
+        return $this->api->json(false, 'OTP_VERIFY_FAILED', 'Invalid otp code entered or expired.');
+
+
+    }
+
+
 
 }

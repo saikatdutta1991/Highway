@@ -252,7 +252,7 @@ class Email
         }
 
         try {
-            $resCode = Mail::to($toEmail)->send(new CommonTemplate($welcomename, $subject, $messageBody));
+            $resCode = Mail::to($toEmail)->queue(new CommonTemplate($welcomename, $subject, $messageBody));
             \Log::info('COMMON MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
         
         } catch(\Exception $e) {

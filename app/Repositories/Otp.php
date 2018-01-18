@@ -144,20 +144,30 @@ class Otp
 
 		$this->otpToken->where('full_mobile_number', $countryCode.$mobileNo)->delete();
 
-        $otp = new $this->otpToken;
+        $otp = $this->createOtpToken($countryCode, $mobileNo);
         
-        $otp->country_code = $countryCode;
-        $otp->mobile_number = $mobileNo;
-        $otp->full_mobile_number = $countryCode.$mobileNo;
-        $otp->token = $this->generateFourDRandomNum();
-        $otp->expired_at = $this->addMinutesToTimestamp(date('Y-m-d H:i:s'), 10);
-        $otp->save();
-
         $message = str_replace("{{otp_code}}", $otp->token, $message);
 
         $ismsgsent = $this->sendMessage($countryCode, $mobileNo, $message, $error);
 
         return $ismsgsent ? $otp->token : false;
+	}
+
+
+
+	/**
+	 * create otp token
+	 */
+	public function createOtpToken($countryCode, $mobileNo)
+	{
+		$otp = new $this->otpToken;
+        $otp->country_code = $countryCode;
+        $otp->mobile_number = $mobileNo;
+        $otp->full_mobile_number = $countryCode.$mobileNo;
+        $otp->token = $this->generateFourDRandomNum();
+        $otp->expired_at = $this->addMinutesToTimestamp(date('Y-m-d H:i:s'), 10);
+		$otp->save();
+		return $otp;
 	}
 
 

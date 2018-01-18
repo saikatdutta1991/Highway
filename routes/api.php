@@ -7,6 +7,12 @@
  */
 Route::group(['prefix' => '/v1/user'], function(){
 
+    /**
+     * password reset apis
+     */
+    Route::post('password-reset-request', 'Apis\User\UserRegister@sendPasswordReset');
+    Route::post('password-reset', 'Apis\User\UserRegister@resetPassword');
+
     Route::post('register', 'Apis\User\UserRegister@doRegister');
     Route::post('login', 'Apis\User\UserRegister@doLogin');
     
@@ -66,6 +72,12 @@ Route::group(['prefix' => '/v1/user'], function(){
  * routes are alredy prefixed by '/api'
  */
 Route::group(['prefix' => '/v1/driver'], function(){
+
+    /**
+     * password reset apis
+     */
+    Route::post('password-reset-request', 'Apis\Driver\DriverAuth@sendPasswordReset');
+    Route::post('password-reset', 'Apis\Driver\DriverAuth@resetPassword');
 
     Route::post('register', 'Apis\Driver\DriverAuth@doRegister');
     Route::post('login', 'Apis\Driver\DriverAuth@doLogin');
