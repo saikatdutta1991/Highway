@@ -262,12 +262,14 @@ class PushNotification
 	}
 	public function push($resType = self::RAW)
 	{
+		$ndata = $this->notifCustomPayload;
+		$ndata['notification'] = $this->buildNotification();
 		$fields = [
 			"registration_ids" => $this->deviceTokens,
 			"notification" => $this->buildNotification(),
 			"priority" => $this->priority,
 			'content_available' => $this->content_available,
-	        'data' => $this->notifCustomPayload
+	        'data' => $ndata,
 	    ];
 	    $fields = json_encode($fields);
 	    $headers = [
