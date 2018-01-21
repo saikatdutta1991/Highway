@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->decimal('amount', 10, 2)->default(0.00);
             $table->string('currency_type', 50)->default('USD');
             $table->string('gateway',50)->default();
+            $table->string('payment_method',128)->default('');
             $table->text('extra_info')->nullable();
             $table->string('status', 100);
 
