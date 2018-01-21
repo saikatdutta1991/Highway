@@ -57,10 +57,10 @@ class RideRequest extends Controller
         $canceledRides = $this->rideRequest->whereIn('ride_status', [Ride::USER_CANCELED, Ride::DRIVER_CANCELED])->count();        
         $ongointRides = $this->rideRequest->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())->count();
         $cashRides = $this->rideRequest->where('payment_mode', Ride::CASH)->count();
-        $payuRides = $this->rideRequest->where('payment_mode', Ride::PAYU)->count();
+        $onlineRides = $this->rideRequest->where('payment_mode', Ride::ONLINE)->count();
         
         return view('admin.intracity_rides', compact(
-            'rides', 'totalRides', 'completedRides', 'canceledRides', 'ongointRides', 'cashRides', 'payuRides'
+            'rides', 'totalRides', 'completedRides', 'canceledRides', 'ongointRides', 'cashRides', 'onlineRides'
         ));
 
     }

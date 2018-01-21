@@ -322,4 +322,29 @@ class Setting extends Controller
 
 
 
+
+
+    /**
+     * show razorpay api key settings
+     */
+    public function showRazorpaySetting(Request $request)
+    {
+        $RAZORPAY_MERCHANT_ID = $this->setting->get('RAZORPAY_MERCHANT_ID');
+        $RAZORPAY_API_KEY = $this->setting->get('RAZORPAY_API_KEY');
+        $RAZORPAY_API_SECRET = $this->setting->get('RAZORPAY_API_SECRET');
+        return view('admin.razorpay_settings', compact('RAZORPAY_MERCHANT_ID', 'RAZORPAY_API_KEY', 'RAZORPAY_API_SECRET'));
+    }
+
+    /**
+     * save razorpay settings
+     */
+    public function saveRazorpaySetting(Request $request)
+    {
+        $this->setting->set('RAZORPAY_MERCHANT_ID', trim($request->razorpay_merchant_id));
+        $this->setting->set('RAZORPAY_API_KEY', trim($request->razorpay_api_key));
+        $this->setting->set('RAZORPAY_API_SECRET', trim($request->razorpay_api_secret));
+        return $this->api->json(true, 'RAZORPAY_SAVED', 'Razorpay api keys saved');
+    }
+
+
 }

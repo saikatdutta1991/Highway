@@ -53,7 +53,7 @@ class Dashboard extends Controller
 
         //total cash payments
         $totalCashPayments = $this->rideRequestInvoice->where('payment_mode', RideRequest::CASH)->sum('total');
-        $totalPayuPayments = $this->rideRequestInvoice->where('payment_mode', RideRequest::PAYU)->sum('total');
+        $totalOnlinePayments = $this->rideRequestInvoice->where('payment_mode', RideRequest::ONLINE)->sum('total');
         $totalRevenue = $this->rideRequestInvoice->sum('total');
 
 
@@ -75,7 +75,7 @@ class Dashboard extends Controller
 
         return view('admin.dashboard', compact(
             'totalUsers', 'totalDrivers', 'totalRideRequests', 'totalOnlineUsers', 'totalOnlineDrivers',
-            'totalCashPayments', 'totalPayuPayments', 'totalRevenue',
+            'totalCashPayments', 'totalOnlinePayments', 'totalRevenue',
             'laterUsers', 'laterDrivers',
             'todaysUsers', 'pastSevenDaysUsers', 'thisMonthUsers', 'thisYearUsers',
             'todaysDrivers', 'pastSevenDaysDrivers', 'thisMonthDrivers', 'thisYearDrivers'

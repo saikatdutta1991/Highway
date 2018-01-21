@@ -98,8 +98,8 @@
                     <i class="material-icons">credit_card</i>
                 </div>
                 <div class="content">
-                    <div class="text">PAYU PAYMENTS</div>
-                    <div class="number">{{$totalPayuPaymentEarned}}</div>
+                    <div class="text">ONLINE PAYMENTS</div>
+                    <div class="number">{{$totalOnlinePaymentEarned}}</div>
                 </div>
             </div>
         </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="content">
                     <div class="text">TOTAL REVENUE</div>
-                    <div class="number">{{$totalCashPaymentEarned+$totalPayuPaymentEarned}}</div>
+                    <div class="number">{{$totalCashPaymentEarned+$totalOnlinePaymentEarned}}</div>
                 </div>
             </div>
         </div>

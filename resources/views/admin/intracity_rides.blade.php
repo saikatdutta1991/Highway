@@ -72,8 +72,8 @@
                 <i class="material-icons">credit_card</i>
             </div>
             <div class="content">
-                <div class="text">PAYU RIDES</div>
-                <div class="number count-to" data-from="0" data-to="{{$payuRides}}" data-speed="1000" data-fresh-interval="20"></div>
+                <div class="text">ONLINE RIDES</div>
+                <div class="number count-to" data-from="0" data-to="{{$onlineRides}}" data-speed="1000" data-fresh-interval="20"></div>
             </div>
         </div>
     </div>

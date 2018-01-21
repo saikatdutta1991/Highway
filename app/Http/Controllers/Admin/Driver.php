@@ -235,11 +235,11 @@ class Driver extends Controller
         $totalDriverCanceledRequests = $this->rideRequest->where('driver_id', $driver->id)->where('ride_status', Ride::DRIVER_CANCELED)->count();
       
         $totalCashPaymentEarned = $this->rideRequest->revenueGenerated($driver->id, Ride::CASH);
-        $totalPayuPaymentEarned = $this->rideRequest->revenueGenerated($driver->id, Ride::PAYU);
+        $totalOnlinePaymentEarned = $this->rideRequest->revenueGenerated($driver->id, Ride::ONLINE);
 
         return view('admin.edit_driver', compact('driver', 'vehicleTypes',
             'totalDriverRequests', 'totalUserCanceledRequests', 'totalDriverCanceledRequests',
-            'totalCashPaymentEarned', 'totalPayuPaymentEarned'
+            'totalCashPaymentEarned', 'totalOnlinePaymentEarned'
         ));
     }
 

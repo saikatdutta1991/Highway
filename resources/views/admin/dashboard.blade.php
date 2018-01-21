@@ -87,8 +87,8 @@
                     <i class="material-icons">credit_card</i>
                 </div>
                 <div class="content">
-                    <div class="text">PAYU PAYMENTS</div>
-                    <div class="number count-to" data-from="0" data-to="{{$totalPayuPayments}}" data-speed="1000" data-fresh-interval="20"></div>
+                    <div class="text">ONLINE PAYMENTS</div>
+                    <div class="number count-to" data-from="0" data-to="{{$totalOnlinePayments}}" data-speed="1000" data-fresh-interval="20"></div>
                 </div>
             </div>
         </div>

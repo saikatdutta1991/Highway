@@ -87,6 +87,8 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('settings/general/website/save', 'Admin\Setting@saveGeneralSettings');
         Route::post('settings/general/website/logo/save', 'Admin\Setting@saveWebsiteLogo');
         Route::post('settings/general/website/favicon/save', 'Admin\Setting@saveWebsiteFavicon');
+        Route::get('settings/razorpay', 'Admin\Setting@showRazorpaySetting');
+        Route::post('settings/razorpay/save', 'Admin\Setting@saveRazorpaySetting');
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 
