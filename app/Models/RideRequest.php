@@ -10,9 +10,9 @@ class RideRequest extends Model
     protected $table = 'ride_requests';
 
     const CASH = 'CASH'; //default payment mode
-    const PAYU = 'PAYU'; //payment payment mode
-    const DEBIT_OR_CREDIT_CARD = 'DEBIT_OR_CREDIT_CARD';
-    protected $paymentModes = [self::CASH, self::PAYU];
+    const ONLINE = 'ONLINE';
+    const COD = 'COD';
+    protected $paymentModes = [self::CASH, self::ONLINE];
 
     /**
      * payment status list

@@ -1,7 +1,10 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -13,7 +16,8 @@
         "aloha/twilio": "*",
         "laravel/socialite": "*",
         "google/apiclient": "*",
-        "wisembly/elephant.io": "*"
+        "wisembly/elephant.io": "*",
+        "razorpay/razorpay": "2.*"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -37,8 +41,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {

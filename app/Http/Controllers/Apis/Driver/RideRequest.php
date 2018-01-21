@@ -473,6 +473,7 @@ class RideRequest extends Controller
                 $transaction->amount = $fare['total'];
                 $transaction->currency_type = $this->setting->get('currency_code');
                 $transaction->gateway = Ride::CASH;
+                $transaction->payment_mode = Ride::COD;
                 $transaction->status = Transaction::SUCCESS;
                 $transaction->save();
 
@@ -498,7 +499,7 @@ class RideRequest extends Controller
 
 
         //send invoice if paid
-        if($rideRequest->payment_status = Ride::PAID) {
+        if($rideRequest->payment_status == Ride::PAID) {
             $this->email->sendUserRideRequestInvoiceEmail($rideRequest);
         }
         

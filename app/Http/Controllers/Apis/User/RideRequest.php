@@ -6,11 +6,14 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use App\Models\Driver;
+use App\Repositories\Email;
+use App\Repositories\Gateway;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
 use App\Models\Setting;
 use App\Repositories\SocketIOClient;
+use App\Models\Transaction;
 use App\Repositories\Utill;
 use Validator;
 use App\Models\VehicleType;
@@ -21,8 +24,10 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(SocketIOClient $socketIOClient, Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
+    public function __construct(Email $email, Transaction $transaction, SocketIOClient $socketIOClient, Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
     {
+        $this->email = $email;
+        $this->transaction = $transaction;
         $this->socketIOClient = $socketIOClient;
         $this->utill = $utill;
         $this->setting = $setting;
@@ -450,6 +455,126 @@ class RideRequest extends Controller
 
 
     }
+
+
+
+
+    /**
+     * razorpay initiate
+     */
+    public function initRazorpay(Request $request)
+    {
+        $rideRequest = $this->rideRequest->where('user_id', $request->auth_user->id)
+        ->whereIn('ride_status', [Ride::TRIP_ENDED])
+        ->where('payment_status', Ride::NOT_PAID)
+        ->where('payment_mode', Ride::ONLINE)
+        ->where('id', $request->ride_request_id)
+        ->with(['invoice'])
+        ->first();
+
+
+        if(!$rideRequest) {
+            return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request');
+        }
+
+        try {
+
+            $razorpay = Gateway::instance('razorpay');
+            $order = $razorpay->initiate($rideRequest->invoice->invoice_reference, $rideRequest->invoice->total * 100);
+
+        } catch(\Exception $e) {
+           $this->api->log('RAZORPAY_INIT_ERROR', $e->getMessage());
+           return $thsi->api->unknownErrResponse();
+        }
+        
+
+        return $this->api->json(true, 'RAZORPAY_INITIATED', 'Razorpay initiated', [
+            'order_id' => $order->id,
+            'razorpay_api_key' => $razorpay->publickeys()['RAZORPAY_API_KEY']
+        ]);
+
+    }
+
+
+
+
+    /**
+     * make razorpay payment
+     */
+    public function makeRazorpayPayment(Request $request)
+    {
+        $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
+        ->where('user_id', $request->auth_user->id)
+        ->whereIn('ride_status', [Ride::TRIP_ENDED])
+        ->where('payment_status', Ride::NOT_PAID)
+        ->with(['invoice'])
+        ->first();
+
+        if(!$rideRequest) {
+            return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request');
+        }
+
+        $razorpay = Gateway::instance('razorpay');
+        $data = $razorpay->charge($request);
+
+        if(false === $data) {
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+        //check order receipt and invoice referecne same or not
+        $orderReceipt = isset($data['extra']['order']['receipt']) ? $data['extra']['order']['receipt'] : '';
+        if($orderReceipt != $rideRequest->invoice->invoice_reference) {
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        try{
+            DB::beginTransaction();
+
+            $rideRequest->payment_status = Ride::PAID;
+            $rideRequest->ride_status = Ride::COMPLETED;
+            $rideRequest->save();
+
+            $transaction = new $this->transaction;
+            $transaction->trans_id = $data['transaction_id'];
+            $transaction->amount = $data['amount'];
+            $transaction->currency_type = $data['currency_type'];
+            $transaction->gateway = $razorpay->gatewayName();   
+            $transaction->extra_info = json_encode($data['extra']);
+            $transaction->status = $data['status'];  
+            $transaction->payment_method = $data['method'];
+            $transaction->save();
+
+
+            $invoice = $rideRequest->invoice;
+            $invoice->transaction_table_id = $transaction->id;
+            $invoice->payment_status = Ride::PAID;
+            $invoice->save();
+            
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('RAZORPAY_CHARGE_ERROR', $e);
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        //send invoice via email
+        $this->email->sendUserRideRequestInvoiceEmail($rideRequest);
+       
+
+        /**
+         * send push notification to user
+         */
+        $user = $request->auth_user;
+        $currencySymbol = $this->setting->get('currency_symbol');
+        $user->sendPushNotification("Payment successful", "{$currencySymbol}{$invoice->total} has been paid successfully");
+        $user->sendSms("{$currencySymbol}{$invoice->total} has been paid successfully");
+
+        return $this->api->json(true, 'PAID', 'Payment successful');
+
+    }
+
 
 
     

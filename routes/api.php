@@ -45,6 +45,13 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::get('ride-requests/histories', 'Apis\User\RideRequest@getHistories')->name('ride_request_histories');
 
 
+        /**
+         * rasorpay payment apis
+         */
+        Route::post('ride-requests/{ride_request_id}/razorpay/init', 'Apis\User\RideRequest@initRazorpay');
+        Route::post('ride-requests/{ride_request_id}/razorpay/pay', 'Apis\User\RideRequest@makeRazorpayPayment');
+
+
 
         /**
          * intercity trip routes
