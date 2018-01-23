@@ -484,7 +484,7 @@ class RideRequest extends Controller
 
         } catch(\Exception $e) {
            $this->api->log('RAZORPAY_INIT_ERROR', $e->getMessage());
-           return $thsi->api->unknownErrResponse();
+           return $this->api->unknownErrResponse();
         }
         
 
