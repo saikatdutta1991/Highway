@@ -479,7 +479,7 @@ class RideRequest extends Controller
                 $transaction->amount = $fare['total'];
                 $transaction->currency_type = $this->setting->get('currency_code');
                 $transaction->gateway = Ride::CASH;
-                $transaction->payment_mode = Ride::COD;
+                $transaction->payment_method = Ride::COD;
                 $transaction->status = Transaction::SUCCESS;
                 $transaction->save();
 
