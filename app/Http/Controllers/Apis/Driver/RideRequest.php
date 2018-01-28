@@ -144,14 +144,20 @@ class RideRequest extends Controller
     public function checkRideRequest(Request $request)
     {
         
+        //check any ongoing request is there or not
         $rideRequest = $this->rideRequest
         ->where('driver_id', $request->auth_driver->id)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())
-        ->orWhere(function($query){
-            $query->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
-                ->where('user_rating', 0);
-        })
         ->first();
+
+        if(!$rideRequest) {
+            //check for ride complated or trip ended but no user rated
+            $rideRequest = $this->rideRequest
+            ->where('driver_id', $request->auth_driver->id)
+            ->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
+            ->where('user_rating', 0)
+            ->first();
+        }
 
         if(!$rideRequest) {
             return $this->api->json(false, 'NO_ONGOING_REQUEST_FOUND', 'No ongoing request');
