@@ -29,18 +29,9 @@ class TripPoint extends Model
 
 
     /**
-     * all user bookings
-     */
-    public function userBookings()
-    {
-        return $this->hasMany('App\Models\UserTrip', 'trip_point_id');
-    }
-
-
-    /**
      * trip pickup point key rules
      */
-    public function keyRules()
+    /* public function keyRules()
     {
         list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
         return $keyRules = [
@@ -50,7 +41,7 @@ class TripPoint extends Model
             'latitude' => ['required', 'regex:'.$latRegex], 
             'longitude' => ['required', 'regex:'.$longRegex]
         ];
-    }
+    } */
 
 
 }

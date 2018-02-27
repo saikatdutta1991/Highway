@@ -427,9 +427,9 @@ class DriverAuth extends Controller
             $driver->save();
 
             //send password confirmamtion sms
-            $this->otp->sendMessage($user->country_code, $user->mobile_number, 'Your password has been reset');
+            $this->otp->sendMessage($driver->country_code, $driver->mobile_number, 'Your password has been reset');
             // send otp via email
-            $this->email->sendCommonEmail($user->email, $user->fname, 'Password reset', 'Your password has been reset');
+            $this->email->sendCommonEmail($driver->email, $driver->fname, 'Password reset', 'Your password has been reset');
 
             return $this->api->json(true, 'PASSWORD_RESET', 'Your password reset successful');
         }

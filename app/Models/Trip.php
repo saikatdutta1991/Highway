@@ -18,8 +18,8 @@ class Trip extends Model
 
 
     const CASH = 'CASH'; //default payment mode
-    const PAYU = 'PAYU'; //payu payment mode
-    const PAYMENT_MODES = [self::CASH, self::PAYU];
+    const ONLINE = 'ONLINE'; //payu payment mode
+    const PAYMENT_MODES = [self::CASH, self::ONLINE];
 
     /**
      * payment status list
@@ -41,7 +41,7 @@ class Trip extends Model
      * parse date from string format (Y-m-d)
      * returns carbon date if invalid then false
      */
-    public function createDate($dateString)
+    /* public function createDate($dateString)
     {
         //check date if proper
         try {
@@ -51,7 +51,7 @@ class Trip extends Model
         }
         
         return $date;
-    }
+    } */
 
 
 
@@ -71,7 +71,7 @@ class Trip extends Model
      * returns validation rules for trip create input other pickup points
      * takes otherPickupPoints is html form array
      */
-    public function rulesPickupPoints($otherPickupPoints)
+    /* public function rulesPickupPoints($otherPickupPoints)
     {
         if(!is_array($otherPickupPoints)) {
             return [];
@@ -87,7 +87,7 @@ class Trip extends Model
         }
 
         return $rules;
-    }
+    } */
 
 
 
@@ -95,7 +95,7 @@ class Trip extends Model
      * create trip validation rules
      * takes laravel request object
      */
-    public function createTripValidationRules($request)
+    /* public function createTripValidationRules($request)
     {
         list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
         return array_merge([
@@ -111,53 +111,40 @@ class Trip extends Model
             'destination_latitude' => ['required', 'regex:'.$latRegex], 
             'destination_longitude' => ['required', 'regex:'.$longRegex]
         ], $this->rulesPickupPoints($request->other_pickup_points));
-    }
-
-
-
-
-
-    /***
-     * picup points (relation with trip_points table)
-     */
-    public function pickupPoints()
-    {
-        return $this->hasMany('App\Models\TripPoint', 'trip_id');
-    }
-
+    } */
 
 
     /**
      * delete whole trip 
      * checking must be done before like initiated or not
      */
-    public function deleteTrip($tripId)
+    /* public function deleteTrip($tripId)
     {
         $this->where('id', $tripId)->forceDelete();
         app('App\Models\TripPoint')->where('trip_id', $tripId)->forceDelete();
         return true;
-    }
+    } */
 
 
 
     /**
      * get trip date formated string d-m-Y
      */
-    public function tripFormatedDateString()
+    /* public function tripFormatedDateString()
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
         return $date->formatLocalized('%d-%m-%Y');
-    }
+    } */
 
 
     /**
      * get trip time formated string am pm
      */
-    public function tripFormatedTimeString()
+    /* public function tripFormatedTimeString()
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
         return $date->format('h:i A');
-    }
+    } */
 
 
 }
