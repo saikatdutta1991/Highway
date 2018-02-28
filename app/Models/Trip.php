@@ -69,25 +69,25 @@ class Trip extends Model
 
     /**
      * returns validation rules for trip create input other pickup points
-     * takes otherPickupPoints is html form array
+     * takes points is html form array
      */
-    /* public function rulesPickupPoints($otherPickupPoints)
+    public function rulesPickupPoints($points)
     {
-        if(!is_array($otherPickupPoints)) {
+        if(!is_array($points)) {
             return [];
         }
-            
+       
         $keyRules = app('App\Models\TripPoint')->keyRules();
 
         $rules = [];
-        foreach($otherPickupPoints as $index => $pickupPointArray){
-            foreach($pickupPointArray as $key => $value) {
-                $rules["other_pickup_points.{$index}.{$key}"] = $keyRules[$key];
+        foreach($points as $index => $point){
+            foreach($keyRules as $key => $rule) {
+                $rules["points.{$index}.{$key}"] = $rule;
             }
         }
 
         return $rules;
-    } */
+    }
 
 
 
@@ -95,23 +95,15 @@ class Trip extends Model
      * create trip validation rules
      * takes laravel request object
      */
-    /* public function createTripValidationRules($request)
+    public function createTripValidationRules($request)
     {
         list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
         return array_merge([
             'trip_name' => 'required|max:256',
             'seats' => 'required|numeric',
-            'estimated_trip_distance' => 'required|numeric', //km
-            'estimated_trip_time' => 'required|numeric', //minute
             'trip_date_time' => 'required|date_format:Y-m-d H:i:s',
-            'source_address' => 'required|min:1|max:256', 
-            'source_latitude' => ['required', 'regex:'.$latRegex], 
-            'source_longitude' => ['required', 'regex:'.$longRegex], 
-            'destination_address' => 'required|min:1|max:256', 
-            'destination_latitude' => ['required', 'regex:'.$latRegex], 
-            'destination_longitude' => ['required', 'regex:'.$longRegex]
-        ], $this->rulesPickupPoints($request->other_pickup_points));
-    } */
+        ], $this->rulesPickupPoints($request->points));
+    }
 
 
     /**

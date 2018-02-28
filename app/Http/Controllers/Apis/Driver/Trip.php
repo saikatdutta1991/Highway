@@ -57,8 +57,8 @@ class Trip extends Controller
      */
     public function createTrip(Request $request)
     {
-        //dd($request->all());
-        /* //validate trip create request       
+        
+        //validate trip create request       
         $validator = Validator::make(
             $request->all(), $this->trip->createTripValidationRules($request)
         );
@@ -73,9 +73,9 @@ class Trip extends Controller
             return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
                 'errors' => $errors
             ]);
-        } */
+        }
 
-
+        
         /**
          * get ride fare for further ride calculation
          */
