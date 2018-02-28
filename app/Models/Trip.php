@@ -57,6 +57,25 @@ class Trip extends Model
 
 
     /**
+     * relation with trip points
+     */
+    public function tripPoints()
+    {
+        return $this->hasMany('App\Models\TripPoint', 'trip_id');
+    }
+
+
+    /**
+     * relation with trip routes
+     */
+    public function tripRoutes()
+    {
+        return $this->hasMany('App\Models\TripRoute', 'trip_id');
+    }
+
+
+
+    /**
      * relationship with driver
      */
     public function driver()
@@ -110,12 +129,13 @@ class Trip extends Model
      * delete whole trip 
      * checking must be done before like initiated or not
      */
-    /* public function deleteTrip($tripId)
+    public function deleteTrip($tripId)
     {
         $this->where('id', $tripId)->forceDelete();
+        app('App\Models\TripRoute')->where('trip_id', $tripId)->forceDelete();
         app('App\Models\TripPoint')->where('trip_id', $tripId)->forceDelete();
         return true;
-    } */
+    }
 
 
 

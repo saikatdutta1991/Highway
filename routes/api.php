@@ -125,8 +125,6 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::get('/', 'Apis\Driver\Trip@getTrips');
             Route::post('create', 'Apis\Driver\Trip@createTrip');
             Route::post('{trip_id}/delete', 'Apis\Driver\Trip@deleteTrip');
-            Route::post('{trip_id}/pickup-points/{pickup_point_id}/delete', 'Apis\Driver\Trip@deleteTripPickupPoint');
-            Route::post('{trip_id}/pickup-points/add', 'Apis\Driver\Trip@addPickupPoint');
 
         }); 
 

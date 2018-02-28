@@ -207,7 +207,7 @@ class Trip extends Controller
         //fetching correct trip to delete
         $trip = $this->trip->where('id', $request->trip_id)
         ->where('driver_id', $request->auth_driver->id)
-        ->where('trip_status', TripModel::INITIATED)
+        ->where('status', TripModel::INITIATED)
         ->first();
 
         //if no trip found means driver not allowed to delete
@@ -238,134 +238,26 @@ class Trip extends Controller
 
 
     /**
-     * delete trip pickup point
-     * if trip point is the parent trip point then not supposed to delete
-     * rather ask driver to delete whole trip
-     */
-    public function deleteTripPickupPoint(Request $request)
-    {
-        //fetching correct trippoint to delete
-        $tripTable = $this->trip->getTableName();
-        $tripPoint = $this->tripPoint->join($tripTable, "{$tripTable}.id", '=', "{$this->tripPoint->getTableName()}.trip_id")
-        ->where("{$tripTable}.id", $request->trip_id)
-        ->where("{$tripTable}.driver_id", $request->auth_driver->id)
-        ->where("{$this->tripPoint->getTableName()}.trip_points_parent_id", '<>', 0)
-        ->where("{$this->tripPoint->getTableName()}.id", '=', $request->pickup_point_id)
-        ->where("{$this->tripPoint->getTableName()}.trip_status", TripModel::INITIATED)
-        ->select("{$this->tripPoint->getTableName()}.*")
-        ->first();
-
-        if(!$tripPoint) { 
-            return $this->api->json(false, "INVALID", 'You are not allowed to delete this trip point.');
-        }
-
-        //fetching corrent trip point
-        $tripPoint->forceDelete();
-
-        return $this->api->json(false, 'TRIP_POINT_DELETED', 'Trip point deleted');
-
-
-    }
-
-
-
-
-    /**
-     * add new pickup point
-     */
-    public function addPickupPoint(Request $request)
-    {
-
-        //validate trip create request       
-        $validator = Validator::make(
-            $request->all(), $this->tripPoint->keyRules()
-        );
-
-        //if validation fails
-        if($validator->fails()) {
-            
-            $errors = [];
-            foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
-                $errors[$fieldName] = $msgArr[0];
-            }
-            return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
-                'errors' => $errors
-            ]);
-        }
-
-
-        //find correct trip
-        $trip = $this->trip->where('id', $request->trip_id)
-        ->where('driver_id', $request->auth_driver->id)
-        ->first();
-
-
-        //if no trip found means driver not allowed to add trip
-        if(!$trip) {
-            return $this->api->json(false, "INVALID", 'You are not allowed to add new pickup pionts to this');
-        }
-
-        //find trip parent pickup point
-        $tripPointParent = $this->tripPoint->where('trip_id', $trip->id)
-        ->where('trip_points_parent_id', 0)
-        ->first();
-
-
-        $tripPoint = new $this->tripPoint;
-        $tripPoint->trip_id = $trip->id;
-        $tripPoint->trip_points_parent_id = $tripPointParent->id;
-        $tripPoint->seats_booked = 0;
-        $tripPoint->source_address = trim($request->address);
-        $tripPoint->source_latitude = $request->latitude;
-        $tripPoint->source_longitude = $request->longitude;
-        $tripPoint->destination_address = $tripPointParent->destination_address;
-        $tripPoint->destination_latitude = $tripPointParent->destination_latitude;
-        $tripPoint->destination_longitude = $tripPointParent->destination_longitude;
-        $tripPoint->estimated_trip_time = $request->estimated_trip_time;
-        $tripPoint->estimated_trip_distance = $request->estimated_trip_distance;
-
-        /**
-         * get ride fare for further ride calculation
-         */
-        $vTypeId = $this->vehicleType->getIdByCode($request->auth_driver->vehicle_type);
-        $rideFare = $this->rideFare->where('vehicle_type_id', $vTypeId)->first();
-
-        $fare = $rideFare->calculateFare($request->estimated_trip_distance, $request->estimated_trip_time);
-        $tripPoint->estimated_fare = $fare['total'];
-
-        $tripPoint->trip_status = TripModel::INITIATED;
-        $tripPoint->save();      
-
-        return $this->api->json(true, 'TRIP_POINT_ADDED', 'Trip point Added', [
-            'trip_point' => $tripPoint
-        ]);
-
-    }
-
-
-
-
-
-    /**
      * get all trips those are not completed
      */
     public function getTrips(Request $request)
     {
 
         $trips = $this->trip
-        ->with('pickupPoints', 'pickupPoints.userBookings', 'pickupPoints.userBookings.user')
+        //->with('tripPoints', 'tripRoutes', 'tripRoutes.userBookings', 'tripRoutes.userBookings.user')
+        ->with('tripPoints', 'tripRoutes')
         ->where('driver_id', $request->auth_driver->id)
-        ->whereNotIn('trip_status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED]);
+        ->orderBy('date_time', 'desc')
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED]);
 
-        
         $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_driver->timezone);
 
         if(is_array($dateRange)) {
-            $trips = $trips->whereBetween('trip_date_time', $dateRange);
+            $trips = $trips->whereBetween('date_time', $dateRange);
         }
         //else take all trips after current date 
         else{
-            $trips = $trips->where('trip_date_time', '>=', date('Y-m-d H:i:s'));
+            $trips = $trips->where('date_time', '>=', date('Y-m-d H:i:s'));
         }
 
         $trips = $trips->get();

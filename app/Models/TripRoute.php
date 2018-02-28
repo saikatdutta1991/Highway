@@ -16,6 +16,15 @@ class TripRoute extends Model
 
 
     /**
+     * relation with user trip route bookings
+     */
+    public function userBookings()
+    {
+        return $this->hasMany('App\Models\UserTrip', 'trip_route_id');
+    }
+
+
+    /**
      * relation with trip
      */
     public function trip()
@@ -29,17 +38,6 @@ class TripRoute extends Model
     public function driver()
     {
         return $this->trip()->driver();
-    }
-
-
-    public function findNaturalSum($i, $j)
-    {
-        $sum = 0;
-        for($x = $i; $x <= $j; $x++) {
-            $sum += $x;
-        }
-
-        return $sum;
     }
 
 
