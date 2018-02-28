@@ -152,6 +152,7 @@ class Trip extends Controller
                     $tripRoute->seats_available = $trip->no_of_seats;
                     $tripRoute->estimated_distance = $distance;
                     $tripRoute->estimated_time = $time;
+                    $tripRoute->status = TripModel::INITIATED;
 
                     //calculate fare
                     $fare = $rideFare->calculateFare($distance, $time);
