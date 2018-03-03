@@ -275,7 +275,7 @@ class Utill
 
             return [
                 $this->timestampStringToUTC($dateString.' 00:00:01', $timezone)->toDateTimeString(),
-                $this->timestampStringToUTC($dateString.' 11:59:59', $timezone)->toDateTimeString()
+                $this->timestampStringToUTC($dateString.' 23:59:59', $timezone)->toDateTimeString()
             ];
 
         } catch(\Exception $e) {
