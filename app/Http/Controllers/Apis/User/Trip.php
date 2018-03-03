@@ -83,6 +83,9 @@ class Trip extends Controller
 
         $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_user->timezone);
 
+        \Log::info('USER_TRIP_SEARCH_DATERANGE');
+        \Log::info($dateRange);
+
         if(is_array($dateRange)) {
             $trips = $trips->whereBetween("{$tripTable}.date_time", $dateRange);
         }
