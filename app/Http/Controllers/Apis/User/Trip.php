@@ -119,23 +119,22 @@ class Trip extends Controller
         $paymentMode = in_array($request->payment_mode, TripModel::PAYMENT_MODES) ? $request->payment_mode : TripModel::CASH;
 
         //find trip point by id
-        $tripPoint = $this->tripPoint->where('trip_id', $request->trip_id)
-        ->where('id', $request->trip_point_id)
-        ->whereNotIn('trip_status', [TripModel::COMPLETED, TripModel::TRIP_STARTED])
+        $tripRoute = $this->tripRoute->where('trip_id', $request->trip_id)
+        ->where('id', $request->trip_route_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_STARTED, TripModel::TRIP_CANCELED])
         ->first();
         
-        if(!$tripPoint) {
+        if(!$tripRoute) {
             return $this->api->json(false, "INVALID", 'You are not allowed to book this trip');
         }
 
-
         //if seats not not available
-        if($tripPoint->trip->seats_available == 0) {
+        if($tripRoute->seats_available == 0) {
             return $this->api->json(false, 'NO_SEATS_AVAILABLE', "No seats available for this trip");
         }
 
         //check if user has already booked this trip alredy or not
-        if($this->userTrip->where('trip_id', $tripPoint->trip->id)->where('trip_point_id', $tripPoint->id)->exists()) {
+        if($this->userTrip->where('trip_id', $tripRoute->trip_id)->where('trip_route_id', $tripRoute->id)->exists()) {
             return $this->api->json(false, 'ALREADY_BOOKED', 'You have already booked this trip');
         }
 
@@ -144,26 +143,21 @@ class Trip extends Controller
 
             DB::beginTransaction();
             
-            //making trip point status to booked
-            $tripPoint->trip_status == TripModel::BOOKED;
-            //in seats_booked +1
-            $tripPoint->seats_booked += 1;
-            $tripPoint->trip_status = TripModel::BOOKED;
-            $tripPoint->save();
+            //making trip point status to booked          
+            $tripRoute->status = TripModel::BOOKED;
+            $tripRoute->save();
 
             //making trip status booked
-            $trip = $tripPoint->trip;
-            $trip->trip_status = TripModel::BOOKED;
-            //making trip available seats -1
-            $trip->seats_available -= 1;
+            $trip = $tripRoute->trip;
+            $trip->status = TripModel::BOOKED;          
             $trip->save();
 
             //inserting user trip record
             $userTrip = new $this->userTrip;
             $userTrip->user_id = $request->auth_user->id;
             $userTrip->trip_id = $trip->id;
-            $userTrip->trip_point_id = $tripPoint->id;
-            $userTrip->trip_status = TripModel::BOOKED;
+            $userTrip->trip_route_id = $tripRoute->id;
+            $userTrip->status = TripModel::BOOKED;
             $userTrip->payment_mode = $paymentMode;
             $userTrip->payment_status = TripModel::NOT_PAID;
             $userTrip->trip_invoice_id = 0;
@@ -171,6 +165,25 @@ class Trip extends Controller
             $userTrip->driver_rating = 0;
             
             $userTrip->save();
+
+
+            /**
+             * change trip routes avaialbe seats
+             */
+            $seatAffects = explode(",", $tripRoute->seat_affects);
+            foreach($seatAffects as $tripRouteId) {
+                $tr = $this->tripRoute->find($tripRouteId);
+                $tr->seats_available -= 1;
+                $tr->save();
+
+                //changing trip route setas availabe current obeject so that does not make any confusion
+                if($tr->id == $tripRoute->id) {
+                    $tripRoute->seats_available = $tr->seats_available;
+                }
+
+            }
+
+
             
             DB::commit();
 
@@ -184,12 +197,12 @@ class Trip extends Controller
         //send push notification and sms to driver
         $driver = $trip->driver;
         $user = $request->auth_user;
-        $msgBody = "{$user->fullname()} has booked trip({$trip->trip_name}) from {$tripPoint->source_address}";
-        $driver->sendPushNotification($trip->trip_name.' trip has been booked', $msgBody);
+        $msgBody = "{$user->fullname()} has booked trip({$trip->name}) from {$tripRoute->start_point_address}";
+        $driver->sendPushNotification($trip->name.' trip has been booked', $msgBody);
         $driver->sendSms($msgBody);
         
         //send sms to user and email
-        $user->sendSms("Your trip has been booked. From : {$tripPoint->source_address} | To : {$tripPoint->destination_address} on {$tripPoint->trip->tripFormatedDateString()} at {$tripPoint->trip->tripFormatedTimeString()}");
+        $user->sendSms("Your trip has been booked. From : {$tripRoute->start_point_address} | To : {$tripRoute->end_point_address} on {$tripRoute->trip->tripFormatedDateString()} at {$tripRoute->trip->tripFormatedTimeString()}");
 
         return $this->api->json(true, 'TRIP_BOOKED', 'Trip booked', [
             'user_trip' => $userTrip

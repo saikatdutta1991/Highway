@@ -18,9 +18,9 @@ class CreateUsersTripBookingsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('trip_id')->unsigned();
-            $table->bigInteger('trip_point_id')->unsigned();
+            $table->bigInteger('trip_route_id')->unsigned();
 
-            $table->string('trip_status', 100);
+            $table->string('status', 100);
             
             $table->string('payment_mode', 50)->default('CASH');
             $table->string('payment_status', 50)->default('NOT_PAID');

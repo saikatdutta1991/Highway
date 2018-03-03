@@ -142,21 +142,21 @@ class Trip extends Model
     /**
      * get trip date formated string d-m-Y
      */
-    /* public function tripFormatedDateString()
+    public function tripFormatedDateString()
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->date_time)->timezone($this->driver->timezone);
         return $date->formatLocalized('%d-%m-%Y');
-    } */
+    }
 
 
     /**
      * get trip time formated string am pm
      */
-    /* public function tripFormatedTimeString()
+    public function tripFormatedTimeString()
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_date_time)->timezone($this->driver->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->date_time)->timezone($this->driver->timezone);
         return $date->format('h:i A');
-    } */
+    }
 
 
 }
