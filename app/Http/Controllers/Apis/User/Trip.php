@@ -84,9 +84,7 @@ class Trip extends Controller
         $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_user->timezone);
 
         if(is_array($dateRange)) {
-            $trips = $trips->whereBetween("{$tripTable}.date_time", $dateRange)
-            //and greater than current date time
-            ->where("{$tripTable}.date_time", '>=', date('Y-m-d H:i:s'));
+            $trips = $trips->whereBetween("{$tripTable}.date_time", $dateRange);
         }
         //fetch all trips beyond curren datetime 
         else {
