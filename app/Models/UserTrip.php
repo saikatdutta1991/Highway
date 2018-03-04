@@ -24,7 +24,7 @@ class UserTrip extends Model
      */
     public function tripRoute()
     {
-        return $this->belongsTo('App\Models\TripPoint', 'trip_point_id');
+        return $this->belongsTo('App\Models\TripRoute', 'trip_route_id');
     }
 
 

@@ -223,8 +223,8 @@ class Trip extends Controller
     public function getBookedTrips(Request $request)
     {
         $trips = $this->userTrip->where('user_id', $request->auth_user->id)
-        ->whereNotIn('trip_status', [UserTrip::USER_CANCELED, TripModel::TRIP_CANCELED])
-        ->with('trip', 'tripPoint')
+        ->whereNotIn('status', [UserTrip::USER_CANCELED, TripModel::TRIP_CANCELED, TripModel::COMPLETED])
+        ->with('trip', 'tripRoute')
         ->get();
 
         return $this->api->json(true, 'BOOKED_TRIPS', 'Booked trips', [
