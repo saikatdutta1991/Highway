@@ -130,7 +130,8 @@ class Trip extends Controller
         }
 
         //if seats not not available
-        if($tripRoute->seats_available == 0) {
+        $seats = ($request->no_of_seats == '') ? 1 : $request->no_of_seats; //if no of seats null then make 1
+        if($tripRoute->seats_available == 0 || $tripRoute->seats_available < $seats) {
             return $this->api->json(false, 'NO_SEATS_AVAILABLE', "No seats available for this trip");
         }
 
@@ -158,6 +159,7 @@ class Trip extends Controller
             $userTrip->user_id = $request->auth_user->id;
             $userTrip->trip_id = $trip->id;
             $userTrip->trip_route_id = $tripRoute->id;
+            $userTrip->no_of_seats_booked = $seats;
             $userTrip->status = TripModel::BOOKED;
             $userTrip->payment_mode = $paymentMode;
             $userTrip->payment_status = TripModel::NOT_PAID;
@@ -174,7 +176,7 @@ class Trip extends Controller
             $seatAffects = explode(",", $tripRoute->seat_affects);
             foreach($seatAffects as $tripRouteId) {
                 $tr = $this->tripRoute->find($tripRouteId);
-                $tr->seats_available -= 1;
+                $tr->seats_available -= $seats;
                 $tr->save();
 
                 //changing trip route setas availabe current obeject so that does not make any confusion

@@ -19,6 +19,7 @@ class CreateUsersTripBookingsTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('trip_id')->unsigned();
             $table->bigInteger('trip_route_id')->unsigned();
+            $table->tinyInteger('no_of_seats_booked')->default(0);
 
             $table->string('status', 100);
             
