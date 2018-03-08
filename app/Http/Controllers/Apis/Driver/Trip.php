@@ -15,6 +15,7 @@ use App\Models\TripRoute;
 use App\Repositories\Utill;
 use App\Models\VehicleType;
 use App\Models\RideFare;
+use App\Models\UserTrip;
 use Validator;
 
 class Trip extends Controller
@@ -24,6 +25,7 @@ class Trip extends Controller
      * init dependencies
      */
     public function __construct(
+        UserTrip $userTrip, 
         TripRoute $tripRoute,
         RideFare $rideFare, 
         VehicleType $vehicleType, 
@@ -36,6 +38,7 @@ class Trip extends Controller
         SocketIOClient $socketIOClient
     )
     {
+        $this->userTrip = $userTrip;
         $this->tripRoute = $tripRoute;
         $this->rideFare = $rideFare;
         $this->vehicleType = $vehicleType;
@@ -268,6 +271,124 @@ class Trip extends Controller
         ]);
 
     }
+
+
+
+
+    /**
+     * gets a particular trip details
+     * after this driver can start tirp
+     */
+    public function getTripDetails(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->first();
+
+        if(!$trip) {
+            return $this->api->json(false, "INVALID_TRIP_ID", 'Invalid trip id');
+        }
+
+        $tripPoints = $trip->tripPoints;
+        $tripRoutes = $trip->tripRoutes;
+
+        //find how many boarding and unboarding users for a particular point
+        foreach($tripPoints as $index => $tripPoint) {
+
+            //find how many trip routes start from specific point
+            $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
+            
+            //find how many user bookings made for all triprouteids
+            $userTripBookings = $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->with('user')->get();
+
+            $tripPoints[$index]['boarding_user_bookings'] = $userTripBookings;
+            $tripPoints[$index]['total_boarding_users_count'] = $userTripBookings->sum('no_of_seats_booked');
+
+
+             //find how many trip routes end from specific point
+            $tripRouteIds = $trip->tripRoutes->where('end_point_order', $tripPoint->order)->pluck('id')->all();
+            
+            //find how many user bookings made for all triprouteids
+            $userTripBookings = $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->with('user')->get();
+
+            $tripPoints[$index]['unboarding_user_bookings'] = $userTripBookings;
+            $tripPoints[$index]['total_unboarding_users_count'] = $userTripBookings->sum('no_of_seats_booked');
+
+
+
+        }
+
+
+        
+        unset($trip->tripRoutes);
+        unset($trip->tripPoints);
+        
+        return $this->api->json(true, 'TRIP', 'Trip details', [
+            'trip' => $trip,
+            'trip_points' => $tripPoints,
+            'tirp_routes' => $tripRoutes
+        ]);
+
+
+    }
+
+
+
+
+
+    /**
+     * driver start a trip
+     * DRIVER_STARTED
+     */
+    public function driverStartedTrip(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED])
+        ->first();
+
+        if(!$trip) {
+            return $this->api->json(false, "INVALID_TRIP_ID", 'Invalid trip id');
+        }
+
+
+        try {
+
+            DB::beginTransaction();
+            
+            //change trip status to driver started the trip
+            $trip->status = TripModel::DRIVER_STARTED;
+            $trip->save();
+
+            //update trip_routes status to driver started the trip
+            $this->tripRoute->where('trip_id', $trip->id)->update(['status' => TripModel::DRIVER_STARTED]);
+
+            //update user bookings status to driver started the trip
+            $this->userTrip->where('trip_id', $trip->id)->update(['status' => TripModel::DRIVER_STARTED]);
+            
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('DRIVER_STARTED_TRIP', $e->getMessage());
+            return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+        }
+
+        
+
+        //send all user push notification that driver has started the trip
+        $bookings = $this->userTrip->where('trip_id', $trip->id)->with('user')->get();
+        foreach($bookings as $booking) {
+            $booking->user->sendPushNotification("Trip {$trip->name} has been started", "Driver has started the trip, you will be notified as soon driver reaches your pickup point");
+        }
+
+
+        return $this->api->json(true, 'TRIP_DRIVER_STARTED', 'Trip started');
+
+    }
+
 
 
 

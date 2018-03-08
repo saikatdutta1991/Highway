@@ -12,7 +12,9 @@ class Trip extends Model
     const COMPLETED = "COMPLETED";
     const BOOKED = "BOOKED";
     const DRIVER_REACHED = "DRIVER_REACHED";
+    const DRIVER_STARTED = "DRIVER_STARTED";
     const TRIP_STARTED = "TRIP_STARTED";
+    const TRIP_ENDED = "TRIP_ENDED";
     const TRIP_CANCELED = "TRIP_CANCELED"; //canceled by driver 
 
 
