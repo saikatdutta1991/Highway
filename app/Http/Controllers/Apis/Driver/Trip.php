@@ -234,7 +234,7 @@ class Trip extends Controller
             return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
         }
 
-        return $this->api->json(false, 'TRIP_DELETED', 'Trip deleted');
+        return $this->api->json(true, 'TRIP_DELETED', 'Trip deleted');
         
     }
 
