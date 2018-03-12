@@ -23,6 +23,11 @@ class Trip extends Model
     const ONLINE = 'ONLINE'; //payu payment mode
     const PAYMENT_MODES = [self::CASH, self::ONLINE];
 
+
+    /**payment methods */
+    const CARD = "CARD";
+
+
     /**
      * payment status list
      */

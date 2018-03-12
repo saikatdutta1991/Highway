@@ -47,5 +47,13 @@ class UserTrip extends Model
     }
 
 
+    /**
+     * relation with invoice (ride request invoice)
+     */
+    public function invoice()
+    {
+        return $this->belongsTo('App\Models\RideRequestInvoice', 'trip_invoice_id');
+    }
+
 
 }

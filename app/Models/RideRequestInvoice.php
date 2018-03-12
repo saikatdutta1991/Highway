@@ -62,22 +62,42 @@ class RideRequestInvoice extends Model
 
 
 
-
     /**
-     * save invoice gogole map static image
+     * save invoice google map static image
      */
-    public function saveInvoiceMapImage($rideRequest, $save = true)
+    public function saveGoogleStaticMap($slat, $slng, $dlat, $dlng)
     {
         $absPath = $this->invoiceStaticImagePath();
         $path = $this->invoiceStaticImagePath(false);
         $name = app('UtillRepo')->generatePhotoName('invoice_', 'png');
 
         $staticMapImageUrl = app('UtillRepo')->getGoogleStaicMapImageConnectedPointsUrl([
-            [$rideRequest->source_latitude, $rideRequest->source_longitude],
-            [$rideRequest->destination_latitude, $rideRequest->destination_longitude]
+            [$slat, $slng], [$dlat, $dlng]
         ]);
 
         app('UtillRepo')->downloadFile($staticMapImageUrl, $absPath.'/'.$name);
+    
+        return [$path, $name];
+
+    }
+
+
+
+
+
+
+
+    /**
+     * save invoice gogole map static image
+     */
+    public function saveInvoiceMapImage($rideRequest, $save = true)
+    {
+        list($path, $name) = $this->saveGoogleStaticMap(
+            $rideRequest->source_latitude, 
+            $rideRequest->source_longitude, 
+            $rideRequest->destination_latitude, 
+            $rideRequest->destination_longitude
+        );
         
         $this->invoice_map_image_path = $path;
         $this->invoice_map_image_name = $name;

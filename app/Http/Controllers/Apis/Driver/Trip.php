@@ -15,6 +15,8 @@ use App\Models\TripRoute;
 use App\Repositories\Utill;
 use App\Models\VehicleType;
 use App\Models\RideFare;
+use App\Models\RideRequestInvoice as RideInvoice;
+use App\Models\Transaction;
 use App\Models\UserTrip;
 use Validator;
 
@@ -25,6 +27,7 @@ class Trip extends Controller
      * init dependencies
      */
     public function __construct(
+        Transaction $transaction,
         UserTrip $userTrip, 
         TripRoute $tripRoute,
         RideFare $rideFare, 
@@ -35,9 +38,11 @@ class Trip extends Controller
         Setting $setting, 
         Email $email, 
         Api $api, 
-        SocketIOClient $socketIOClient
+        SocketIOClient $socketIOClient,
+        RideInvoice $rideInvoice
     )
     {
+        $this->transaction = $transaction;
         $this->userTrip = $userTrip;
         $this->tripRoute = $tripRoute;
         $this->rideFare = $rideFare;
@@ -49,6 +54,7 @@ class Trip extends Controller
         $this->email = $email;
         $this->api = $api;
         $this->socketIOClient = $socketIOClient;
+        $this->rideInvoice = $rideInvoice;
     }
 
 
@@ -389,6 +395,155 @@ class Trip extends Controller
 
     }
 
+
+
+
+
+    /**
+     * when driver reaches a particular trip point
+     * presses point reached
+     * all boarding passengers gets notofication
+     * all unboarding passengers invoice, trip_end status
+     * trip route and booking user status will be driver reached
+     */
+    public function driverReachedTripPoint(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED])
+        ->first();
+
+        $tripPoint = $this->tripPoint->where('trip_id', $trip->id)->where('id', $request->trip_point_id)->first();
+
+        //find how many trip routes start from specific point
+        $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
+        //update driver reached for all routes whose starting point is current trip point
+        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::DRIVER_REACHED]);
+            
+        //find how many user bookings made for all triprouteids ( boarding passengers)
+        $boardingUserBookings = $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->with('user')->get();
+
+        /**
+         * send all boarding passenders push notification 
+         * that driver has reached boarding point
+         */
+        foreach($boardingUserBookings as $booking) {
+            $booking->user->sendPushNotification("Trip {$trip->name} : driver reached", "Driver has reached your boarding point {$tripPoint->address}, You can contact the driver.");
+        }
+
+
+        //find all trip routes end in specific point (current point)
+        $unboaringRoutes = $trip->tripRoutes->where('end_point_order', $tripPoint->order);
+
+        /**
+         * get ride fare for further ride calculation
+         */
+        $vTypeId = $this->vehicleType->getIdByCode($request->auth_driver->vehicle_type);
+        $rideFare = $this->rideFare->where('vehicle_type_id', $vTypeId)->first();
+
+        foreach($unboaringRoutes as $route) {
+            
+            //update route trip_ended if trip_started
+            $route->status = TripModel::TRIP_ENDED;
+            $route->save();
+
+            //find all unboarding user bookings
+            $unboardingUserBookings = $this->userTrip->where('trip_route_id', $route->id)->with('user')->get();
+
+            $fare = $rideFare->calculateFare($route->estimated_distance, $route->estimated_time);
+
+
+            //for each user booking set invoice
+            foreach($unboardingUserBookings as $booking) {
+
+                //creting invoice
+                $invoice = new $this->rideInvoice;
+                $invoice->invoice_reference = $this->rideInvoice->generateInvoiceReference();
+                $invoice->payment_mode = $booking->payment_mode;
+                $invoice->ride_fare = $fare['ride_fare'];
+                $invoice->access_fee = $fare['access_fee'];
+                $invoice->tax = $fare['taxes'];
+                $invoice->total = $fare['total'];
+                $invoice->currency_type = $this->setting->get('currency_code');
+
+                list($invoiceImagePath, $invoiceImageName) = $invoice->saveGoogleStaticMap($route->start_point_latitude, $route->start_point_longitude, $route->end_point_latitutde, $route->end_point_longitude);
+                $invoice->invoice_map_image_path = $invoiceImagePath;
+                $invoice->invoice_map_image_name = $invoiceImageName;
+
+
+                 //if cash payment mode then payment_status paid
+                if($booking->payment_mode == TripModel::CASH) {
+                    $booking->payment_status = TripModel::PAID;
+                    $booking->status = TripModel::TRIP_ENDED;
+                    $invoice->payment_status = TripModel::PAID;
+
+                    //create transaction because payment successfull here
+                    $transaction = new $this->transaction;
+                    $transaction->trans_id = $invoice->invoice_reference;
+                    $transaction->amount = $fare['total'];
+                    $transaction->currency_type = $this->setting->get('currency_code');
+                    $transaction->gateway = TripModel::CASH;
+                    $transaction->payment_method = TripModel::CARD;
+                    $transaction->status = Transaction::SUCCESS;
+                    $transaction->save();
+
+                    //add transaciton_table_id in invoice
+                    $invoice->transaction_table_id = $transaction->id;
+
+                }
+                
+                $invoice->save();
+
+                $booking->trip_invoice_id = $invoice->id;
+                $booking->save();
+
+                //send invoice if paid
+                /* if($booking->payment_status == Ride::PAID) {
+                    $this->email->sendUserRideRequestInvoiceEmail($rideRequest);
+                } */
+
+                /**
+                 * send push notification to user
+                 */
+                $user = $booking->user;
+                $currencySymbol = $this->setting->get('currency_symbol');
+                $user->sendPushNotification("Your trip ended", "We hope you enjoyed our intercity trip service. Please make payment of {$currencySymbol}".$invoice->total);
+                $user->sendSms("We hope you enjoyed our intercity trip service. Please make payment of {$currencySymbol}".$invoice->total);
+
+                /**
+                 * send socket push to user
+                 */
+                $this->socketIOClient->sendEvent([
+                    'to_ids' => $user->id,
+                    'entity_type' => 'user', //socket will make it uppercase
+                    'event_type' => 'trip_booking_status_changed',
+                    'data' => [
+                        'trip' => $trip,
+                        'trip_route' => $route,
+                        'booking' => $booking,
+                        'invoice' => $invoice->toArray(),
+                    ]
+                ]);
+
+                /**
+                 * dont call invoice save method after this
+                 */
+                $invoice->map_url = $invoice->getStaticMapUrl();
+
+
+            }
+
+
+        }
+
+
+        return $this->api->json(true, 'TRIP_POINT_REACHED', 'Trip point reached', [
+            'message' => 'Get trip details again. Dont show this message to driver'
+        ]);
+
+
+    }
 
 
 

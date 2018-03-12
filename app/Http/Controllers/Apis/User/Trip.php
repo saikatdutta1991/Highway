@@ -226,7 +226,7 @@ class Trip extends Controller
     {
         $trips = $this->userTrip->where('user_id', $request->auth_user->id)
         ->whereNotIn('status', [UserTrip::USER_CANCELED, TripModel::TRIP_CANCELED, TripModel::COMPLETED])
-        ->with('trip', 'tripRoute')
+        ->with('trip', 'tripRoute', 'invoice')
         ->get();
 
         return $this->api->json(true, 'BOOKED_TRIPS', 'Booked trips', [
