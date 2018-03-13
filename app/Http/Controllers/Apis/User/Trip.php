@@ -226,8 +226,17 @@ class Trip extends Controller
     {
         $trips = $this->userTrip->where('user_id', $request->auth_user->id)
         ->whereNotIn('status', [UserTrip::USER_CANCELED, TripModel::TRIP_CANCELED, TripModel::COMPLETED])
-        ->with('trip', 'tripRoute', 'invoice')
+        ->with('trip', 'tripRoute', 'invoice', 'trip.driver')
         ->get();
+
+        $trips->map(function($trip){
+            
+            if($trip->invoice) {
+                $trip->invoice['map_url'] = $trip->invoice->getStaticMapUrl();
+            }
+            
+            $trip->trip->driver['profile_photo_url'] = $trip->trip->driver->profilePhotoUrl();
+        });
 
         return $this->api->json(true, 'BOOKED_TRIPS', 'Booked trips', [
             'trips' => $trips

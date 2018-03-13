@@ -26,6 +26,7 @@ class Trip extends Model
 
     /**payment methods */
     const CARD = "CARD";
+    const COD = 'COD';
 
 
     /**

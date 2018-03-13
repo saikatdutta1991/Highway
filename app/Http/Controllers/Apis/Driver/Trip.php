@@ -484,7 +484,7 @@ class Trip extends Controller
                     $transaction->amount = $fare['total'];
                     $transaction->currency_type = $this->setting->get('currency_code');
                     $transaction->gateway = TripModel::CASH;
-                    $transaction->payment_method = TripModel::CARD;
+                    $transaction->payment_method = TripModel::COD;
                     $transaction->status = Transaction::SUCCESS;
                     $transaction->save();
 
