@@ -270,10 +270,21 @@ class Trip extends Controller
             $trips = $trips->where('date_time', '>=', date('Y-m-d H:i:s'));
         }
 
+
+        /**
+         * find current running trip
+         */
+         $currentTrip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED, TripModel::INITIATED])
+        ->first();
+
+
         $trips = $trips->get();
 
         return $this->api->json(true, 'TRIPS', 'Your trips', [
-            'trips' => $trips
+            'trips' => $trips,
+            'current_trip' => $currentTrip
         ]);
 
     }
@@ -373,6 +384,11 @@ class Trip extends Controller
 
             //update user bookings status to driver started the trip
             $this->userTrip->where('trip_id', $trip->id)->update(['status' => TripModel::DRIVER_STARTED]);
+
+            //making driver un availbable
+            $authDriver = $this->auth_driver;
+            $authDriver->is_available = 0;
+            $authDriver->save();
             
             DB::commit();
 
