@@ -387,7 +387,7 @@ class Trip extends Controller
             $this->userTrip->where('trip_id', $trip->id)->update(['status' => TripModel::DRIVER_STARTED]);
 
             //making driver un availbable
-            $authDriver = $this->auth_driver;
+            $authDriver = $request->auth_driver;
             $authDriver->is_available = 0;
             $authDriver->save();
             
