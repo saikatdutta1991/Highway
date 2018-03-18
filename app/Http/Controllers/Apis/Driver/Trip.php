@@ -117,6 +117,7 @@ class Trip extends Controller
                 $tripPoint->longitude = $point['longitude'];
                 $tripPoint->distance = isset($point['distance']) ? $point['distance'] / 1000 : 0;
                 $tripPoint->time = isset($point['time']) ? $point['time'] : 0;
+                $tripPoint->status = TripModel::INITIATED;
                 $tripPoint->save(); 
                 $tripPoints[] = $tripPoint;
             }
@@ -431,11 +432,15 @@ class Trip extends Controller
         ->first();
 
         $tripPoint = $this->tripPoint->where('trip_id', $trip->id)->where('id', $request->trip_point_id)->first();
+        $tripPoint->status = TripModel::DRIVER_REACHED;
+        $tripPoint->save();
 
         //find how many trip routes start from specific point
         $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
         //update driver reached for all routes whose starting point is current trip point
         $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::DRIVER_REACHED]);
+        //update alluser bookings status driver reached
+        $this->userTrip->wherein('trip_route_id', $tripRouteIds)->update(['status' => TripModel::DRIVER_REACHED]);
             
         //find how many user bookings made for all triprouteids ( boarding passengers)
         $boardingUserBookings = $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->with('user')->get();
@@ -562,6 +567,70 @@ class Trip extends Controller
     }
 
 
+
+    /**
+     * start trip point
+     * send all users boarding from that point 
+     * take who all passengers are boarding
+     */
+    public function driverStartTripPoint(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED])
+        ->first();
+
+        
+        //send notification to all users that your trip has started
+        $tripPoint = $this->tripPoint->where('trip_id', $trip->id)->where('id', $request->trip_point_id)->first();
+        $tripPoint->status = TripModel::TRIP_STARTED;
+        $tripPoint->save();
+        //find how many trip routes start from specific point
+        $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
+        //update driver reached for all routes whose starting point is current trip point
+        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::TRIP_STARTED]);
+        //update all user trips status trip started
+        $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->update(['status' => TripModel::TRIP_STARTED]);
+            
+        //find how many user bookings made for all triprouteids ( boarding passengers)
+        $boardingUserBookings = $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->with('user')->get();
+
+        /**
+         * send all boarding passenders push notification 
+         * that driver has reached boarding point
+         */
+        $userIds = [];
+        $boardingUserIds = explode(',', $request->boarding_user_ids);
+        foreach($boardingUserBookings as $booking) {
+            
+            if(!empty($boardingUserIds) && in_array($booking->user->id, $boardingUserIds)) {
+                $booking->is_boarded = 1; 
+                $booking->save();
+            }
+            $booking->user->sendPushNotification("Trip {$trip->name} : started", "Driver has started trip at boarding point {$tripPoint->address}, You can contact the driver.");
+            $userIds[] = $booking->user->id;
+        }
+
+        /**
+         * send socket push to user
+         */
+        $this->socketIOClient->sendEvent([
+            'to_ids' => implode(',', $userIds),
+            'entity_type' => 'user', //socket will make it uppercase
+            'event_type' => 'trip_booking_status_changed',
+            'data' => [
+                'trip' => $trip,
+                'trip_point' => $tripPoint,
+            ]
+        ]);
+
+
+        return $this->api->json(true, 'TRIP_STARTED', 'Trip started', [
+            'message' => 'Get trip details again. Dont show this message to driver'
+        ]);
+
+    }
 
 
 }

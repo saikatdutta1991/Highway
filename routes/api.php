@@ -128,6 +128,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::get('{trip_id}/details', 'Apis\Driver\Trip@getTripDetails');
             Route::post('{trip_id}/driver_started', 'Apis\Driver\Trip@driverStartedTrip');
             Route::post('{trip_id}/trip_points/{trip_point_id}/driver_reached', 'Apis\Driver\Trip@driverReachedTripPoint');
+            Route::post('{trip_id}/trip_points/{trip_point_id}/start_trip', 'Apis\Driver\Trip@driverStartTripPoint');
 
         }); 
 

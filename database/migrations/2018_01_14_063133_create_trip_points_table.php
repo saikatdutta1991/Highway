@@ -21,7 +21,7 @@ class CreateTripPointsTable extends Migration
             $table->tinyInteger('order')->default(0);
             $table->integer('distance')->default(0)->comment('used to store distance between previuos order point in km');
             $table->integer('time')->default(0)->comment('used to store travel time between previuos order point');
-            
+            $table->string('status', 50)->default('');
             $table->string('address', 500);
             $table->decimal('latitude', 10, 7)->default(0.0);
             $table->decimal('longitude', 10, 7)->default(0.0);
