@@ -277,7 +277,7 @@ class Trip extends Controller
          */
          $currentTrip = $this->trip
         ->where('driver_id', $request->auth_driver->id)
-        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED, TripModel::INITIATED])
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::BOOKED, TripModel::TRIP_CANCELED, TripModel::INITIATED])
         ->first();
 
 
@@ -477,6 +477,8 @@ class Trip extends Controller
 
             //for each user booking set invoice
             foreach($unboardingUserBookings as $booking) {
+                //if cash then status completed
+                $booking->status = TripModel::TRIP_ENDED;
 
                 //creting invoice
                 $invoice = new $this->rideInvoice;
@@ -496,7 +498,7 @@ class Trip extends Controller
                  //if cash payment mode then payment_status paid
                 if($booking->payment_mode == TripModel::CASH) {
                     $booking->payment_status = TripModel::PAID;
-                    $booking->status = TripModel::TRIP_ENDED;
+                    $booking->status = TripModel::COMPLETED;
                     $invoice->payment_status = TripModel::PAID;
 
                     //create transaction because payment successfull here
@@ -631,6 +633,88 @@ class Trip extends Controller
         ]);
 
     }
+
+
+
+
+    /**
+     * driver gives rating to users
+     */
+    public function driverGiveRatingToBookedUsers(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED])
+        ->first();
+
+        if(!is_array($request->ratings)) {
+            return $this->api->json(false, 'INVALID_RATINGS', 'Invalid rating array');
+        }
+
+
+        foreach($request->ratings as $rating) {
+            
+            $booking = $this->userTrip->where('trip_id', $trip->id)->where('user_id', $rating['user_id'])->where('trip_route_id', $rating['trip_route_id'])->first();
+            if(!$booking) continue;
+
+            list($ratingValue, $userRating) = $booking->calculateUserRating($rating['rate']);
+            $booking->user_rating = $ratingValue;
+            $booking->save();
+
+            $user = $booking->user;
+            $user->rating = $userRating;
+            $user->save();
+
+        }
+
+        return $this->api->json(true, 'RATING_DONE', 'Rating done.');
+
+    }
+
+
+
+
+    /**
+     * complete trip
+     * if user rating done all 
+     * if all trip routes status trip_ended
+     */
+    public function completeTrip(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED])
+        ->first();
+
+        //check all trip routes status trip_ended
+        if($trip->tripRoutes->where('status', TripModel::TRIP_ENDED)->count() != $trip->tripRoutes->count()) {
+            return $this->api->json(false, 'TRIP_POINTS_NOT_REACHED', 'All trip points not reached');
+        }
+
+        //check all trip user bookings rated
+        $tripRouteIds = $trip->tripRoutes->pluck('id')->all();
+        $bookings = $this->userTrip->where('trip_id', $trip->id)->whereIn('trip_route_id', $tripRouteIds)->get();
+
+        if($bookings->count() != $bookings->where('user_rating', '<>', 0)->count()) {
+            return $this->api->json(false, 'TRIP_BOOINKG_RATINGS_NOT_DONE', 'All the user bookings not rated');
+        }
+
+
+        $trip->status = TripModel::COMPLETED;
+        $trip->save();
+        
+        $driver = $request->auth_driver;
+        $driver->is_available = 1;
+        $driver->save();
+
+        return $this->api->json(true, 'TRIP_COMPLETED', 'Trip completed');
+
+
+    }
+
+
 
 
 }

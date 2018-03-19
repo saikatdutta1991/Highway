@@ -61,6 +61,7 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::get('search', 'Apis\User\Trip@searchTrips');
             Route::post('book', 'Apis\User\Trip@bookTrip');
             Route::get('booked', 'Apis\User\Trip@getBookedTrips');
+            Route::post('{trip_id}/trip_routes/{trip_route_id}/driver/rating/{rating}', 'Apis\User\Trip@rateTripDriver');
 
         }); 
 
@@ -129,6 +130,8 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/driver_started', 'Apis\Driver\Trip@driverStartedTrip');
             Route::post('{trip_id}/trip_points/{trip_point_id}/driver_reached', 'Apis\Driver\Trip@driverReachedTripPoint');
             Route::post('{trip_id}/trip_points/{trip_point_id}/start_trip', 'Apis\Driver\Trip@driverStartTripPoint');
+            Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
+            Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
 
         }); 
 

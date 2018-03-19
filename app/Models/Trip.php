@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Trip extends Model
 {
 
+    /**
+     * rating array const
+     */
+    const RATINGS = [1, 2, 3, 4, 5];
+
     //const values
     const INITIATED = "INITIATED";
     const COMPLETED = "COMPLETED";

@@ -238,14 +238,69 @@ class Trip extends Controller
             $trip->trip->driver['profile_photo_url'] = $trip->trip->driver->profilePhotoUrl();
         });
 
+
+        /**
+         * find current running trip
+         */
+         $currentTrip = $this->userTrip
+        ->where('user_id', $request->auth_user->id)
+        ->whereNotIn('status', [TripModel::COMPLETED, TripModel::BOOKED, TripModel::DRIVER_STARTED, TripModel::TRIP_CANCELED, TripModel::INITIATED])
+        ->with('trip', 'tripRoute', 'invoice', 'trip.driver')
+        ->first();
+
+        if(!$currentTrip) {
+            //check if any ride completd by not driver rated
+            $currentTrip = $this->userTrip
+            ->where('user_id', $request->auth_user->id)
+            ->with('trip', 'tripRoute', 'invoice', 'trip.driver')
+            ->where('status', TripModel::COMPLETED)
+            ->where('driver_rating', 0)
+            ->first();
+        }
+
+
+
+
         return $this->api->json(true, 'BOOKED_TRIPS', 'Booked trips', [
-            'trips' => $trips
+            'trips' => $trips,
+            'current_trip' => $currentTrip
         ]);
 
 
     }
 
 
+
+    /**
+     * give rating to trip driver
+     */
+    public function rateTripDriver(Request $request)
+    {
+        $userTrip = $this->userTrip
+        ->where('user_id', $request->auth_user->id)
+        ->where('trip_id', $request->trip_id)
+        ->where('trip_route_id', $request->trip_route_id)
+        ->whereIn('status', [TripModel::TRIP_ENDED, TripModel::COMPLETED])
+        ->first();
+        
+
+        if(!$userTrip) {
+            return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
+        }
+
+
+        list($ratingValue, $driverRating) = $userTrip->calculateDriverRating($request->rating);
+        
+        $userTrip->driver_rating = $ratingValue;
+        $userTrip->save();
+
+        $driver = $userTrip->trip->driver;
+        $driver->rating = $driverRating;
+        $driver->save();
+
+        return $this->api->json(true, 'RATING_DONE', 'Rating done');
+
+    }
 
 
 
