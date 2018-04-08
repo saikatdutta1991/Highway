@@ -224,6 +224,19 @@ io.on('connection', function (socket) {
 				});
 			}
 
+			//if trip_id is avaialbel send trip user latitude longitude
+			if (data.trip_id) {
+				helper.getUserIdsByTripId(trip_id, function (err, result) {
+					if (err && !result.length) return;
+
+					//loop through all user ids for a specific trip 
+					result.forEach(function (row) {
+						io.sockets.in('USER_' + row.user_id).emit('driver_location_updated', data);
+					})
+
+				});
+			}
+
 
 			//send location to admin
 			io.sockets.in('ADMIN').emit('driver_location_updated', {
