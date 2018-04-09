@@ -402,10 +402,22 @@ class Trip extends Controller
         
 
         //send all user push notification that driver has started the trip
+        $userIds = [];
         $bookings = $this->userTrip->where('trip_id', $trip->id)->with('user')->get();
         foreach($bookings as $booking) {
             $booking->user->sendPushNotification("Trip {$trip->name} has been started", "Driver has started the trip, you will be notified as soon driver reaches your pickup point");
+            $userIds[] = $booking->user->id;
         }
+        
+        $userIds = implode(',', $userIds);
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $userIds,
+            'entity_type' => 'user', //socket will make it uppercase
+            'event_type' => 'trip_booking_status_changed',
+            'data' => [
+                'trip' => $trip
+            ]
+        ]);
 
 
         return $this->api->json(true, 'TRIP_DRIVER_STARTED', 'Trip started');
@@ -449,9 +461,22 @@ class Trip extends Controller
          * send all boarding passenders push notification 
          * that driver has reached boarding point
          */
+        $userIds = [];
         foreach($boardingUserBookings as $booking) {
             $booking->user->sendPushNotification("Trip {$trip->name} : driver reached", "Driver has reached your boarding point {$tripPoint->address}, You can contact the driver.");
+            $userIds[] = $booking->user->id;
         }
+
+        $userIds = implode(',', $userIds);
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $userIds,
+            'entity_type' => 'user', //socket will make it uppercase
+            'event_type' => 'trip_booking_status_changed',
+            'data' => [
+                'trip' => $trip,
+                'trip_point' => $tripPoint
+            ]
+        ]);
 
 
         //find all trip routes end in specific point (current point)
