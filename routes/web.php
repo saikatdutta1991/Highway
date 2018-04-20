@@ -89,6 +89,17 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('settings/general/website/favicon/save', 'Admin\Setting@saveWebsiteFavicon');
         Route::get('settings/razorpay', 'Admin\Setting@showRazorpaySetting');
         Route::post('settings/razorpay/save', 'Admin\Setting@saveRazorpaySetting');
+
+
+
+        /** trip routes */
+        Route::group(['prefix' => 'trips'], function(){
+            Route::get('routes', 'Admin\Trip@showTripRoutes'); //show all trip routes created by driver
+            Route::get('routes/add', 'Admin\Trip@showAddTripRoute'); //add new trip route
+            Route::post('routes/add', 'Admin\Trip@addNewTripRoute')->name('admin.add-new-route'); // add new trip route api
+        });
+        
+
         
         Route::get('logout', 'Admin\AuthController@doLogout');
 
