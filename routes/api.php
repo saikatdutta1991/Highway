@@ -133,6 +133,9 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
 
+            /** search trip points */
+            Route::get('points/search', 'Apis\Driver\Trip@searchPoint');
+
         }); 
 
 
