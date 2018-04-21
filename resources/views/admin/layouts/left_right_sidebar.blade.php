@@ -115,6 +115,9 @@
                         <li class="@yield('trips_add_point_active')">
                             <a href="{{url('admin/trips/points/add')}}">Add Point</a>
                         </li>
+                        <li class="@yield('trips_points_active')">
+                            <a href="{{url('admin/trips/points')}}">All Points</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

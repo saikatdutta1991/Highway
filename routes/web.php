@@ -101,6 +101,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('points', 'Admin\Trip@showTripPoints');
             Route::get('points/add', 'Admin\Trip@showAddPoint');
             Route::post('points/add', 'Admin\Trip@addNewPoint')->name('admin.add-new-point'); // add new trip point
+            Route::post('points/{point_id}/delete', 'Admin\Trip@deleteTripPoint')->name('admin.delete-trip-point'); // add new trip point
         });
         
 

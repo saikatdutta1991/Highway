@@ -171,6 +171,27 @@ class Trip extends Controller
 
 
 
+    /**
+     * show trip points
+     */
+    public function showTripPoints(Request $request)
+    {
+        $points = $this->tripPoint->orderBy('created_at', 'desc');
+
+        /** specific city */
+        if($request->city != "") {
+            $points = $points->where('city', 'like', $request->city);
+        }
+
+        /** specific country */
+        if($request->country != "") {
+            $points = $points->where('country', 'like', $request->country);
+        }
+
+        $points = $points->paginate(100);
+        return view('admin.trips.show_trip_points', compact('points'));
+    }
+
 
 
     /**
@@ -225,6 +246,21 @@ class Trip extends Controller
             'trip_point' => $tripPoint
         ]);
 
+    }
+
+
+
+    /**
+     * delete trip point
+     */
+    public function deleteTripPoint(Request $request)
+    {
+        $point = $this->tripPoint->find($request->point_id);
+        if($point) {
+            $point->delete();
+        }
+
+        return $this->api->json(true, 'POINT_DELETED', 'Point deleted');
     }
 
 
