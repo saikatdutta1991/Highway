@@ -25,6 +25,9 @@ class CreateAdminTripPointsTable extends Migration
             $table->string('address', 500);
             $table->decimal('latitude', 10, 7)->default(0.0);
             $table->decimal('longitude', 10, 7)->default(0.0);
+            $table->string('city', 100);
+            $table->string('country', 100);
+            $table->string('zip_code', 100);
            
             $table->timestamps();
             $table->softDeletes();

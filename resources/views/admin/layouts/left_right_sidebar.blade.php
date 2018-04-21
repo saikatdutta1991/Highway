@@ -109,8 +109,11 @@
                     <span>Trips</span>
                     </a>
                     <ul class="ml-menu">
-                        <li class="@yield('trips_add_route_active')">
+                        <!-- <li class="@yield('trips_add_route_active')">
                             <a href="{{url('admin/trips/routes/add')}}">Add Route</a>
+                        </li> -->
+                        <li class="@yield('trips_add_point_active')">
+                            <a href="{{url('admin/trips/points/add')}}">Add Point</a>
                         </li>
                     </ul>
                 </li>

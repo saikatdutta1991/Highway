@@ -170,4 +170,64 @@ class Trip extends Controller
     }
 
 
+
+
+
+    /**
+     * show add new trip point(only one single point for trips)
+     */
+    public function showAddPoint()
+    {
+        $setting = $this->setting;
+        return view('admin.trips.add_new_point', compact('setting'));
+    }
+
+
+
+    /**
+     * add new trip point
+     */
+    public function addNewPoint(Request $request)
+    {
+        list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
+        $validator = Validator::make($request->all(), [
+            'address' => 'required|min:1|max:500', 
+            'city' => 'required|min:1|max:100', 
+            'country' => 'required|min:1|max:100', 
+            'zip_code' => 'required|min:1|max:100', 
+            'latitude' => ['required', 'regex:'.$latRegex], 
+            'longitude' => ['required', 'regex:'.$longRegex],
+        ]);
+
+        //if validation fails
+        if($validator->fails()) {
+            
+            $errors = [];
+            foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
+                $errors[$fieldName] = $msgArr[0];
+            }
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
+                'errors' => $errors
+            ]);
+        }
+
+
+        $tripPoint = new $this->tripPoint;
+        $tripPoint->address = $request->address;
+        $tripPoint->latitude = $request->latitude;
+        $tripPoint->longitude = $request->longitude;
+        $tripPoint->city = $request->city;
+        $tripPoint->country = $request->country;
+        $tripPoint->zip_code = $request->zip_code;
+        $tripPoint->save();
+
+        return $this->api->json(true, "TRIP_POINT_ADDED", 'Trip point added', [
+            'trip_point' => $tripPoint
+        ]);
+
+    }
+
+
+
+
 }

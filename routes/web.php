@@ -97,6 +97,10 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('routes', 'Admin\Trip@showTripRoutes'); //show all trip routes created by driver
             Route::get('routes/add', 'Admin\Trip@showAddTripRoute'); //add new trip route
             Route::post('routes/add', 'Admin\Trip@addNewTripRoute')->name('admin.add-new-route'); // add new trip route api
+            
+            Route::get('points', 'Admin\Trip@showTripPoints');
+            Route::get('points/add', 'Admin\Trip@showAddPoint');
+            Route::post('points/add', 'Admin\Trip@addNewPoint')->name('admin.add-new-point'); // add new trip point
         });
         
 
