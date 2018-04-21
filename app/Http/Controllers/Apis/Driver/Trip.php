@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Apis\Driver;
 
+use App\Models\AdminTripPoint;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
@@ -39,7 +40,8 @@ class Trip extends Controller
         Email $email, 
         Api $api, 
         SocketIOClient $socketIOClient,
-        RideInvoice $rideInvoice
+        RideInvoice $rideInvoice,
+        AdminTripPoint $adminTripPoint
     )
     {
         $this->transaction = $transaction;
@@ -55,7 +57,59 @@ class Trip extends Controller
         $this->api = $api;
         $this->socketIOClient = $socketIOClient;
         $this->rideInvoice = $rideInvoice;
+        $this->adminTripPoint = $adminTripPoint;
     }
+
+
+
+    /**
+     * search trip point
+     */
+    public function searchPoint(Request $request)
+    {
+
+
+        $points = $this->adminTripPoint->where('address', 'like', '%'.$request->address.'%');
+        if(!$points->count()) {
+
+            $words = explode(" ", $request->address);
+            foreach($words as $word) {
+                $points = $this->adminTripPoint->orWhere('address', 'like', $word.'%');
+            }
+
+        }
+        
+
+        /** match country if in request */
+        if($request->country != '') {
+            $points = $points->where('country', 'like', $request->country.'%');
+        }
+
+
+        /** match city if in request */
+        if($request->city != '') {
+            $points = $points->where('city', 'like', $request->city.'%');
+        }
+
+        $points = $points->select(['address', 'city', 'country', 'zip_code', 'latitude', 'longitude'])->paginate(100);
+
+        return $this->api->json(true, 'POINTS', 'Trip points', [
+            'points' => $points->items(),
+             'paging' => [
+                'total' => $points->total(),
+                'has_more' => $points->hasMorePages(),
+                'next_page_url' => $points->nextPageUrl()?:'',
+                'count' => $points->count(),
+            ]
+        ]);
+    }
+
+
+
+
+
+
+
 
 
     /**
