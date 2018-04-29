@@ -97,6 +97,10 @@ Route::group(['prefix' => '/v1/driver'], function(){
     Route::post('google', 'Apis\Driver\Google@authenticate');
 
 
+    /** search trip points */
+    Route::get('trips/points/search', 'Apis\Driver\Trip@searchPoint');
+
+
     //driver's authenticated routes
     Route::group(['middleware' => 'driverApiAuth'], function(){
 
@@ -133,8 +137,6 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
 
-            /** search trip points */
-            Route::get('points/search', 'Apis\Driver\Trip@searchPoint');
 
         }); 
 
