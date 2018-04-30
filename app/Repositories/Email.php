@@ -30,10 +30,38 @@ class Email
 
 
     /**
-     * send user ride request invoice
+     * send user trip invoice
      */
+    public function sendUserTripInvoiceEmail($userBooking)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            
+            $resCode = Mail::to($userBooking->user->email)->queue(new \App\Mail\TripInvoice($userBooking));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+        
+        return true;
+
+
+    }
+
+
+
     /**
-     * send new user registration email
+     * send user ride request invoice
      */
     public function sendUserRideRequestInvoiceEmail($rideRequest)
     {

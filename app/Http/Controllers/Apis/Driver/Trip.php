@@ -504,7 +504,7 @@ class Trip extends Controller
         //find how many trip routes start from specific point
         $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
         //update driver reached for all routes whose starting point is current trip point
-        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::DRIVER_REACHED]);
+        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::DRIVER_REACHED, 'reached_timestamp' => date('Y-m-d H:i:s')]);
         //update alluser bookings status driver reached
         $this->userTrip->wherein('trip_route_id', $tripRouteIds)->update(['status' => TripModel::DRIVER_REACHED]);
             
@@ -546,6 +546,7 @@ class Trip extends Controller
             
             //update route trip_ended if trip_started
             $route->status = TripModel::TRIP_ENDED;
+            $route->end_timestamp = date('Y-m-d H:i:s');
             $route->save();
 
             //find all unboarding user bookings
@@ -601,9 +602,9 @@ class Trip extends Controller
                 $booking->save();
 
                 //send invoice if paid
-                /* if($booking->payment_status == Ride::PAID) {
-                    $this->email->sendUserRideRequestInvoiceEmail($rideRequest);
-                } */
+                if($booking->payment_status == Ride::PAID) {
+                    $this->email->sendUserTripInvoiceEmail($booking);
+                }
 
                 /**
                  * send push notification to user
@@ -670,7 +671,7 @@ class Trip extends Controller
         //find how many trip routes start from specific point
         $tripRouteIds = $trip->tripRoutes->where('start_point_order', $tripPoint->order)->pluck('id')->all();
         //update driver reached for all routes whose starting point is current trip point
-        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::TRIP_STARTED]);
+        $this->tripRoute->where('trip_id', $trip->id)->where('start_point_order', $tripPoint->order)->update(['status' => TripModel::TRIP_STARTED, 'start_timestamp' => date('Y-m-d H:i:s')]);
         //update all user trips status trip started
         $this->userTrip->whereIn('trip_route_id', $tripRouteIds)->update(['status' => TripModel::TRIP_STARTED]);
             

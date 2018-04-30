@@ -63,6 +63,12 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::get('booked', 'Apis\User\Trip@getBookedTrips');
             Route::post('{trip_id}/trip_routes/{trip_route_id}/driver/rating/{rating}', 'Apis\User\Trip@rateTripDriver');
 
+            /**
+             * rasorpay payment apis
+             */
+            Route::get('{trip_booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
+            Route::post('{trip_booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment');
+
         }); 
 
 

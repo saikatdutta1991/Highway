@@ -42,6 +42,24 @@ class TripRoute extends Model
 
 
     /**
+     * trip route request start time
+     */
+    public function getStartTime($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->start_timestamp)->setTimezone($timezone)->format('h:i a');
+    }
+
+    /**
+     * trip route request start time
+     */
+    public function getEndTime($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->end_timestamp)->setTimezone($timezone)->format('h:i a');
+    }
+
+
+
+    /**
      * calculate and save trip routes seat affects if any route booked
      * eg : A -> B -> C
      * ROUTES : A -> B, B -> C, A -> C each 5 seats available
