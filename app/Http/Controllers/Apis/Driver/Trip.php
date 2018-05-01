@@ -602,7 +602,7 @@ class Trip extends Controller
                 $booking->save();
 
                 //send invoice if paid
-                if($booking->payment_status == Ride::PAID) {
+                if($booking->payment_status == TripModel::PAID) {
                     $this->email->sendUserTripInvoiceEmail($booking);
                 }
 
