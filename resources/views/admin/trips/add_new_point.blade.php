@@ -125,7 +125,7 @@
         <div class="modal-content" style="border-radius: 2px;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Search your restaurant location</h4>
+                <h4 class="modal-title">Search your trip point location</h4>
                 <small>Enter Your location > Click find > Drag marker to choose location</small>
             </div>
             <div class="modal-body">
