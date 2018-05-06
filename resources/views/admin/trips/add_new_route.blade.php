@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 @section('trips_active', 'active')
-@section('trips_add_route_active', 'active')
-@section('title', 'Add new trip route')
+@section('trips_new_route_add_active', 'active')
+@section('title', 'Add new route')
 @section('top-header')
 <style>
     .address-dot
@@ -63,7 +63,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="block-header">
-        <h2>TRIP ROUTE</h2>
+        <h2>ADD ROUTE</h2>
     </div>
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -71,7 +71,7 @@
                 <div class="header">
                     <h2>
                         ADD NEW TRIP ROUTE
-                        <small>Choose source, destination and intermediate pickup points. Set time, distance, estimated fare also.</small>
+                        <small>Choose source, destination and intermediate pickup points. First and last point will be the source and destination point. Enter location name and latlong points.</small>
                     </h2>
                 </div>
                 <div class="body">
@@ -79,7 +79,7 @@
                         {!! csrf_field() !!}
                         <div class="row clearfix">
                             <div class="col-md-12">
-                                <b>Trip Name</b>
+                                <b>Route Name</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                     <i class="material-icons">text_format</i>
@@ -94,11 +94,13 @@
                             <div class="col-md-12">
                                 <label> Trip Pionts</label>
                                 <small>(Add trip points in order)</small>
-                                <i id="add-new-point"title="Add new intermediate point" class="material-icons" style="vertical-align: middle;cursor: pointer;">add</i>
-                                <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Enter details of each intermediate points. Calculate and enter fare, time and distance from previous intermediate. That's why first point does not have fare, distance and time field.">help_outline</i>
+                                <button title="Add new intermediate point"  id="add-new-point" type="button" class="btn bg-green btn-xs waves-effect">
+                                    +Add Point
+                                </button>
+                                <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Enter details of each intermediate points. Calculate and enter name, latitude, longitude. First and second point will be source and destination.">help_outline</i>
                             </div>
                         </div>
-                        <div class="row clearfix trip-point-div" id="trip_point_s" data-point-order="1">
+                        <div class="row clearfix trip-point-div" data-point-order="1">
                             <div class="point-title">Point 1</div>
                             <div class="col-md-6">
                                 <b> Address</b>
@@ -133,13 +135,46 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <b>City</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">location_on</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input required name="points[0][city]" type="text" class="form-control" placeholder="Ex: Bangalore" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <b>Country</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">location_on</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input required name="points[0][country]" type="text" class="form-control" placeholder="Ex: India" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <b>Zip-Code</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">location_on</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input required name="points[0][zip_code]" type="text" class="form-control" placeholder="Ex: 713234" value="">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-12 text-center point-bottom-arrow">
                                 <i class="material-icons">arrow_downward</i>
                             </div>
                         </div>
-                        <div class="row clearfix trip-point-div" id="trip_pont_d" data-point-order="2">
-                            <div class="point-title">Point 2</div>
-                            <div class="col-md-8">
+                        <div class="row clearfix trip-point-div" data-point-order="2">
+                            <div class="point-title">Point 1</div>
+                            <div class="col-md-6">
                                 <b> Address</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">
@@ -151,24 +186,13 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <b> Fare({{$currency_symbol}})</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">monetization_on</i>
-                                    </span>
-                                    <div class="form-line">
-                                        <input step="any"  required name="points[1][fare]" type="number" class="form-control" placeholder="Ex: 12.89" value="" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
                                 <b> Latitude</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                     <i class="material-icons">location_on</i>
                                     </span>
                                     <div class="form-line">
-                                        <input step="any" required name="points[1][latitude]" type="number" class="form-control" placeholder="Ex: 12.8957554" value="">
+                                        <input step="any"  required name="points[1][latitude]" type="number" class="form-control" placeholder="Ex: 12.8957554" value="">
                                     </div>
                                 </div>
                             </div>
@@ -179,29 +203,40 @@
                                     <i class="material-icons">location_on</i>
                                     </span>
                                     <div class="form-line">
-                                        <input step="any" required name="points[1][longitude]" type="number" class="form-control" placeholder="Ex: 12.8957554" value="">
+                                        <input step="any"  required name="points[1][longitude]" type="number" class="form-control" placeholder="Ex: 12.8957554" value="">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <b> Distance(Metre)</b>
+                            <div class="col-md-4">
+                                <b>City</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">
-                                    <i class="material-icons">space_bar</i>
+                                    <i class="material-icons">location_on</i>
                                     </span>
                                     <div class="form-line">
-                                        <input  required name="points[1][distance]" type="number" class="form-control" placeholder="Ex: 10" value="">
+                                        <input required name="points[1][city]" type="text" class="form-control" placeholder="Ex: Bangalore" value="">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <b> Time(Minutes)</b>
+                            <div class="col-md-4">
+                                <b>Country</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">
-                                    <i class="material-icons">timer</i>
+                                    <i class="material-icons">location_on</i>
                                     </span>
                                     <div class="form-line">
-                                        <input  required name="points[1][time]" type="number" class="form-control" placeholder="Ex: 10" value="">
+                                        <input required name="points[1][country]" type="text" class="form-control" placeholder="Ex: India" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <b>Zip-Code</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                    <i class="material-icons">location_on</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input required name="points[1][zip_code]" type="text" class="form-control" placeholder="Ex: 713234" value="">
                                     </div>
                                 </div>
                             </div>
@@ -233,7 +268,7 @@
         hideLastBottomArrow();
     
         $("#add-new-route-form").on('submit', function(event){
-
+            
             event.preventDefault();
             
             var data = $("#add-new-route-form").serializeArray();
@@ -242,7 +277,7 @@
 
             $.post("{{route('admin.add-new-route')}}", data, function(response){
                 if(response.success) {
-                    showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    showNotification('bg-black', response.text+'<br><a style="color:white;text-decoration: underline;" href="{{route('admin.show-all-routes')}}">click to see all routes</a>', 'top', 'right', 'animated flipInX', 'animated flipOutX');
                 } else {
 
                     for (var property in response.data.errors) {
@@ -264,10 +299,15 @@
             var elems = $(".trip-point-div");
             console.log(elems)
             var clonedElem = $(elems[1]).clone();
-            clonedElem.removeAttr('id')
-            clonedElem.hide();
+            /* clonedElem.removeAttr('id')
+            */
+            clonedElem.hide(); 
             $(elems[elems.length - 2]).after(clonedElem)
             clonedElem.fadeIn();
+            clonedElem.css('background-color', '#ff000012')
+            setTimeout(function(){
+                clonedElem.css('background-color', 'inherit')
+            }, 500)
     
             arrangePionts();
 
@@ -319,9 +359,9 @@
             var addressElem = elem.find('input[name$="[address]"]');
             var latitudeElem = elem.find('input[name$="[latitude]"]');
             var longitudeElem = elem.find('input[name$="[longitude]"]');
-            var distanceElem = elem.find('input[name$="[distance]"]');
-            var timeElem = elem.find('input[name$="[time]"]');
-            var fareElem = elem.find('input[name$="[fare]"]');
+            var cityElem = elem.find('input[name$="[city]"]');
+            var countryElem = elem.find('input[name$="[country]"]');
+            var zipCodeElem = elem.find('input[name$="[zip_code]"]');
     
             if(addressElem.length) {
                 addressElem.attr('name', 'points['+(i-1)+'][address]')
@@ -335,16 +375,16 @@
                 longitudeElem.attr('name', 'points['+(i-1)+'][longitude]')
             }
     
-            if(distanceElem.length) {
-                distanceElem.attr('name', 'points['+(i-1)+'][distance]')
+            if(cityElem.length) {
+                cityElem.attr('name', 'points['+(i-1)+'][city]')
             }
     
-            if(timeElem.length) {
-                timeElem.attr('name', 'points['+(i-1)+'][time]')
+            if(countryElem.length) {
+                countryElem.attr('name', 'points['+(i-1)+'][country]')
             }
     
-            if(fareElem.length) {
-                fareElem.attr('name', 'points['+(i-1)+'][fare]')
+            if(zipCodeElem.length) {
+                zipCodeElem.attr('name', 'points['+(i-1)+'][zip_code]')
             }
     
         }

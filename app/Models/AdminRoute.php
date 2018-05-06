@@ -4,14 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AdminTrip extends Model
+class AdminRoute extends Model
 {
 
-    protected $table = 'admin_trips';
+    /**
+     * route status constants
+     */
+    const ENABLED = 'ENABLED';
+
+    protected $table = 'admin_routes';
 
     public function getTableName()
     {
         return $this->table;
+    }
+
+
+    /**
+     * relation with admin route points
+     */
+    public function points()
+    {
+        return $this->hasMany('App\Models\AdminRoutePoint', 'admin_route_id');
     }
 
 
@@ -25,7 +39,7 @@ class AdminTrip extends Model
             return [];
         }
        
-        $keyRules = app('App\Models\AdminTripPoint')->keyRules();
+        $keyRules = app('App\Models\AdminRoutePoint')->keyRules();
 
         $rules = [];
         foreach($points as $index => $point){
@@ -47,27 +61,18 @@ class AdminTrip extends Model
     {
         list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
         return array_merge([
-            'name' => 'required|max:256',
-            /* 'no_of_seats' => 'required|numeric' */
+            'name' => 'required|max:256|unique:'.$this->getTableName().',name',
         ], $this->rulesPickupPoints($request->points));
     }
 
 
     /**
-     * delete whole trip 
-     * checking must be done before like initiated or not
+     * get formated created at
      */
-    public function deleteTrip($tripId)
+    public function formatedCreatedAt($timezone = 'Asia\Kolkata')
     {
-        $this->where('id', $tripId)->forceDelete();
-        app('App\Models\TripRoute')->where('trip_id', $tripId)->forceDelete();
-        app('App\Models\TripPoint')->where('trip_id', $tripId)->forceDelete();
-        return true;
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d M, Y');
     }
-
-
-
-
 
 
 }

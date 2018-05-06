@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAdminTripsTable extends Migration
+class CreateAdminRoutesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateAdminTripsTable extends Migration
      */
     public function up()
     {
-        Schema::create('admin_trips', function (Blueprint $table) {
+        Schema::create('admin_routes', function (Blueprint $table) {
 
             $table->bigIncrements('id');
             $table->string('name', 128);            

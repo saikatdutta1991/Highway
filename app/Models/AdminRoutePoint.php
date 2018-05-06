@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AdminTripPoint extends Model
+class AdminRoutePoint extends Model
 {
 
-    protected $table = 'admin_trip_points';
+    protected $table = 'admin_route_points';
 
     public function getTableName()
     {
@@ -15,21 +15,17 @@ class AdminTripPoint extends Model
     }
 
 
-    //relation with trip
-    public function trip()
+    /**
+     * relation with trip
+     */
+    public function adminRoute()
     {
-        return $this->belongsTo('App\Models\AdminTrip', 'admin_trip_id');
-    }
-
-    //relation with driver
-    public function driver()
-    {
-        return $this->trip()->driver();
+        return $this->belongsTo('App\Models\AdminRoute', 'admin_route_id');
     }
 
 
     /**
-     * trip pickup point key rules
+     * route pickup point key rules
      */
     public function keyRules()
     {
@@ -38,9 +34,9 @@ class AdminTripPoint extends Model
             'address' => 'required|min:1|max:256', 
             'latitude' => ['required', 'regex:'.$latRegex], 
             'longitude' => ['required', 'regex:'.$longRegex],
-            'distance' => 'sometimes|required',
-            'time' => 'sometimes|required',
-            'fare' => 'sometimes|required'
+            'city' => 'required',          
+            'country' => 'required',          
+            'zip_code' => 'required',          
         ];
     }
 

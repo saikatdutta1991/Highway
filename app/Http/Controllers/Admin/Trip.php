@@ -7,9 +7,8 @@ use App\Http\Controllers\Controller;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\Setting as Set;
-use App\Models\AdminTrip;
-use App\Models\AdminTripPoint;
-use App\Models\AdminTripRoute;
+use App\Models\AdminRoute;
+use App\Models\AdminRoutePoint;
 use Validator;
 
 
@@ -19,21 +18,34 @@ class Trip extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Set $setting, Api $api, AdminTrip $trip, AdminTripPoint $tripPoint, AdminTripRoute $tripRoute)
+    public function __construct(
+        Set $setting, 
+        Api $api, 
+        AdminRoute $route, 
+        AdminRoutePoint $routePoint
+    )
     {
         $this->setting = $setting;
         $this->api = $api;
-        $this->trip = $trip;
-        $this->tripPoint = $tripPoint;
-        $this->tripRoute = $tripRoute;
+        $this->route = $route;
+        $this->routePoint = $routePoint;
     }
 
 
+    /**
+     * show all admin routes
+     */
+    public function showRoutes(Request $request)
+    {
+        $routes = $this->route->with('points')->orderBy('created_at', 'desc')->paginate(1000);
+        return view('admin.trips.show_admin_routes', compact('routes'));
+    }
+
 
     /**
-     * shows add trip route page
+     * shows add new route page
      */
-    public function showAddTripRoute(Request $request)
+    public function showAddNewRoute(Request $request)
     {
         $setting = $this->setting;
         return view('admin.trips.add_new_route', compact('setting'));
@@ -43,11 +55,11 @@ class Trip extends Controller
     /**
      * adds new trip route
      */
-    public function addNewTripRoute(Request $request)
+    public function addNewRoute(Request $request)
     {
         //validate trip create request       
         $validator = Validator::make(
-            $request->all(), $this->trip->createTripValidationRules($request)
+            $request->all(), $this->route->createTripValidationRules($request)
         );
 
         //if validation fails
@@ -61,96 +73,52 @@ class Trip extends Controller
                 'errors' => $errors
             ]);
         }
-
         
-        $trip = new $this->trip;
-        $trip->name = ucfirst(trim($request->name));
+        $route = new $this->route;
+        $route->name = ucfirst($request->name);
+        $route->status = AdminRoute::ENABLED;
+
+        //initializing route point
+        $points = [];
 
         try {
 
             DB::beginTransaction();
             
-            $trip->save();
-
-            //saving trip points
-            $tripPoints = [];
-            /* $tripRoute */
-            $order = 1;
-            foreach($request->points as $point) {
-                $tripPoint = new $this->tripPoint;
-                $tripPoint->admin_trip_id = $trip->id;
-                $tripPoint->order = $order++;
-                $tripPoint->address = $point['address'];
-                $tripPoint->latitude = $point['latitude'];
-                $tripPoint->longitude = $point['longitude'];
-                $tripPoint->distance = isset($point['distance']) ? $point['distance'] / 1000 : 0;
-                $tripPoint->time = isset($point['time']) ? $point['time'] : 0;
-                $tripPoint->fare = isset($point['fare']) ? $point['fare'] : 0.00;
-                $tripPoint->save(); 
-                $tripPoints[] = $tripPoint;
-            }
-        
-            /**
-             * finding all possible routes and distance, time estimated
-             */
-            $tripRoutes = [];
-            $pointsCount = count($tripPoints);
-            $scaleSize = 2;
-            while($scaleSize <= $pointsCount) {
-
-                $scaleStartIndex = 0;
-                $scaleEndIndex = $scaleStartIndex + $scaleSize - 1;
-
-                while($scaleEndIndex < $pointsCount) {
-                    
-                    $fare = 0;
-                    $time = 0;
-                    $distance = 0;
-                    for($i = $scaleStartIndex; $i < $scaleEndIndex; $i++) {
+            //save route
+            $route->save();
             
-                        $tripPoint = $tripPoints[$i + 1];
-                        $time += $tripPoint->time;
-                        $distance += $tripPoint->distance;
-                        $fare += $tripPoint->fare;
-                    }
+            /**initialize point order, source point index, destination point index */
+            $pointOrder = 1;
+            $sourcePointIndex = 0;
+            $destinationPointIndex = count($request->points) - 1;
 
-                    /**
-                     * save trip routes in database
-                     */
-                    //echo "{$tripPoints[$scaleStartIndex]->address} -  {$tripPoints[$scaleEndIndex]->address} $time $distance<br>";
-                    $tripRoute = new $this->tripRoute;
-                    $tripRoute->admin_trip_id = $trip->id;
-                    $tripRoute->start_point_address = $tripPoints[$scaleStartIndex]->address;
-                    $tripRoute->start_point_latitude = $tripPoints[$scaleStartIndex]->latitude;
-                    $tripRoute->start_point_longitude = $tripPoints[$scaleStartIndex]->longitude;
-                    $tripRoute->start_point_order = $tripPoints[$scaleStartIndex]->order;
-                    $tripRoute->end_point_address = $tripPoints[$scaleEndIndex]->address;
-                    $tripRoute->end_point_latitude = $tripPoints[$scaleEndIndex]->latitude;
-                    $tripRoute->end_point_longitude = $tripPoints[$scaleEndIndex]->longitude;
-                    $tripRoute->end_point_order = $tripPoints[$scaleEndIndex]->order;
-                    $tripRoute->seat_affects = '';
-                    $tripRoute->estimated_distance = $distance;
-                    $tripRoute->estimated_time = $time;
-                    $tripRoute->estimated_fare = $fare;
-
-                    $tripRoute->save();
-                    $tripRoutes[] = $tripRoute;
-                    
-                    $scaleStartIndex++;
-                    $scaleEndIndex++;
-
+            /**loop all points and save */
+            foreach($request->points as $index => $point) {
+                
+                $routePoint = new $this->routePoint;
+                $routePoint->admin_route_id = $route->id;
+                $routePoint->order = $pointOrder++;
+                $routePoint->address = $point['address'];
+                $routePoint->latitude = $point['latitude'];
+                $routePoint->longitude = $point['longitude'];
+                $routePoint->city = ucfirst($point['city']);
+                $routePoint->country = ucfirst($point['country']);
+                $routePoint->zip_code = $point['zip_code'];
+                
+                /** add tag for source and destination */
+                if($index == $sourcePointIndex) {
+                    $routePoint->tag = 'SOURCE';
+                } else if($index == $destinationPointIndex) {
+                    $routePoint->tag = 'DESTINATION';
+                } else {
+                    $routePoint->tag = 'INTERMEDIATE';
                 }
-
-                $scaleSize++;
+                
+                $routePoint->save(); 
+                $points[] = $routePoint;
 
             }
-
-
-            /**
-             * calculate seat affects and save
-             */
-            $this->tripRoute->calculateSeatAffects($tripRoutes);
-         
         
             DB::commit();
 
@@ -163,10 +131,40 @@ class Trip extends Controller
         
         
         return $this->api->json(true, "TRIP_CREATED", 'Trip created', [
-            'trip' => $trip,
-            'trip_points' => $tripPoints,
-            'trip_routes' => $tripRoutes
+            'route' => $route,
+            'route_points' => $points
         ]);
+    }
+
+
+
+    /**
+     * delete route
+     */
+    public function deleteRoute(Request $request)
+    {
+        $route = $this->route->find($request->route_id);
+
+        try {
+            DB::beginTransaction();
+
+            //delete route points
+            $this->routePoint->where('admin_route_id', $route->id)->forceDelete();
+
+            //delete route 
+            $route->forceDelete();
+
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('DELETE_ROUTE_ERROR', $e->getMessage());
+            return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+        }
+
+
+        return $this->api->json(true, 'ROUTE_DELETED', 'Route deleted');
+
     }
 
 
@@ -174,41 +172,41 @@ class Trip extends Controller
     /**
      * show trip points
      */
-    public function showTripPoints(Request $request)
-    {
-        $points = $this->tripPoint->orderBy('created_at', 'desc');
+    // public function showTripPoints(Request $request)
+    // {
+    //     $points = $this->tripPoint->orderBy('created_at', 'desc');
 
-        /** specific city */
-        if($request->city != "") {
-            $points = $points->where('city', 'like', $request->city);
-        }
+    //     /** specific city */
+    //     if($request->city != "") {
+    //         $points = $points->where('city', 'like', $request->city);
+    //     }
 
-        /** specific country */
-        if($request->country != "") {
-            $points = $points->where('country', 'like', $request->country);
-        }
+    //     /** specific country */
+    //     if($request->country != "") {
+    //         $points = $points->where('country', 'like', $request->country);
+    //     }
 
-        $points = $points->paginate(100);
-        return view('admin.trips.show_trip_points', compact('points'));
-    }
+    //     $points = $points->paginate(100);
+    //     return view('admin.trips.show_trip_points', compact('points'));
+    // }
 
 
 
     /**
      * show add new trip point(only one single point for trips)
      */
-    public function showAddPoint()
+    /* public function showAddPoint()
     {
         $setting = $this->setting;
         return view('admin.trips.add_new_point', compact('setting'));
-    }
+    } */
 
 
 
     /**
      * add new trip point
      */
-    public function addNewPoint(Request $request)
+    /* public function addNewPoint(Request $request)
     {
         list($latRegex, $longRegex) = app('UtillRepo')->regexLatLongValidate();
         $validator = Validator::make($request->all(), [
@@ -246,14 +244,14 @@ class Trip extends Controller
             'trip_point' => $tripPoint
         ]);
 
-    }
+    } */
 
 
 
     /**
      * delete trip point
      */
-    public function deleteTripPoint(Request $request)
+    /* public function deleteTripPoint(Request $request)
     {
         $point = $this->tripPoint->find($request->point_id);
         if($point) {
@@ -261,7 +259,7 @@ class Trip extends Controller
         }
 
         return $this->api->json(true, 'POINT_DELETED', 'Point deleted');
-    }
+    } */
 
 
 
