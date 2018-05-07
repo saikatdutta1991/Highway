@@ -61,8 +61,8 @@
     .point-delete-btn
     {
         color: red;
-        float: right;
-        top: -21px;
+        right: 0px;
+        top: 0px;
         position: relative;
         background: #00000012;
         cursor: pointer;
