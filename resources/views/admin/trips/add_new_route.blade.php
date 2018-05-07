@@ -63,7 +63,7 @@
         color: red;
         right: 0px;
         top: 0px;
-        position: relative;
+        position: absolute;
         background: #00000012;
         cursor: pointer;
     }
