@@ -109,9 +109,9 @@
     $(document).ready(function(){
         
 
-        $(".show-all-points").hover(function(){
+    /*     $(".show-all-points").hover(function(){
             $(this).click();
-        }, function(){})
+        }, function(){}) */
         
         $(".delete-route-btn").on('click', function(){
 

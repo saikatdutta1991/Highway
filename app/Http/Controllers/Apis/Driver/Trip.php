@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Apis\Driver;
 
-use App\Models\AdminTripPoint;
+use App\Models\AdminRoute;
+use App\Models\AdminRoutePoint;
+use App\Models\AdminRoutePath;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
@@ -41,7 +43,9 @@ class Trip extends Controller
         Api $api, 
         SocketIOClient $socketIOClient,
         RideInvoice $rideInvoice,
-        AdminTripPoint $adminTripPoint
+        AdminRoute $route,
+        AdminRoutePoint $routePoint,
+        AdminRoutePath $routePath
     )
     {
         $this->transaction = $transaction;
@@ -57,7 +61,9 @@ class Trip extends Controller
         $this->api = $api;
         $this->socketIOClient = $socketIOClient;
         $this->rideInvoice = $rideInvoice;
-        $this->adminTripPoint = $adminTripPoint;
+        $this->route = $route;
+        $this->routePoint = $routePoint;
+        $this->routePath = $routePath;
     }
 
 
@@ -68,40 +74,104 @@ class Trip extends Controller
     public function searchPoint(Request $request)
     {
 
+        //routes table name 
+        $rt = $this->route->getTableName();
+        $rpt = $this->routePath->getTableName();
+        $routes = $this->route->where($rt.'.status', AdminRoute::ENABLED)
+        ->join($rpt, $rt.'.id', '=', $rpt.'.admin_route_id')
+        ->distinct();
 
-        $points = $this->adminTripPoint->where('address', 'like', '%'.$request->address.'%');
-        if(!$points->count()) {
-
-            $words = explode(" ", $request->address);
-            foreach($words as $word) {
-                $points = $this->adminTripPoint->orWhere('address', 'like', $word.'%');
-            }
-
-        }
-        
-
-        /** match country if in request */
-        if($request->country != '') {
-            $points = $points->where('country', 'like', $request->country.'%');
+        /**
+         * if routes name is present
+         * search by route name and send response
+         */
+        if($request->route_name != "") {
+            $routes = $routes->where($rt.'.name', 'like', '%'.$request->route_name.'%');
         }
 
 
-        /** match city if in request */
-        if($request->city != '') {
-            $points = $points->where('city', 'like', $request->city.'%');
+
+        /**
+         * if source address is present
+         */
+        if($request->s_address != '') {
+            $routes = $routes->where($rpt.'.s_address', 'like', '%'.$request->s_address.'%');
         }
 
-        $points = $points->select(['address', 'city', 'country', 'zip_code', 'latitude', 'longitude'])->paginate(100);
+        /**
+         * if source city is present
+         */
+        if($request->s_city != '') {
+            $routes = $routes->where($rpt.'.s_city', 'like', '%'.$request->s_city.'%');
+        }
 
-        return $this->api->json(true, 'POINTS', 'Trip points', [
-            'points' => $points->items(),
-             'paging' => [
-                'total' => $points->total(),
-                'has_more' => $points->hasMorePages(),
-                'next_page_url' => $points->nextPageUrl()?:'',
-                'count' => $points->count(),
+
+        /**
+         * if destination address is present
+         */
+        if($request->d_address != '') {
+            $routes = $routes->where($rpt.'.d_address', 'like', '%'.$request->d_address.'%');
+        }
+
+        /**
+         * if destination city is present
+         */
+        if($request->d_city != '') {
+            $routes = $routes->where($rpt.'.d_city', 'like', '%'.$request->d_city.'%');
+        }
+
+
+
+        /**
+         * if source latitude longitude present
+         */
+        $sRadius = $request->s_radius ?: 5;
+        if($request->s_lat != '' && $request->s_lng != '') {
+
+            list($sMinLat, $sMaxLat, $sMinLng, $sMaxLng) = app('UtillRepo')->getRadiousLatitudeLongitude(
+                $request->s_lat, $request->s_lng, $sRadius
+            );
+
+            $routes = $routes->where(function($query) use($sMinLat, $sMaxLat, $sMinLng, $sMaxLng, $rpt){
+                $query->whereBetween("{$rpt}.s_latitude", [$sMinLat, $sMaxLat])
+                ->whereBetween("{$rpt}.s_longitude", [$sMinLng, $sMaxLng]);
+            });
+        }
+
+
+
+        /**
+         * if destination latitude longitude present
+         */
+        $dRadius = $request->d_radius ?: 5;
+        if($request->d_lat != '' && $request->d_lng != '') {
+
+            list($dMinLat, $dMaxLat, $dMinLng, $dMaxLng) = app('UtillRepo')->getRadiousLatitudeLongitude(
+                $request->d_lat, $request->d_lng, $dRadius
+            );
+
+            $routes = $routes->where(function($query) use($dMinLat, $dMaxLat, $dMinLng, $dMaxLng, $rpt){
+                $query->whereBetween("{$rpt}.s_latitude", [$dMinLat, $dMaxLat])
+                ->whereBetween("{$rpt}.d_longitude", [$dMinLng, $dMaxLng]);
+            });
+        }
+
+
+
+
+        $routes = $routes->select($rt.'.*')->with('points')->paginate(100);
+
+        return $this->api->json(true, 'ROUTES', 'Routes', [
+            'routes' => $routes->items(),
+            'paging' => [
+                'total' => $routes->total(),
+                'has_more' => $routes->hasMorePages(),
+                'next_page_url' => $routes->nextPageUrl()?:'',
+                'count' => $routes->count(),
             ]
         ]);
+
+        
     }
 
 

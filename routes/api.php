@@ -103,8 +103,8 @@ Route::group(['prefix' => '/v1/driver'], function(){
     Route::post('google', 'Apis\Driver\Google@authenticate');
 
 
-    /** search trip points */
-    Route::get('trips/points/search', 'Apis\Driver\Trip@searchPoint');
+    /** search routes points */
+    Route::get('trips/routes/search', 'Apis\Driver\Trip@searchPoint');
 
 
     //driver's authenticated routes

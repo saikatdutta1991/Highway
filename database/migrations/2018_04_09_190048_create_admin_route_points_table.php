@@ -16,7 +16,6 @@ class CreateAdminRoutePointsTable extends Migration
         Schema::create('admin_route_points', function (Blueprint $table) {
             
             $table->bigIncrements('id');
-
             $table->bigInteger('admin_route_id')->unsigned()->comment('foreignkey for admin route id');
             
             $table->tinyInteger('order')->default(0)->comment('maintain point order');

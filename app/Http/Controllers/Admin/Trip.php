@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Setting as Set;
 use App\Models\AdminRoute;
 use App\Models\AdminRoutePoint;
+use App\Models\AdminRoutePath;
 use Validator;
 
 
@@ -22,12 +23,14 @@ class Trip extends Controller
         Set $setting, 
         Api $api, 
         AdminRoute $route, 
-        AdminRoutePoint $routePoint
+        AdminRoutePoint $routePoint,
+        AdminRoutePath $routePath
     )
     {
         $this->setting = $setting;
         $this->api = $api;
         $this->route = $route;
+        $this->routePath = $routePath;
         $this->routePoint = $routePoint;
     }
 
@@ -93,6 +96,10 @@ class Trip extends Controller
             $sourcePointIndex = 0;
             $destinationPointIndex = count($request->points) - 1;
 
+            /**init route path */
+            $path = new $this->routePath;
+            $path->admin_route_id = $route->id;
+
             /**loop all points and save */
             foreach($request->points as $index => $point) {
                 
@@ -109,12 +116,32 @@ class Trip extends Controller
                 /** add tag for source and destination */
                 if($index == $sourcePointIndex) {
                     $routePoint->tag = 'SOURCE';
+
+                    /** add path source*/
+                    $path->s_address = $point['address'];
+                    $path->s_latitude = $point['latitude'];
+                    $path->s_longitude = $point['longitude'];
+                    $path->s_city = ucfirst($point['city']);
+                    $path->s_country = ucfirst($point['country']);
+                    $path->s_zip_code = $point['zip_code'];
+
+
                 } else if($index == $destinationPointIndex) {
                     $routePoint->tag = 'DESTINATION';
+
+                    /** add path source*/
+                    $path->d_address = $point['address'];
+                    $path->d_latitude = $point['latitude'];
+                    $path->d_longitude = $point['longitude'];
+                    $path->d_city = ucfirst($point['city']);
+                    $path->d_country = ucfirst($point['country']);
+                    $path->d_zip_code = $point['zip_code'];
+
                 } else {
                     $routePoint->tag = 'INTERMEDIATE';
                 }
                 
+                $path->save();
                 $routePoint->save(); 
                 $points[] = $routePoint;
 

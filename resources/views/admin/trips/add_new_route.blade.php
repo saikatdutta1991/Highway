@@ -58,6 +58,15 @@
         top: -10px;
         font-size: 10px;
     }
+    .point-delete-btn
+    {
+        color: red;
+        float: right;
+        top: -21px;
+        position: relative;
+        background: #00000012;
+        cursor: pointer;
+    }
 </style>
 @endsection
 @section('content')
@@ -101,6 +110,7 @@
                             </div>
                         </div>
                         <div class="row clearfix trip-point-div" data-point-order="1">
+                            <i class="material-icons point-delete-btn" title="Remove point">delete_forever</i>
                             <div class="point-title">Point 1</div>
                             <div class="col-md-6">
                                 <b> Address</b>
@@ -173,6 +183,7 @@
                             </div>
                         </div>
                         <div class="row clearfix trip-point-div" data-point-order="2">
+                            <i class="material-icons point-delete-btn" title="Remove point">delete_forever</i>
                             <div class="point-title">Point 1</div>
                             <div class="col-md-6">
                                 <b> Address</b>
@@ -264,6 +275,29 @@
 @section('bottom')
 <script>
     $(document).ready(function(){
+
+
+        $("body").on('click', '.point-delete-btn', function(){
+            var elems = $(".trip-point-div");
+            var pointdiv = $(this).parent();
+            var currentOrder = pointdiv.data('point-order')
+
+            if(currentOrder == 1 || currentOrder == elems.length) {
+                showNotification('bg-black', 'You are allowed to delete source and destination point', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+
+            pointdiv.fadeOut();
+            pointdiv.remove();
+
+            arrangePionts();
+            hideLastBottomArrow();
+
+        });
+
+
+
         
         hideLastBottomArrow();
     
