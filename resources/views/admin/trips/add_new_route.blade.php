@@ -66,6 +66,19 @@
         position: absolute;
         background: #00000012;
         cursor: pointer;
+        padding: 5px;
+    }
+    .location-search-btn
+    {
+        padding: 5px;
+        right: 34px;
+        top: 0px;
+        position: absolute;
+        background: #00000012;
+        cursor: pointer;
+    }
+    #map_canvas {
+    height: 350px;
     }
 </style>
 @endsection
@@ -110,6 +123,7 @@
                             </div>
                         </div>
                         <div class="row clearfix trip-point-div" data-point-order="1">
+                            <i class="material-icons location-search-btn" title="Search location">search</i>
                             <i class="material-icons point-delete-btn" title="Remove point">delete_forever</i>
                             <div class="point-title">Point 1</div>
                             <div class="col-md-6">
@@ -183,6 +197,7 @@
                             </div>
                         </div>
                         <div class="row clearfix trip-point-div" data-point-order="2">
+                            <i class="material-icons location-search-btn" title="Search location">search</i>
                             <i class="material-icons point-delete-btn" title="Remove point">delete_forever</i>
                             <div class="point-title">Point 1</div>
                             <div class="col-md-6">
@@ -271,8 +286,246 @@
 </div>
 </div>
 </div>
+<!-- map modal -->
+<div id="mapModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content" style="border-radius: 2px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Search your trip point location</h4>
+                <small>Enter Your location > Click find > Drag marker to choose location</small>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <input id="address" type="textbox" value="" placeholder = "Enter your location" class="form-control input-md">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-info" onclick="codeAddress()">Find</button>
+                        <button type="button" class="btn btn-info" onclick="closeMapModal()">Done</button>
+                    </div>
+                </div>
+                <br>                       
+                <div id="map_canvas"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- map modal end -->
 @endsection
 @section('bottom')
+<script src="https://maps.googleapis.com/maps/api/js?key={{$setting->get('google_maps_api_key')}}"></script>
+<script>
+    var geocoder;
+    var map;
+    var marker;
+    var infowindow = new google.maps.InfoWindow({
+    size: new google.maps.Size(150, 50)
+    });
+    
+    function initialize() {
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var mapOptions = {
+    zoom: 8,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+    google.maps.event.addListener(map, 'click', function() {
+    infowindow.close();
+    });
+    }
+    
+    function geocodePosition(pos) {
+    geocoder.geocode({
+    latLng: pos
+    }, function(responses) {
+    
+        console.log('responses', responses, pos)
+        var results = responses;
+        var street = "";
+        var city = "";
+        var state = "";
+        var country = "";
+        var zipcode = "";
+        for (var i = 0; i < results.length; i++) {
+    
+            if (results[i].types[0] === "locality") {
+                city = results[i].address_components[0].long_name;
+                state = results[i].address_components[2].long_name;
+    
+            }
+            if (results[i].types[0] === "postal_code" && zipcode == "") {
+                zipcode = results[i].address_components[0].long_name;
+    
+            }
+            if (results[i].types[0] === "country") {
+                country = results[i].address_components[0].long_name;
+    
+            }
+            if (results[i].types[0] === "route" && street == "") {
+    
+                for (var j = 0; j < 3; j++) {
+                    if (j == 0) {
+                        street = results[i].address_components[j].long_name;
+                    } else {
+                        street += ", " + results[i].address_components[j].long_name;
+                    }
+                }
+    
+            }
+            if (results[i].types[0] === "street_address") {
+                    for (var j = 0; j < 4; j++) {
+                        if (j == 0) {
+                            street = results[i].address_components[j].long_name;
+                        } else {
+                            street += ", " + results[i].address_components[j].long_name;
+                        }
+                    }
+    
+                }
+            }
+            if (zipcode == "") {
+                if (typeof results[0].address_components[8] !== 'undefined') {
+                    zipcode = results[0].address_components[8].long_name;
+                }
+            }
+            if (country == "") {
+                if (typeof results[0].address_components[7] !== 'undefined') {
+                    country = results[0].address_components[7].long_name;
+                }
+            }
+            if (state == "") {
+                if (typeof results[0].address_components[6] !== 'undefined') {
+                    state = results[0].address_components[6].long_name;
+                }
+            }
+            if (city == "") {
+                if (typeof results[0].address_components[5] !== 'undefined') {
+                    city = results[0].address_components[5].long_name;
+                }
+            }
+    
+            var address = {
+                "street": street,
+                "city": city,
+                "state": state,
+                "country": country,
+                "zipcode": zipcode,
+            };
+           
+            fillAddress(address, pos)
+            
+      
+    
+    
+    
+    
+        if (responses && responses.length > 0) {
+        marker.formatted_address = responses[0].formatted_address;
+        } else {
+        marker.formatted_address = 'Cannot determine address at this location.';
+        }
+        infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        infowindow.open(map, marker);
+        });
+    }
+    
+    function codeAddress() {
+    var address = document.getElementById('address').value;
+    geocoder.geocode({
+    'address': address
+    }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+    map.setCenter(results[0].geometry.location);
+    console.log('code address location', results[0].geometry.location)
+    geocodePosition(results[0].geometry.location)
+    if (marker) {
+    marker.setMap(null);
+    if (infowindow) infowindow.close();
+    }
+    marker = new google.maps.Marker({
+    map: map,
+    draggable: true,
+    position: results[0].geometry.location
+    });
+    google.maps.event.addListener(marker, 'dragend', function() {
+    geocodePosition(marker.getPosition());
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+    
+    if (marker.formatted_address) {
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    } else {
+    infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    }
+    infowindow.open(map, marker);
+    });
+    google.maps.event.trigger(marker, 'click');
+    } else {
+    alert('Geocode was not successful for the following reason: ' + status);
+    }
+    });
+    }
+    
+    google.maps.event.addDomListener(window, "load", initialize);
+</script>
+<script>
+    function clearAddress()
+    {
+
+        currentLocationSearchPointDiv.find('input[name$="[address]"]').val('');
+        currentLocationSearchPointDiv.find('input[name$="[latitude]"]').val('');
+        currentLocationSearchPointDiv.find('input[name$="[longitude]"]').val('');
+        currentLocationSearchPointDiv.find('input[name$="[city]"]').val('');
+        currentLocationSearchPointDiv.find('input[name$="[country]"]').val('');
+        currentLocationSearchPointDiv.find('input[name$="[zip_code]"]').val('');       
+    }
+    
+    function fillAddress(address, pos) 
+    {
+        console.log(address, pos)
+        currentLocationSearchPointDiv.find('input[name$="[address]"]').val(address.street);
+        currentLocationSearchPointDiv.find('input[name$="[latitude]"]').val(pos.lat);
+        currentLocationSearchPointDiv.find('input[name$="[longitude]"]').val(pos.lng);
+        currentLocationSearchPointDiv.find('input[name$="[city]"]').val(address.city);
+        currentLocationSearchPointDiv.find('input[name$="[country]"]').val(address.country);
+        currentLocationSearchPointDiv.find('input[name$="[zip_code]"]').val(address.zipcode);
+    }
+    
+    
+    
+    function closeMapModal()
+    {
+        $("#mapModal").modal('hide')
+    }
+
+    let currentLocationSearchPointDivId = 0;
+    let currentLocationSearchPointDiv = null;
+    
+    $(document).ready(function(){
+        $("#mapModal").on('shown.bs.modal', function(){
+            $("#address").val('')
+            initialize();
+        });
+    
+        $(".location-search-btn").on('click', function(){
+            var elems = $(".trip-point-div");
+            var pointdiv = $(this).parent();
+            currentLocationSearchPointDivId = pointdiv.data('point-order')
+            console.log(currentLocationSearchPointDivId)
+            currentLocationSearchPointDiv = pointdiv;
+            $("#mapModal").modal('show')
+            clearAddress();
+            //initialize();
+        })
+    
+    
+    })
+    
+</script>
 <script>
     $(document).ready(function(){
 
