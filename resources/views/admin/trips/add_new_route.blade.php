@@ -511,7 +511,7 @@
             initialize();
         });
     
-        $(".location-search-btn").on('click', function(){
+        $("body").on('click', '.location-search-btn',function(){
             var elems = $(".trip-point-div");
             var pointdiv = $(this).parent();
             currentLocationSearchPointDivId = pointdiv.data('point-order')
