@@ -345,7 +345,7 @@ class Trip extends Controller
 
         //check order receipt and invoice referecne same or not
         $orderReceipt = isset($data['extra']['order']['receipt']) ? $data['extra']['order']['receipt'] : '';
-        if($orderReceipt != $rideRequest->invoice->invoice_reference) {
+        if($orderReceipt != $userBooking->invoice->invoice_reference) {
             return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
         }
 
