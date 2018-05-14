@@ -539,6 +539,7 @@ class Trip extends Controller
             'entity_type' => 'user', //socket will make it uppercase
             'event_type' => 'trip_booking_status_changed',
             'data' => [
+                'type' => 'driver_started_trip',
                 'trip' => $trip
             ]
         ]);
@@ -597,6 +598,7 @@ class Trip extends Controller
             'entity_type' => 'user', //socket will make it uppercase
             'event_type' => 'trip_booking_status_changed',
             'data' => [
+                'type' => 'driver_reached_point',
                 'trip' => $trip,
                 'trip_point' => $tripPoint
             ]
@@ -692,6 +694,7 @@ class Trip extends Controller
                     'entity_type' => 'user', //socket will make it uppercase
                     'event_type' => 'trip_booking_status_changed',
                     'data' => [
+                        'type' => 'trip_end',
                         'trip' => $trip,
                         'trip_route' => $route,
                         'booking' => $booking,
@@ -772,6 +775,7 @@ class Trip extends Controller
             'entity_type' => 'user', //socket will make it uppercase
             'event_type' => 'trip_booking_status_changed',
             'data' => [
+                'type' => 'driver_started_from_point',
                 'trip' => $trip,
                 'trip_point' => $tripPoint,
             ]
