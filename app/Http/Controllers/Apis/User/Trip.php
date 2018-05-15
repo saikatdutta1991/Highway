@@ -83,7 +83,7 @@ class Trip extends Controller
             });
         }
         //matching trip not canceled or started or completed
-        $trips = $trips->whereNotIn("{$this->tripRoute->getTableName()}.status", [TripModel::COMPLETED, TripModel::TRIP_STARTED, TripModel::TRIP_CANCELED]);
+        $trips = $trips->whereNotIn("{$this->tripRoute->getTableName()}.status", [TripModel::TRIP_ENDED, TripModel::TRIP_STARTED, TripModel::TRIP_CANCELED]);
 
         $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_user->timezone);
 
