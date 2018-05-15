@@ -411,7 +411,9 @@ class Trip extends Controller
         ->where('user_id', $request->auth_user->id)
         ->where('trip_id', $request->trip_id)
         ->where('trip_route_id', $request->trip_route_id)
-        ->whereIn('status', [TripModel::TRIP_ENDED, TripModel::COMPLETED])
+        ->where(function($query){
+            $query->where('status', TripModel::TRIP_ENDED)->orWhere('status', TripModel::COMPLETED);
+        })
         ->first();
         
 
