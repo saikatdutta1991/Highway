@@ -636,10 +636,10 @@ class Trip extends Controller
                 $invoice = new $this->rideInvoice;
                 $invoice->invoice_reference = $this->rideInvoice->generateInvoiceReference();
                 $invoice->payment_mode = $booking->payment_mode;
-                $invoice->ride_fare = $fare['ride_fare'];
-                $invoice->access_fee = $fare['access_fee'];
-                $invoice->tax = $fare['taxes'];
-                $invoice->total = $fare['total'];
+                $invoice->ride_fare = app('App\Repositories\Utill')->formatAmountDecimalTwo($fare['ride_fare'] * $booking->no_of_seats_booked); //multiplying with no of seats
+                $invoice->access_fee = app('App\Repositories\Utill')->formatAmountDecimalTwo($fare['access_fee'] * $booking->no_of_seats_booked);
+                $invoice->tax = app('App\Repositories\Utill')->formatAmountDecimalTwo($fare['taxes'] * $booking->no_of_seats_booked);
+                $invoice->total = app('App\Repositories\Utill')->formatAmountDecimalTwo($fare['total'] * $booking->no_of_seats_booked);
                 $invoice->currency_type = $this->setting->get('currency_code');
 
                 list($invoiceImagePath, $invoiceImageName) = $invoice->saveGoogleStaticMap($route->start_point_latitude, $route->start_point_longitude, $route->end_point_latitutde, $route->end_point_longitude);
