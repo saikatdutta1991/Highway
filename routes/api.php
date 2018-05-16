@@ -62,7 +62,7 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::post('book', 'Apis\User\Trip@bookTrip');
             Route::get('booked', 'Apis\User\Trip@getBookedTrips');
             Route::post('{trip_id}/trip_routes/{trip_route_id}/driver/rating/{rating}', 'Apis\User\Trip@rateTripDriver');
-
+            Route::get('histories', 'Apis\User\Trip@getHistories')->name('user.trip_histories');
             /**
              * rasorpay payment apis
              */
@@ -142,7 +142,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/trip_points/{trip_point_id}/start_trip', 'Apis\Driver\Trip@driverStartTripPoint');
             Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
-
+            Route::get('histories', 'Apis\Driver\Trip@getTripHistories')->name('driver.trip_histories');
 
         }); 
 

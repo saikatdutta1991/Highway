@@ -871,4 +871,43 @@ class Trip extends Controller
 
 
 
+
+    /**
+     * return trip histories
+     */
+    public function getTripHistories(Request $request)
+    {
+
+        $trips = $this->trip
+        ->with('tripPoints', 'tripRoutes', 'tripRoutes.userBookings', 'tripRoutes.userBookings.user')
+        ->where('driver_id', $request->auth_driver->id)
+        ->orderBy('date_time', 'desc')
+        ->where(function($query){
+            $query->where('status', TripModel::COMPLETED)
+            ->orWhere('status', TripModel::TRIP_CANCELED);
+        })
+        ->paginate(2);
+
+
+        $trips->map(function($trip){
+            
+            if($trip->invoice) {
+                $trip->invoice['map_url'] = $trip->invoice->getStaticMapUrl();
+            }
+            
+        });
+
+        return $this->api->json(true, 'TRIP_HISTORIES', 'Trip histories', [
+            'trip_histories'=> $trips->items(),
+            'paging' => [
+                'total' => $trips->total(),
+                'has_more' => $trips->hasMorePages(),
+                'next_page_url' => $trips->nextPageUrl()?:'',
+                'count' => $trips->count(),
+            ]
+        ]);
+    }
+
+
+
 }
