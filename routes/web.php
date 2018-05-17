@@ -70,25 +70,37 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('services/{service_id}/ridefare', 'Admin\Service@createOrUpdateRideFare');
         Route::post('services/tax/save', 'Admin\Service@saveRideTaxPercentage');
         
-        Route::get('settings/email', 'Admin\Setting@showEmailSetting');
-        Route::post('settings/email/save', 'Admin\Setting@saveEmailSettings');
-        Route::post('settings/email/test', 'Admin\Setting@testEmail');
-        Route::get('settings/sms', 'Admin\Setting@showSmsSetting');
-        Route::post('settings/sms/save', 'Admin\Setting@saveSmsSetting');
-        Route::post('settings/sms/test', 'Admin\Setting@testSms');
-        Route::get('settings/firebase', 'Admin\Setting@showFirebaseSetting');
-        Route::post('settings/firebase/save', 'Admin\Setting@saveFirebaseSetting');
-        Route::get('settings/facebook', 'Admin\Setting@showFacebookSetting');
-        Route::post('settings/facebook/save', 'Admin\Setting@saveFacebookSetting');
-        Route::get('settings/google', 'Admin\Setting@showGoogleSetting');
-        Route::post('settings/google/save', 'Admin\Setting@saveGoogleSetting');
-        Route::post('settings/google/map-key/save', 'Admin\Setting@saveGoogleMapKey');
-        Route::get('settings/general', 'Admin\Setting@showGeneralSetting');
-        Route::post('settings/general/website/save', 'Admin\Setting@saveGeneralSettings');
-        Route::post('settings/general/website/logo/save', 'Admin\Setting@saveWebsiteLogo');
-        Route::post('settings/general/website/favicon/save', 'Admin\Setting@saveWebsiteFavicon');
-        Route::get('settings/razorpay', 'Admin\Setting@showRazorpaySetting');
-        Route::post('settings/razorpay/save', 'Admin\Setting@saveRazorpaySetting');
+
+        Route::group(['prefix' => 'settings'], function(){
+
+            Route::get('email', 'Admin\Setting@showEmailSetting');
+            Route::post('email/save', 'Admin\Setting@saveEmailSettings');
+            Route::post('email/test', 'Admin\Setting@testEmail');
+            Route::get('sms', 'Admin\Setting@showSmsSetting');
+            Route::post('sms/save', 'Admin\Setting@saveSmsSetting');
+            Route::post('sms/test', 'Admin\Setting@testSms');
+            Route::get('firebase', 'Admin\Setting@showFirebaseSetting');
+            Route::post('firebase/save', 'Admin\Setting@saveFirebaseSetting');
+            Route::get('facebook', 'Admin\Setting@showFacebookSetting');
+            Route::post('facebook/save', 'Admin\Setting@saveFacebookSetting');
+            Route::get('google', 'Admin\Setting@showGoogleSetting');
+            Route::post('google/save', 'Admin\Setting@saveGoogleSetting');
+            Route::post('google/map-key/save', 'Admin\Setting@saveGoogleMapKey');
+            Route::get('general', 'Admin\Setting@showGeneralSetting');
+            Route::post('general/website/save', 'Admin\Setting@saveGeneralSettings');
+            Route::post('general/website/logo/save', 'Admin\Setting@saveWebsiteLogo');
+            Route::post('general/website/favicon/save', 'Admin\Setting@saveWebsiteFavicon');
+            Route::get('razorpay', 'Admin\Setting@showRazorpaySetting');
+            Route::post('razorpay/save', 'Admin\Setting@saveRazorpaySetting');
+
+            /**referral routes */
+            Route::get('referral', 'Admin\Referral@showReferralSetting');
+            Route::post('referral/save/enable', 'Admin\Referral@saveEnable')->name('admin.referral_save_enable');
+            Route::post('referral/save/bonus', 'Admin\Referral@saveBonusAmount')->name('admin.referral_save_bonus');
+            /**referral routes end */
+
+        });
+
 
 
 

@@ -83,6 +83,9 @@
                         <li class="@yield('settings_general_active')">
                             <a href="{{url('admin/settings/general')}}">General</a>
                         </li>
+                        <li class="@yield('settings_referral_active')">
+                            <a href="{{url('admin/settings/referral')}}">Referral</a>
+                        </li>
                         <li class="@yield('settings_razorpay_active')">
                             <a href="{{url('admin/settings/razorpay')}}">Razorpay Gateway</a>
                         </li>
