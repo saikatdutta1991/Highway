@@ -2,12 +2,28 @@
 
 namespace App\Models;
 
+use App\Models\Events\UserCreated;
 use App\Models\DeviceToken;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use App\Repositories\PushNotification;
 
 class User extends Model
 {
+
+
+    use Notifiable;
+
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => UserCreated::class
+    ];
+
 
     const ACTIVATED = 'ACTIVATED';
 

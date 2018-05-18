@@ -53,6 +53,14 @@ Route::group(['prefix' => '/v1/user'], function(){
 
 
 
+        Route::group(['prefix' => 'referral'], function(){
+            Route::get('info', 'Apis\User\Referral@getReferralInfo');
+        });
+
+
+
+
+
         /**
          * intercity trip routes
          */
@@ -126,6 +134,12 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('ride-request/{ride_request_id}/rate-user', 'Apis\Driver\RideRequest@rateUser');
 
         Route::get('ride-requests/histories', 'Apis\Driver\RideRequest@getHistories')->name('ride_request_histories');
+
+
+
+        Route::group(['prefix' => 'referral'], function(){
+            Route::get('info', 'Apis\Driver\Referral@getReferralInfo');
+        });
 
 
         /**

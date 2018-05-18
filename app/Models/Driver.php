@@ -2,12 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Events\DriverCreated;
 use App\Models\DeviceToken;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use App\Repositories\PushNotification;
 
 class Driver extends Model
 {
+
+    use Notifiable;
+
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => DriverCreated::class
+    ];
 
     const ACTIVATED = 'ACTIVATED';
 
