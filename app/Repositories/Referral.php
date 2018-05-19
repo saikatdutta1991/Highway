@@ -200,4 +200,51 @@ class referral
 
 
 
+    /**
+     * get referral users list for admin panel
+     */
+    public function getReferralUsers($request, $path = 'referral/users')
+    {
+        $uModel = app('App\Models\User');
+        $ut = $uModel->getTableName();
+        $rht = $this->referralHistory->getTableName();
+        
+        $users = $uModel->join($rht, function ($join) use($rht, $ut) {
+            $join->on($ut.'.id', '=', $rht.'.referrer_id')
+            ->where($rht.'.referrer_type', 'user');
+        })
+        ->select([$ut.'.*', DB::raw('COUNT(referrer_id) as referred_count')])
+        ->groupBy($ut.'.id')
+        ->orderBy('referred_count');
+
+        if($request->has('specific_user_id')) {
+            $users = $users->where($ut.'.id', $request->specific_user_id);
+        }
+
+        $users = $users->paginate(100)->setPath($path);
+
+        
+        
+        //modify items: add referred users
+        $users->getCollection()->transform(function ($user) {
+            
+            $referralHistories = $this->referralHistory
+            ->where('referrer_type', 'user')
+            ->where('referrer_id', $user->id)
+            ->with('referredUser')
+            ->get();
+
+            $user['referral_histories'] = $referralHistories;
+            $user['referral_code'] = $this->referralCode->where('e_type', 'user')->where('e_id', $user->id)->first();
+            return $user;
+        });
+
+      
+        return $users;
+        
+
+    }
+
+
+
 }

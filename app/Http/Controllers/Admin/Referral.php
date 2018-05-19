@@ -16,8 +16,9 @@ class Referral extends Controller
     /**
      * init dependencies
      */
-    public function __construct(ReferralRepo $referral, Set $setting, Api $api)
+    public function __construct(User $user, ReferralRepo $referral, Set $setting, Api $api)
     {
+        $this->user = $user;
         $this->referral = $referral;
         $this->setting = $setting;
         $this->api = $api;
@@ -60,6 +61,26 @@ class Referral extends Controller
         $this->setting->set('referred_bonus_amount', $request->referred_bonus_amount);
         return $this->api->json(true, 'SAVED', 'saved');
     }
+
+
+
+
+    /**
+     * show user referrals 
+     * user referral statistics
+     */
+    public function showReferralUsers(Request $request)
+    {
+        
+        $users = $this->referral->getReferralUsers($request);
+
+        return view('admin.referral.user_referral_details', compact(
+            'users'
+        ));
+
+    }
+
+
 
 
 }

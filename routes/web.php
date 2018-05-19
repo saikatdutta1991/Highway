@@ -93,13 +93,21 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('razorpay', 'Admin\Setting@showRazorpaySetting');
             Route::post('razorpay/save', 'Admin\Setting@saveRazorpaySetting');
 
-            /**referral routes */
-            Route::get('referral', 'Admin\Referral@showReferralSetting');
-            Route::post('referral/save/enable', 'Admin\Referral@saveEnable')->name('admin.referral_save_enable');
-            Route::post('referral/save/bonus', 'Admin\Referral@saveBonusAmount')->name('admin.referral_save_bonus');
-            /**referral routes end */
+        });
+
+
+
+        /**referral routes */
+        Route::group(['prefix' => 'referral'], function(){
+
+            Route::get('settings', 'Admin\Referral@showReferralSetting');
+            Route::post('save/enable', 'Admin\Referral@saveEnable')->name('admin.referral_save_enable');
+            Route::post('save/bonus', 'Admin\Referral@saveBonusAmount')->name('admin.referral_save_bonus');
+            Route::get('users', 'Admin\Referral@showReferralUsers')->name('admin.show_referral_users');
 
         });
+        /**referral routes end */
+
 
 
 

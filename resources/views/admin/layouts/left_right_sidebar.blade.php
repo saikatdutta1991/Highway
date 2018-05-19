@@ -54,6 +54,22 @@
                     <span>Users</span>
                     </a>
                 </li>
+            
+                <li class="@yield('referral_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">share</i>
+                    <span>Referral</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('settings_referral_active')">
+                            <a href="{{url('admin/referral/settings')}}">Settings</a>
+                        </li>
+                        <li class="@yield('user_referrals_active')">
+                            <a href="{{url('admin/referral/users')}}">User Referrals</a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="@yield('driver_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">drive_eta</i>
@@ -82,9 +98,6 @@
                     <ul class="ml-menu">
                         <li class="@yield('settings_general_active')">
                             <a href="{{url('admin/settings/general')}}">General</a>
-                        </li>
-                        <li class="@yield('settings_referral_active')">
-                            <a href="{{url('admin/settings/referral')}}">Referral</a>
                         </li>
                         <li class="@yield('settings_razorpay_active')">
                             <a href="{{url('admin/settings/razorpay')}}">Razorpay Gateway</a>

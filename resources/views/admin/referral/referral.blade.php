@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('settings_active', 'active')
+@section('referral_active', 'active')
 @section('settings_referral_active', 'active')
 @section('title', 'Referral Settings')
 @section('top-header')
