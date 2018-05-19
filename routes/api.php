@@ -22,6 +22,10 @@ Route::group(['prefix' => '/v1/user'], function(){
     Route::post('facebook', 'Apis\User\Facebook@authenticate');
     Route::post('google', 'Apis\User\Google@authenticate');
 
+    Route::group(['prefix' => 'referral'], function(){
+        Route::get('verify', 'Apis\User\Referral@verifyReferralCode');
+    });
+
 
     Route::group(['middleware' => 'userApiAuth'], function(){
 
@@ -113,6 +117,11 @@ Route::group(['prefix' => '/v1/driver'], function(){
 
     /** search routes points */
     Route::get('trips/routes/search', 'Apis\Driver\Trip@searchPoint');
+
+
+    Route::group(['prefix' => 'referral'], function(){
+        Route::get('verify', 'Apis\Driver\Referral@verifyReferralCode');
+    });
 
 
     //driver's authenticated routes

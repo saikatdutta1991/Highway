@@ -50,5 +50,22 @@ class Referral extends Controller
 
 
 
+    /**
+     * verify referral code
+     */
+    public function verifyReferralCode(Request $request)
+    {
+
+        $valid = $this->referral->isReferralCodeValid('driver', $request->code);
+        return $this->api->json($valid, 'REFERRAL_VALIDITY_CHECK', 'Referral validity check', [
+            'code' => $request->code,
+            'is_valid' => $valid,
+            'module_enabled' => $this->referral->isEnabled()
+        ]);
+
+    }
+
+
+
 
 }

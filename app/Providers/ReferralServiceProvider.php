@@ -40,6 +40,7 @@ class ReferralServiceProvider extends ServiceProvider
          */
         $this->app->singleton('App\Repositories\Referral', function ($app) {
             return new \App\Repositories\Referral(
+                $app->make('App\Repositories\Api'),
                 $app->make('App\Models\Setting'),
                 $app->make('App\Models\Referral\ReferralCode'),
                 $app->make('App\Models\Referral\ReferralHistory')
