@@ -26,4 +26,13 @@ class ReferralHistory extends Model
 
 
 
+    /**
+     * relation with referrer user
+     */
+    public function referrerUser()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'referrer_id');
+    }
+
+
 }

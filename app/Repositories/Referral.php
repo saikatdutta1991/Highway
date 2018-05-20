@@ -193,6 +193,23 @@ class referral
         }
 
 
+        //send referrer user email 
+        $toEmail = $referralHistory->referrerUser->email;
+        $name = $referralHistory->referrerUser->fname;
+        $subject = 'Earned from referral';
+        $messageBody = "Your friend {$referralHistory->referredUser->fname} has registered with your referral code just now. 
+        <br> You have earned {$referralHistory->referrer_bonus_amount}. Enjoy !!";
+        app('App\Repositories\Email')->sendCommonEmail($toEmail, $name, $subject, $messageBody);
+
+
+        //send referred user email
+        $toEmail = $referralHistory->referredUser->email;
+        $name = $referralHistory->referredUser->fname;
+        $subject = 'Earned from referral';
+        $messageBody = "You have just earned {$referralHistory->referred_bonus_amount}. Enjoy !!";
+        app('App\Repositories\Email')->sendCommonEmail($toEmail, $name, $subject, $messageBody);
+
+
         return $referralHistory;
 
 
