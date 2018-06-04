@@ -118,6 +118,9 @@ Route::group(['prefix' => '/v1/driver'], function(){
     /** search routes points */
     Route::get('trips/routes/search', 'Apis\Driver\Trip@searchPoint');
 
+    /** get all trip source and destination points */
+    Route::get('trips/source-destination-points', 'Apis\Driver\Trip@getAllSourceDetinationPoints');
+
 
     Route::group(['prefix' => 'referral'], function(){
         Route::get('verify', 'Apis\Driver\Referral@verifyReferralCode');
@@ -166,7 +169,6 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
             Route::get('histories', 'Apis\Driver\Trip@getTripHistories')->name('driver.trip_histories');
-
         }); 
 
 

@@ -910,4 +910,21 @@ class Trip extends Controller
 
 
 
+    /**
+     * return all admin trip routes
+     */
+    public function getAllSourceDetinationPoints(Request $request)
+    {
+        $spoints = $this->routePoint->where('tag', 'SOURCE')->distinct('address')->get();
+        $dpoints = $this->routePoint->where('tag', 'DESTINATION')->distinct('address')->get();
+
+        return $this->api->json(true, 'S_D_POINTS', 'Source & destination points', [
+            's_points' => $spoints,
+            'd_points' => $dpoints
+        ]);
+
+    }
+
+
+
 }
