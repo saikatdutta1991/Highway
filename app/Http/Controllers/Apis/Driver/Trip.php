@@ -917,10 +917,12 @@ class Trip extends Controller
     {
         $spoints = $this->routePoint->where('tag', 'SOURCE')->distinct('address')->get();
         $dpoints = $this->routePoint->where('tag', 'DESTINATION')->distinct('address')->get();
+        $ipoints = $this->routePoint->where('tag', 'INTERMEDIATE')->distinct('address')->get();
 
         return $this->api->json(true, 'S_D_POINTS', 'Source & destination points', [
             's_points' => $spoints,
-            'd_points' => $dpoints
+            'd_points' => $dpoints,
+            'i_points' => $ipoints,
         ]);
 
     }
