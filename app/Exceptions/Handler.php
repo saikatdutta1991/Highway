@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Route;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +49,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        //if request uri contains /api/v1/ and app debug mode false
+        if (strpos($request->getRequestUri(), '/api/v1/') !== false && !env('APP_DEBUG')) {
+            return app('App\Repositories\Api')->json(false, 'Api not found');
+        }
+
         return parent::render($request, $exception);
     }
 }
