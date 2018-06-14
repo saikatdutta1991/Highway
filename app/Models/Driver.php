@@ -491,19 +491,19 @@ class Driver extends Model
     public function getExtraPhotosUrl()
     {
         return [
-            'vehicle_rc_photo_url' => url($this->vehicle_rc_photo_path.'/'.$this->vehicle_rc_photo_name),
-            'vehicle_contract_permit_photo_url' => url($this->vehicle_contract_permit_photo_path.'/'.$this->vehicle_contract_permit_photo_name),
-            'vehicle_insurance_certificate_photo_url' => url($this->vehicle_insurance_certificate_photo_path.'/'.$this->vehicle_insurance_certificate_photo_name),
-            'vehicle_fitness_certificate_photo_url' => url($this->vehicle_fitness_certificate_photo_path.'/'.$this->vehicle_fitness_certificate_photo_name),
-            'vehicle_lease_agreement_photo_url' => url($this->vehicle_lease_agreement_photo_path.'/'.$this->vehicle_lease_agreement_photo_name),
-            'vehicle_photo_1_url' => url($this->vehicle_photo_1_path.'/'.$this->vehicle_photo_1_name),
-            'vehicle_photo_2_url' => url($this->vehicle_photo_2_path.'/'.$this->vehicle_photo_2_name),
-            'vehicle_photo_3_url' => url($this->vehicle_photo_3_path.'/'.$this->vehicle_photo_3_name),
-            'vehicle_photo_4_url' => url($this->vehicle_photo_4_path.'/'.$this->vehicle_photo_4_name),
-            'vehicle_commercial_driving_license_photo_url' => url($this->vehicle_commercial_driving_license_photo_path.'/'.$this->vehicle_commercial_driving_license_photo_name),
-            'vehicle_police_verification_certificate_photo_url' => url($this->vehicle_police_verification_certificate_photo_path.'/'.$this->vehicle_police_verification_certificate_name),
-            'bank_passbook_photo_url' => url($this->bank_passbook_photo_path.'/'.$this->bank_passbook_photo_name),
-            'aadhaar_card_photo_url' => url($this->aadhaar_card_photo_path.'/'.$this->aadhaar_card_photo_name),
+            'vehicle_rc_photo_url' => $this->vehicle_rc_photo_name != '' ? url($this->vehicle_rc_photo_path.'/'.$this->vehicle_rc_photo_name):"",
+            'vehicle_contract_permit_photo_url' => $this->vehicle_contract_permit_photo_name != '' ? url($this->vehicle_contract_permit_photo_path.'/'.$this->vehicle_contract_permit_photo_name) : '',
+            'vehicle_insurance_certificate_photo_url' => $this->vehicle_insurance_certificate_photo_name != '' ? url($this->vehicle_insurance_certificate_photo_path.'/'.$this->vehicle_insurance_certificate_photo_name) : '',
+            'vehicle_fitness_certificate_photo_url' => $this->vehicle_fitness_certificate_photo_name != '' ? url($this->vehicle_fitness_certificate_photo_path.'/'.$this->vehicle_fitness_certificate_photo_name) : '',
+            'vehicle_lease_agreement_photo_url' => $this->vehicle_lease_agreement_photo_name != '' ? url($this->vehicle_lease_agreement_photo_path.'/'.$this->vehicle_lease_agreement_photo_name) : '',
+            'vehicle_photo_1_url' => $this->vehicle_photo_1_name != '' ? url($this->vehicle_photo_1_path.'/'.$this->vehicle_photo_1_name) : '',
+            'vehicle_photo_2_url' => $this->vehicle_photo_2_name != '' ? url($this->vehicle_photo_2_path.'/'.$this->vehicle_photo_2_name) : '',
+            'vehicle_photo_3_url' => $this->vehicle_photo_3_name != '' ? url($this->vehicle_photo_3_path.'/'.$this->vehicle_photo_3_name) : '',
+            'vehicle_photo_4_url' => $this->vehicle_photo_4_name != '' ? url($this->vehicle_photo_4_path.'/'.$this->vehicle_photo_4_name) : '',
+            'vehicle_commercial_driving_license_photo_url' => $this->vehicle_commercial_driving_license_photo_name != '' ? url($this->vehicle_commercial_driving_license_photo_path.'/'.$this->vehicle_commercial_driving_license_photo_name) : '',
+            'vehicle_police_verification_certificate_photo_url' => $this->vehicle_police_verification_certificate_name != '' ? url($this->vehicle_police_verification_certificate_photo_path.'/'.$this->vehicle_police_verification_certificate_name) : '',
+            'bank_passbook_photo_url' => $this->bank_passbook_photo_name != '' ? url($this->bank_passbook_photo_path.'/'.$this->bank_passbook_photo_name) : '',
+            'aadhaar_card_photo_url' => $this->aadhaar_card_photo_name != '' ? url($this->aadhaar_card_photo_path.'/'.$this->aadhaar_card_photo_name) : '',
         ];
     }
 
