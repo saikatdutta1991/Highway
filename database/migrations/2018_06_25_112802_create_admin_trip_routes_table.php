@@ -18,6 +18,12 @@ class CreateAdminTripRoutesTable extends Migration
             $table->bigInteger('from_location')->comment('admin trip location id');
             $table->bigInteger('to_location')->comment('admin trip location id');
             $table->time('time')->default('00:00')->comment('optional time');
+
+            $table->decimal('base_fare', 10, 2)->default(0.00);
+            $table->decimal('tax_fee', 10, 2)->default(0.00);
+            $table->decimal('access_fee', 10, 2)->default(0.00);
+            $table->decimal('total_fare', 10, 2)->default(0.00);
+
             $table->string('status', 50)->default('ENABLED');
             $table->timestamps();
             $table->softDeletes();
