@@ -115,20 +115,15 @@ Route::group(['prefix' => 'admin'], function(){
         /** trip routes */
         Route::group(['prefix' => 'routes'], function(){
 
-            /* Route::get('/', 'Admin\Trip@showRoutes')->name('admin.show-all-routes'); //show all admin routes
-            Route::get('add', 'Admin\Trip@showAddNewRoute')->name('admin.show-add-new-route');//add new trip route
-            Route::post('add', 'Admin\Trip@addNewRoute')->name('admin.add-new-route'); // add new trip route api
-            Route::post('{route_id}/delete', 'Admin\Trip@deleteRoute')->name('admin.delete-route'); */
-            
-            /* 
-            
-            
-            Route::get('points', 'Admin\Trip@showTripPoints');
-            Route::get('points/add', 'Admin\Trip@showAddPoint');
-            Route::post('points/add', 'Admin\Trip@addNewPoint')->name('admin.add-new-point'); // add new trip point
-            Route::post('points/{point_id}/delete', 'Admin\Trip@deleteTripPoint')->name('admin.delete-trip-point'); */ // add new trip point
+            Route::get('locations', 'Admin\Trip@showLocations')->name('admin.show_all_locations');
+            Route::post('locations/create', 'Admin\Trip@createLocation');
+            Route::get('locations/{location_id}/points', 'Admin\Trip@showLocation');
+            Route::post('locations/{location_id}/points/create', 'Admin\Trip@createLocationPoints');
+            Route::get('/', 'Admin\Trip@showRoutes')->name('admin.show-all-routes'); //show all admin routes
+            Route::get('add', 'Admin\Trip@addNewRoute')->name('admin.add_new_route');//add new trip route
+
         });
-        
+        /** trip routes end */
 
         
         Route::get('logout', 'Admin\AuthController@doLogout');
