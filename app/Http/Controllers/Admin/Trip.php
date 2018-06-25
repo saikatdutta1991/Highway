@@ -38,7 +38,7 @@ class Trip extends Controller
     /**
      * show admin route locations list
      */
-    public function showLocations(Request $request)
+    public function showLocations()
     {
         $locations = $this->location->orderBy('updated_at', 'desc')->get();
         return view('admin.trips.show_trip_locations', compact('locations'));
