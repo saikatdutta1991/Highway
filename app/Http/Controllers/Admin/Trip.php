@@ -29,10 +29,114 @@ class Trip extends Controller
     {
         $this->setting = $setting;
         $this->api = $api;
+        $this->location = $location;
+        $this->point = $point;
         $this->route = $route;
-        $this->routePath = $routePath;
-        $this->routePoint = $routePoint;
     }
+
+
+    /**
+     * show admin route locations list
+     */
+    public function showLocations(Request $request)
+    {
+        $locations = $this->location->orderBy('updated_at', 'desc')->get();
+        return view('admin.trips.show_trip_locations', compact('locations'));
+    }
+
+
+
+    /**
+     * create new admin trip location
+     */
+    public function createLocation(Request $request)
+    {
+        if($this->location->where('name', $request->name)->exists()) {
+            return $this->api->json(false, 'LOCATION_EXISTS', 'Location exists with same name');
+        }
+
+        if($request->name == '') {
+            return $this->api->json(false, 'LOCATION_NAME_EMPTY', 'Enter location name');
+        }
+
+
+        $location = new $this->location;
+        $location->name = ucfirst($request->name);
+        $location->save();
+
+        return $this->api->json(true, 'LOCATION_CREATED', 'Location created', [
+            'location' => $location
+        ]);
+
+    }
+
+
+
+
+    /**
+     * update new admin trip location
+     */
+    public function updateLocation(Request $request)
+    {
+        if($this->location->where('name', $request->name)->where('id', '<>', $request->id)->exists()) {
+            return $this->api->json(false, 'LOCATION_EXISTS', 'Location exists with same name');
+        }
+
+        if($request->name == '') {
+            return $this->api->json(false, 'LOCATION_NAME_EMPTY', 'Enter location name');
+        }
+
+
+        $location = $this->location->find($request->id);
+        $location->name = ucfirst($request->name);
+        $location->save();
+
+        return $this->api->json(true, 'LOCATION_UPDATED', 'Location updated', [
+            'location' => $location
+        ]);
+
+    }
+
+
+
+    /**
+     * show location and related points
+     */
+    public function showLocation(Request $request)
+    {
+        $location = $this->location->find($request->location_id);
+        return view('admin.trips.show_trip_location_points', compact('location'));
+    }
+
+
+
+    /**
+     * this will remove all points to specific location and create new
+     */
+    public function createLocationPoints(Request $request)
+    {
+        $location = $this->location->find($request->location_id); 
+
+        //delete all points related to this location id
+        $this->point->where('admin_trip_location_id', $location->id)->forceDelete();
+
+        //create new points
+        foreach($request->points as $point) {
+            $p = new $this->point;
+            $p->admin_trip_location_id = $location->id;
+            $p->label = $point['label'];
+            $p->address = $point['address'];
+            $p->latitude = $point['latitude'];
+            $p->longitude = $point['longitude'];
+            $p->save();
+        }
+
+        return $this->api->json(true, 'LOCATION_POINTS_UPDATED', 'Location points updated');
+
+    }
+
+
+
 
 
     // /**

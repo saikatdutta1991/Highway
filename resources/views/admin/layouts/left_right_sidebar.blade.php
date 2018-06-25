@@ -125,11 +125,8 @@
                     <span>Trips</span>
                     </a>
                     <ul class="ml-menu">
-                        <li class="@yield('trips_all_routes_active')">
-                            <a href="{{url('admin/routes')}}">All Routes</a>
-                        </li>
-                        <li class="@yield('trips_new_route_add_active')">
-                            <a href="{{url('admin/routes/add')}}">Add Route</a>
+                        <li class="@yield('trips_route_locations')">
+                            <a href="{{url('admin/routes/locations')}}">Locations</a>
                         </li>
                     </ul>
                 </li>
