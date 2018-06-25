@@ -115,10 +115,10 @@ Route::group(['prefix' => 'admin'], function(){
         /** trip routes */
         Route::group(['prefix' => 'routes'], function(){
 
-            Route::get('/', 'Admin\Trip@showRoutes')->name('admin.show-all-routes'); //show all admin routes
+            /* Route::get('/', 'Admin\Trip@showRoutes')->name('admin.show-all-routes'); //show all admin routes
             Route::get('add', 'Admin\Trip@showAddNewRoute')->name('admin.show-add-new-route');//add new trip route
             Route::post('add', 'Admin\Trip@addNewRoute')->name('admin.add-new-route'); // add new trip route api
-            Route::post('{route_id}/delete', 'Admin\Trip@deleteRoute')->name('admin.delete-route');
+            Route::post('{route_id}/delete', 'Admin\Trip@deleteRoute')->name('admin.delete-route'); */
             
             /* 
             
