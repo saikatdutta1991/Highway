@@ -128,6 +128,12 @@
                         <li class="@yield('trips_route_locations')">
                             <a href="{{url('admin/routes/locations')}}">Locations</a>
                         </li>
+                        <li class="@yield('trips_new_route_active')">
+                            <a href="{{url('admin/routes/new')}}">New Route</a>
+                        </li>
+                        <li class="@yield('trips_all_routes_active')">
+                            <a href="{{url('admin/routes')}}">Routes</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

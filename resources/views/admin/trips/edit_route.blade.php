@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
+@section('trips_all_routes_active', 'active')
 @section('trips_active', 'active')
-@section('trips_new_route_active', 'active')
-@section('title', 'Add new route')
+@section('title', 'Edit route')
 @section('top-header')
 <style>
     .input-group .form-control {
@@ -25,6 +25,7 @@
                 </div>
                 <div class="body">
                     <form id="add-new-route-form" action="" method="POST">
+                        <input type="hidden" name="route_id" value="{{$route->id}}" >
                         {!! csrf_field() !!}
                         <div class="row clearfix">
                             <div class="col-md-6">
@@ -36,7 +37,7 @@
                                     <div class="form-line">
                                         <select class="form-control show-tick" name="from_location">
                                             @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option @if($route->from_location == $location->id) selected @endif value="{{$location->id}}">{{$location->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -51,7 +52,7 @@
                                     <div class="form-line">
                                         <select class="form-control show-tick" name="to_location">
                                             @foreach($locations as $location)
-                                            <option value="{{$location->id}}">{{$location->name}}</option>
+                                            <option @if($route->to_location == $location->id) selected @endif value="{{$location->id}}">{{$location->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -64,7 +65,7 @@
                                         {{$currency_symbol}}
                                     </span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_fare" value="0.00">
+                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_fare" value="{{$route->base_fare}}">
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +76,7 @@
                                         {{$currency_symbol}}
                                     </span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee" value="0.00">
+                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee" value="{{$route->tax_fee}}">
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +87,7 @@
                                         {{$currency_symbol}}
                                     </span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee" value="0.00">
+                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee" value="{{$route->access_fee}}">
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +98,7 @@
                                         {{$currency_symbol}}
                                     </span>
                                     <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="total_fare" style="cursor: not-allowed;font-size: 25px;font-weight: 700;" value="0.00">
+                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="total_fare" style="cursor: not-allowed;font-size: 25px;font-weight: 700;" value="{{$route->total_fare}}">
                                     </div>
                                 </div>
                             </div>
@@ -109,7 +110,7 @@
                             <div class="col-sm-12 text-right">
                                 <button type="submit" class="btn bg-pink waves-effect" id="add-route">
                                 <i class="material-icons">save</i>
-                                <span>CREATE</span>
+                                <span>SAVE</span>
                                 </button>
                             </div>
                         </div>

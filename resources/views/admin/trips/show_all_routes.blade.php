@@ -13,7 +13,7 @@
 @section('content')
 <div class="container-fluid">
 <div class="block-header">
-    <h2>TRIP ROUTES</h2>
+    <h2>ROUTES</h2>
 </div>
 <!-- With Material Design Colors -->
 <div class="row clearfix">
@@ -21,7 +21,7 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    <button title="Add new route"  id="add-new-route" onclick="window.location.href='{{route('admin.show-add-new-route')}}'" type="button" class="btn bg-cyan btn-xs waves-effect pull-right">
+                    <button title="Add new route"  id="add-new-route" onclick="window.location.href='{{route('admin.show-new-route')}}'" type="button" class="btn bg-cyan btn-xs waves-effect pull-right">
                         +Add New Route
                     </button>
                     LIST OF ALL ROUTES
@@ -38,10 +38,10 @@
                     <table class="table table-condensed table-hover">
                         <thead>
                             <tr>
-                                <th>#ID</th>
-                                <th>Name</th>
+                                <th>From&nbsp;<i style="vertical-align:middle" class="material-icons">flight_takeoff</i></th>
+                                <th>To&nbsp;<i style="vertical-align:middle" class="material-icons">flight_land</i></th>
+                                <th>Fare</th>
                                 <th>Status</th>
-                                <th>Points Count</th>
                                 <th>Created</th>
                                 <th>ACTION</th>
                             </tr>
@@ -49,40 +49,16 @@
                         <tbody>
                             @foreach($routes as $route)
                             <tr id="route-row-{{$route->id}}">
-                            <td>{{$route->id}}</td>
-                            <td>{{$route->name}}</td>
-                            <td>{{$route->status}}</td>
-                            <td>{{count($route->points)}}</td>
-                            <td>{{$route->formatedCreatedAt($default_timezone)}}</td>
-                            <td>
-                                <i class="material-icons col-red delete-route-btn" style="cursor:pointer" data-route-id="{{$route->id}}" title="Delete route">delete_forever</i>
-                                <i data-toggle="collapse" data-target="#points-list-of-route-{{$route->id}}" class="material-icons show-all-points" style="cursor:pointer" title="show all points">arrow_downward</i>
+                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{url('admin/routes/locations/'.$route->from_location.'/points')}}'" style="text-decoration:underline;cursor:pointer">{{$route->from->name}}</td>
+                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{url('admin/routes/locations/'.$route->to_location.'/points')}}'" style="text-decoration:underline;cursor:pointer">{{$route->to->name}}</td>
+                            <td>{{$route->total_fare}}
+                                <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Fare Breakdown" data-content="Base Fare: {{$route->base_fare}} | Tax Fee: {{$route->tax_fee}} | Access Fee: {{$route->access_fee}}">help_outline</i>
                             </td>
-                            </tr>
-                            <tr>
-                            <td colspan="6">
-                                <div class="collapse" id="points-list-of-route-{{$route->id}}">
-                                    <table class="table table-condensed table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>ADDRESS</th>
-                                                <th>CITY</th>
-                                                <th>COUNTRY</th>
-                                                <th>LATITUDE-LONGITUDE</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($route->points as $point)
-                                            <tr id="point-row-{{$point->id}}">
-                                            <td>{{$point->address}}</td>
-                                            <td>{{$point->city}}</td>
-                                            <td>{{$point->country}}</td>
-                                            <td>{{$point->latitude}}, {{$point->longitude}}</td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <td>{{$route->status}}</td>
+                            <td>{{$route->createdOn($default_timezone)}}</td>
+                            <td>
+                                <i class="material-icons" style="cursor:pointer" title="Edit route" onclick="window.location.href='{{route('admin.show-edit-route', ['route_id' => $route->id])}}'">edit</i>
+                                <!-- <i class="material-icons col-red delete-route-btn" style="cursor:pointer" data-route-id="{{$route->id}}" title="Delete route">delete_forever</i> -->
                             </td>
                             </tr>
                             @endforeach
@@ -109,11 +85,7 @@
     $(document).ready(function(){
         
 
-    /*     $(".show-all-points").hover(function(){
-            $(this).click();
-        }, function(){}) */
-        
-        $(".delete-route-btn").on('click', function(){
+       /*  $(".delete-route-btn").on('click', function(){
 
             var deleteBtnElem = $(this);
         
@@ -156,7 +128,7 @@
             
             });
 
-        });
+        }); */
 
         
     });

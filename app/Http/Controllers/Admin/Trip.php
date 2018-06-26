@@ -137,6 +137,86 @@ class Trip extends Controller
 
 
 
+    /**
+     * show page for add new route
+     */
+    public function showNewRoute()
+    {
+        $locations = $this->location->orderBy('name')->get();
+        return view('admin.trips.add_new_route', compact('locations'));
+    }
+
+
+    /**
+     * create new route or update route if route_id param exists
+     */
+    public function addNewRoute(Request $request)
+    {
+        //check any route exists with same source and destination
+        $route = $this->route->where('from_location', $request->from_location)->where('to_location', $request->to_location);
+        if($request->route_id != '') {
+            $route = $route->where('id', '<>', $request->route_id);
+        }
+        $route = $route->first();
+
+        if($route) {
+            return $this->api->json(false, 'ROUTE_EXISTS', 'Same source and destination route already exists.');
+        }
+
+        //if route_id exists then fetch saved route and update
+        if($request->route_id != '') {
+            $route = $this->route->find($request->route_id);
+        } else  {
+            $route = new $this->route;
+        }
+
+        //if from and to location id same return error
+        if($request->from_location == $request->to_location) {
+            return $this->api->json(false, 'FROM_TO_LOCATION_SAME', 'Source and destination location can\'t be same.');
+        }
+
+        
+        $route->from_location = $request->from_location;
+        $route->to_location = $request->to_location;
+        $route->base_fare = $request->base_fare;
+        $route->tax_fee = $request->tax_fee;
+        $route->access_fee = $request->access_fee;
+        $route->total_fare = $request->total_fare;
+        $route->status = AdminTripRoute::ENABLED;
+        $route->save();
+
+        return $this->api->json(true, 'CREATED', 'Route created', [
+            'route' => $route
+        ]);
+
+
+
+    }
+
+
+
+    /**
+     * show all routes
+     */
+    public function showRoutes()
+    {
+        $routes = $this->route->orderBy('updated_at', 'desc')->paginate(100);
+        return view('admin.trips.show_all_routes', compact('routes'));
+    }
+
+
+    /**
+     * show edit route
+     */
+    public function showEditRoute(Request $request)
+    {
+        $route = $this->route->find($request->route_id);
+        $locations = $this->location->orderBy('name')->get();
+        return view('admin.trips.edit_route', compact('route', 'locations'));
+    }
+
+
+
 
 
     // /**

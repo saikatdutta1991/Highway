@@ -121,7 +121,9 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('locations/{location_id}/points', 'Admin\Trip@showLocation');
             Route::post('locations/{location_id}/points/create', 'Admin\Trip@createLocationPoints')->name('admin.add-locatin-points');
             Route::get('/', 'Admin\Trip@showRoutes')->name('admin.show-all-routes'); //show all admin routes
-            Route::get('add', 'Admin\Trip@addNewRoute')->name('admin.add_new_route');//add new trip route
+            Route::get('new', 'Admin\Trip@showNewRoute')->name('admin.show-new-route');
+            Route::get('edit/{route_id}', 'Admin\Trip@showEditRoute')->name('admin.show-edit-route');
+            Route::post('new', 'Admin\Trip@addNewRoute')->name('admin.add_new_route');//add new trip route
 
         });
         /** trip routes end */
