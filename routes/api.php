@@ -115,11 +115,8 @@ Route::group(['prefix' => '/v1/driver'], function(){
     Route::post('google', 'Apis\Driver\Google@authenticate');
 
 
-    /** search routes points */
-    Route::get('trips/routes/search', 'Apis\Driver\Trip@searchPoint');
-
-    /** get all trip source and destination points */
-    Route::get('trips/source-destination-points', 'Apis\Driver\Trip@getAllSourceDetinationPoints');
+    /** get all admin created routes */
+    Route::get('trips/routes', 'Apis\Driver\Trip@getTripRoutes');
 
 
     Route::group(['prefix' => 'referral'], function(){
@@ -159,7 +156,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
          */
         Route::group(['prefix' => 'trips'], function(){
 
-            Route::get('/', 'Apis\Driver\Trip@getTrips');
+            /* Route::get('/', 'Apis\Driver\Trip@getTrips');
             Route::post('create', 'Apis\Driver\Trip@createTrip');
             Route::post('{trip_id}/delete', 'Apis\Driver\Trip@deleteTrip');
             Route::get('{trip_id}/details', 'Apis\Driver\Trip@getTripDetails');
@@ -168,7 +165,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/trip_points/{trip_point_id}/start_trip', 'Apis\Driver\Trip@driverStartTripPoint');
             Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
-            Route::get('histories', 'Apis\Driver\Trip@getTripHistories')->name('driver.trip_histories');
+            Route::get('histories', 'Apis\Driver\Trip@getTripHistories')->name('driver.trip_histories'); */
         }); 
 
 
