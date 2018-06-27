@@ -4,18 +4,17 @@ namespace App\Http\Controllers\Apis\Driver;
 
 use App\Repositories\Api;
 use App\Models\Trip\AdminTripRoute;
-
-
 use App\Http\Controllers\Controller;
 use DB;
-use App\Repositories\Email;
 use Illuminate\Http\Request;
+use App\Models\Trip\Trip as TripModel;
+use App\Models\Trip\TripPoint;
+use App\Repositories\Utill;
+
+
+use App\Repositories\Email;
 use App\Models\Setting;
 use App\Repositories\SocketIOClient;
-use App\Models\Trip as TripModel;
-use App\Models\TripPoint;
-use App\Models\TripRoute;
-use App\Repositories\Utill;
 use App\Models\VehicleType;
 use App\Models\RideFare;
 use App\Models\RideRequestInvoice as RideInvoice;
@@ -33,6 +32,9 @@ class Trip extends Controller
     {
         $this->api = $api;
         $this->adminTripRoute = $adminTripRoute;
+        $this->trip = app('App\Models\Trip\Trip');
+        $this->tripPoint = app('App\Models\Trip\TripPoint');
+        $this->utill = app('App\Repositories\Utill');
     }
 
 
@@ -62,6 +64,153 @@ class Trip extends Controller
         ]);
         
     }
+
+
+
+
+    /**
+     * create new trip 
+     * takes no of seats, trip date time, admin trip route id, admin trip route point ids
+     */
+    public function createTrip(Request $request)
+    {
+        
+        //check route exists 
+        $adminRoute = $this->adminTripRoute->find($request->route_id);
+        if(!$adminRoute) {
+            return $this->api->json(false, 'INVALID_ROUTE', 'Invalid route');
+        }
+
+        /* check source and destination points */
+        $frmPointIds = explode(',', $request->from_point_ids); //source point ids
+        $toPointIds = explode(',', $request->to_point_ids); //destination point ids
+        $routePoints = array_merge(
+            $adminRoute->from->points->pluck('id')->toArray(),
+            $adminRoute->to->points->pluck('id')->toArray()
+        );
+        $invalid = false;
+        $reqPointIds = array_merge($frmPointIds, $toPointIds);
+        foreach($reqPointIds as $id) {
+            if(!in_array($id, $routePoints)) {
+                $invalid = true;
+                break;
+            }
+        }
+
+        if($invalid) {
+            return $this->api->json(false, 'INVALID_POINTS', 'Invalid points');
+        }
+        /* end check source and destination points */
+
+
+
+        /** validating request other */
+        $validator = Validator::make(
+            $request->all(), [
+                'name' => 'required|max:256|min:1',
+                'seats' => 'required|numeric',
+                'date_time' => 'required|date_format:Y-m-d H:i:s'
+            ]
+        );
+
+        if($validator->fails()) {
+            
+            $errors = [];
+            foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
+                $errors[$fieldName] = $msgArr[0];
+            }
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
+                'errors' => $errors
+            ]);
+        }
+        /**end validating request other */
+
+
+       
+
+        /** store trip details */
+        $trip = new $this->trip;
+        $trip->driver_id = $request->auth_driver->id;
+        $trip->name = $request->name;
+        $trip->from = $adminRoute->from->name;
+        $trip->to = $adminRoute->to->name;
+        $trip->seats = $request->seats;
+        $trip->seats_available = $request->seats;
+        $trip->admin_route_ref_id = $adminRoute->id;
+        $trip->status = TripModel::CREATED;
+        $trip->trip_datetime = $this->utill->timestampStringToUTC($request->date_time, $request->auth_driver->timezone)->toDateTimeString();
+
+
+        //to store create trip points
+        $createdTripPts = [];
+  
+        try {
+
+            DB::beginTransaction();
+            
+            $trip->save();
+
+            /**insert source points from request form point ids */
+            foreach($adminRoute->from->points as $point) {
+                
+                //if point id is not in request source points
+                if(!in_array($point->id, $frmPointIds)) {
+                    continue;
+                }
+                $spt = new $this->tripPoint;
+                $spt->trip_id = $trip->id;
+                $spt->address = $point->address;
+                $spt->label = $point->label;
+                $spt->latitude = $point->latitude;
+                $spt->longitude = $point->longitude;
+                $spt->tag = 'SOURCE';
+                $spt->status = TripPoint::CREATED;
+                $spt->save();
+
+                $createdTripPts[] = $spt; //push newly create trip point array
+            }
+
+
+            /**insert destination points from request to point ids */
+            foreach($adminRoute->to->points as $point) {
+                
+                //if point id is not in request source points
+                if(!in_array($point->id, $toPointIds)) {
+                    continue;
+                }
+                $spt = new $this->tripPoint;
+                $spt->trip_id = $trip->id;
+                $spt->address = $point->address;
+                $spt->label = $point->label;
+                $spt->latitude = $point->latitude;
+                $spt->longitude = $point->longitude;
+                $spt->tag = 'DESTINATION';
+                $spt->status = TripPoint::CREATED;
+                $spt->save();
+
+                $createdTripPts[] = $spt; //push newly create trip point array
+            }
+
+
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('CREATE_TRIP_ERROR', $e->getMessage());
+            return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+        }
+
+
+
+        return $this->api->json(true, "TRIP_CREATED", 'Trip created', [
+            'trip' => $trip,
+            'trip_points' => $createdTripPts
+        ]);
+
+
+    }
+
+
 
 
 
@@ -101,7 +250,10 @@ class Trip extends Controller
     //      * if source city is present
     //      */
     //     if($request->s_city != '') {
-    //         $routes = $routes->where($rpt.'.s_city', 'like', '%'.$request->s_city.'%');
+    //         $routes = $r        'trip' => $trip,
+        //     'trip_points' => $tripPoints,
+        //     'trip_routes' => $tripRoutes
+        // ]);outes->where($rpt.'.s_city', 'like', '%'.$request->s_city.'%');
     //     }
 
 
@@ -176,149 +328,6 @@ class Trip extends Controller
 
 
 
-
-
-
-
-
-    // /**
-    //  * create trip for driver 
-    //  * create points, point orders
-    //  * calculate affected routes
-    //  * use algoright for consecutive sub array
-    //  */
-    // public function createTrip(Request $request)
-    // {
-        
-    //     //validate trip create request       
-    //     $validator = Validator::make(
-    //         $request->all(), $this->trip->createTripValidationRules($request)
-    //     );
-
-    //     //if validation fails
-    //     if($validator->fails()) {
-            
-    //         $errors = [];
-    //         foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
-    //             $errors[$fieldName] = $msgArr[0];
-    //         }
-    //         return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
-    //             'errors' => $errors
-    //         ]);
-    //     }
-
-        
-    //     /**
-    //      * get ride fare for further ride calculation
-    //      */
-    //     $vTypeId = $this->vehicleType->getIdByCode($request->auth_driver->vehicle_type);
-    //     $rideFare = $this->rideFare->where('vehicle_type_id', $vTypeId)->first();
-
-    //     $trip = new $this->trip;
-    //     $trip->driver_id = $request->auth_driver->id;
-    //     $trip->name = ucfirst(trim($request->trip_name));
-    //     $trip->no_of_seats = $request->seats;
-    //     $trip->date_time = $this->utill->timestampStringToUTC($request->trip_date_time, $request->auth_driver->timezone)->toDateTimeString();
-    //     $trip->status = TripModel::INITIATED;
-
-    //     try {
-
-    //         DB::beginTransaction();
-            
-    //         $trip->save();
-
-    //         //saving trip points
-    //         $tripPoints = [];
-    //         /* $tripRoute */
-    //         $order = 1;
-    //         foreach($request->points as $point) {
-    //             $tripPoint = new $this->tripPoint;
-    //             $tripPoint->trip_id = $trip->id;
-    //             $tripPoint->order = $order++;
-    //             $tripPoint->address = $point['address'];
-    //             $tripPoint->latitude = $point['latitude'];
-    //             $tripPoint->longitude = $point['longitude'];
-    //             $tripPoint->distance = isset($point['distance']) ? $point['distance'] / 1000 : 0;
-    //             $tripPoint->time = isset($point['time']) ? $point['time'] : 0;
-    //             $tripPoint->status = TripModel::INITIATED;
-    //             $tripPoint->save(); 
-    //             $tripPoints[] = $tripPoint;
-    //         }
-        
-    //         /**
-    //          * finding all possible routes and distance, time estimated
-    //          */
-    //         $tripRoutes = [];
-    //         $pointsCount = count($tripPoints);
-    //         $scaleSize = 2;
-    //         while($scaleSize <= $pointsCount) {
-
-    //             $scaleStartIndex = 0;
-    //             $scaleEndIndex = $scaleStartIndex + $scaleSize - 1;
-
-    //             while($scaleEndIndex < $pointsCount) {
-        
-    //                 $time = 0;
-    //                 $distance = 0;
-    //                 for($i = $scaleStartIndex; $i < $scaleEndIndex; $i++) {
-            
-    //                     $tripPoint = $tripPoints[$i + 1];
-    //                     $time += $tripPoint->time;
-    //                     $distance += $tripPoint->distance;
-    //                 }
-
-    //                 /**
-    //                  * save trip routes in database
-    //                  */
-    //                 //echo "{$tripPoints[$scaleStartIndex]->address} -  {$tripPoints[$scaleEndIndex]->address} $time $distance<br>";
-    //                 $tripRoute = new $this->tripRoute;
-    //                 $tripRoute->trip_id = $trip->id;
-    //                 $tripRoute->start_point_address = $tripPoints[$scaleStartIndex]->address;
-    //                 $tripRoute->start_point_latitude = $tripPoints[$scaleStartIndex]->latitude;
-    //                 $tripRoute->start_point_longitude = $tripPoints[$scaleStartIndex]->longitude;
-    //                 $tripRoute->start_point_order = $tripPoints[$scaleStartIndex]->order;
-    //                 $tripRoute->end_point_address = $tripPoints[$scaleEndIndex]->address;
-    //                 $tripRoute->end_point_latitude = $tripPoints[$scaleEndIndex]->latitude;
-    //                 $tripRoute->end_point_longitude = $tripPoints[$scaleEndIndex]->longitude;
-    //                 $tripRoute->end_point_order = $tripPoints[$scaleEndIndex]->order;
-    //                 $tripRoute->seat_affects = '';
-    //                 $tripRoute->seats_available = $trip->no_of_seats;
-    //                 $tripRoute->estimated_distance = $distance;
-    //                 $tripRoute->estimated_time = $time;
-    //                 $tripRoute->status = TripModel::INITIATED;
-
-    //                 //calculate fare
-    //                 $fare = $rideFare->calculateFare($distance, $time);
-    //                 $tripRoute->estimated_fare = $fare['total'];
-
-    //                 $tripRoute->save();
-    //                 $tripRoutes[] = $tripRoute;
-                    
-
-    //                 $scaleStartIndex++;
-    //                 $scaleEndIndex++;
-
-    //             }
-
-    //             $scaleSize++;
-
-    //         }
-
-
-    //         /**
-    //          * calculate seat affects and save
-    //          */
-    //         $this->tripRoute->calculateSeatAffects($tripRoutes);
-         
-        
-    //         DB::commit();
-
-    //     } catch(\Exception $e) {
-    //         DB::rollback();
-    //         $this->api->log('CREATE_TRIP_ERROR', $e->getMessage());
-    //         return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
-    //     }
-        
         
         
     //     return $this->api->json(true, "TRIP_CREATED", 'Trip created', [

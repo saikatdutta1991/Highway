@@ -14,19 +14,18 @@ class CreateTripsTable extends Migration
     public function up()
     {
         Schema::create('trips', function (Blueprint $table) {
-
             $table->bigIncrements('id');
-            $table->bigInteger('driver_id')->unsigned();
-            $table->string('name', 128);
-            $table->integer('no_of_seats')->default(0);
-            $table->timestamp('date_time')->nullable();
-            $table->string('status', 128);
-
+            $table->bigInteger('driver_id');
+            $table->string('name', 256);
+            $table->string('from', 256);
+            $table->string('to', 256);
+            $table->tinyInteger('seats')->default(1);
+            $table->tinyInteger('seats_available')->default(1);
+            $table->dateTime('trip_datetime');
+            $table->string('status', 50)->default('CREATED');
+            $table->bigInteger('admin_route_ref_id')->comment('Stores the admin routes table id for reference');
             $table->timestamps();
             $table->softDeletes();
-            
-
-
         });
     }
 
