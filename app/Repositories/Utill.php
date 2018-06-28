@@ -271,6 +271,7 @@ class Utill
      */
     public function utcDateRange($dateString, $timezone)
     {
+        $timezone = $this->getTimezone($timezone);
         try {
 
             return [

@@ -27,6 +27,13 @@ Route::group(['prefix' => '/v1/user'], function(){
     });
 
 
+    /** trip user authorization removed apis */
+    Route::get('trips/source-destination-list', 'Apis\User\Trip@getSourceDestList');
+    /** end trip user authorization removed apis */
+
+
+
+
     Route::group(['middleware' => 'userApiAuth'], function(){
 
         Route::post('push-token/update', 'Apis\User\UserProfile@updatePushToken');
@@ -71,15 +78,17 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::group(['prefix' => 'trips'], function(){
 
             Route::get('search', 'Apis\User\Trip@searchTrips');
+
+            /*
             Route::post('book', 'Apis\User\Trip@bookTrip');
             Route::get('booked', 'Apis\User\Trip@getBookedTrips');
             Route::post('{trip_id}/trip_routes/{trip_route_id}/driver/rating/{rating}', 'Apis\User\Trip@rateTripDriver');
-            Route::get('histories', 'Apis\User\Trip@getHistories')->name('user.trip_histories');
+            Route::get('histories', 'Apis\User\Trip@getHistories')->name('user.trip_histories'); */
             /**
              * rasorpay payment apis
              */
-            Route::get('{trip_booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
-            Route::post('{trip_booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment');
+            /* Route::get('{trip_booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
+            Route::post('{trip_booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment'); */
 
         }); 
 
