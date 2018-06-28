@@ -74,39 +74,11 @@ class Trip extends Controller
      */
     public function createTrip(Request $request)
     {
-        
-        //check route exists 
-        $adminRoute = $this->adminTripRoute->find($request->route_id);
-        if(!$adminRoute) {
-            return $this->api->json(false, 'INVALID_ROUTE', 'Invalid route');
-        }
-
-        /* check source and destination points */
-        $frmPointIds = explode(',', $request->from_point_ids); //source point ids
-        $toPointIds = explode(',', $request->to_point_ids); //destination point ids
-        $routePoints = array_merge(
-            $adminRoute->from->points->pluck('id')->toArray(),
-            $adminRoute->to->points->pluck('id')->toArray()
-        );
-        $invalid = false;
-        $reqPointIds = array_merge($frmPointIds, $toPointIds);
-        foreach($reqPointIds as $id) {
-            if(!in_array($id, $routePoints)) {
-                $invalid = true;
-                break;
-            }
-        }
-
-        if($invalid) {
-            return $this->api->json(false, 'INVALID_POINTS', 'Invalid points');
-        }
-        /* end check source and destination points */
-
-
 
         /** validating request other */
         $validator = Validator::make(
             $request->all(), [
+                'route_id' => 'required|exists:'.$this->adminTripRoute->getTableName().',id',
                 'name' => 'required|max:256|min:1',
                 'seats' => 'required|numeric',
                 'date_time' => 'required|date_format:Y-m-d H:i:s'
@@ -125,8 +97,21 @@ class Trip extends Controller
         }
         /**end validating request other */
 
+    
+        /* check source and destination points */
+        $adminRoute = $this->adminTripRoute->find($request->route_id);
+        $frmPointIds = explode(',', $request->from_point_ids); //source point ids
+        $toPointIds = explode(',', $request->to_point_ids); //destination point ids
+        $routePoints = array_merge(
+            $adminRoute->from->points->pluck('id')->toArray(),
+            $adminRoute->to->points->pluck('id')->toArray()
+        );
+        
+        if(!count(array_intersect($routePoints, array_merge($frmPointIds, $toPointIds))) == count($routePoints)) {
+            return $this->api->json(false, 'INVALID_POINTS', 'Invalid points');
+        }
+        /* end check source and destination points */
 
-       
 
         /** store trip details */
         $trip = new $this->trip;
@@ -151,12 +136,10 @@ class Trip extends Controller
             $trip->save();
 
             /**insert source points from request form point ids */
-            foreach($adminRoute->from->points as $point) {
+            foreach($frmPointIds as $pid) {
                 
-                //if point id is not in request source points
-                if(!in_array($point->id, $frmPointIds)) {
-                    continue;
-                }
+                $point = $adminRoute->from->points->where('id', $pid)->first();
+             
                 $spt = new $this->tripPoint;
                 $spt->trip_id = $trip->id;
                 $spt->address = $point->address;
@@ -172,12 +155,10 @@ class Trip extends Controller
 
 
             /**insert destination points from request to point ids */
-            foreach($adminRoute->to->points as $point) {
+            foreach($toPointIds as $pid) {
                 
-                //if point id is not in request source points
-                if(!in_array($point->id, $toPointIds)) {
-                    continue;
-                }
+                $point = $adminRoute->to->points->where('id', $pid)->first();
+                
                 $spt = new $this->tripPoint;
                 $spt->trip_id = $trip->id;
                 $spt->address = $point->address;
