@@ -14,7 +14,7 @@ class CreateReferralHistoriesTable extends Migration
     public function up()
     {
         Schema::create('referral_histories', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
 
             $table->string('referrer_type', 50)->comment('referrer entity type(user/driver');
             $table->bigInteger('referrer_id')->unsigned()->comment('who is referring');

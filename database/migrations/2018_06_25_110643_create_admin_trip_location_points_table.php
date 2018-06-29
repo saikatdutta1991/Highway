@@ -15,7 +15,7 @@ class CreateAdminTripLocationPointsTable extends Migration
     {
         Schema::create('admin_trip_location_points', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('admin_trip_location_id');
+            $table->bigInteger('admin_trip_location_id')->unsigned();
             $table->string('label', 256)->comment('point short name');
             $table->string('address', 500);
             $table->decimal('latitude', 10, 7)->default(0.0);
