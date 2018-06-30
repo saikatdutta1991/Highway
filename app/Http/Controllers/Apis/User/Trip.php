@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Apis\User;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Repositories\Email;
 use App\Repositories\Gateway;
 use Illuminate\Http\Request;
 use App\Models\RideRequestInvoice as Invoice;
@@ -14,7 +15,7 @@ use App\Models\Trip\Trip as TripModel;
 use App\Models\Trip\TripBooking;
 
 /* 
-use App\Repositories\Email;
+;
 use App\Repositories\SocketIOClient;
 use App\Models\TripPoint;
 use App\Models\TripRoute;
@@ -38,6 +39,7 @@ class Trip extends Controller
         $this->invoice = app('App\Models\RideRequestInvoice');
         $this->setting = app('App\Models\Setting');
         $this->transaction = app('App\Models\Transaction');
+        $this->email = app('App\Repositories\Email');
     }
 
 

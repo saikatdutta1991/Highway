@@ -51,7 +51,6 @@ class Trip extends Model
         return $this->belongsTo('App\Models\Driver', 'driver_id');
     }
     
-    
 
 
     /**
@@ -59,7 +58,7 @@ class Trip extends Model
      */
     public function tripFormatedDateString()
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->date_time)->timezone($this->driver->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($this->driver->timezone);
         return $date->formatLocalized('%d-%m-%Y');
     }
 
@@ -69,7 +68,7 @@ class Trip extends Model
      */
     public function tripFormatedTimeString()
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->date_time)->timezone($this->driver->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($this->driver->timezone);
         return $date->format('h:i A');
     }
 

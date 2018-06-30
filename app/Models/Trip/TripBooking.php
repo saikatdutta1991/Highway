@@ -72,4 +72,13 @@ class TripBooking extends Model
     }
 
 
+
+    public function tripFormatedCratedTimestamp()
+    {
+        $timezone = app('UtillRepo')->getTimezone($this->user->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->timezone($timezone);   
+        return $date->formatLocalized('%d-%m-%Y'). $date->format(' h:i A');
+    }
+
+
 }

@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\UserTrip;
+use App\Models\Trip\TripBooking;
 use App\Models\RideRequestInvoice as Invoice;
 use App\Models\Driver;
 use App\Models\User;
@@ -15,7 +15,7 @@ class TripInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userTrip;
+    public $booking;
 
     /**
      * Create a new message instance.
@@ -23,9 +23,9 @@ class TripInvoice extends Mailable
      * @return void
      */
     
-    public function __construct(UserTrip $userTrip)
+    public function __construct(TripBooking $booking)
     {
-        $this->userTrip = $userTrip;
+        $this->booking = $booking;
     }
 
     /**
@@ -37,11 +37,6 @@ class TripInvoice extends Mailable
     {
         $this->setting = app('App\Models\Setting');
         $this->utillRepo = app('UtillRepo');
-       
-        /* $staticMapImage = $this->utillRepo->getBase64Image(app('UtillRepo')->getGoogleStaicMapImageConnectedPointsUrl([
-            [$this->rideRequest->source_latitude,$this->rideRequest->source_longitude],
-            [$this->rideRequest->destination_latitude,$this->rideRequest->destination_longitude]
-        ]), false); */
 
         return $this->from(
             $this->setting->get('email_support_from_address'), 
@@ -49,10 +44,10 @@ class TripInvoice extends Mailable
         )
         ->subject($this->setting->get('website_name').' trip invoice')
         ->view('emails.user_trip_invoice')->with([
-            'user' => $this->userTrip->user,
-            'driver' => $this->userTrip->trip->driver,
-            'invoice' => $this->userTrip->invoice,
-            'userTrip' => $this->userTrip
+            'user' => $this->booking->user,
+            'driver' => $this->booking->trip->driver,
+            'invoice' => $this->booking->invoice,
+            'userTrip' => $this->booking
         ]);
         
     }

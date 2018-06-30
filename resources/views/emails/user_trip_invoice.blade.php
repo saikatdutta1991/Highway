@@ -235,21 +235,13 @@
 
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
 
-                <tr style="text-align:center">
-                    <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <h3 style="margin: 0; font-family: sans-serif; line-height: 125%; color: #333333; font-weight: normal;">Ride Details</h3>
-                    </td>
-                    <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <h3 style="margin: 0; font-family: sans-serif; line-height: 125%; color: #333333; font-weight: normal;">Fare Details</h3>
-                    </td>
-                </tr>
-                <tr style="text-align:center">
-                    <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <img src="{{$invoice->getStaticMapUrl()}}" style="width:100%">
-                    </td>
-                    <td bgcolor="#ffffff" style="vertical-align:top;padding: 0px 40px 0px 0px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        
 
+                <tr style="text-align:center">
+                    <!-- <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                        <img src="{{$invoice->getStaticMapUrl()}}" style="width:100%">
+                    </td> -->
+                    <td colspan="2" bgcolor="#ffffff" style="vertical-align:top;padding: 0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                        
                         <table style="width:100%;border-top: 1px solid #b1a8a8;">
                             <tr style="background-color: #d2d0d0;color:#353535">
                                 <td style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%;">Ride Fare</td>
@@ -281,6 +273,7 @@
 
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <tr>
+                    
                     <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                         <div style="border-top: 1px solid #b1a8a8;padding-top: 10px;">
                         <img src="{{$driver->profilePhotoUrl()}}" style="width:70px;float: left;margin-right:10px">
@@ -306,10 +299,10 @@
                 </tr>
                 <tr style="background-color: #d2d0d0;color:#353535">
                     <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                    {{$userTrip->tripRoute->start_point_address}}
+                    {{$userTrip->trip->from}}({{$userTrip->boardingPoint->address}})
                     </td>
                     <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                    {{$userTrip->tripRoute->end_point_addresss}}
+                    {{$userTrip->trip->to}}({{$userTrip->destPoint->address}})
                     </td>
                 </tr>
             </table>
@@ -317,18 +310,18 @@
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <tr style="">
                     <td bgcolor="#ffffff" style="padding:10px 40px 10px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: black;font-weight:700">
-                    Ride start time
+                    Booking Date
                     </td>
                     <td bgcolor="#ffffff" style="padding:10px 40px 10px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color:black;font-weight:700">
-                    Ride end time
+                    Trip Date
                     </td>
                 </tr>
                 <tr style="background-color: #d2d0d0;color:#353535">
                     <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                    {{$userTrip->tripRoute->getStartTime($user->timezone)}}
+                    {{$userTrip->tripFormatedCratedTimestamp()}}
                     </td>
                     <td bgcolor="#ffffff" style="padding:0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                    {{$userTrip->tripRoute->getEndTime($user->timezone)}}
+                    {{$userTrip->trip->tripFormatedDateString()}} at {{$userTrip->trip->tripFormatedTimeString()}}
                     </td>
                 </tr>
             </table>
