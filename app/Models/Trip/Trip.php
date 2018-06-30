@@ -18,7 +18,10 @@ class Trip extends Model
     const TRIP_STARTED = "TRIP_STARTED";
     const TRIP_ENDED = "TRIP_ENDED";
     const TRIP_CANCELED = "TRIP_CANCELED_DRIVER"; //canceled by driver 
-
+    const ONLINE = "ONLINE";
+    const PAYMENT_MODES = ['ONLINE'];
+    const NOT_PAID = 'NOT_PAID';
+    const PAID = 'PAID';
 
     protected $table = 'trips';
 
@@ -68,6 +71,16 @@ class Trip extends Model
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->date_time)->timezone($this->driver->timezone);
         return $date->format('h:i A');
+    }
+
+
+
+    /**
+     * relation with admin route
+     */
+    public function adminRoute()
+    {
+        return $this->belongsTo('App\Models\Trip\AdminTripRoute', 'admin_route_ref_id');
     }
 
 
