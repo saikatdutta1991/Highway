@@ -364,84 +364,35 @@ class Trip extends Controller
 
 
 
-    // /**
-    //  * give rating to trip driver
-    //  */
-    // public function rateTripDriver(Request $request)
-    // {
-    //     $userTrip = $this->userTrip
-    //     ->where('user_id', $request->auth_user->id)
-    //     ->where('trip_id', $request->trip_id)
-    //     ->where('trip_route_id', $request->trip_route_id)
-    //     ->where(function($query){
-    //         $query->where('status', TripModel::TRIP_ENDED)->orWhere('status', TripModel::COMPLETED);
-    //     })
-    //     ->first();
+    /**
+     * give rating to trip driver
+     */
+    public function rateTripDriver(Request $request)
+    {
+
+        $booking = $this->booking->where('user_id', $request->auth_user->id)
+        ->where('id', $request->booking_id)
+        ->where('driver_rating', 0)
+        ->first();
+
         
+        if(!$booking || !in_array($request->rating, TripBooking::RATINGS)) {
+            return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
+        }
 
-    //     if(!$userTrip) {
-    //         return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
-    //     }
 
-
-    //     list($ratingValue, $driverRating) = $userTrip->calculateDriverRating($request->rating);
+        list($ratingValue, $driverRating) = $booking->calculateDriverRating($request->rating);
         
-    //     $userTrip->driver_rating = $ratingValue;
-    //     $userTrip->save();
+        $booking->driver_rating = $ratingValue;
+        $booking->save();
 
-    //     $driver = $userTrip->trip->driver;
-    //     $driver->rating = $driverRating;
-    //     $driver->save();
+        $driver = $booking->trip->driver;
+        $driver->rating = $driverRating;
+        $driver->save();
 
-    //     return $this->api->json(true, 'RATING_DONE', 'Rating done');
+        return $this->api->json(true, 'RATING_DONE', 'Rating done');
 
-    // }
-
-
-
-    // /**
-    //  * send user trip histories completed
-    //  */
-    // public function getHistories(Request $request)
-    // {
-    //     $userTrips = $this->userTrip->where('user_id', $request->auth_user->id)
-    //     ->where(function($query){
-    //         $query->where('status', TripModel::TRIP_CANCELED)
-    //         ->orWhere('status', TripModel::COMPLETED)
-    //         ->orWhere('status', UserTrip::USER_CANCELED);
-    //     })
-    //     ->orderBy('created_at', 'desc')
-    //     ->with('trip', 'tripRoute', 'invoice', 'trip.driver')
-    //     ->paginate(100);
-
-    //     $userTrips->map(function($userTrip){
-            
-    //         if($userTrip->invoice) {
-    //             $userTrip->invoice['map_url'] = $userTrip->invoice->getStaticMapUrl();
-    //         }
-
-    //         $userTrip->trip->driver['profile_photo_url'] = $userTrip->trip->driver->profilePhotoUrl();
-    //     });
-
-    //     return $this->api->json(true, 'TRIP_HISTORIES', 'trip histories', [
-    //         'user_trips'=> $userTrips->items(),
-    //         'paging' => [
-    //             'total' => $userTrips->total(),
-    //             'has_more' => $userTrips->hasMorePages(),
-    //             'next_page_url' => $userTrips->nextPageUrl()?:'',
-    //             'count' => $userTrips->count(),
-    //         ]
-    //     ]);
-   
-
-    // }
-
-
-
-
-
-       
-
+    }
 
 
 }
