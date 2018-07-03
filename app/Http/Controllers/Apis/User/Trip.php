@@ -274,6 +274,11 @@ class Trip extends Controller
             $transaction->save();
 
 
+            $trip = $booking->trip;
+            $trip->seats_available -= $booking->booked_seats;
+            $trip->save();
+
+
             $invoice = $booking->invoice;
             $invoice->transaction_table_id = $transaction->id;
             $invoice->payment_status = TripModel::PAID;

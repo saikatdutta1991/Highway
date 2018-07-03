@@ -193,132 +193,29 @@ class Trip extends Controller
 
 
 
+    /**
+     * get all trips
+     */
+    public function getTrips(Request $request)
+    {
 
+        $trips = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->orderBy('trip_datetime', 'desc')
+        ->paginate(200);
 
+        return $this->api->json(true, 'TRIPS', 'Your trips', [
+            'trips' => $trips->items(),
+             'paging' => [
+                'total' => $trips->total(),
+                'has_more' => $trips->hasMorePages(),
+                'next_page_url' => $trips->nextPageUrl()?:'',
+                'count' => $trips->count(),
+            ]
+        ]);
 
+    }
 
-    // /**
-    //  * search trip point
-    //  */
-    // public function searchPoint(Request $request)
-    // {
-
-    //     //routes table name 
-    //     $rt = $this->route->getTableName();
-    //     $rpt = $this->routePath->getTableName();
-    //     $routes = $this->route->where($rt.'.status', AdminRoute::ENABLED)
-    //     ->join($rpt, $rt.'.id', '=', $rpt.'.admin_route_id')
-    //     ->distinct();
-
-    //     /**
-    //      * if routes name is present
-    //      * search by route name and send response
-    //      */
-    //     if($request->route_name != "") {
-    //         $routes = $routes->where($rt.'.name', 'like', '%'.$request->route_name.'%');
-    //     }
-
-
-
-    //     /**
-    //      * if source address is present
-    //      */
-    //     if($request->s_address != '') {
-    //         $routes = $routes->where($rpt.'.s_address', 'like', '%'.$request->s_address.'%');
-    //     }
-
-    //     /**
-    //      * if source city is present
-    //      */
-    //     if($request->s_city != '') {
-    //         $routes = $r        'trip' => $trip,
-        //     'trip_points' => $tripPoints,
-        //     'trip_routes' => $tripRoutes
-        // ]);outes->where($rpt.'.s_city', 'like', '%'.$request->s_city.'%');
-    //     }
-
-
-    //     /**
-    //      * if destination address is present
-    //      */
-    //     if($request->d_address != '') {
-    //         $routes = $routes->where($rpt.'.d_address', 'like', '%'.$request->d_address.'%');
-    //     }
-
-    //     /**
-    //      * if destination city is present
-    //      */
-    //     if($request->d_city != '') {
-    //         $routes = $routes->where($rpt.'.d_city', 'like', '%'.$request->d_city.'%');
-    //     }
-
-
-
-    //     /**
-    //      * if source latitude longitude present
-    //      */
-    //     $sRadius = $request->s_radius ?: 5;
-    //     if($request->s_lat != '' && $request->s_lng != '') {
-
-    //         list($sMinLat, $sMaxLat, $sMinLng, $sMaxLng) = app('UtillRepo')->getRadiousLatitudeLongitude(
-    //             $request->s_lat, $request->s_lng, $sRadius
-    //         );
-
-    //         $routes = $routes->where(function($query) use($sMinLat, $sMaxLat, $sMinLng, $sMaxLng, $rpt){
-    //             $query->whereBetween("{$rpt}.s_latitude", [$sMinLat, $sMaxLat])
-    //             ->whereBetween("{$rpt}.s_longitude", [$sMinLng, $sMaxLng]);
-    //         });
-    //     }
-
-
-
-    //     /**
-    //      * if destination latitude longitude present
-    //      */
-    //     $dRadius = $request->d_radius ?: 5;
-    //     if($request->d_lat != '' && $request->d_lng != '') {
-
-    //         list($dMinLat, $dMaxLat, $dMinLng, $dMaxLng) = app('UtillRepo')->getRadiousLatitudeLongitude(
-    //             $request->d_lat, $request->d_lng, $dRadius
-    //         );
-
-    //         $routes = $routes->where(function($query) use($dMinLat, $dMaxLat, $dMinLng, $dMaxLng, $rpt){
-    //             $query->whereBetween("{$rpt}.s_latitude", [$dMinLat, $dMaxLat])
-    //             ->whereBetween("{$rpt}.d_longitude", [$dMinLng, $dMaxLng]);
-    //         });
-    //     }
-
-
-
-
-    //     $routes = $routes->select($rt.'.*')->with('points')->paginate(100);
-
-    //     return $this->api->json(true, 'ROUTES', 'Routes', [
-    //         'routes' => $routes->items(),
-    //         'paging' => [
-    //             'total' => $routes->total(),
-    //             'has_more' => $routes->hasMorePages(),
-    //             'next_page_url' => $routes->nextPageUrl()?:'',
-    //             'count' => $routes->count(),
-    //         ]
-    //     ]);
-
-        
-    // }
-
-
-
-
-        
-        
-    //     return $this->api->json(true, "TRIP_CREATED", 'Trip created', [
-    //         'trip' => $trip,
-    //         'trip_points' => $tripPoints,
-    //         'trip_routes' => $tripRoutes
-    //     ]);
-        
-
-    // }
 
 
 
@@ -361,47 +258,7 @@ class Trip extends Controller
 
 
 
-    // /**
-    //  * get all trips those are not completed
-    //  */
-    // public function getTrips(Request $request)
-    // {
-
-    //     $trips = $this->trip
-    //     //->with('tripPoints', 'tripRoutes', 'tripRoutes.userBookings', 'tripRoutes.userBookings.user')
-    //     ->with('tripPoints', 'tripRoutes')
-    //     ->where('driver_id', $request->auth_driver->id)
-    //     ->orderBy('date_time', 'desc')
-    //     ->whereNotIn('status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED]);
-
-    //     $dateRange = app('UtillRepo')->utcDateRange($request->date, $request->auth_driver->timezone);
-
-    //     if(is_array($dateRange)) {
-    //         $trips = $trips->whereBetween('date_time', $dateRange);
-    //     }
-    //     //else take all trips after current date 
-    //     else{
-    //         $trips = $trips->where('date_time', '>=', date('Y-m-d H:i:s'));
-    //     }
-
-
-    //     /**
-    //      * find current running trip
-    //      */
-    //      $currentTrip = $this->trip
-    //     ->where('driver_id', $request->auth_driver->id)
-    //     ->whereNotIn('status', [TripModel::COMPLETED, TripModel::BOOKED, TripModel::TRIP_CANCELED, TripModel::INITIATED])
-    //     ->first();
-
-
-    //     $trips = $trips->get();
-
-    //     return $this->api->json(true, 'TRIPS', 'Your trips', [
-    //         'trips' => $trips,
-    //         'current_trip' => $currentTrip
-    //     ]);
-
-    // }
+    
 
 
 
