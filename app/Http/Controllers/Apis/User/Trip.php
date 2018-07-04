@@ -358,6 +358,28 @@ class Trip extends Controller
 
 
 
+    /**
+     * get booking by trip id
+     */
+    public function getBookingByTrip(Request $request)
+    {
+        $booking = $this->booking->where('user_id', $request->auth_user->id)
+        ->where('trip_id', $request->trip_id)
+        ->with('trip', 'trip.driver', 'invoice', 'boardingPoint', 'destPoint')
+        ->first();
+
+        if($booking->invoice)  {
+            $booking->invoice['map_url'] = $booking->invoice->getStaticMapUrl();
+            $booking->trip->driver['profile_photo_url'] = $booking->trip->driver->profilePhotoUrl();
+        }
+
+        return $this->api->json(true, 'BOOKING', 'Booking', [
+            'bookings' => $booking
+        ]);
+    }
+
+
+
    
 
 

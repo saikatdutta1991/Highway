@@ -79,10 +79,11 @@ Route::group(['prefix' => '/v1/user'], function(){
 
             Route::get('search', 'Apis\User\Trip@searchTrips');
             Route::post('book', 'Apis\User\Trip@bookTrip');
-            Route::get('booked', 'Apis\User\Trip@getBookedTrips');
-            Route::get('booking/{booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
-            Route::post('booking/{booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment');
-            Route::post('booking/{booking_id}/rating', 'Apis\User\Trip@rateTripDriver');
+            Route::get('bookings', 'Apis\User\Trip@getBookedTrips');
+            Route::get('{trip_id}/booking', 'Apis\User\Trip@getBookingByTrip');
+            Route::get('bookings/{booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
+            Route::post('bookings/{booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment');
+            Route::post('bookings/{booking_id}/rating', 'Apis\User\Trip@rateTripDriver');
 
         }); 
 
@@ -161,17 +162,13 @@ Route::group(['prefix' => '/v1/driver'], function(){
 
             Route::post('create', 'Apis\Driver\Trip@createTrip');
             Route::get('/', 'Apis\Driver\Trip@getTrips');
-
-            /* 
-            
-            Route::post('{trip_id}/delete', 'Apis\Driver\Trip@deleteTrip');
-            Route::get('{trip_id}/details', 'Apis\Driver\Trip@getTripDetails');
-            Route::post('{trip_id}/driver_started', 'Apis\Driver\Trip@driverStartedTrip');
-            Route::post('{trip_id}/trip_points/{trip_point_id}/driver_reached', 'Apis\Driver\Trip@driverReachedTripPoint');
-            Route::post('{trip_id}/trip_points/{trip_point_id}/start_trip', 'Apis\Driver\Trip@driverStartTripPoint');
-            Route::post('{trip_id}/users/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
+            Route::get('{trip_id}', 'Apis\Driver\Trip@getTripDetails');
+            Route::post('{trip_id}/start', 'Apis\Driver\Trip@startTrip');
+            Route::post('{trip_id}/points/{point_id}/reached', 'Apis\Driver\Trip@driverReachedTripPoint');
+            Route::post('{trip_id}/bookings/users/{user_id}/boarded', 'Apis\Driver\Trip@userBoarded');
+            Route::post('{trip_id}/bookings/users/{user_id}/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
-            Route::get('histories', 'Apis\Driver\Trip@getTripHistories')->name('driver.trip_histories'); */
+
         }); 
 
 

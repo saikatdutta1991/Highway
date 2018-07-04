@@ -33,5 +33,23 @@ class TripPoint extends Model
     }
 
 
+
+    /**
+     * relation with booking boaring point
+     */
+    public function boardingBookings()
+    {
+        return $this->hasMany('App\Models\Trip\TripBooking', 'boarding_point_id');
+    }
+
+    /**
+     * relation with booking dest point
+     */
+    public function destBookings()
+    {
+        return $this->hasMany('App\Models\Trip\TripBooking', 'dest_point_id');
+    }
+
+
    
 }

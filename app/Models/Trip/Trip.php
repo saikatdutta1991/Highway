@@ -83,4 +83,14 @@ class Trip extends Model
     }
 
 
+
+    /**
+     * bookings
+     */
+    public function bookings()
+    {
+        return $this->hasMany('App\Models\Trip\TripBooking', 'trip_id');
+    } 
+
+
 }
