@@ -14,16 +14,6 @@ use App\Models\Transaction;
 use App\Models\Trip\Trip as TripModel;
 use App\Models\Trip\TripBooking;
 
-/* 
-;
-use App\Repositories\SocketIOClient;
-use App\Models\TripPoint;
-use App\Models\TripRoute;
-
-use App\Repositories\Utill;
-use App\Models\UserTrip;
-use Validator; */
-
 class Trip extends Controller
 {
 
@@ -420,6 +410,62 @@ class Trip extends Controller
         return $this->api->json(true, 'RATING_DONE', 'Rating done');
 
     }
+
+
+
+
+    /**
+     * cancel booked trip
+     * release trip seats
+     * if only trip has not been started, cancel allowed
+     */
+    public function cancelTrip(Request $request)
+    {
+        $booking = $this->booking->where('user_id', $request->auth_user->id)
+        ->where('id', $request->booking_id)
+        ->where('booking_status', TripBooking::BOOKING_CONFIRMED)
+        ->first();
+
+        /**trip status CREATED */
+        if(!$booking || $booking->trip->status != TripModel::CREATED) {
+            return $this->api->json(false, "INVALID_BOOKING_FOR_CANCEL", "Invalid booking for cancellation");
+        }
+
+
+        try {
+            
+            DB::beginTransaction();
+            
+            $trip = $booking->trip;
+            $trip->seats_available += $booking->booked_seats;
+            $trip->save();
+
+            $booking->booking_status = TripBooking::BOOKING_CANCELED_USER;
+            $booking->save();
+
+
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();            
+            $this->api->log('TRIP_CANCEL_ERROR', ['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        $user = $request->auth_user;
+        $msgTxt = "{$booking->trip->name} booking has been canceled successfully";
+        $msgTitle = "Booking canceled";
+        $user->sendPushNotification($msgTitle, $msgTxt);
+        $user->sendSms($msgTxt);
+
+
+        return $this->api->json(true, "BOOKING_CANCELED", "Booking canceled successfully");
+
+
+    }
+
+
 
 
 }

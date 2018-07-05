@@ -489,6 +489,60 @@ class Trip extends Controller
 
 
 
+    /**
+     * cancel trip
+     */
+    public function cancelTrip(Request $request)
+    {
+        $trip = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where("id", $request->trip_id)
+        ->where('status', TripModel::CREATED)
+        ->with('bookings', 'bookings.user')
+        ->first();
+
+        if(!$trip) {
+            return $this->api->json(false, "INVALID_TRIP", 'Invalid trip');
+        }
+
+        //cancel only booking trips
+        try {
+
+            DB::beginTransaction();
+
+            $trip->status = TripModel::TRIP_CANCELED_DRIVER;
+            $trip->save();
+            
+            $bookings = $this->tripBooking->where('trip_id', $trip->id)
+            ->where('booking_status', TripBooking::BOOKING_CONFIRMED)
+            ->get();
+
+            foreach($bookings as $booking) {
+                $booking->booking_status = TripModel::TRIP_CANCELED_DRIVER;
+                $booking->save();
+                
+                $user = $booking->user;
+                $msgTxt = "{$trip->name} booking has been canceled by driver";
+                $msgTitle = "Booking canceled";
+                $user->sendPushNotification($msgTitle, $msgTxt);
+                $user->sendSms($msgTxt);
+            }
+
+
+            
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('DRIVER_STARTED_TRIP', $e->getMessage());
+            return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+        }
+
+        return $this->api->json(true, "TRIP_CANCELED", "Trip canceled successfully");
+    }
+
+
+
 
 
 

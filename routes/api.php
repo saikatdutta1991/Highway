@@ -84,7 +84,7 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::get('bookings/{booking_id}/razorpay/init', 'Apis\User\Trip@initRazorpay');
             Route::post('bookings/{booking_id}/razorpay/pay', 'Apis\User\Trip@makeRazorpayPayment');
             Route::post('bookings/{booking_id}/rating', 'Apis\User\Trip@rateTripDriver');
-
+            Route::post('bookings/{booking_id}/cancel', 'Apis\User\Trip@cancelTrip');
         }); 
 
 
@@ -168,7 +168,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post('{trip_id}/bookings/users/{user_id}/boarded', 'Apis\Driver\Trip@userBoarded');
             Route::post('{trip_id}/bookings/users/{user_id}/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
-
+            Route::post('{trip_id}/cancel', 'Apis\Driver\Trip@cancelTrip');
         }); 
 
 
