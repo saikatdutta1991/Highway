@@ -134,6 +134,9 @@
                         <li class="@yield('trips_all_routes_active')">
                             <a href="{{url('admin/routes')}}">Routes</a>
                         </li>
+                        <li class="@yield('canceled_bookings_active')">
+                            <a href="{{url('admin/routes/canceled-bookings')}}">Canceled Bookings</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

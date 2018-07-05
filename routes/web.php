@@ -125,6 +125,9 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('edit/{route_id}', 'Admin\Trip@showEditRoute')->name('admin.show-edit-route');
             Route::post('new', 'Admin\Trip@addNewRoute')->name('admin.add_new_route');//add new trip route
 
+
+            Route::get('canceled-bookings', 'Admin\Trip@showCanceledBookings')->name('admin.show_canceled_bookings');
+
         });
         /** trip routes end */
 

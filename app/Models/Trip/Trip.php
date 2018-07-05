@@ -56,10 +56,20 @@ class Trip extends Model
     /**
      * get trip date formated string d-m-Y
      */
-    public function tripFormatedDateString()
+    public function tripFormatedDateString($timezone = null)
     {
-        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($this->driver->timezone);
+        $timezone = $timezone ?: $this->driver->timezone;
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($timezone);
         return $date->formatLocalized('%d-%m-%Y');
+    }
+
+
+
+    /** trip formated timestamp */
+    public function tripFormatedTimestampString($timezone)
+    {
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($timezone);
+        return $date->formatLocalized('%d-%m-%Y').' '.$date->format('h:i A');
     }
 
 

@@ -26,6 +26,21 @@ class TripBooking extends Model
 
 
     /**
+     * formated cancel by
+     */
+    public function formatedCanceledBy()
+    {
+        if($this->booking_status == TripBooking::BOOKING_CANCELED_USER) {
+            return 'User';
+        } else if($this->booking_status == Trip::TRIP_CANCELED_DRIVER) {
+            return 'Driver';
+        }
+    }
+
+
+
+
+    /**
      * relation with trip
      */
     public function trip()
