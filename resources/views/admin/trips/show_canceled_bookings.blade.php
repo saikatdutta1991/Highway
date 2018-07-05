@@ -29,7 +29,7 @@
                 <div class="body table-responsive">
                     @if(!$cnclBookings->count())
                     <div class="alert bg-pink">
-                        No Locations Found
+                        No Canceled Bookings Found
                     </div>
                     @else
                     
