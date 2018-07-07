@@ -10,8 +10,10 @@ use App\Models\Setting as Set;
 use App\Models\Trip\AdminTripLocation;
 use App\Models\Trip\AdminTripLocationPoint;
 use App\Models\Trip\AdminTripRoute;
+use App\Repositories\Gateway;
 use App\Models\Trip\TripBooking;
 use App\Models\Trip\Trip as TripModel;
+use App\Models\Transaction;
 use Validator;
 
 
@@ -27,7 +29,8 @@ class Trip extends Controller
         AdminTripLocation $location, 
         AdminTripLocationPoint $point,
         AdminTripRoute $route,
-        TripBooking $booking
+        TripBooking $booking,
+        Transaction $transaction
     )
     {
         $this->setting = $setting;
@@ -36,8 +39,13 @@ class Trip extends Controller
         $this->point = $point;
         $this->route = $route;
         $this->booking = $booking;
+        $this->transaction = $transaction;
     }
 
+
+
+
+    
 
     /**
      * show admin route locations list
@@ -228,13 +236,71 @@ class Trip extends Controller
     {
         $cnclBookings = $this->booking->whereIn('booking_status', [TripModel::TRIP_CANCELED_DRIVER, TripBooking::BOOKING_CANCELED_USER])
         ->where('payment_mode', TripModel::ONLINE)
-        ->where('payment_status', TripModel::PAID)
         ->orderBy('created_at')
+        ->orderByRaw("FIELD(payment_status, 'PAID', 'FULL_REFUNDED') ASC")
         ->with('trip', 'invoice', 'user')
         ->paginate(100);
     
         return view('admin.trips.show_canceled_bookings', compact('cnclBookings'));
     }
+
+
+
+    /**
+     * full refund to userbookings
+     */
+    public function fullRefundTripBooking(Request $request)
+    {
+        $booking = $this->booking->find($request->booking_id);
+        $invoice = $booking->invoice;
+        $transaction = $invoice->transaction;
+
+        try {
+
+            DB::beginTransaction();
+
+            $booking->payment_status = TripModel::FULL_REFUNDED;
+            $booking->save();
+
+            $invoice->payment_status = TripModel::FULL_REFUNDED;
+            $invoice->save();
+
+
+            $razorpay = Gateway::instance('razorpay');
+            $refund = $razorpay->refundFull($transaction->trans_id);
+
+
+            if(!$refund['success']) {
+                return $this->api->json(false, $refund['error_code'], $refund['message']);
+            }
+
+
+            $t = new $this->transaction;
+            $t->trans_parent_id = $transaction->id;
+            $t->trans_id = $refund['refund_id'];
+            $t->amount = -$refund['amount'];
+            $t->currency_type = $refund['currency_type'];
+            $t->gateway = $razorpay->gatewayName();   
+            $t->extra_info = json_encode($refund['extra']);
+            $t->status = $refund['status'];
+            $t->save();
+
+
+            DB::commit();
+
+        } catch(\Exception $e) {dd($e);
+            DB::rollback();
+            $this->api->log('ADMIN_RAZORPAY_REFUND_FULL_ERROR', $e);
+            $this->api->log('ADMIN_RAZORPAY_REFUND_FULL_ERROR', ['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        return $this->api->json(true, 'REFUND_SUCCESS', 'Refund successfull');
+
+
+    }
+
 
 
 }

@@ -22,6 +22,7 @@ class Trip extends Model
     const PAYMENT_MODES = ['ONLINE'];
     const NOT_PAID = 'NOT_PAID';
     const PAID = 'PAID';
+    const FULL_REFUNDED = 'FULL_REFUNDED';
 
     protected $table = 'trips';
 

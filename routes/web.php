@@ -127,6 +127,7 @@ Route::group(['prefix' => 'admin'], function(){
 
 
             Route::get('canceled-bookings', 'Admin\Trip@showCanceledBookings')->name('admin.show_canceled_bookings');
+            Route::post('trips/bookings/{booking_id}/refund-full', 'Admin\Trip@fullRefundTripBooking');
 
         });
         /** trip routes end */

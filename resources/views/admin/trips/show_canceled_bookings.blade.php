@@ -40,15 +40,16 @@
                                 <th>User</th>
                                 <th>Trip</th>
                                 <th>Date</th>
-                                <th>By</th>
+                                <th>Canceled By</th>
                                 <th>Paid Amount</th>
+                                <th>Payment Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($cnclBookings as $booking)
                             <tr>
-                            <td>{{$booking->invoice->invoice_reference}}</td>
+                            <td title="Invoice Id : {{$booking->invoice->invoice_reference}}">...{{substr($booking->invoice->invoice_reference, -7)}}</td>
                             <td>
                                 <a  data-toggle="tooltip" 
                                     data-placement="left" 
@@ -62,8 +63,11 @@
                             <td>{{$booking->trip->tripFormatedDateString($default_timezone)}}</td>
                             <td>{{$booking->formatedCanceledBy()}}</td>
                             <td>{{$currency_symbol}}{{$booking->invoice->total}}</td>
+                            <td @if($booking->invoice->payment_status == 'FULL_REFUNDED') style="color:green" @endif>{{$booking->invoice->payment_status == 'FULL_REFUNDED'?'REFUNDED':$booking->invoice->payment_status}}</td>
                             <td>
-                               <i title="Click to refund" class="refund-btn material-icons">settings_backup_restore</i>
+                                @if($booking->payment_status == 'PAID') 
+                                <i title="Click to refund" class="refund-btn material-icons" data-booking-id="{{$booking->id}}">settings_backup_restore</i>
+                                @endif
                             </td>
                             </tr>
                             @endforeach
@@ -85,6 +89,7 @@
 <script>
 
     var csrf_token = "{{csrf_token()}}";
+    let refund_url = "{{url('admin')}}/routes/trips/bookings/{booking_id}/refund-full"
 
     $(document).ready(function(){
 
@@ -102,7 +107,50 @@
 
 
         $(".refund-btn").on('click', function(){
-            alert('feature not added')
+           
+            let clickedBtn = this;
+
+            swal({
+                title: "Are you sure to refund this booking",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, refund",
+                cancelButtonText: "No, cancel please",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            }, function (isConfirm) {
+                if (!isConfirm)  {
+                    return false;
+                }
+                
+                
+                var bookingId = $(clickedBtn).data('booking-id')
+                var url = refund_url.replace('{booking_id}', bookingId)
+                console.log(url)
+                 
+                        
+                $.post(url, {_token:csrf_token}, function(response){
+                    console.log(response)
+                    if(response.success) {
+                        showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    } else {
+                        showNotification('bg-red', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    }
+
+                    swal.close();
+                                
+                }).fail(function(response) {
+                    
+                    showNotification('bg-red', 'Unknown server error.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    swal.close();
+                });
+                
+
+            });
+
+
         })
 
         
