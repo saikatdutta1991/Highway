@@ -73,7 +73,7 @@ class Trip extends Controller
         ? $trips->whereBetween("trip_datetime", $dateRange) 
         : $trips = $trips->where("trip_datetime", ">=", date('Y-m-d H:i:s'));
 
-        $trips = $trips->with('adminRoute', 'points')->get();
+        $trips = $trips->with('adminRoute', 'points', 'driver')->get();
         
         return $this->api->json(true, 'TRIPS', 'Trips', [
             'count' => $trips->count(),
