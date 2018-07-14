@@ -74,6 +74,13 @@ class Trip extends Controller
         : $trips = $trips->where("trip_datetime", ">=", date('Y-m-d H:i:s'));
 
         $trips = $trips->with('adminRoute', 'points', 'driver')->get();
+
+
+        $trips->map(function($trip){        
+            $trip->driver['profile_photo_url'] = $trip->driver->profilePhotoUrl();
+        });
+
+
         
         return $this->api->json(true, 'TRIPS', 'Trips', [
             'count' => $trips->count(),
