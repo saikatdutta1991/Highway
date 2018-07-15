@@ -26,7 +26,37 @@ class referral
         $this->setting = $setting;
         $this->referralCode = $referralCode;
         $this->referralHistory = $referralHistory;
+        $this->utillRepo = app('UtillRepo');
     }
+
+
+
+    /**
+     * calculate total after deducting referreal bonus
+     */
+    public function deductBounus($userId, $total)
+    {
+        if(!$this->isEnabled()) {
+            return false;
+        }
+
+        $referral = $this->createReferralCodeIfNotExists('user', $userId);
+        
+        $bonusDiscount = 0;
+        if($total >= $referral->bonus_amount) {
+            $total -= $referral->bonus_amount;
+            $bonusDiscount = $referral->bonus_amount;
+        } else {
+            $bonusDiscount = $total;
+            $total = 0;
+        }
+        
+        return ['total' => $this->utillRepo->formatAmountDecimalTwo($total), 'bonusDiscount' => $this->utillRepo->formatAmountDecimalTwo($bonusDiscount)];
+
+    }
+
+
+
 
 
 

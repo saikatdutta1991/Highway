@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\RideFare;
 use Validator;
 use App\Models\User;
+use App\Repositories\Referral;
 
 class PriceCalculator extends Controller
 {
@@ -17,11 +18,12 @@ class PriceCalculator extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user, RideFare $rideFare)
+    public function __construct(Api $api, User $user, RideFare $rideFare, Referral $referral)
     {
         $this->api = $api;
         $this->user = $user;
         $this->rideFare = $rideFare;
+        $this->referral = $referral;
     }
 
 
@@ -52,6 +54,16 @@ class PriceCalculator extends Controller
         $fareData = $rFare->calculateFare(
             $distance, intval($request->duration)
         );
+
+        $res = $this->referral->deductBounus($request->auth_user->id, $fareData['total']);
+       
+        if($res !== false) {
+            $fareData['total'] = $res['total'];
+            $fareData['bonusDiscount'] = $res['bonusDiscount'];
+        }
+        
+
+
 
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);
     }

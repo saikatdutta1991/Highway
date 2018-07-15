@@ -16,6 +16,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\VehicleType;
 use Validator;
+use App\Repositories\Referral;
 
 class RideRequest extends Controller
 {
@@ -23,7 +24,7 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Setting $setting, Transaction $transaction, Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user)
+    public function __construct(Setting $setting, Transaction $transaction, Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user, Referral $referral)
     {
         $this->setting = $setting;
         $this->transaction = $transaction;
@@ -35,6 +36,7 @@ class RideRequest extends Controller
         $this->rideRequest = $rideRequest;
         $this->socketIOClient = $socketIOClient;
         $this->user = $user;
+        $this->referral = $referral;
     }
 
 
@@ -441,6 +443,16 @@ class RideRequest extends Controller
         
         $fare = $rideFare->calculateFare($request->ride_distance, $rideTime);
 
+        /** calculate referral bonus */
+        $bonusData = $this->referral->deductBounus($rideRequest->user_id, $fare['total']);
+       
+        if($bonusData !== false) {
+            $fare['total'] = $bonusData['total'];
+            $fare['bonusDiscount'] = $bonusData['bonusDiscount'];
+        }
+        /** end calculate referral bonus */
+        
+
         
         try{
             DB::beginTransaction();
@@ -461,6 +473,13 @@ class RideRequest extends Controller
             $invoice->access_fee = $fare['access_fee'];
             $invoice->tax = $fare['taxes'];
             $invoice->total = $fare['total'];
+
+            /** if referral bonus */ 
+            if(isset($fare['bonusDiscount'])) {
+                $invoice->referral_bonus_discount = $fare['bonusDiscount'];
+            }
+
+            
             $invoice->currency_type = $this->setting->get('currency_code');
 
             list($invoiceImagePath, $invoiceImageName) = $invoice->saveInvoiceMapImage($rideRequest);
@@ -468,7 +487,7 @@ class RideRequest extends Controller
             $invoice->invoice_map_image_name = $invoiceImageName;
 
             //if cash payment mode then payment_status paid
-            if($rideRequest->payment_mode == Ride::CASH) {
+            if($rideRequest->payment_mode == Ride::CASH || $fare['total'] == 0) {
                 $rideRequest->payment_status = Ride::PAID;
                 $rideRequest->ride_status = Ride::COMPLETED;
                 $invoice->payment_status = Ride::PAID;
@@ -493,6 +512,14 @@ class RideRequest extends Controller
             //adding invoice id to ride request
             $rideRequest->ride_invoice_id = $invoice->id;
             $rideRequest->save();
+
+
+            /** now deduct referral bonus amount from user */
+            if(isset($fare['bonusDiscount'])) {
+                $userReferralRecord = $this->referral->createReferralCodeIfNotExists('user', $rideRequest->user_id);
+                $userReferralRecord->bonus_amount -= $fare['bonusDiscount'];
+                $userReferralRecord->save();
+            }
 
 
             DB::commit();
