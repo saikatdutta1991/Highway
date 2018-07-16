@@ -246,6 +246,19 @@ class Trip extends Controller
      */
     public function startTrip(Request $request)
     {
+
+        /** check any trip already started or not  */
+        $ongoingTripCount = $this->trip
+        ->where('driver_id', $request->auth_driver->id)
+        ->where('status', TripModel::TRIP_STARTED)
+        ->count();
+
+        if($ongoingTripCount) {
+            return $this->api->json(false, "MULTIPLE_TRIP_CANTBE_STARTED", "Multiple trip cannot be started");
+        }
+
+
+
         $trip = $this->trip
         ->where('driver_id', $request->auth_driver->id)
         ->where("id", $request->trip_id)
