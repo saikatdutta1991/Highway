@@ -165,7 +165,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::get('{trip_id}', 'Apis\Driver\Trip@getTripDetails');
             Route::post('{trip_id}/start', 'Apis\Driver\Trip@startTrip');
             Route::post('{trip_id}/points/{point_id}/reached', 'Apis\Driver\Trip@driverReachedTripPoint');
-            Route::post('{trip_id}/bookings/users/{user_id}/boarded', 'Apis\Driver\Trip@userBoarded');
+            Route::post('{trip_id}/bookings/users/boarded', 'Apis\Driver\Trip@userBoarded');
             Route::post('{trip_id}/bookings/users/{user_id}/rate', 'Apis\Driver\Trip@driverGiveRatingToBookedUsers');
             Route::post('{trip_id}/complete', 'Apis\Driver\Trip@completeTrip');
             Route::post('{trip_id}/cancel', 'Apis\Driver\Trip@cancelTrip');

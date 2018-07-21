@@ -429,42 +429,60 @@ class Trip extends Controller
      */
     public function userBoarded(Request $request)
     {
-        $booking = $this->tripBooking->where('trip_id', $request->trip_id)
-        ->where('user_id', $request->user_id)
+
+        $userIds = explode(',', $request->user_ids);
+        $userIds = array_filter($userIds);
+
+
+        $bookings = $this->tripBooking->where('trip_id', $request->trip_id)
+        ->whereIn('user_id', $userIds)
         ->where('booking_status', TripBooking::BOOKING_CONFIRMED)
         ->where('boarding_time', null)
-        ->first();
+        ->with('trip', 'user')
+        ->get();
 
-        /** validate trip belongs to driver */
-        if(!$booking || $booking->trip->driver_id != $request->auth_driver->id) {
+
+        if(!$bookings->count()) {
             return $this->api->json(false, "INVALID_TRIP", 'Invalid trip');
         }
+        
 
-        $booking->boarding_time = date('Y-m-d H:i:s');
-        $booking->save();
+        /** loop thorugh all bookings */
+        foreach($bookings as $booking) {
+
+            /** validate trip belongs to driver */
+            if(!$booking || $booking->trip->driver_id != $request->auth_driver->id) {
+                return $this->api->json(false, "INVALID_TRIP", 'Invalid trip');
+            }
+
+            $booking->boarding_time = date('Y-m-d H:i:s');
+            $booking->save();
+
+            /** send push notification and sokcet notification to user */
+            $pushTitle = "Trip {$booking->trip->name} boarded";
+            $pushMsg = "You have boarded to trip";     
+            $booking->user->sendPushNotification($pushTitle, $pushMsg);
 
 
-        /** send push notification and sokcet notification to user */
-        $pushTitle = "Trip {$booking->trip->name} boarded";
-        $pushMsg = "You have boarded to trip";     
-        $booking->user->sendPushNotification($pushTitle, $pushMsg);
+        }
 
+        
+        /** send socket and push notifications to boarding users */
         $this->socketIOClient->sendEvent([
-            'to_ids' => $booking->user->id,
+            'to_ids' => $userIds,
             'entity_type' => 'user', //socket will make it uppercase
             'event_type' => 'trip_status_changed',
             'data' => [
                 'type' => 'boarded',
-                'trip' => $booking->trip
+                'trip' => $bookings[0]->trip
             ]
         ]);
         /** end send socket and push notifications to boarding users */
 
 
-        return $this->api->json(true, 'USER_BOARDED', 'User boarded', [
+        return $this->api->json(true, 'USER_BOARDED', 'Users boarded', [
             'message' => 'Get trip details again. Dont show this message to driver'
         ]);
-
 
 
     }
