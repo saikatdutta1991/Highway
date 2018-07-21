@@ -422,6 +422,32 @@ class Trip extends Controller
 
 
     /**
+     * get all unrated bookings
+     */
+    public function getUnratedBookings(Request $request)
+    {
+        $bookings = $this->booking->where('user_id', $request->auth_user->id)
+        ->where('driver_rating', 0)
+        ->with('trip', 'trip.driver', 'invoice', 'boardingPoint', 'destPoint')
+        ->get();
+
+        /** adding new data eg: invoice map url */
+        $bookings->map(function($booking){
+            if(!$booking->invoice) return;
+            $booking->invoice['map_url'] = $booking->invoice->getStaticMapUrl();
+            $booking->trip->driver['profile_photo_url'] = $booking->trip->driver->profilePhotoUrl();
+        });
+
+
+        return $this->api->json(true, 'UNRATED_BOOKED_TRIPS', 'Booked trips', [
+            'bookings' => $bookings
+        ]);
+    }
+
+
+
+
+    /**
      * cancel booked trip
      * release trip seats
      * if only trip has not been started, cancel allowed
