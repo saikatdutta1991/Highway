@@ -271,6 +271,11 @@ class Trip extends Controller
         }
 
 
+        /** remove all INITIALTED bookings */
+        $this->tripBooking->where('trip_id', $trip->id)->where('booking_status', TripBooking::INITIATED)->forceDelete();
+
+
+
         try {
 
             DB::beginTransaction();
