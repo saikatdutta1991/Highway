@@ -637,6 +637,12 @@ class Trip extends Controller
         ->where('status', TripModel::TRIP_ENDED)
         ->with('points', 'bookings')
         ->first();
+
+
+        if(!$trip) {
+            return $this->api->json(false, "INVALID_TRIP", 'Invalid trip');
+        }
+
         
         /** check all points reached */
         if($trip->points->where('status', TripPoint::DRIVER_REACHED)->count() != $trip->points->count()) {
