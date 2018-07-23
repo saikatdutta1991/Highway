@@ -13,6 +13,8 @@ use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\Trip\Trip as TripModel;
 use App\Models\Trip\TripBooking;
+use App\Models\Trip\TripPoint;
+
 
 class Trip extends Controller
 {
@@ -30,6 +32,7 @@ class Trip extends Controller
         $this->setting = app('App\Models\Setting');
         $this->transaction = app('App\Models\Transaction');
         $this->email = app('App\Repositories\Email');
+        $this->tripPoint = app('App\Models\Trip\TripPoint');
     }
 
 
@@ -427,6 +430,10 @@ class Trip extends Controller
     public function getUnratedBookings(Request $request)
     {
         $bookings = $this->booking->where('user_id', $request->auth_user->id)
+        ->join($this->tripPoint->getTableName(), function ($join) {
+            $join->on($this->booking->getTableName().'.dest_point_id', '=', $this->tripPoint->getTableName().'.id')
+            ->where($this->tripPoint->getTableName().'.status', TripPoint::DRIVER_REACHED);
+        })
         ->where('driver_rating', 0)
         ->with('trip', 'trip.driver', 'invoice', 'boardingPoint', 'destPoint')
         ->get();
