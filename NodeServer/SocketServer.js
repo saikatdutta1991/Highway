@@ -225,7 +225,7 @@ io.on('connection', function (socket) {
 			}
 
 			//if trip_id is avaialbel send trip user latitude longitude
-			if (data.trip_id) {
+			/* if (data.trip_id) {
 				helper.getUserIdsByTripId(data.trip_id, function (err, result) {
 					if (err && !result.length) return;
 
@@ -236,7 +236,7 @@ io.on('connection', function (socket) {
 					})
 
 				});
-			}
+			} */
 
 
 			//send location to admin
