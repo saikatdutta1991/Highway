@@ -90,6 +90,7 @@ class DriverProfile extends Controller
     {
 
         $validator = Validator::make($request->all(), [
+            'is_available' => 'sometimes|required|in:0,1',
             'fname' => 'sometimes|required|max:128',
             'lname' => 'sometimes|required|max:128',
             'email' => 'sometimes|required|email|max:128',
@@ -119,6 +120,7 @@ class DriverProfile extends Controller
 
             $e = $validator->errors();
             $msg = [];
+            ($e->has('is_available')) ? $msg['is_available'] = $e->get('is_available')[0] : '';
             ($e->has('fname')) ? $msg['fname'] = $e->get('fname')[0] : '';
             ($e->has('lname')) ? $msg['lname'] = $e->get('lname')[0] : '';
             ($e->has('email')) ? $msg['email'] = $e->get('email')[0] : '';
@@ -149,6 +151,11 @@ class DriverProfile extends Controller
 
         $driver = $request->auth_driver;
 
+
+
+        if($request->has('is_available')) {
+            $driver->is_available = $request->is_available == 1 ? 1 : 0;
+        }
 
         if($request->has('fname')) {
             $driver->fname = trim($request->fname);
