@@ -39,7 +39,7 @@ module.exports = function (dbConn) {
 
     /** get user_ids for a trip */
     module.getUserIdsByTripId = function (tripId, callback) {
-        var sql = "SELECT user_id FROM users_trip_bookings WHERE trip_id = " + tripId;
+        var sql = "SELECT user_id FROM trip_bookings WHERE trip_id = " + tripId;
         console.log('trip user ids query', sql);
         module.conn.query(sql, function (err, result) {
             callback(err, result);
