@@ -183,9 +183,9 @@ class RideRequest extends Controller
 
 
             /** cancellation charge will be added here */
-            if($rideRequest->ride_status == Ride::TRIP_STARTED) {
+            if($rideRequest->ride_status == Ride::DRIVER_STARTED || $rideRequest->ride_status == Ride::DRIVER_REACHED) {
 
-                $rideStartedAgo = intval($this->utill->getDiffMinute($rideRequest->ride_start_time, date('Y-m-d H:i:s')));
+                $rideStartedAgo = intval($this->utill->getDiffMinute($rideRequest->driver_started_time, date('Y-m-d H:i:s')));
                 
                 $allowedTime = $this->setting->get('ride_request_cancellation_charge_after_minute_trip_started')?:0; 
                 $cancellationChargeAmt = $this->setting->get('ride_request_cancellation_charge')?:0.00;

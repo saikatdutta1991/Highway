@@ -234,6 +234,12 @@ class RideRequest extends Controller
 
         //changing ride request status
         $rideRequest->ride_status = $request->status;
+
+        /** add driver_started_time */
+        if($request->status == Ride::DRIVER_REACHED) {
+            $rideRequest->driver_started_time = date('Y-m-d H:i:s');
+        }
+
         $rideRequest->save();
 
       
