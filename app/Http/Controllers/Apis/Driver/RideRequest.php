@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Models\VehicleType;
 use Validator;
 use App\Repositories\Referral;
+use App\Models\RideCancellationCharge as CancellationCharge;
 
 class RideRequest extends Controller
 {
@@ -24,8 +25,9 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Setting $setting, Transaction $transaction, Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user, Referral $referral)
+    public function __construct(CancellationCharge $cCharge, Setting $setting, Transaction $transaction, Email $email, VehicleType $vehicleType, RideFare $rideFare, RideInvoice $rideInvoice, Api $api, Ride $rideRequest, SocketIOClient $socketIOClient, User $user, Referral $referral)
     {
+        $this->cCharge = $cCharge;
         $this->setting = $setting;
         $this->transaction = $transaction;
         $this->email = $email;
@@ -443,6 +445,16 @@ class RideRequest extends Controller
         
         $fare = $rideFare->calculateFare($request->ride_distance, $rideTime);
 
+        /** calculate cancellation charge */
+        $cChargeAmt = $this->cCharge->calculateCancellationCharge($rideRequest->user_id);
+        $cChargeAmt = app('UtillRepo')->formatAmountDecimalTwoWithoutRound($cChargeAmt);
+        $fare['total'] += $cChargeAmt;
+        $fare['cancellation_charge'] = $cChargeAmt;
+        $this->cCharge->clearCharges($rideRequest->user_id);
+        /** end calculate cancellation charge */
+
+
+
         /** calculate referral bonus */
         $bonusData = $this->referral->deductBounus($rideRequest->user_id, $fare['total']);
        
@@ -473,6 +485,9 @@ class RideRequest extends Controller
             $invoice->access_fee = $fare['access_fee'];
             $invoice->tax = $fare['taxes'];
             $invoice->total = $fare['total'];
+
+            /** cancellation charge added to invoice */
+            $invoice->cancellation_charge = $fare['cancellation_charge'];
 
             /** if referral bonus */ 
             if(isset($fare['bonusDiscount'])) {

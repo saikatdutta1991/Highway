@@ -45,9 +45,22 @@ class Service extends Controller
         }
 
         $rideTaxPecentage = $this->setting->get('vehicle_ride_fare_tax_percentage');
-        return view('admin.services', compact('services', 'rideTaxPecentage'));
+        $cancellationCharge = $this->setting->get('ride_request_cancellation_charge');
+        $cancellationChargeAfterMinute = $this->setting->get('ride_request_cancellation_charge_after_minute_trip_started');
+        return view('admin.services', compact('services', 'rideTaxPecentage', 'cancellationCharge', 'cancellationChargeAfterMinute'));
     }
 
+
+
+    /**
+     * save ride request cancellation charge
+     */
+    public function saveRideRequestCancellationCharge(Request $request)
+    {
+        $this->setting->set('ride_request_cancellation_charge', $request->ride_request_cancellation_charge);
+        $this->setting->set('ride_request_cancellation_charge_after_minute_trip_started', $request->ride_request_cancellation_charge_after_minute_trip_started);
+        return $this->api->json(true, 'SAVED', 'Cancellation charge saved successfully');
+    }
 
 
     /**

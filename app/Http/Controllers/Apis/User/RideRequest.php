@@ -11,6 +11,7 @@ use App\Repositories\Gateway;
 use Hash;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
+use App\Models\RideCancellationCharge as CancellationCharge;
 use App\Models\Setting;
 use App\Repositories\SocketIOClient;
 use App\Models\Transaction;
@@ -24,8 +25,9 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Email $email, Transaction $transaction, SocketIOClient $socketIOClient, Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
+    public function __construct(CancellationCharge $cCharge, Email $email, Transaction $transaction, SocketIOClient $socketIOClient, Utill $utill, Setting $setting, Api $api, Ride $rideRequest, VehicleType $vehicleType, Driver $driver)
     {
+        $this->cCharge = $cCharge;
         $this->email = $email;
         $this->transaction = $transaction;
         $this->socketIOClient = $socketIOClient;
@@ -178,6 +180,30 @@ class RideRequest extends Controller
 
         try {
             DB::beginTransaction();
+
+
+            /** cancellation charge will be added here */
+            if($rideRequest->ride_status == Ride::TRIP_STARTED) {
+
+                $rideStartedAgo = intval($this->utill->getDiffMinute($rideRequest->ride_start_time, date('Y-m-d H:i:s')));
+                
+                $allowedTime = $this->setting->get('ride_request_cancellation_charge_after_minute_trip_started')?:0; 
+                $cancellationChargeAmt = $this->setting->get('ride_request_cancellation_charge')?:0.00;
+                if($rideStartedAgo >= $allowedTime) {
+                    $cCharge = new $this->cCharge;
+                    $cCharge->user_id = $request->auth_user->id;
+                    $cCharge->ride_request_id = $request->ride_request_id;
+                    $cCharge->cancellation_charge = $cancellationChargeAmt;
+                    $cCharge->status = CancellationCharge::NOT_APPLIED;
+                    $cCharge->save();
+
+                    $user = $request->auth_user;
+                    $currencySymbol = $this->setting->get('currency_symbol');
+                    $user->sendPushNotification("Cancellation Charge Added", "You will be charged {$currencySymbol}{$cCharge->cancellation_charge} as cancellation ride on next ride.");
+                }
+
+            }
+
 
             //chaning driver availability to 1
             $driver->is_available = 1;

@@ -57,7 +57,14 @@
                             </button>
                         </li>
                         <li>
-                            <button type="button" id="tax-percentage-button" data-toggle="tooltip" data-placement="left" title="Set ride service tax percentage" class="font-bold btn bg-red btn-block btn-xs waves-effect">Service Tax</button>
+                            <button type="button" id="tax-percentage-button" data-toggle="tooltip" data-placement="left" title="Set ride service tax percentage" class="font-bold btn bg-red btn-block btn-xs waves-effect">
+                                <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Service Tax
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" id="cancellation-charge-button" data-toggle="tooltip" data-placement="left" title="Set ride cancellation charge" class="font-bold btn bg-red btn-block btn-xs waves-effect">
+                            <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Cancellation Charge
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -294,6 +301,57 @@
 </div>
 <!-- intracity tax percentage -->
 
+<!-- cancellation charge modal -->
+<div class="modal fade" id="cancellation_charge_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">CANCELLATION CHARGE SETTINGS</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <form id="cancellation_charge_add_form">
+                        <input type="hidden" value="{{csrf_token()}}" name="_token">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="number" class="form-control" value="{{$cancellationCharge}}" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="ride_request_cancellation_charge">
+                                    <label class="form-label">Cancellation Charge({{$currency_symbol}})</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="number" class="form-control" value="{{$cancellationChargeAfterMinute}}" min="0" onblur="this.value=parseInt(this.value)" name="ride_request_cancellation_charge_after_minute_trip_started">
+                                    <label class="form-label">Cancellation charge will be applied after minute(s)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-12" id="cancellation-charge-error-div" style="display:none">
+                        <div class="preloader pl-size-xs" style="float:left;margin-right: 5px;display:none">
+                            <div class="spinner-layer pl-red-grey">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="res-text" style="float:left;display:none">Saving ...</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="cancellation-charge-save-btn">SAVE</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end cancellation charge modal -->
 
 @endsection
 @section('bottom')
@@ -305,9 +363,34 @@
     var service_fare_base = "{{url('admin/services')}}";
     var csrf_token = "{{csrf_token()}}";
     var save_tax_percentage = "{{url('admin/services/tax/save')}}";
+    var save_cancellation_charge = "{{url('admin/services/cancellation-charge/save')}}";
 
     $("#tax-percentage-button").on('click', function(){
         $("#ride_fare_tax_modal").modal('show')
+    })
+
+    $("#cancellation-charge-button").on('click', function(){
+        $("#cancellation_charge_modal").modal('show')
+    })
+
+
+    $("#cancellation-charge-save-btn").on('click', function(){
+
+        var data = $('#cancellation_charge_add_form').serializeArray();
+        console.log(data)
+        $.post(save_cancellation_charge, data, function(response){
+
+            if(response.success) {
+                $("#cancellation_charge_modal").modal('hide')
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            } 
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Contact to developer', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
     })
 
 

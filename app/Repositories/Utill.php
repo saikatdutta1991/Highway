@@ -111,6 +111,16 @@ class Utill
 	{
 		return number_format(round($amount, 2), 2, '.', '');
     }
+
+
+
+    /**
+     * formate amount to two decimal places without rount value
+     */
+    public function formatAmountDecimalTwoWithoutRound($amount = "")
+    {
+        return number_format($amount, 2, '.', '');
+    }
     
 
 

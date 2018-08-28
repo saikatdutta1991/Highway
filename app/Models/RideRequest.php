@@ -92,7 +92,7 @@ class RideRequest extends Model
      */
     public function rideRequestCancelAllowedStatusList()
     {
-        return [self::INITIATED, self::DRIVER_ACCEPTED, self::DRIVER_STARTED, self::DRIVER_REACHED];
+        return [self::INITIATED, self::DRIVER_ACCEPTED, self::DRIVER_STARTED, self::DRIVER_REACHED, self::TRIP_STARTED];
     }
 
 

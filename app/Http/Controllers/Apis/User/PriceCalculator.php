@@ -11,6 +11,7 @@ use App\Models\RideFare;
 use Validator;
 use App\Models\User;
 use App\Repositories\Referral;
+use App\Models\RideCancellationCharge as CancellationCharge;
 
 class PriceCalculator extends Controller
 {
@@ -18,8 +19,9 @@ class PriceCalculator extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api, User $user, RideFare $rideFare, Referral $referral)
+    public function __construct(CancellationCharge $cCharge, Api $api, User $user, RideFare $rideFare, Referral $referral)
     {
+        $this->cCharge = $cCharge;
         $this->api = $api;
         $this->user = $user;
         $this->rideFare = $rideFare;
@@ -63,6 +65,10 @@ class PriceCalculator extends Controller
         }
         
 
+        $cChargeAmt = $this->cCharge->calculateCancellationCharge($request->auth_user->id);
+        $cChargeAmt = app('UtillRepo')->formatAmountDecimalTwoWithoutRound($cChargeAmt);
+        $fareData['total'] += $cChargeAmt;
+        $fareData['cancellation_charge'] = $cChargeAmt;
 
 
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);

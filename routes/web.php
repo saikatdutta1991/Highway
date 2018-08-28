@@ -69,6 +69,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('services/{service_id}/ridefare', 'Admin\Service@getRideFare');
         Route::post('services/{service_id}/ridefare', 'Admin\Service@createOrUpdateRideFare');
         Route::post('services/tax/save', 'Admin\Service@saveRideTaxPercentage');
+        Route::post('services/cancellation-charge/save', 'Admin\Service@saveRideRequestCancellationCharge');
         
 
         Route::group(['prefix' => 'settings'], function(){
