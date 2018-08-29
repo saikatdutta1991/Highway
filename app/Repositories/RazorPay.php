@@ -150,4 +150,49 @@ class RazorPay extends Gateway
 
 
 
+
+    /**
+     * initiate partial refund
+     */
+    public function refundPartial($paymentId, $refundAmount)
+    {
+        $api = new Api(
+            $this->allKeys()['RAZORPAY_API_KEY'],
+            $this->allKeys()['RAZORPAY_API_SECRET']
+        );
+
+        try {
+            
+
+            $refund = $api->refund->create(array('payment_id' => $paymentId, 'amount' => $refundAmount * 100));
+            $payment  = $api->payment->fetch($paymentId);
+           
+            
+            return [
+                'success' => true,
+                'refund_id' => $refund->id,
+                'status' => $payment->status,
+                'amount' => $refund->amount / 100,
+                'currency_type' => $refund->currency,
+                'payment_id' => $refund->payment_id,
+                'extra' => [
+                    'refund' => $refund->toArray(),
+                    'payment' => $payment->toArray()
+                ]
+            ];
+
+
+        } catch(\Exception $e) {
+            \Log::info('RAZORPAY_REFUND_PARTIAL_ERROR');
+            \Log::info($e->getMessage());
+            return [
+                'success' => false,
+                'error_code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
+
+
 }

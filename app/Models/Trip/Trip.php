@@ -23,6 +23,7 @@ class Trip extends Model
     const NOT_PAID = 'NOT_PAID';
     const PAID = 'PAID';
     const FULL_REFUNDED = 'FULL_REFUNDED';
+    const PARTIAL_REFUNDED = 'PARTIAL_REFUNDED';
 
     protected $table = 'trips';
 

@@ -303,4 +303,66 @@ class Trip extends Controller
 
 
 
+
+    /** 
+     * refund partial
+     */
+    public function partialRefundTripBooking(Request $request)
+    {
+        $booking = $this->booking->find($request->booking_id);
+        $refundAmt = $request->refund_amount;
+        $invoice = $booking->invoice;
+        $transaction = $invoice->transaction;
+
+        if($refundAmt > $invoice->total) {
+            return $this->api->json(false, 'INVALID_REFUND_AMOUNT', 'Invalid refund amount');
+        }
+
+
+        try {
+
+            DB::beginTransaction();
+
+            $booking->payment_status = TripModel::PARTIAL_REFUNDED;
+            $booking->save();
+
+            $invoice->payment_status = TripModel::PARTIAL_REFUNDED;
+            $invoice->cancellation_charge = $invoice->total - $refundAmt;
+            $invoice->save();
+
+
+            $razorpay = Gateway::instance('razorpay');
+            $refund = $razorpay->refundPartial($transaction->trans_id, $refundAmt);
+
+
+            if(!$refund['success']) {
+                return $this->api->json(false, $refund['error_code'], $refund['message']);
+            }
+
+
+            $t = new $this->transaction;
+            $t->trans_parent_id = $transaction->id;
+            $t->trans_id = $refund['refund_id'];
+            $t->amount = -$refund['amount'];
+            $t->currency_type = $refund['currency_type'];
+            $t->gateway = $razorpay->gatewayName();   
+            $t->extra_info = json_encode($refund['extra']);
+            $t->status = $refund['status'];
+            $t->save();
+
+
+            DB::commit();
+
+        } catch(\Exception $e) {dd($e);
+            DB::rollback();
+            $this->api->log('ADMIN_RAZORPAY_REFUND_PARTIAL_ERROR', $e);
+            $this->api->log('ADMIN_RAZORPAY_REFUND_PARTIAL_ERROR', ['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        return $this->api->json(true, 'REFUND_SUCCESS', 'Refund successfull');
+    }
+
+
 }
