@@ -121,6 +121,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
 
 
     /** get all admin created routes */
+    Route::get('trips/locations', 'Apis\Driver\Trip@getAllLocations');
     Route::get('trips/routes', 'Apis\Driver\Trip@getTripRoutes');
 
 

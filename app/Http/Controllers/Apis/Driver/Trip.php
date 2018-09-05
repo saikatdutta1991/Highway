@@ -31,6 +31,7 @@ class Trip extends Controller
         $this->api = $api;
         $this->adminTripRoute = $adminTripRoute;
         $this->trip = app('App\Models\Trip\Trip');
+        $this->adminTripLocation = app('App\Models\Trip\AdminTripLocation');
         $this->tripPoint = app('App\Models\Trip\TripPoint');
         $this->utill = app('App\Repositories\Utill');
         $this->tripBooking = app('App\Models\Trip\TripBooking');
@@ -38,12 +39,32 @@ class Trip extends Controller
     }
 
 
+
+    /**
+     * get all trip locations
+     */
+    public function getAllLocations()
+    {
+        $locations = $this->adminTripLocation->orderBy('name', 'asc')->get()->toArray();
+        return $this->api->json(true, 'LOCATIONS', 'Locations fetched', [
+            'locations' => $locations
+        ]);
+    }
+
+
     /**
      * get admin trip routes with location and location points
      */
-    public function getTripRoutes()
+    public function getTripRoutes(Request $request)
     {
-        $routes = $this->adminTripRoute->with(['from', 'from.points', 'to', 'to.points'])->orderBy('updated_at', 'desc')->get();
+        $routes = $this->adminTripRoute->with(['from', 'from.points', 'to', 'to.points'])->orderBy('updated_at', 'desc');
+        
+        if($request->has('from_location') && $request->has('to_location')) {
+            $routes = $routes->where('from_location', $request->from_location)
+            ->where('to_location', $request->to_location);
+        }
+        
+        $routes = $routes->get();
 
         $routes->map(function($route){
             $route->source = $route->from->name;
