@@ -247,8 +247,18 @@ class Trip extends Controller
         $trip = $this->trip
         ->where('driver_id', $request->auth_driver->id)
         ->where("id", $request->trip_id)
-        ->with('points', 'points.boardingBookings', 'points.destBookings', 'points.boardingBookings.user', 'points.destBookings.user')
+        ->with(['points', 
+        'points.boardingBookings' => function($query){
+            $query->where('booking_status', '<>', TripBooking::INITIATED);
+        }, 
+        'points.destBookings' => function($query){
+            $query->where('booking_status', '<>', TripBooking::INITIATED);
+        },
+        'points.boardingBookings.user', 
+        'points.destBookings.user'
+        ])
         ->first();
+
 
         if(!$trip) {
             return $this->api->json(false, "INVALID_TRIP_ID", 'Invalid trip id');
