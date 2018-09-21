@@ -223,6 +223,11 @@ class Trip extends Controller
         $trips = $this->trip
         ->where('driver_id', $request->auth_driver->id)
         ->orderBy('trip_datetime', 'desc')
+        // remove trips created but not started of previous date
+        ->where(function($query){
+            $query->where('trip_datetime', "<=", date('Y-m-d H:i:s'))
+            ->where('status', '<>', TripModel::CREATED);
+        })
         ->paginate(200);
 
         return $this->api->json(true, 'TRIPS', 'Your trips', [
