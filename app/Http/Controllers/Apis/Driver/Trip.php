@@ -255,15 +255,26 @@ class Trip extends Controller
         ->where("id", $request->trip_id)
         ->with(['points', 
         'points.boardingBookings' => function($query){
-            $query->where('booking_status', '<>', TripBooking::INITIATED);
+            $query->whereNotIn('booking_status', [TripBooking::INITIATED, TripBooking::BOOKING_CANCELED_USER]);
         }, 
         'points.destBookings' => function($query){
-            $query->where('booking_status', '<>', TripBooking::INITIATED);
+            $query->whereNotIn('booking_status', [TripBooking::INITIATED, TripBooking::BOOKING_CANCELED_USER]);
         },
         'points.boardingBookings.user', 
         'points.destBookings.user'
         ])
         ->first();
+
+
+        
+        /** remove points where no users boarding or unborading*/
+        $pointsToRemove = [];
+        foreach ($trip->points as $pointKey => $point) {           
+            if($point->boardingBookings->count() == 0 && $point->destBookings->count() == 0) {
+                $trip->points->pull($pointKey);
+            }
+        }
+
 
 
         if(!$trip) {
@@ -399,14 +410,19 @@ class Trip extends Controller
         $trip = $point->trip;
 
         //if all points driver reached then trip ended
-        $pointsCount = $this->tripPoint->where('trip_id', $trip->id)->count();
         $reachedCount = $this->tripPoint->where('trip_id', $trip->id)->where('status', TripPoint::DRIVER_REACHED)->count();
-        if($reachedCount == $pointsCount) {
+
+        $minPointsTobeReachedCount = 0;
+        foreach ($trip->points as $pointKey => $point) {          
+            if($point->boardingBookings->count() == 0 && $point->destBookings->count() == 0) {
+                ++$minPointsTobeReachedCount;
+            }
+        }
+
+        if($reachedCount >= $minPointsTobeReachedCount) {
             $trip->status = TripModel::TRIP_ENDED;
             $trip->save();
         }
-
-
         
 
         /** send socket and push notifications to boarding users */
@@ -687,12 +703,12 @@ class Trip extends Controller
 
         
         /** check all points reached */
-        if($trip->points->where('status', TripPoint::DRIVER_REACHED)->count() != $trip->points->count()) {
+        /* if($trip->points->where('status', TripPoint::DRIVER_REACHED)->count() != $trip->points->count()) {
             return $this->api->json(false, 'TRIP_POINTS_NOT_REACHED', 'All trip points not reached');
-        }
+        } */
 
         /**check booking users rating done */
-        if($trip->bookings->where('user_rating', 0)->count()) {
+        if($trip->bookings->where('user_rating', 0)->where('booking_status', TripBooking::BOOKING_CONFIRMED)->count()) {
             return $this->api->json(false, 'TRIP_BOOINKG_RATINGS_NOT_DONE', 'All the user bookings not rated');
         }
 
