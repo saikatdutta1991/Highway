@@ -273,14 +273,18 @@ class Trip extends Controller
 
         
         /** remove points where no users boarding or unborading*/
-        $pointsToRemove = [];
-        foreach ($trip->points as $pointKey => $point) {           
-            if($point->boardingBookings->count() == 0 && $point->destBookings->count() == 0) {
-                $trip->points->pull($pointKey);
+        $pointsToTake = [];
+        foreach ($trip->points as $point) {           
+
+            if(!($point->boardingBookings->count() == 0 && $point->destBookings->count() == 0)) {
+                 $pointsToTake[] = $point;
             }
+
         }
-
-
+        
+        unset($trip->points);
+        $trip->points = collect($pointsToTake);
+        
 
         if(!$trip) {
             return $this->api->json(false, "INVALID_TRIP_ID", 'Invalid trip id');
