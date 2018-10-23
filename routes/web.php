@@ -110,6 +110,18 @@ Route::group(['prefix' => 'admin'], function(){
         /**referral routes end */
 
 
+        /** coupon code routes */
+        Route::group(['prefix' => 'coupons'], function(){
+
+            Route::get('/', 'Admin\Coupon@showCoupons')->name('admin.coupons.show');
+            Route::get('/add', 'Admin\Coupon@showAddCoupon')->name('admin.coupons.show.add-new');
+            Route::post('/add', 'Admin\Coupon@addCoupon')->name('admin.coupons.add-new');
+
+        });
+        /** coupon code routes end */
+
+
+
 
 
 

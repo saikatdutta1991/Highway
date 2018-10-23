@@ -70,6 +70,21 @@
                     </ul>
                 </li>
 
+                <li class="@yield('coupons_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">content_cut</i>
+                    <span>Coupons</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('coupons_add_active')">
+                            <a href="{{route('admin.coupons.show.add-new')}}">Add New</a>
+                        </li>
+                        <li class="@yield('coupons_view_active')">
+                            <a href="{{route('admin.coupons.show')}}">List</a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="@yield('driver_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">drive_eta</i>
