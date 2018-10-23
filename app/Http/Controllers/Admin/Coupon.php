@@ -26,6 +26,18 @@ class Coupon extends Controller
 
 
 
+    /**
+     * page for edit coupon
+     */
+    public function showEditCoupon(Request $request)
+    {
+        $coupon = $this->coupon->find($request->coupon_id);
+        return view('admin.coupons.add_coupon', compact('coupon'));
+    }
+
+
+
+
     /** 
      * page for add coupon
      */
@@ -33,6 +45,64 @@ class Coupon extends Controller
     { 
         return view('admin.coupons.add_coupon');
     }
+
+
+
+    /**
+     * update coupon
+     */
+    public function updateCoupon(Request $request)
+    {
+        /** validating request other */
+        $validator = Validator::make($request->all(), [                
+            'code' => 'required|max:128|unique:'.$this->coupon->getTableName().',code,'.$request->coupon_id,
+            'name' => 'required|max:256',
+            'description' => 'required|max:500',
+            'max_uses' => 'required|numeric',
+            'max_uses_user' => 'required|numeric',
+            'type' => 'required',
+            'discount_amount' => 'required|numeric',
+            'discount_type' => 'required',
+            'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
+            'expires_at' => 'required|date_format:d-m-Y h:i A'
+        ]);
+
+        if($validator->fails()) {
+            
+            $errors = [];
+            foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
+                $errors[$fieldName] = $msgArr[0];
+            }
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields', [
+                'errors' => $errors
+            ]);
+        }
+        
+        /**end validating request other */
+
+
+
+        $coupon = $this->coupon->find($request->coupon_id);
+        $coupon->code = $request->code;
+        $coupon->name = $request->name;
+        $coupon->description = $request->description;
+        $coupon->max_uses = $request->max_uses;
+        $coupon->max_uses_user = $request->max_uses_user;
+        $coupon->type = $request->type;
+        $coupon->discount_amount = $request->discount_amount;
+        $coupon->discount_type = $request->discount_type;
+        $coupon->starts_at = $this->utill->strtoutc($request->starts_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
+        $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
+        $coupon->save();
+
+
+        return $this->api->json(true, "COUPON_SAVED", 'Coupon saved', [
+            'coupon' => $coupon
+        ]);
+    }
+
+
+
 
 
 
@@ -51,8 +121,8 @@ class Coupon extends Controller
             'type' => 'required',
             'discount_amount' => 'required|numeric',
             'discount_type' => 'required',
-            'starts_at' => 'required|date_format:Y-m-d H:i|before_or_equal:expires_at',
-            'expires_at' => 'required|date_format:Y-m-d H:i'
+            'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
+            'expires_at' => 'required|date_format:d-m-Y h:i A'
         ]);
 
         if($validator->fails()) {
@@ -79,8 +149,8 @@ class Coupon extends Controller
         $coupon->type = $request->type;
         $coupon->discount_amount = $request->discount_amount;
         $coupon->discount_type = $request->discount_type;
-        $coupon->starts_at = $this->utill->timestampStringToUTC("{$request->starts_at}:00", $this->setting->get('default_timezone'))->toDateTimeString();
-        $coupon->expires_at = $this->utill->timestampStringToUTC("{$request->expires_at}:00", $this->setting->get('default_timezone'))->toDateTimeString();
+        $coupon->starts_at = $this->utill->strtoutc($request->starts_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
+        $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
         $coupon->save();
 
 
@@ -96,9 +166,22 @@ class Coupon extends Controller
 
     public function showCoupons()
     {
-        $coupons = $this->coupon->withCount('userCoupons')->get();
+        $coupons = $this->coupon->withCount('userCoupons')->orderBy('created_at', 'desc')->get();
         return view('admin.coupons.list', compact('coupons'));
     }
+
+
+
+
+    /**
+     * show public offers
+     */
+    public function showOffers()
+    {
+        $coupons = $this->coupon->withCount('userCoupons')->where('expires_at', '>=', date('Y-m-d H:i:s'))->orderBy('created_at', 'desc')->get();
+        return view('coupon_offers', compact('coupons'));   
+    }
+
 
 
 }

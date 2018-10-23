@@ -17,6 +17,10 @@ Route::get('/', function () {
 
 
 
+/**
+ * coupon offers page
+ */
+Route::get('offers', 'Admin\Coupon@showOffers')->name('offers');
 
 
 
@@ -116,6 +120,8 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('/', 'Admin\Coupon@showCoupons')->name('admin.coupons.show');
             Route::get('/add', 'Admin\Coupon@showAddCoupon')->name('admin.coupons.show.add-new');
             Route::post('/add', 'Admin\Coupon@addCoupon')->name('admin.coupons.add-new');
+            Route::get('/add/{coupon_id}', 'Admin\Coupon@showEditCoupon')->name('admin.coupons.show.edit');
+            Route::post('/add/{coupon_id}', 'Admin\Coupon@updateCoupon')->name('admin.coupons.update');
 
         });
         /** coupon code routes end */

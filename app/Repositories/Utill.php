@@ -276,6 +276,15 @@ class Utill
 
 
     /**
+     * change datetime string to UTC with input datetime format
+     */
+    public function strtoutc($datetimeString, $timezone, $format = 'Y-m-d H:i:s')
+    {
+        return \Carbon\Carbon::createFromFormat($format, $datetimeString, $timezone)->timezone('UTC');
+    }
+
+
+    /**
      * returns utc timestamp range for a particular date when date is in local
      * dateString format is Y-m-d
      */

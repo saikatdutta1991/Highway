@@ -20,19 +20,7 @@
 {
     text-decoration:none;
 }
-.copy-btn {
-    font-size : 20px;
-    cursor: pointer;
-    display:none;
-    vertical-align:middle;
-}
-.code-cell:hover > .copy-btn{
-    display:inline-block;
-}
-.copy-code {
-    display:none;
-    opacity:0;
-}
+
 </style>
 @endsection
 @section('content')
@@ -61,12 +49,12 @@
                 <thead>
                     <tr>                        
                         <th>CODE</th>
-                        <th>USES</th>
                         <th>USES PER USER</th>
                         <th>TYPE</th>
                         <th>DISCOUNT</th>
                         <th>STARTS</th>
                         <th>EXPIRES</th>
+                        <th>USES</th>
                        <!--  <th>ACTIONS</th> -->
                     </tr>
                 </thead>
@@ -74,15 +62,15 @@
                     @foreach($coupons as $coupon)
                     <tr>                        
                         <td>
-                            <a data-toggle="tooltip" data-placement="left" title="Click to edit" href="javascript:void(0)">{{$coupon->code}}</a>
+                            <a data-toggle="tooltip" data-placement="left" title="Click to edit" href="{{route('admin.coupons.show.edit', ['coupon_id' => $coupon->id])}}">{{$coupon->code}}</a>
                             <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Name : {{$coupon->name}} | {{$coupon->description}}">help_outline</i>
                         </td>
-                        <td>{{$coupon->user_coupons_count}}/{{$coupon->max_uses}}</td>   
                         <td>{{$coupon->max_uses_user}}</td>   
-                        <td>{{$coupon->type}}</td>   
+                        <td>{{$coupon->formatedCouponType()}}</td>   
                         <td>{{intval($coupon->discount_amount)}}({{$coupon->discount_type}})</td>   
-                        <td>{{$coupon->starts_at}}</td>   
-                        <td>{{$coupon->expires_at}}</td>   
+                        <td>{{$coupon->formatedStartsAt($default_timezone)}}</td>   
+                        <td>{{$coupon->formatedExpiresAt($default_timezone)}}</td>   
+                        <td>{{$coupon->user_coupons_count}}/{{$coupon->max_uses}}</td>   
                     </tr>
                 
                     @endforeach
@@ -99,29 +87,4 @@
 
 @endsection
 @section('bottom')
-<script>
-
-$(document).ready(function(){
-
-
-    /**
-        edit user link click handler
-     */
-     $(".edit-user-btn").on('click', function(){
-
-        var userId = $(this).data('user-id');
-        console.log(userId)
-        var url = "{{url('admin/users')}}/"+userId;
-        window.open(url, '_blank');
-
-     });
-
-
-   
-});
-    
-
-    
-</script>
-    
 @endsection
