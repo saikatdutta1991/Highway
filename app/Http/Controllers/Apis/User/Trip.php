@@ -354,9 +354,20 @@ class Trip extends Controller
     public function getBookedTrips(Request $request)
     {
 
-        $bookings = $this->booking->where('user_id', $request->auth_user->id)
-        ->orderBy('created_at')
+        $bookings = $this->booking->where($this->booking->getTableName().'.user_id', $request->auth_user->id)
+        ->orderBy($this->booking->getTableName().'.created_at')
+        ->join($this->trip->getTableName(), $this->trip->getTableName().'.id', '=', $this->booking->getTableName().'.trip_id')
+        ->where(function($query){
+
+            $query->where($this->trip->getTableName().'.trip_datetime', ">", date('Y-m-d H:i:s'))
+            ->orWhere(function($query){
+                $query->where($this->trip->getTableName().'.trip_datetime', "<=", date('Y-m-d H:i:s'))
+                ->where($this->trip->getTableName().'.status', '<>', TripModel::CREATED);
+            });
+
+        })
         ->with('trip', 'trip.driver', 'invoice', 'boardingPoint', 'destPoint')
+        ->select($this->booking->getTableName().'.*')
         ->paginate(100);
 
         /** adding new data eg: invoice map url */
