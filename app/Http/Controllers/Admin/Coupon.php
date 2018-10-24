@@ -62,6 +62,8 @@ class Coupon extends Controller
             'max_uses_user' => 'required|numeric',
             'type' => 'required',
             'discount_amount' => 'required|numeric',
+            'minimum_purchase' => 'required|numeric',
+            'maximum_discount_allowed' => 'required|numeric',
             'discount_type' => 'required',
             'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
             'expires_at' => 'required|date_format:d-m-Y h:i A'
@@ -93,6 +95,8 @@ class Coupon extends Controller
         $coupon->discount_type = $request->discount_type;
         $coupon->starts_at = $this->utill->strtoutc($request->starts_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
         $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
+        $coupon->minimum_purchase = $request->minimum_purchase;
+        $coupon->maximum_discount_allowed = $request->maximum_discount_allowed;
         $coupon->save();
 
 
@@ -120,6 +124,8 @@ class Coupon extends Controller
             'max_uses_user' => 'required|numeric',
             'type' => 'required',
             'discount_amount' => 'required|numeric',
+            'minimum_purchase' => 'required|numeric',
+            'maximum_discount_allowed' => 'required|numeric',
             'discount_type' => 'required',
             'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
             'expires_at' => 'required|date_format:d-m-Y h:i A'
@@ -151,6 +157,8 @@ class Coupon extends Controller
         $coupon->discount_type = $request->discount_type;
         $coupon->starts_at = $this->utill->strtoutc($request->starts_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
         $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
+        $coupon->minimum_purchase = $request->minimum_purchase;
+        $coupon->maximum_discount_allowed = $request->maximum_discount_allowed;
         $coupon->save();
 
 

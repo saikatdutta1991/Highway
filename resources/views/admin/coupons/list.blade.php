@@ -52,8 +52,8 @@
                         <th>USES PER USER</th>
                         <th>TYPE</th>
                         <th>DISCOUNT</th>
-                        <th>STARTS</th>
-                        <th>EXPIRES</th>
+                        <th>DURATION</th>
+                       <!--  <th>EXPIRES</th> -->
                         <th>USES</th>
                        <!--  <th>ACTIONS</th> -->
                     </tr>
@@ -67,9 +67,16 @@
                         </td>
                         <td>{{$coupon->max_uses_user}}</td>   
                         <td>{{$coupon->formatedCouponType()}}</td>   
-                        <td>{{intval($coupon->discount_amount)}}({{$coupon->discount_type}})</td>   
-                        <td>{{$coupon->formatedStartsAt($default_timezone)}}</td>   
-                        <td>{{$coupon->formatedExpiresAt($default_timezone)}}</td>   
+                        <td>@if($coupon->discount_type=='flat'){{$currency_symbol}}@endif{{intval($coupon->discount_amount)}}@if($coupon->discount_type=='percentage')%@endif
+                            @if($coupon->discount_type=='flat')-Minimum : {{$coupon->minimum_purchase}}{{$currency_symbol}}@endif
+                            @if($coupon->discount_type=='percentage')-Upto : {{$coupon->maximum_discount_allowed}}{{$currency_symbol}}@endif
+                        </td>   
+                        <td>
+                            {{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $coupon->starts_at)->setTimezone($default_timezone)->format('d M, Y @h:ia')}}
+                            <span style="font-weight:700;">to</span>
+                            {{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $coupon->expires_at)->setTimezone($default_timezone)->format('d M, Y @h:ia')}}
+                        </td>   
+                       <!--  <td></td> -->   
                         <td>{{$coupon->user_coupons_count}}/{{$coupon->max_uses}}</td>   
                     </tr>
                 

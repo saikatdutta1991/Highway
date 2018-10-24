@@ -159,7 +159,13 @@
                 </div>
                 <div class="panel-body">
                     <div class="col-md-12">
-                        <p class="">{{$coupon->description}}</p>
+                        <p class="">
+                            @if($coupon->discount_type=='flat'){{$currency_symbol}}@endif{{intval($coupon->discount_amount)}}@if($coupon->discount_type=='percentage')%@endif
+                            @if($coupon->discount_type=='flat')-Minimum : {{$coupon->minimum_purchase}}{{$currency_symbol}}@endif
+                            @if($coupon->discount_type=='percentage')-Upto : {{$coupon->maximum_discount_allowed}}{{$currency_symbol}}@endif
+                            <br>
+                            {{$coupon->description}}
+                        </p>
                     </div>
                 </div>
                 <div class="panel-footer">

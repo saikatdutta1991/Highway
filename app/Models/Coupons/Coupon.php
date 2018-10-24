@@ -130,19 +130,16 @@ class Coupon extends Model
         $discountAmt = 0;
         if($this->discount_type == Coupon::FLAT) {
 
-            $discountAmt = $this->discount_amount;
-
-            if($total >= $discountAmt) {
-                $total -= $discountAmt;
-            } else {
-                $discountAmt = $total;
-                $total = 0;
+            if($total > $this->minimum_purchase && $total >= $this->discount_amount) {
+                $total -= $this->discount_amount;
+                $discountAmt = $this->discount_amount;
             }
-
+    
 
         } else if($this->discount_type == Coupon::PERCENT){
             
             $discountAmt = $total * ($this->discount_amount / 100);
+            $discountAmt = $discountAmt > $this->maximum_discount_allowed ? $this->maximum_discount_allowed : $discountAmt;
 
             if($total >= $discountAmt) {
                 $total -= $discountAmt;

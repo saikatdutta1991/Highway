@@ -112,7 +112,27 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3">
+                            <div class="col-sm-6" id="minimum_purchase_div" style="display:none">
+                                <div class="form-group">
+                                    <b>Mimimum Purchase({{$currency_symbol}})</b>
+                                    <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Minimum purchase must be this amount coupon to apply">help_outline</i>
+                                    <div class="form-line">
+                                        <input type="number" step="1" pattern="\d*"  class="form-control" placeholder="Ex: 200" name="minimum_purchase" value="@if(isset($coupon)){{intval($coupon->minimum_purchase)}}@endif">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6" id="maximum_discount_allowed_div" style="display:none">
+                                <div class="form-group">
+                                    <b>Maximum Discount Allowed({{$currency_symbol}})</b>
+                                    <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Maximum discount allowed for discount type percentage">help_outline</i>
+                                    <div class="form-line">
+                                        <input type="number" step="1" pattern="\d*" class="form-control" placeholder="Ex: 200" name="maximum_discount_allowed" value="@if(isset($coupon)){{intval($coupon->maximum_discount_allowed)}}@endif">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <b>Starts At</b>
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Must be 12 hour time">help_outline</i>
@@ -122,7 +142,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <b>Expires At</b>
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Must be 12 hour time">help_outline</i>
@@ -161,6 +181,20 @@
 
     $(document).ready(function(){
 
+
+        $('select[name=discount_type]').on('change', function(){
+
+            if($(this).val() == 'flat') {
+                $("#maximum_discount_allowed_div").hide();
+                $("#minimum_purchase_div").show();
+            } else {
+                $("#maximum_discount_allowed_div").show();
+                $("#minimum_purchase_div").hide();
+            }
+
+        }).change();
+
+
         $('.datetimepicker').bootstrapMaterialDatePicker({
             format: 'DD-MM-YYYY hh:mm A',
             shortTime : true
@@ -173,7 +207,7 @@
             event.preventDefault();
 
             let data = $(this).serializeArray()            
-
+            
             $.post(add_coupon_url, data, function(response){
                 console.log(response)
                 if(response.success) {
