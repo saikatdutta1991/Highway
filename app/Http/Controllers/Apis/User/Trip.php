@@ -14,6 +14,8 @@ use App\Models\Transaction;
 use App\Models\Trip\Trip as TripModel;
 use App\Models\Trip\TripBooking;
 use App\Models\Trip\TripPoint;
+use App\Models\Coupons\Coupon;
+use App\Models\Coupons\UserCoupon;
 
 
 class Trip extends Controller
@@ -33,6 +35,8 @@ class Trip extends Controller
         $this->transaction = app('App\Models\Transaction');
         $this->email = app('App\Repositories\Email');
         $this->tripPoint = app('App\Models\Trip\TripPoint');
+        $this->coupon = app('App\Models\Coupons\Coupon');
+        $this->userCoupon = app('App\Models\Coupons\UserCoupon');
     }
 
 
@@ -127,7 +131,8 @@ class Trip extends Controller
         }
 
         
-       /*  dd('success'); */
+       /** delete all previous initiated trip bookings */
+       $this->booking->where('user_id', $request->auth_user->id)->where('booking_status', TripBooking::INITIATED)->forceDelete();
 
         try {
 
@@ -156,6 +161,31 @@ class Trip extends Controller
             $invoice->tax = $this->utill->formatAmountDecimalTwo($trip->adminRoute->tax_fee * $booking->booked_seats);
             $invoice->total = $invoice->ride_fare + $invoice->access_fee + $invoice->tax;
             $invoice->currency_type = $this->setting->get('currency_code');
+
+
+            /** calculate coupon discount block*/
+            if($request->coupon_code != '') {
+                
+                $validCoupon = $this->coupon->isValid($request->coupon_code, $request->auth_user->id, $coupon, 2);
+                if($validCoupon !== true) {
+                    return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
+                }
+
+                $couponDeductionRes = $coupon->calculateDiscount($invoice->total);
+                $invoice->total = $couponDeductionRes['total'];
+                $invoice->coupon_discount = $couponDeductionRes['coupon_discount'];
+
+                /** insert coupon used by user in db */
+                $userCoupon = new $this->userCoupon;
+                $userCoupon->user_id = $request->auth_user->id;
+                $userCoupon->coupon_id = $coupon->id;
+                $userCoupon->save();
+
+            }
+            /** calculate coupon discount block end*/
+
+
+
 
             list($invoiceImagePath, $invoiceImageName) = $invoice->saveGoogleStaticMap($sourcePoint->latitude, $sourcePoint->longitude, $destPoint->latitutde, $destPoint->longitude);
             $invoice->invoice_map_image_path = $invoiceImagePath;

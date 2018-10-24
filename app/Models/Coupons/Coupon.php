@@ -89,15 +89,38 @@ class Coupon extends Model
 
 
     /**
+     * get coupon types array list
+     */
+    protected static function getCouponTypes($couponType) 
+    {
+        switch ($couponType) {
+            case 1:
+                return [Coupon::ALL, Coupon::CITY_RIDE];
+                break;
+            
+            case 2:
+                return [Coupon::ALL, Coupon::INTRACITY_TRIP];
+                break;
+
+            default:
+                return [];
+                break;
+        }
+    }
+
+
+
+
+    /**
      * validate coupon code
      * if valid then returns true
      * else returns error code and message
      */
-    public static function isValid($couponCode, $userId, &$coupon)
+    public static function isValid($couponCode, $userId, &$coupon, $couponType = 1)
     {
         /** fetching coupon by coupon code */
         $coupon = self::where('code', $couponCode)
-        ->whereIn('type', [Coupon::ALL, Coupon::CITY_RIDE])
+        ->whereIn('type', self::getCouponTypes($couponType))
         ->where('starts_at', '<=', date('Y-m-d H:i:s'))
         ->where('expires_at', '>=', date('Y-m-d H:i:s'))
         ->withCount('couponUses')

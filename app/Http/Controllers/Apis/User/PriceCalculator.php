@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Repositories\Referral;
 use App\Models\RideCancellationCharge as CancellationCharge;
 use App\Models\Coupons\Coupon;
+use App\Models\Trip\Trip as TripModel;
 
 class PriceCalculator extends Controller
 {
@@ -28,6 +29,8 @@ class PriceCalculator extends Controller
         $this->rideFare = $rideFare;
         $this->referral = $referral;
         $this->coupon = app('App\Models\Coupons\Coupon');
+        $this->trip = app('App\Models\Trip\Trip');
+        $this->utill = app('App\Repositories\Utill');
     }
 
 
@@ -95,6 +98,52 @@ class PriceCalculator extends Controller
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);
 
     }
+
+
+
+
+
+
+    /**
+     * validate coupon code for trip
+     */
+    public function validateCouponCodeForTrip(Request $request)
+    {
+
+        if($request->coupon_code == '' || $request->no_of_seats < 1) {
+            return $this->api->json(false, 'INVALID_INPUT_PARAMS', 'Invalid input params');
+        }
+
+        /** fetch trip from db */
+        $trip = $this->trip->where('id', $request->trip_id)->first();
+
+
+        /** check if coupon code is valid */
+        $validCoupon = $this->coupon->isValid($request->coupon_code, $request->auth_user->id, $coupon, 2);
+        if($validCoupon !== true) {
+            return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
+        }
+
+
+
+        /** calculate total fare */
+        $totalFare = $trip->adminRoute->base_fare + $trip->adminRoute->access_fee + $trip->adminRoute->tax_fee;
+        $totalFare = $totalFare * $request->no_of_seats;
+
+        $couponDeductionRes = $coupon->calculateDiscount($totalFare);
+      
+
+        return $this->api->json(true, 'VALID_COUPON', 'Coupon valid', [
+            'total' => $this->utill->formatAmountDecimalTwo($totalFare),
+            'no_of_seats' => $request->no_of_seats,
+            'after_deduction' => $this->utill->formatAmountDecimalTwo($couponDeductionRes['total']),
+            'coupon_discount' => $couponDeductionRes['coupon_discount']
+        ]);
+
+    }
+
+
+
 
 
 

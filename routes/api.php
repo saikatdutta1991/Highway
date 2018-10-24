@@ -86,6 +86,10 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::post('bookings/{booking_id}/rating', 'Apis\User\Trip@rateTripDriver');
             Route::get('bookings/unrated', 'Apis\User\Trip@getUnratedBookings');
             Route::post('bookings/{booking_id}/cancel', 'Apis\User\Trip@cancelTrip');
+
+            /** validate coupon code route */
+            Route::post('{trip_id}/coupon-code-validate', 'Apis\User\PriceCalculator@validateCouponCodeForTrip');
+
         }); 
 
 
