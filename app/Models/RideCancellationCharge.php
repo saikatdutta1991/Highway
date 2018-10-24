@@ -23,7 +23,7 @@ class RideCancellationCharge extends Model
     public function calculateCancellationCharge($userid)
     {
         $charge = $this->where('user_id', $userid)->where('status', self::NOT_APPLIED)->sum('cancellation_charge');
-        return $charge;
+        return app('UtillRepo')->formatAmountDecimalTwoWithoutRound($charge);
     }
 
     /**

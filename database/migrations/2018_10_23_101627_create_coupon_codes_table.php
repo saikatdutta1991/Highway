@@ -25,8 +25,8 @@ class CreateCouponCodesTable extends Migration
             $table->string('type', 50)->default(''); // coupon type
             $table->decimal('discount_amount', 10, 2)->default(0.00);
             $table->string('discount_type', 50)->default('');
-            $table->timestamp('starts_at');
-            $table->timestamp('expires_at');
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

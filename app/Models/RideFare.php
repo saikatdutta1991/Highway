@@ -30,7 +30,7 @@ class RideFare extends Model
         $taxes = $this->calculateRideFareTax($fare);
         $accessFee = $this->access_fee;
         $total = $fare + $this->access_fee + $taxes;
-        $total = number_format(round($total), 2, '.', '');
+        //$total = number_format(round($total), 2, '.', '');
 
         return [
             'ride_fare' => $fare,
@@ -61,7 +61,7 @@ class RideFare extends Model
         $taxPercentage = $tax = app('App\Models\Setting')->get('vehicle_ride_fare_tax_percentage');
         $taxPercentage = $taxPercentage == '' ? 0 : $taxPercentage;
         $taxes = $fare * ( $taxPercentage / 100 );
-        return round($taxes, 2);
+        return $utillRepo->formatAmountDecimalTwo($taxes);
     }
 
 

@@ -178,7 +178,9 @@ class Coupon extends Controller
      */
     public function showOffers()
     {
-        $coupons = $this->coupon->withCount('userCoupons')->where('expires_at', '>=', date('Y-m-d H:i:s'))->orderBy('created_at', 'desc')->get();
+        $coupons = $this->coupon->withCount('userCoupons')
+        ->where('starts_at', '<=', date('Y-m-d H:i:s'))
+        ->where('expires_at', '>=', date('Y-m-d H:i:s'))->orderBy('created_at', 'desc')->get();
         return view('coupon_offers', compact('coupons'));   
     }
 

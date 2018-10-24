@@ -12,6 +12,7 @@ use Validator;
 use App\Models\User;
 use App\Repositories\Referral;
 use App\Models\RideCancellationCharge as CancellationCharge;
+use App\Models\Coupons\Coupon;
 
 class PriceCalculator extends Controller
 {
@@ -26,6 +27,7 @@ class PriceCalculator extends Controller
         $this->user = $user;
         $this->rideFare = $rideFare;
         $this->referral = $referral;
+        $this->coupon = app('App\Models\Coupons\Coupon');
     }
 
 
@@ -34,44 +36,64 @@ class PriceCalculator extends Controller
      */
     public function estimatePrice(Request $request)
     {
-       
-        if($request->distance == '' || !is_numeric($request->distance)) {
-            return $this->api->json(false, 'INVALID_DISTANCE', 'Invalid distance');
-        }
-
-        if($request->duration == '' || !is_numeric($request->duration) || $request->duration < 0) {
-            return $this->api->json(false, 'INVALID_DURATION', 'Invalid time duration');
-        }
-
-
+        /** fetching vehicle service details by vehicle_type_id */
         $rFare = $this->rideFare->where('vehicle_type_id', $request->vehicle_type_id)->first();
-        
-        if(!$rFare) {
-            return $this->api->json(false, 'FARE_NOT_SET', 'Fare not set by admin. Try again');
+
+
+        /** validate input params and vehile service */
+        if(!is_numeric($request->distance) || 
+            (!is_numeric($request->duration) || $request->duration < 0) 
+            || !$rFare)
+        {
+            return $this->api->json(false, 'INVALID_INPUT_PARAMS', 'Invalid input params');
         }
 
-        //convert distance meter into km
-        $distance = $request->distance / 1000;
 
-        $fareData = $rFare->calculateFare(
-            $distance, intval($request->duration)
-        );
+        /** calculate fare by distance and duration */
+        $distance = $request->distance / 1000; //meter to km
+        $duration = intval($request->duration); //taking invalue from duration
+        $fareData = $rFare->calculateFare($distance, $duration);
 
-        $res = $this->referral->deductBounus($request->auth_user->id, $fareData['total']);
-       
-        if($res !== false) {
-            $fareData['total'] = $res['total'];
-            $fareData['bonusDiscount'] = $res['bonusDiscount'];
+
+        $userId = $request->auth_user->id;
+
+        /** calculating referral bonus discount, this block in if condition
+         * because referral system can be disabled
+        */
+        if( ($bonusDeduction = $this->referral->deductBounus($userId, $fareData['total'])) !== false ) {
+            $fareData['total'] = $bonusDeduction['total'];
+            $fareData['bonusDiscount'] = $bonusDeduction['bonusDiscount'];
+        }
+
+
+        /** calculating cancellation charge */
+        $cancellaionCharge = $this->cCharge->calculateCancellationCharge($userId);
+        $fareData['total'] += $cancellaionCharge;
+        $fareData['cancellation_charge'] = $cancellaionCharge;
+
+
+
+        /** calculation for coupon on if coupon passed*/
+        $fareData['coupon_discount'] = '0.00';
+        if($request->coupon_code != '') {
+
+            $validCoupon = $this->coupon->isValid($request->coupon_code, $userId, $coupon);
+            if($validCoupon !== true) {
+                return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
+            }
+
+            //code comes here means coupon valid
+            $couponDeductionRes = $coupon->calculateDiscount($fareData['total']);
+            $fareData['total'] = $couponDeductionRes['total'];
+            $fareData['coupon_discount'] = $couponDeductionRes['coupon_discount'];
         }
         
-
-        $cChargeAmt = $this->cCharge->calculateCancellationCharge($request->auth_user->id);
-        $cChargeAmt = app('UtillRepo')->formatAmountDecimalTwoWithoutRound($cChargeAmt);
-        $fareData['total'] += $cChargeAmt;
-        $fareData['cancellation_charge'] = $cChargeAmt;
+        /** calculation for coupon end*/
 
 
+        $fareData['total'] = number_format(round($fareData['total']), 2, '.', '');
         return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);
+
     }
 
 
