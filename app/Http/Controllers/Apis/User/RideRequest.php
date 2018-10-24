@@ -18,6 +18,7 @@ use App\Models\Transaction;
 use App\Repositories\Utill;
 use Validator;
 use App\Models\VehicleType;
+use App\Models\Coupons\Coupon;
 
 class RideRequest extends Controller
 {
@@ -37,6 +38,7 @@ class RideRequest extends Controller
         $this->rideRequest = $rideRequest;
         $this->vehicleType = $vehicleType;
         $this->driver = $driver;
+        $this->coupon = app('App\Models\Coupons\Coupon');
     }
 
 
@@ -384,6 +386,22 @@ class RideRequest extends Controller
         $rideRequest->payment_mode = $request->payment_mode;
         $rideRequest->ride_status = Ride::INITIATED;
 
+
+        /** calculation for coupon on if coupon passed*/
+        if($request->coupon_code != '') {
+
+            $validCoupon = $this->coupon->isValid($request->coupon_code, $request->auth_user->id, $coupon);
+            if($validCoupon !== true) {
+                return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
+            }
+
+            $rideRequest->applied_coupon_id = $coupon->id;
+        }
+        
+        /** calculation for coupon end*/
+
+
+        /** finally save ride request record */
         $rideRequest->save();
 
         return $this->api->json(true, 'RIDE_REQUEST_INITIATED', 'Ride request initiated successfully', [

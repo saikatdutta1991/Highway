@@ -18,6 +18,8 @@ use App\Models\VehicleType;
 use Validator;
 use App\Repositories\Referral;
 use App\Models\RideCancellationCharge as CancellationCharge;
+use App\Models\Coupons\Coupon;
+use App\Models\Coupons\UserCoupon;
 
 class RideRequest extends Controller
 {
@@ -39,6 +41,8 @@ class RideRequest extends Controller
         $this->socketIOClient = $socketIOClient;
         $this->user = $user;
         $this->referral = $referral;
+        $this->coupon = app('App\Models\Coupons\Coupon');
+        $this->userCoupon = app('App\Models\Coupons\UserCoupon');
     }
 
 
@@ -425,35 +429,38 @@ class RideRequest extends Controller
      */
     public function endRideRequest(Request $request)
     {
-        //find ride request 
+
+        /** fetching ride request from db by ride request table id */
         $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
         ->where('driver_id', $request->auth_driver->id)
         ->whereIn('ride_status', [Ride::TRIP_STARTED])
         ->first();
 
-        if(!$rideRequest) {
+        if(!$rideRequest || !$request->has('ride_distance')) {
             return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request'); 
         }
         
-        if(!$request->has('ride_distance')) {
-            return $this->api->json(false, 'PARAMTERS_ARE_MISSING', 'Some input parameters are missing');
-        }
 
-        //chaning ride_request_distance meter to km
+        /** converting ride_request_distance meter to km and updating reqeust object*/
         $request->request->add(['ride_distance' => ($request->ride_distance/1000) ]);
 
-        //getting rideFare object by vehicle type id
-        $vTypeId = $this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type);
-        $rideFare = $this->rideFare->where('vehicle_type_id', $vTypeId)->first();
+        /** fetching ride fare by vehile type id */        
+        $rideFare = $this->rideFare->where(
+            'vehicle_type_id', $this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type)
+        )->first();
 
         $rideEndTime = date('Y-m-d H:i:s');
         $rideTime = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
         
+
+
+        /** caltulating basic fare details */
         $fare = $rideFare->calculateFare($request->ride_distance, $rideTime);
+
+
 
         /** calculate cancellation charge */
         $cChargeAmt = $this->cCharge->calculateCancellationCharge($rideRequest->user_id);
-        $cChargeAmt = app('UtillRepo')->formatAmountDecimalTwoWithoutRound($cChargeAmt);
         $fare['total'] += $cChargeAmt;
         $fare['cancellation_charge'] = $cChargeAmt;
         $this->cCharge->clearCharges($rideRequest->user_id);
@@ -471,9 +478,36 @@ class RideRequest extends Controller
         /** end calculate referral bonus */
         
 
+
+        /** calculate coupon discount if applied block */
+        $fare['coupon_discount'] = 0.00;
+        if($rideRequest->applied_coupon_id) {
+
+            $coupon = $this->coupon->find($rideRequest->applied_coupon_id);
+            $couponDeductionRes = $coupon->calculateDiscount($fare['total']);
+            $fare['total'] = $couponDeductionRes['total'];
+            $fare['coupon_discount'] = $couponDeductionRes['coupon_discount'];
+
+        }
+        /** calculate coupon discount if applied block end*/
+
+
+
+        /** rounding total fare, dont change total after this*/
+        $fare['total'] = round($fare['total']);
+
         
         try{
             DB::beginTransaction();
+
+            /** insert coupon used by user in db */
+            if($rideRequest->applied_coupon_id) {
+                $userCoupon = new $this->userCoupon;
+                $userCoupon->user_id = $rideRequest->user_id;
+                $userCoupon->coupon_id = $rideRequest->applied_coupon_id;
+                $userCoupon->save();
+            }
+
 
             //updating ride request table
             $rideRequest->ride_distance = $request->ride_distance;
@@ -499,6 +533,9 @@ class RideRequest extends Controller
             if(isset($fare['bonusDiscount'])) {
                 $invoice->referral_bonus_discount = $fare['bonusDiscount'];
             }
+
+            /** coupon discount added to invoice */
+            $invoice->coupon_discount = $fare['coupon_discount'];
 
             
             $invoice->currency_type = $this->setting->get('currency_code');
