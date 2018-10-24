@@ -114,7 +114,7 @@
 
                             <div class="col-sm-6" id="minimum_purchase_div" style="display:none">
                                 <div class="form-group">
-                                    <b>Mimimum Purchase({{$currency_symbol}})</b>
+                                    <b>Minimum Purchase({{$currency_symbol}})</b>
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Minimum purchase must be this amount coupon to apply">help_outline</i>
                                     <div class="form-line">
                                         <input type="number" step="1" pattern="\d*"  class="form-control" placeholder="Ex: 200" name="minimum_purchase" value="@if(isset($coupon)){{intval($coupon->minimum_purchase)}}@endif">
