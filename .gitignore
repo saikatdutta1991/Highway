@@ -1,11 +1,14 @@
 /node_modules
-/storage/*.key
+/storage/*
 /storage
 /vendor
 /.idea
 /.vagrant
-/config/setttings.php
+/config/*
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/public/images/*
+/public/users/invoices/*
+/public/drivers/profile/photos/*
