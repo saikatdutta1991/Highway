@@ -50,35 +50,18 @@ if (config.IS_HTTPS) {
 /**
  * initilizing mysql database connection
  */
-var conn;
+var conn = mysql.createPool(config.mysql);
+conn.on('connection', function (connection) {
+	console.log('MYSQL : pool connection established')
+});
 
-function handleDisconnect() {
-	conn = mysql.createConnection(config.mysql); // Recreate the connection, since
-	// the old one cannot be reused.
+conn.on('enqueue', function () {
+	console.log('Waiting for available connection slot');
+});
 
-	conn.connect(function (err) {              // The server is either down
-		if (err) {                                     // or restarting (takes a while sometimes).
-			console.log('error when connecting to db:', err);
-			setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-		}                                     // to avoid a hot loop, and to allow our node script to
-	});                                     // process asynchronous requests in the meantime.
-	// If you're also serving http, display a 503 error.
-	conn.on('error', function (err) {
-		console.log('db error', err);
-		if (err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-			handleDisconnect();                         // lost due to either server restart, or a
-		} else {                                      // connnection idle timeout (the wait_timeout
-			throw err;                                  // server variable configures this)
-		}
-	});
-
-	console.log("mysql database connected");
-
-}
-
-handleDisconnect();
-
-
+conn.on('release', function (connection) {
+	console.log('MYSQL : pol connection %d released', connection.threadId);
+});
 
 
 

@@ -13,7 +13,7 @@
 
 module.exports = {
 
-    IS_PRODUCTION: false,
+    IS_PRODUCTION: true,
 
 
     getConfig() {
@@ -25,9 +25,9 @@ module.exports = {
         SERVER_INTERNAL_COMMUNICATION_KEY: '123456789',
         SERVER_PORT: 3000,
         IS_HTTPS: false,
-        HTTPS_KEY_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ghealth.net.key',
-        HTTPS_CERT_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ghealth.net.cer',
-        HTTPS_CA_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ca.cer',
+        HTTPS_KEY_PATH: '',
+        HTTPS_CERT_PATH: '',
+        HTTPS_CA_PATH: '',
 
         BASE_URL: 'http://localhost/Highway/public', //without ritht '/'
 
@@ -35,7 +35,13 @@ module.exports = {
             host: 'localhost',
             user: 'root',
             password: 'root',
-            database: 'highway'
+            database: 'highway',
+            connectionLimit: 100,
+            waitForConnections: true,
+            queueLimit: 0,
+            debug: true,
+            wait_timeout: 28800,
+            connect_timeout: 10
         },
 
         CLIENT_AUTHENTICATE_TIMEOUT: 2000,
@@ -48,22 +54,28 @@ module.exports = {
 
         SERVER_INTERNAL_COMMUNICATION_KEY: '123456789',
         SERVER_PORT: 3000,
-        IS_HTTPS: false,
-        HTTPS_KEY_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ghealth.net.key',
-        HTTPS_CERT_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ghealth.net.cer',
-        HTTPS_CA_PATH: '/home/ubuntu/.acme.sh/ghealth.net/ca.cer',
+        IS_HTTPS: true,
+        HTTPS_KEY_PATH: '/etc/letsencrypt/live/highway.capefox.in/privkey.pem',
+        HTTPS_CERT_PATH: '/etc/letsencrypt/live/highway.capefox.in/fullchain.pem',
+        HTTPS_CA_PATH: '/etc/letsencrypt/live/highway.capefox.in/privkey.pem',
 
-        BASE_URL: 'http://139.59.79.130', //without ritht '/'
+        BASE_URL: 'https://highway.capefox.in', //without ritht '/'
 
 
         mysql: {
             host: 'localhost',
             user: 'root',
             password: 'root',
-            database: 'highway'
+            database: 'highway',
+            connectionLimit: 100,
+            waitForConnections: true,
+            queueLimit: 0,
+            debug: true,
+            wait_timeout: 28800,
+            connect_timeout: 10
         },
 
-        CLIENT_AUTHENTICATE_TIMEOUT: 2000,
+        CLIENT_AUTHENTICATE_TIMEOUT: 5000,
 
 
         DEBUG: false
