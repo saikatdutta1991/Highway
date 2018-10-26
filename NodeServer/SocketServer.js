@@ -207,6 +207,7 @@ io.on('connection', function (socket) {
 		//if already authenticated then skip
 		if (!socket.auth) return;
 
+
 		console.log('driver_update_location', socket.auth_entity, data);
 
 		try {
@@ -338,7 +339,9 @@ io.on('connection', function (socket) {
 		socket.leave(socket_room);
 
 		/** check room is empty then change driver is_connection status to 0 in db */
-		if (socket.auth && socket.auth_entity && socket.auth_entity.type == 'DRIVER' && !io.sockets.adapter.rooms[socket_room].length) {
+		var clients = io.sockets.adapter.rooms[socket_room];
+		clients = clients ? clients.length : 0;
+		if (socket.auth && socket.auth_entity && socket.auth_entity.type == 'DRIVER' && !clients) {
 			console.log('Driver is_conencted status set to 0')
 			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 0);
 		}
