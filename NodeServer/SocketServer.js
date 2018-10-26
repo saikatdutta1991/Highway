@@ -221,7 +221,7 @@ io.on('connection', function (socket) {
 			if (data.ride_request_id) {
 				helper.getRideRequest(data.ride_request_id, socket.auth_entity.id, function (err, result) {
 					if (err && !result.length) return;
-					console.log('ride request fetched', result);
+					console.log('ride request fetched');
 					io.sockets.in('USER_' + result[0].user_id).emit('driver_location_updated', data);
 				});
 			}
@@ -337,9 +337,9 @@ io.on('connection', function (socket) {
 		console.log('disconnect', socket_room);
 		socket.leave(socket_room);
 
-
-		//if driver disconnected change is connected to socket column to 0
-		if (socket.auth && socket.auth_entity && socket.auth_entity.type == 'DRIVER') {
+		/** check room is empty then change driver is_connection status to 0 in db */
+		if (socket.auth && socket.auth_entity && socket.auth_entity.type == 'DRIVER' && !io.sockets.adapter.rooms[socket_room].length) {
+			console.log('Driver is_conencted status set to 0')
 			helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 0);
 		}
 
