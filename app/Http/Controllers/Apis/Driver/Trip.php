@@ -328,6 +328,16 @@ class Trip extends Controller
         }
 
 
+
+        /** don't let the driver to start trip if no user booked */
+        if(!$this->tripBooking->where('trip_id', $trip->id)->where('booking_status', TripBooking::BOOKING_CONFIRMED)->count()) {
+            return $this->api->json(false, "NO_USER_BOOKED", 'No users have booked, so you can\'t start trip');
+        }
+
+
+
+
+
         /** remove all INITIALTED bookings */
         $this->tripBooking->where('trip_id', $trip->id)->where('booking_status', TripBooking::INITIATED)->forceDelete();
 
