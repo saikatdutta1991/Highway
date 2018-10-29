@@ -423,7 +423,7 @@ class Trip extends Controller
 
         $minPointsTobeReachedCount = 0;
         foreach ($trip->points as $pointKey => $point) {          
-            if($point->boardingBookings->count() == 0 && $point->destBookings->count() == 0) {
+            if($point->boardingBookings->count() > 0 || $point->destBookings->count() > 0) {
                 ++$minPointsTobeReachedCount;
             }
         }
