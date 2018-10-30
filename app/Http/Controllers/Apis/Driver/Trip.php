@@ -432,8 +432,8 @@ class Trip extends Controller
         $reachedCount = $this->tripPoint->where('trip_id', $trip->id)->where('status', TripPoint::DRIVER_REACHED)->count();
 
         $minPointsTobeReachedCount = 0;
-        foreach ($trip->points as $pointKey => $point) {          
-            if($point->boardingBookings->count() > 0 || $point->destBookings->count() > 0) {
+        foreach ($trip->points as $pointKey => $p) {          
+            if($p->boardingBookings->count() > 0 || $p->destBookings->count() > 0) {
                 ++$minPointsTobeReachedCount;
             }
         }
