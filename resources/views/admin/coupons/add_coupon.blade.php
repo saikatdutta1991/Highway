@@ -117,7 +117,7 @@
                                     <b>Minimum Purchase({{$currency_symbol}})</b>
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Minimum purchase must be this amount coupon to apply">help_outline</i>
                                     <div class="form-line">
-                                        <input type="number" step="1" pattern="\d*"  class="form-control" placeholder="Ex: 200" name="minimum_purchase" value="@if(isset($coupon)){{intval($coupon->minimum_purchase)}}@endif">
+                                        <input type="number" step="1" pattern="\d*"  class="form-control" placeholder="Ex: 200" name="minimum_purchase" value="@if(isset($coupon)){{intval($coupon->minimum_purchase)}}@else{{0}}@endif">
                                     </div>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@
                                     <b>Maximum Discount Allowed({{$currency_symbol}})</b>
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Maximum discount allowed for discount type percentage">help_outline</i>
                                     <div class="form-line">
-                                        <input type="number" step="1" pattern="\d*" class="form-control" placeholder="Ex: 200" name="maximum_discount_allowed" value="@if(isset($coupon)){{intval($coupon->maximum_discount_allowed)}}@endif">
+                                        <input type="number" step="1" pattern="\d*" class="form-control" placeholder="Ex: 200" name="maximum_discount_allowed" value="@if(isset($coupon)){{intval($coupon->maximum_discount_allowed)}}@else{{0}}@endif">
                                     </div>
                                 </div>
                             </div>
