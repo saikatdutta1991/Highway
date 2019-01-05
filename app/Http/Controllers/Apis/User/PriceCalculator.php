@@ -55,7 +55,7 @@ class PriceCalculator extends Controller
         /** calculate fare by distance and duration */
         $distance = $request->distance / 1000; //meter to km
         $duration = intval($request->duration); //taking invalue from duration
-        $fareData = $rFare->calculateFare($distance, $duration);
+        $fareData = $rFare->calculateFare($distance, 0); //duration no need to pass because in price calculator waiting time calculated
 
 
         $userId = $request->auth_user->id;
