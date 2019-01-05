@@ -240,8 +240,13 @@ class RideRequest extends Controller
         $rideRequest->ride_status = $request->status;
 
         /** add driver_started_time */
-        if($request->status == Ride::DRIVER_REACHED) {
+        if($request->status == Ride::DRIVER_STARTED) {
             $rideRequest->driver_started_time = date('Y-m-d H:i:s');
+        }
+
+        /** add driver reached to pickup location time */
+        if($request->status == Ride::DRIVER_REACHED) {
+            $rideRequest->driver_reached_time = date('Y-m-d H:i:s');
         }
 
         $rideRequest->save();
