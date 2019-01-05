@@ -84,6 +84,9 @@ class RideFare extends Model
         if($distance >= $this->first_distance) {
             $fare += $this->first_distance_price;
             $distance -= $this->first_distance;
+        } else {
+            $fare += $this->first_distance_price;
+            $distance = 0;
         }
 
 
