@@ -39,6 +39,9 @@ class PriceCalculator extends Controller
      */
     public function estimatePrice(Request $request)
     {
+        /** log the request */
+        $this->api->log('estimate price reqeust', $request->all());
+
         /** fetching vehicle service details by vehicle_type_id */
         $rFare = $this->rideFare->where('vehicle_type_id', $request->vehicle_type_id)->first();
 
@@ -92,6 +95,9 @@ class PriceCalculator extends Controller
         }
         
         /** calculation for coupon end*/
+
+        /** log the fare */
+        $this->api->log('estimate price', $fareData);
 
 
         $fareData['total'] = number_format(round($fareData['total']), 2, '.', '');
