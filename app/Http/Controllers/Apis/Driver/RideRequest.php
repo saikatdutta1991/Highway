@@ -456,11 +456,11 @@ class RideRequest extends Controller
 
         $rideEndTime = date('Y-m-d H:i:s');
         $rideTime = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
-        
+        $rideWaitTiime = app('UtillRepo')->getDiffMinute($rideRequest->driver_reached_time, $rideRequest->ride_start_time);
 
 
         /** caltulating basic fare details */
-        $fare = $rideFare->calculateFare($request->ride_distance, $rideTime);
+        $fare = $rideFare->calculateFare($request->ride_distance, $rideWaitTiime);
 
 
 
