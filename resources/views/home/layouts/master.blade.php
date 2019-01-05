@@ -19,6 +19,12 @@
         <link rel="stylesheet" href="{{asset('web/home/')}}/css/owl.carousel.min.css">
         <!-- Main css -->
         <link href="{{asset('web/home/')}}/css/style.css" rel="stylesheet">
+        <!-- Chrome, Firefox OS and Opera -->
+        <meta name="theme-color" content="#8d5b92">
+        <!-- Windows Phone -->
+        <meta name="msapplication-navbutton-color" content="#8d5b92">
+        <!-- iOS Safari -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="#8d5b92">
         @yield('top-header')
     </head>
     <body data-spy="scroll" data-target="#navbar" data-offset="30">
