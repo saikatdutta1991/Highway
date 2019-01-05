@@ -6,11 +6,12 @@
                     <a class="navbar-brand" href="index.html"><img src="{{$website_logo_url}}" class="img-fluid" alt="logo"></a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
                     <div class="collapse navbar-collapse" id="navbar">
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"> <a class="nav-link active" href="#home">HOME <span class="sr-only">(current)</span></a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="#features">FEATURES</a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="#gallery">GALLERY</a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="#pricing">PRICING</a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="#contact">CONTACT</a> </li>
+                            <li class="nav-item"> <a class="nav-link active" href="{{url('/')}}#home">HOME <span class="sr-only">(current)</span></a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#features">FEATURES</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#gallery">GALLERY</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#pricing">PRICING</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#contact">CONTACT</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('offers')}}#offers">OFFERS</a> </li>
                             <li class="nav-item"><a href="#" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Download</a></li>
                         </ul>
                     </div>

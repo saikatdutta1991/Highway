@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="{{asset('web/home/')}}/css/owl.carousel.min.css">
         <!-- Main css -->
         <link href="{{asset('web/home/')}}/css/style.css" rel="stylesheet">
+        @yield('top-header')
     </head>
     <body data-spy="scroll" data-target="#navbar" data-offset="30">
         <!-- Nav Menu -->
