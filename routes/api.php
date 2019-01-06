@@ -7,9 +7,11 @@
  */
 Route::group(['prefix' => '/v1/user'], function(){
 
-    /**
-     * password reset apis
-     */
+    /** get coupon code */
+    Route::get('coupons', 'Apis\User\Coupon@getCoupons');
+
+
+    /** password reset apis */
     Route::post('password-reset-request', 'Apis\User\UserRegister@sendPasswordReset');
     Route::post('password-reset', 'Apis\User\UserRegister@resetPassword');
 
