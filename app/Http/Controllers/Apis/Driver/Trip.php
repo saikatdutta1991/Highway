@@ -727,9 +727,9 @@ class Trip extends Controller
         } */
 
         /**check booking users rating done */
-        if($trip->bookings->where('user_rating', 0)->where('booking_status', TripBooking::BOOKING_CONFIRMED)->count()) {
+        /* if($trip->bookings->where('user_rating', 0)->where('booking_status', TripBooking::BOOKING_CONFIRMED)->count()) {
             return $this->api->json(false, 'TRIP_BOOINKG_RATINGS_NOT_DONE', 'All the user bookings not rated');
-        }
+        } */
 
 
         $trip->status = TripModel::COMPLETED;
