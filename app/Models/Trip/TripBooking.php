@@ -158,4 +158,15 @@ class TripBooking extends Model
 
 
 
+
+    /**
+     * tracking api
+     */
+    public function trackBookingUrl()
+    {
+        return route('track-booking', ['bookingid' => $this->booking_id]);
+    }
+
+
+
 }
