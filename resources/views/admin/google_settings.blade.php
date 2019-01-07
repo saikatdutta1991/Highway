@@ -93,6 +93,16 @@
                             </div>
                         </div>
                         <div class="row clearfix">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <b>Google Map Api Key For User Trip Booking Track</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="Ex: 9ld5f7uahh1.apps.googleusercontent.com" name="google_maps_api_key_booking_track" value="{{$google_maps_api_key_booking_track}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
                             <div class="col-sm-12 text-right">
                                 <button type="submit" id="google-map-api-key-save-btn" class="btn bg-pink waves-effect">
                                 <i class="material-icons">save</i>

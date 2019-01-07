@@ -263,6 +263,7 @@ class Setting extends Controller
     public function saveGoogleMapKey(Request $request)
     {
         $this->setting->set('google_maps_api_key', trim($request->google_maps_api_key));
+        $this->setting->set('google_maps_api_key_booking_track', trim($request->google_maps_api_key_booking_track));
         return $this->api->json(true, 'GOOGLE_MAPS_API_KEYS_SAVED', 'Google map keys saved');
     }
 
