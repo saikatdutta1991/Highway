@@ -55,62 +55,94 @@
                 </div>
             </div>
         </div>
-        <div class="card acard">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#booking-details" aria-expanded="true" aria-controls="booking-details">
-                    Booking Details
-                    </button>
-                </h5>
-            </div>
-            <div id="booking-details" class="collapse show" aria-labelledby="headingOne">
-                <div class="card-body table-responsive">
-					<table class="table table-bordered table-sm">
-  <tbody>
-    <tr>
-      <td>Booking ID</td>
-      <th scope="row">{{$booking->booking_id}}</th>
-    </tr>
-	<tr>
-      <td>Trip</td>
-      <td>{{$trip->name}}</td>
-    </tr>
-	<tr>
-      <td>Pickup Address</td>
-      <td>{{$pickupPoint->address}}</td>
-    </tr>
-	<tr>
-      <td>Drop Address</td>
-      <td>{{$dropPoint->address}}</td>
-    </tr>
-	<tr>
-      <td>Seats</td>
-      <td>{{$booking->booked_seats}}</td>
-    </tr>
-	<tr>
-      <td>Booking Date</td>
-      <td>{{$booking->tripFormatedCratedTimestamp()}}</td>
-    </tr>
-	<tr>
-      <td>Trip Date</td>
-      <td>{{$trip->tripFormatedTimestampString($user->timezone)}}</td>
-    </tr>
-  </tbody>
-</table>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card acard">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#booking-details" aria-expanded="true" aria-controls="booking-details">
+                            Booking Details
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="booking-details" class="collapse show" aria-labelledby="headingOne">
+                        <div class="card-body table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Booking ID</td>
+                                        <th scope="row">{{$booking->booking_id}}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Trip</td>
+                                        <td>{{$trip->name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickup Address</td>
+                                        <td>{{$pickupPoint->address}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Drop Address</td>
+                                        <td>{{$dropPoint->address}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Seats</td>
+                                        <td>{{$booking->booked_seats}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Booking Date</td>
+                                        <td>{{$booking->tripFormatedCratedTimestamp()}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Journey Date</td>
+                                        <td>{{$trip->tripFormatedTimestampString($user->timezone)}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card acard">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#driver-details" aria-expanded="false" aria-controls="driver-details">
-                    Driver Details
-                    </button>
-                </h5>
-            </div>
-            <div id="driver-details" class="collapse">
-                <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            <div class="col-md-6">
+                <div class="card acard">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#driver-details" aria-expanded="false" aria-controls="driver-details">
+                            Driver Details
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="driver-details" class="collapse show">
+                        <div class="card-body row">
+
+								<div class="col-md-4 col-sm-4">
+									<img class="card-img-top" src="{{$driver->profilePhotoUrl()}}" alt="Card image">
+								</div>
+								<div class="col-md-8 col-sm-8">
+									<table class="table table-bordered table-sm">
+										<tbody>
+											<tr>
+												<td>Name</td>
+												<th scope="row">{{$driver->fname}}{{$driver->lname}}</th>
+											</tr>
+											<tr>
+												<td>Contact</td>
+												<td>{{$driver->fullMobileNumber()}}</td>
+											</tr>
+											<tr>
+												<td>Car</td>
+												<td>{{$driver->vehicle_type}}</td>
+											</tr>
+											<tr>
+												<td>Car Number</td>
+												<td>{{$driver->vehicle_number}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

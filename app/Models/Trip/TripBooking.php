@@ -92,7 +92,7 @@ class TripBooking extends Model
     {
         $timezone = app('UtillRepo')->getTimezone($this->user->timezone);
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->timezone($timezone);   
-        return $date->formatLocalized('%d-%m-%Y'). $date->format(' h:i A');
+        return $date->format('d-m-Y'). $date->format(' h:i A');
     }
 
 
