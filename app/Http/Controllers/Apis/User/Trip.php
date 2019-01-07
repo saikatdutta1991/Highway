@@ -148,7 +148,7 @@ class Trip extends Controller
             $booking->booking_status = TripBooking::INITIATED;
             $booking->payment_mode = TripModel::ONLINE;
             $booking->payment_status = TripModel::NOT_PAID;
-            $booking->boking_id = $this->utill->randomChars();
+            $booking->booking_id = $this->utill->randomChars();
 
             
             /**creating invoice */
