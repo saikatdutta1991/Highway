@@ -73,6 +73,22 @@ class Utill
 
 
     /**
+     * generate random caps caracters
+     */
+    public function randomChars($limit = 9)
+    {
+        $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $res = "";
+        for ($i = 0; $i < $limit; $i++) {
+            $res .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+        return $res;
+    } 
+
+
+
+
+    /**
      * download file and save to given path
      * $filename is absolute path and filename with extension
      */
