@@ -54,6 +54,36 @@ class Handler extends ExceptionHandler
             return app('App\Repositories\Api')->json(false, 'Api not found');
         }
 
-        return parent::render($request, $exception);
+
+        /** if not in debug mode */
+        if(!env('APP_DEBUG')) {
+            $header = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 'Somethiing Wrong Happened';
+        
+            return response()->view('error', [
+                    'title' => 'Something Happend', 
+                    'header' => $header, 
+                    'message' => $this->getHtmlMessage()
+                ]);
+        }
+
+        return parent::render($request, $exception);       
+        
     }
+
+    /** get message string */
+    protected function getHtmlMessage()
+    {
+        return <<<HTML
+        <h3>Hmm, We are having trouble finding the site.</h3>
+        <p>We can't connect to the server.</p>
+        <b>If that address is correct, here three other things you can try:</b>
+        <ul>
+            <li>Try agiain later.</li>
+            <li>Check your network connection.</li>
+            <li>If you are connected but behind a firewall, check that Nightly has permission to access the web.</li>
+        </ul>
+HTML;
+    }
+
+
 }

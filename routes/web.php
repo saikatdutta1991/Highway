@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'Web\HomeController@showHomepage');
+Route::get('track-booking/{bookingid}', 'Web\HomeController@trackBooking');
 
 
 

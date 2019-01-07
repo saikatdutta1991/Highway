@@ -1,5 +1,5 @@
 @extends('home.layouts.master')
-@section('title', 'Welcome')
+@section('title', 'Offers')
 @section('top-header')
 <style>
     h2 {
