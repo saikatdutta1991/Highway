@@ -327,7 +327,7 @@ class Trip extends Controller
         /** send notifications to user via email, sms, push */
         $user = $request->auth_user;
         $currencySymbol = $this->setting->get('currency_symbol');
-        $msgTxt = "Trip {$booking->trip->name} booking confirmed. Payment {$currencySymbol}{$invoice->total} has been made successfully. Booking id : {$booking->booking_id}";
+        $msgTxt = "Trip {$booking->trip->name} booking confirmed. Payment {$currencySymbol}{$invoice->total} has been made successfully. Track your booking here ".$booking->trackBookingUrl();
         $user->sendPushNotification("Booking Confirmed", $msgTxt);
         $user->sendSms($msgTxt);
         $this->email->sendUserTripInvoiceEmail($booking);
