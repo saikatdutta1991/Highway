@@ -20,6 +20,25 @@ class TripPoint extends Model
     }
 
 
+
+    /** check if driver started for this point */
+    public function isDriverStarted()
+    {
+        return $this->status == self::DRIVER_STARTED || $this->status == self::DRIVER_REACHED;
+    }
+
+
+
+    /**
+     * is driver reached the point
+     */
+    public function isDriverReached()
+    {
+        return $this->status == self::DRIVER_REACHED;
+    }
+
+
+
     //relation with trip
     public function trip()
     {

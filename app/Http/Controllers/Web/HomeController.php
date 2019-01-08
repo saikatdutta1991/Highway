@@ -36,7 +36,7 @@ class HomeController extends Controller
         $trip = $booking->trip;
 //dd($driver);
 
-        return view('track_booking', [
+        return view('tracking.track_booking', [
             'booking' => $booking,
             'invoice' => $invoice,
             'user' => $user,

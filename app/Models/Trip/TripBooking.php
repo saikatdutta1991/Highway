@@ -25,6 +25,24 @@ class TripBooking extends Model
     }
 
 
+
+    /** is user boarded */
+    public function isBoarded()
+    {
+        return !!$this->boarding_time;
+    }
+
+    /**
+     * is booking canceled 
+     */
+    public function isBookingCancelled()
+    {
+        return ($this->booking_status == TripBooking::BOOKING_CANCELED_USER 
+        || $this->booking_status == Trip::TRIP_CANCELED_DRIVER);
+    }
+
+
+
     /**
      * formated cancel by
      */
@@ -94,6 +112,18 @@ class TripBooking extends Model
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->timezone($timezone);   
         return $date->format('d-m-Y'). $date->format(' h:i A');
     }
+
+
+    /** 
+     * formated booking date time
+     */
+    public function formatedBookingDate()
+    {
+        $timezone = app('UtillRepo')->getTimezone($this->user->timezone);
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->timezone($timezone);   
+        return $date->format('D d-M-Y').' at '. $date->format(' h:i A');
+    }
+
 
 
     /**

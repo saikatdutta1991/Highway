@@ -76,6 +76,17 @@ class Trip extends Model
 
 
     /**
+     * formated journey date time
+     */
+    public function formatedJourneyDate($timezone)
+    {
+        $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($timezone);
+        return $date->format('D d-M-Y').' at '.$date->format('h:i A');
+    }
+
+
+
+    /**
      * get trip time formated string am pm
      */
     public function tripFormatedTimeString()
