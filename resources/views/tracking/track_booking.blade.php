@@ -183,10 +183,9 @@
             function calcRoute() {
 
 
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
+                
+                    
 
-                        console.log('position', position)
 
                         //var start = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                         var start = new google.maps.LatLng({{$pickupPoint->latitude}}, {{$pickupPoint->longitude}});
@@ -223,15 +222,6 @@
                                 alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
                             }
                         });
-
-                    });
-
-                } else {
-                    console.log("Geolocation is not supported by this browser.");
-                }
-
-
-
 
             }
 
