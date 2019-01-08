@@ -28,23 +28,40 @@ class HomeController extends Controller
     public function trackBooking(Request $request)
     {
         $booking = TripBooking::where('booking_id', $request->bookingid)->first();
-        $invoice = $booking->invoice;
         $user = $booking->user;
         $pickupPoint = $booking->boardingPoint;
         $dropPoint = $booking->destPoint;
         $driver = $booking->trip->driver;
         $trip = $booking->trip;
-//dd($driver);
 
         return view('tracking.track_booking', [
             'booking' => $booking,
-            'invoice' => $invoice,
             'user' => $user,
             'pickupPoint' => $pickupPoint,
             'dropPoint' => $dropPoint,
             'driver' => $driver,
             'trip' => $trip
         ]);
+    }
+
+
+
+    /**
+     * send booking progress view
+     */
+    public function trackBookingProgress(Request $request)
+    {
+        $booking = TripBooking::where('booking_id', $request->bookingid)->first();
+        $pickupPoint = $booking->boardingPoint;
+        $dropPoint = $booking->destPoint;
+
+        return view('tracking.booking_progress', [
+            'booking' => $booking,
+            'pickupPoint' => $pickupPoint,
+            'dropPoint' => $dropPoint,
+        ]);
+
+
     }
 
 

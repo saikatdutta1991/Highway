@@ -47,8 +47,10 @@
     </div>
 </header>
 <div class="section s-section">
-    <div class="container">
-        @include('tracking.booking_progress')
+    <div class="container" id="main-container">
+
+        <span id="progress-container"></span>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="card acard">
@@ -161,6 +163,22 @@
 @section('bottom-script')
 <script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key_booking_track}}&libraries=places"></script>
 <script>
+
+    /** fetch booking progress every 30 sec */
+    function getProgress()
+    {
+        $.get('{{route("track-booking-progress", ["bookingid" => $booking->booking_id])}}', function(response){
+            $("#progress-container").html(response)
+        });
+    }
+    getProgress();
+    setInterval(getProgress, 30000);
+
+
+
+
+
+
         function mapLocation() {
             var directionsDisplay;
             var directionsService = new google.maps.DirectionsService();
