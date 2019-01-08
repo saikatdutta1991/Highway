@@ -30,6 +30,13 @@
     .s-section {
     padding : 40px 0;
     }
+
+    #map-canvas {
+    height: 400px;
+    width: 100%;
+    margin: 0px;
+    padding: 0px
+    }
     /* background: #f56091; */
 </style>
 @endsection
@@ -141,13 +148,95 @@
                     </button>
                 </h5>
             </div>
-            <div id="map-tracking" class="collapse">
+            <div id="map-tracking" class="collapse show">
                 <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    <div id="map-canvas"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @include('home.layouts.address')
+@endsection
+@section('bottom-script')
+<script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key_booking_track}}&libraries=places"></script>
+<script>
+        function mapLocation() {
+            var directionsDisplay;
+            var directionsService = new google.maps.DirectionsService();
+            var map;
+
+            function initialize() {
+                directionsDisplay = new google.maps.DirectionsRenderer();
+                var chicago = new google.maps.LatLng(12.9398505, 77.6047609);
+                var mapOptions = {
+                    zoom: 14,
+                    center: chicago
+                };
+                map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+                directionsDisplay.setMap(map);
+                //google.maps.event.addDomListener(document.getElementById('routebtn'), 'click', calcRoute);
+                calcRoute()
+            }
+
+            function calcRoute() {
+
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+
+                        console.log('position', position)
+
+                        //var start = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                        var start = new google.maps.LatLng({{$pickupPoint->latitude}}, {{$pickupPoint->longitude}});
+                        //var end = new google.maps.LatLng(38.334818, -181.884886);
+                        var end = new google.maps.LatLng({{$dropPoint->latitude}}, {{$dropPoint->longitude}});
+                        var request = {
+                            origin: start,
+                            destination: end,
+                            travelMode: google.maps.TravelMode.DRIVING
+                        };
+                        directionsService.route(request, function (response, status) {
+                            console.log('response', response)
+
+                            var totalDistance = 0;
+                            var totalDuration = 0;
+                            var legs = response.routes[0].legs;
+                            for (var i = 0; i < legs.length; ++i) {
+                                totalDistance += legs[i].distance.value;
+                                totalDuration += legs[i].duration.value;
+                            }
+                            console.log('totalDistance', totalDistance)
+                            console.log('totalDuration', totalDuration)
+
+                            if (status == google.maps.DirectionsStatus.OK) {
+                                directionsDisplay.setOptions({
+                                    polylineOptions: {
+                                        strokeColor: 'red',
+                                        strokeWeight: 4
+                                    }
+                                })
+                                directionsDisplay.setDirections(response);
+                                directionsDisplay.setMap(map);
+                            } else {
+                                alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+                            }
+                        });
+
+                    });
+
+                } else {
+                    console.log("Geolocation is not supported by this browser.");
+                }
+
+
+
+
+            }
+
+            google.maps.event.addDomListener(window, 'load', initialize);
+        }
+        mapLocation();    
+
+</script>
 @endsection

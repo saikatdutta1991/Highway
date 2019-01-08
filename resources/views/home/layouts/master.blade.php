@@ -40,5 +40,6 @@
         <script src="{{asset('web/home/')}}/js/owl.carousel.min.js"></script>
         <!-- Custom JS -->
         <script src="{{asset('web/home/')}}/js/script.js"></script>
+        @yield('bottom-script')
     </body>
 </html>
