@@ -14,7 +14,7 @@
 Route::get('/', 'Web\HomeController@showHomepage');
 Route::get('track-booking/{bookingid}', 'Web\HomeController@trackBooking')->name('track-booking');
 Route::get('track-booking/{bookingid}/progress', 'Web\HomeController@trackBookingProgress')->name('track-booking-progress');
-
+Route::get('track-booking/{bookingid}/map', 'Web\HomeController@trackBookingMap')->name('track-booking-map');
 
 
 /**

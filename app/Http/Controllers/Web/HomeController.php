@@ -67,6 +67,75 @@ class HomeController extends Controller
 
 
 
+    /**
+     * send json map location informations
+     * this api will be as polling
+     */
+    public function trackBookingMap(Request $request)
+    {
+        $booking = TripBooking::where('booking_id', $request->bookingid)->first();
+        $pickupPoint = $booking->boardingPoint;
+        $dropPoint = $booking->destPoint;
+        $driver = $booking->trip->driver;
+
+        /** if pickuppoint driver not started means trip not started yet
+         * so send the pickup and drop point location
+         */
+        if(!$pickupPoint->isDriverStarted() || $dropPoint->isDriverReached()) {
+            return response()->json([
+                'source' => [
+                    'lat' => $pickupPoint->latitude,
+                    'lat' => $pickupPoint->longitude,
+                    'address' => $pickupPoint->address
+                ],
+                'destination' => [
+                    'lat' => $dropPoint->latitude,
+                    'lat' => $dropPoint->longitude,
+                    'address' => $dropPoint->address
+                ]
+            ]);
+        } 
+        /** else if 
+         * pickup point reached means trip started
+         * so send the driver location and drop point location
+         */
+        else if($pickupPoint->isDriverReached()) {
+            return response()->json([
+                'source' => [
+                    'lat' => $driver->latitude,
+                    'lat' => $driver->longitude,
+                    'address' => ''
+                ],
+                'destination' => [
+                    'lat' => $dropPoint->latitude,
+                    'lat' => $dropPoint->longitude,
+                    'address' => $dropPoint->address
+                ]
+            ]);
+        }
+
+        /** else send driver and source point location */
+        else {
+            return response()->json([
+                'source' => [
+                    'lat' => $driver->latitude,
+                    'lat' => $driver->longitude,
+                    'address' => ''
+                ],
+                'destination' => [
+                    'lat' => $pickupPoint->latitude,
+                    'lat' => $pickupPoint->longitude,
+                    'address' => $pickupPoint->address
+                ]
+            ]);
+        }
+
+
+
+    }
+
+
+
 
 
 }
