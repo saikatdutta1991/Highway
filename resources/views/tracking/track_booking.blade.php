@@ -150,7 +150,6 @@
             </div>
             <div id="map-tracking" class="collapse show">
                 <div class="card-body" style="padding:0px">
-                    <input type="button" id="routebtn" value="route" />
                     <div id="map-canvas"></div>
                 </div>
             </div>
@@ -176,7 +175,7 @@
                 };
                 map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
                 directionsDisplay.setMap(map);
-                google.maps.event.addDomListener(document.getElementById('routebtn'), 'click', calcRoute);
+                //google.maps.event.addDomListener(document.getElementById('routebtn'), 'click', calcRoute);
                 calcRoute()
             }
 
