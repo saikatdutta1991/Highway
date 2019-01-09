@@ -21,11 +21,11 @@ class CreateRideRequestsTable extends Migration
             $table->string('ride_vehicle_type');
 
             $table->string('source_address', 256);
-            $table->decimal('source_latitude', 10, 7)->default(0.0);
-            $table->decimal('source_longitude', 10, 7)->default(0.0);
+            $table->decimal('source_latitude', 10, 8)->default(0.0);
+            $table->decimal('source_longitude', 10, 8)->default(0.0);
             $table->string('destination_address', 256);
-            $table->decimal('destination_latitude', 10, 7)->default(0.0);
-            $table->decimal('destination_longitude', 10, 7)->default(0.0);
+            $table->decimal('destination_latitude', 10, 8)->default(0.0);
+            $table->decimal('destination_longitude', 10, 8)->default(0.0);
 
             $table->decimal('ride_distance', 10, 1)->default(0.0);
             $table->integer('ride_time')->default(0);

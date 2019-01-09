@@ -18,8 +18,8 @@ class CreateAdminTripLocationPointsTable extends Migration
             $table->bigInteger('admin_trip_location_id')->unsigned();
             $table->string('label', 256)->comment('point short name');
             $table->string('address', 500);
-            $table->decimal('latitude', 10, 7)->default(0.0);
-            $table->decimal('longitude', 10, 7)->default(0.0);
+            $table->decimal('latitude', 10, 8)->default(0.0);
+            $table->decimal('longitude', 10, 8)->default(0.0);
 
             $table->timestamps();
             $table->softDeletes();

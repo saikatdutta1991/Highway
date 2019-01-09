@@ -21,8 +21,8 @@ class CreateTripPointsTable extends Migration
             $table->string('tag', 50);
             $table->string('status', 50);
             $table->dateTime('reached_time')->default('0000-00-00 00:00:00');
-            $table->decimal('latitude', 10, 7)->default(0.0);
-            $table->decimal('longitude', 10, 7)->default(0.0);
+            $table->decimal('latitude', 10, 8)->default(0.0);
+            $table->decimal('longitude', 10, 8)->default(0.0);
             $table->timestamps();
             $table->softDeletes();
         });
