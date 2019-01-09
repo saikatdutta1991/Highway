@@ -99,7 +99,7 @@ class referral
      */
     public function generateReferralCode()
     {
-        return strtoupper(uniqid(date('YmdHis')));
+        return $this->utillRepo->randomChars(10);
     }
 
 
