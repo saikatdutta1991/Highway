@@ -18,12 +18,9 @@
 
                             @if($booking->isBoarded()) 
                                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Boarded</div>
-
-
-                                @if($dropPoint->isDriverReached())
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Completed</div>
-                                @endif
-
+                            @endif
+                            @if($dropPoint->isDriverReached())
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Completed</div>
                             @endif
 
                         @endif
