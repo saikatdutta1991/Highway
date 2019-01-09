@@ -78,54 +78,59 @@ class HomeController extends Controller
         $dropPoint = $booking->destPoint;
         $driver = $booking->trip->driver;
 
-        /** if pickuppoint driver not started means trip not started yet
-         * so send the pickup and drop point location
-         */
-        if(!$pickupPoint->isDriverStarted() || $dropPoint->isDriverReached()) {
+        /**
+         * check driver has not started trip or user trip completed
+        */
+        if( (!$pickupPoint->isDriverStarted() && !$pickupPoint->isDriverReached()) || $dropPoint->isDriverReached() ) {
             return response()->json([
                 'source' => [
                     'lat' => $pickupPoint->latitude,
-                    'lat' => $pickupPoint->longitude,
-                    'address' => $pickupPoint->address
+                    'lng' => $pickupPoint->longitude,
+                    'address' => $pickupPoint->address,
+                    'title' => 'Boarding Point'
                 ],
                 'destination' => [
                     'lat' => $dropPoint->latitude,
-                    'lat' => $dropPoint->longitude,
-                    'address' => $dropPoint->address
-                ]
-            ]);
-        } 
-        /** else if 
-         * pickup point reached means trip started
-         * so send the driver location and drop point location
-         */
-        else if($pickupPoint->isDriverReached()) {
-            return response()->json([
-                'source' => [
-                    'lat' => $driver->latitude,
-                    'lat' => $driver->longitude,
-                    'address' => ''
-                ],
-                'destination' => [
-                    'lat' => $dropPoint->latitude,
-                    'lat' => $dropPoint->longitude,
-                    'address' => $dropPoint->address
+                    'lng' => $dropPoint->longitude,
+                    'address' => $dropPoint->address,
+                    'title' => 'Drop Point'
                 ]
             ]);
         }
 
-        /** else send driver and source point location */
-        else {
+        /** check driver coming to pickup */
+        if( $pickupPoint->isDriverStarted() && !$pickupPoint->isDriverReached() ) {
             return response()->json([
                 'source' => [
                     'lat' => $driver->latitude,
-                    'lat' => $driver->longitude,
-                    'address' => ''
+                    'lng' => $driver->longitude,
+                    'address' => '',
+                    'title' => 'Driver On Way Pickup'
                 ],
                 'destination' => [
                     'lat' => $pickupPoint->latitude,
-                    'lat' => $pickupPoint->longitude,
-                    'address' => $pickupPoint->address
+                    'lng' => $pickupPoint->longitude,
+                    'address' => $pickupPoint->address,
+                    'title' => 'Pickup Point'
+                ]
+            ]);
+        }
+
+
+        /** check driver has reached pickup point and will go or going to drop point */
+        if($pickupPoint->isDriverReached() && !$dropPoint->isDriverReached()) {
+            return response()->json([
+                'source' => [
+                    'lat' => $driver->latitude,
+                    'lng' => $driver->longitude,
+                    'address' => '',
+                    'title' => 'Driver On Way Drop'
+                ],
+                'destination' => [
+                    'lat' => $dropPoint->latitude,
+                    'lng' => $dropPoint->longitude,
+                    'address' => $dropPoint->address,
+                    'title' => 'Drop Point'
                 ]
             ]);
         }

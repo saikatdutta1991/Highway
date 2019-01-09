@@ -2,7 +2,7 @@
 @section('title', "Track Booking : {$booking->booking_id}")
 @section('top-header')
 <style>
-    h4 {
+    .header-title {
     color:white
     }
     .acard {
@@ -30,9 +30,8 @@
     .s-section {
     padding : 40px 0;
     }
-
     #map-canvas {
-    height: 400px;
+    height: 500px;
     width: 100%;
     margin: 0px;
     padding: 0px
@@ -43,14 +42,12 @@
 @section('content')
 <header class="bg-gradient" style="padding-bottom: 3rem">
     <div class="container">
-        <h4>Track Your Booking</h4>
+        <h4 class="header-title">Track Your Booking</h4>
     </div>
 </header>
 <div class="section s-section">
     <div class="container" id="main-container">
-
         <span id="progress-container"></span>
-
         <div class="row">
             <div class="col-md-6">
                 <div class="card acard">
@@ -110,33 +107,31 @@
                     </div>
                     <div id="driver-details" class="collapse show">
                         <div class="card-body row">
-
-								<div class="col-md-4 col-sm-4">
-									<img class="card-img-top" src="{{$driver->profilePhotoUrl()}}" alt="Card image">
-								</div>
-								<div class="col-md-8 col-sm-8">
-									<table class="table table-bordered table-sm">
-										<tbody>
-											<tr>
-												<td>Name</td>
-												<th scope="row">{{$driver->fname}}{{$driver->lname}}</th>
-											</tr>
-											<tr>
-												<td>Contact</td>
-												<td>{{$driver->fullMobileNumber()}}</td>
-											</tr>
-											<tr>
-												<td>Car</td>
-												<td>{{$driver->vehicle_type}}</td>
-											</tr>
-											<tr>
-												<td>Car Number</td>
-												<td>{{$driver->vehicle_number}}</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-
+                            <div class="col-md-4 col-sm-4">
+                                <img class="card-img-top" src="{{$driver->profilePhotoUrl()}}" alt="Card image">
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <table class="table table-bordered table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td>Name</td>
+                                            <th scope="row">{{$driver->fname}}{{$driver->lname}}</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Contact</td>
+                                            <td>{{$driver->fullMobileNumber()}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Car</td>
+                                            <td>{{$driver->vehicle_type}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Car Number</td>
+                                            <td>{{$driver->vehicle_number}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,6 +148,22 @@
             <div id="map-tracking" class="collapse show">
                 <div class="card-body" style="padding:0px">
                     <div id="map-canvas"></div>
+                    <div id="content-start">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5></h5>
+                                <p class="card-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content-end">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5></h5>
+                                <p class="card-text"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,8 +173,9 @@
 @endsection
 @section('bottom-script')
 <script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key_booking_track}}&libraries=places"></script>
+<link rel="stylesheet" href="{{asset('web/popupmarker.css')}}">
+<script src="{{asset('web/popupmarker.js')}}"></script>
 <script>
-
     /** fetch booking progress every 30 sec */
     function getProgress()
     {
@@ -172,79 +184,108 @@
         });
     }
     getProgress();
-    setInterval(getProgress, 30000);
-
-
-
-
-
-
-        function mapLocation() {
-            var directionsDisplay;
-            var directionsService = new google.maps.DirectionsService();
-            var map;
-
-            function initialize() {
-                directionsDisplay = new google.maps.DirectionsRenderer();
-                var chicago = new google.maps.LatLng(12.9398505, 77.6047609);
-                var mapOptions = {
-                    zoom: 14,
-                    center: chicago
-                };
-                map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-                directionsDisplay.setMap(map);
-                //google.maps.event.addDomListener(document.getElementById('routebtn'), 'click', calcRoute);
-                calcRoute()
-            }
-
-            function calcRoute() {
-
-
+    
+    
+    /** map tracking code */
+    var mapPointsUrl = "{{route('track-booking-map', ['bookingid' => $booking->booking_id])}}"
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    var directionsService = new google.maps.DirectionsService();
+    var map;
+    var initLatitude = {{$pickupPoint->latitude}}
+    var initLongitude = {{$pickupPoint->longitude}}
+    var initLocation = new google.maps.LatLng(initLatitude, initLongitude);
+    var totalDistance = '';
+    var totalDuration = '';
+    
+    function initialize() 
+    {
+        map = new google.maps.Map(document.getElementById('map-canvas'), {
+            zoom: 14,
+            center: initLocation
+        });
+        directionsDisplay.setMap(map);
+        getMapPoints();
+    }
+    
+    google.maps.event.addDomListener(window, 'load', initialize);
+    
+            
+    function calcRoute(slat, slng, dlat, dlng) 
+    {
+        totalDistance = '';
+        totalDuration = '';
+    
+        var start = new google.maps.LatLng(slat, slng);
+        var end = new google.maps.LatLng(dlat, dlng);
+    
+        var popup1 = new Popup(start, document.getElementById('content-start'));
+        popup1.setMap(map);
+        var popup2 = new Popup(end, document.getElementById('content-end'));
+        popup2.setMap(map);
+                       
+        var request = {
+            origin: start,
+            destination: end,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+    
+        directionsService.route(request, function (response, status) {
+            
+            var legs = response.routes[0].legs;
+            totalDistance = legs[0].distance.text;
+            totalDuration = legs[0].duration.text;        
+    
+            if (status == google.maps.DirectionsStatus.OK) {
                 
-                    
-
-
-                        //var start = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                        var start = new google.maps.LatLng({{$pickupPoint->latitude}}, {{$pickupPoint->longitude}});
-                        //var end = new google.maps.LatLng(38.334818, -181.884886);
-                        var end = new google.maps.LatLng({{$dropPoint->latitude}}, {{$dropPoint->longitude}});
-                        var request = {
-                            origin: start,
-                            destination: end,
-                            travelMode: google.maps.TravelMode.DRIVING
-                        };
-                        directionsService.route(request, function (response, status) {
-                            console.log('response', response)
-
-                            var totalDistance = 0;
-                            var totalDuration = 0;
-                            var legs = response.routes[0].legs;
-                            for (var i = 0; i < legs.length; ++i) {
-                                totalDistance += legs[i].distance.value;
-                                totalDuration += legs[i].duration.value;
-                            }
-                            console.log('totalDistance', totalDistance)
-                            console.log('totalDuration', totalDuration)
-
-                            if (status == google.maps.DirectionsStatus.OK) {
-                                directionsDisplay.setOptions({
-                                    polylineOptions: {
-                                        strokeColor: 'red',
-                                        strokeWeight: 4
-                                    }
-                                })
-                                directionsDisplay.setDirections(response);
-                                directionsDisplay.setMap(map);
-                            } else {
-                                alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
-                            }
-                        });
-
-            }
-
-            google.maps.event.addDomListener(window, 'load', initialize);
-        }
-        mapLocation();    
-
+                directionsDisplay.setOptions({
+                    suppressMarkers: true,
+                    polylineOptions: {
+                        strokeColor: 'black',
+                        strokeWeight: 3,
+                        clickable: true,
+                        geodesic: true
+                    }
+                })
+                directionsDisplay.setDirections(response);
+    
+            } 
+    
+        });
+    
+        
+    }
+    
+        
+    
+    /** fetch map locations */
+    var contentStart = $("#content-start");
+    var contentEnd = $("#content-end");
+    function getMapPoints()
+    {
+        $.get(mapPointsUrl, function(response){
+            console.log(response)
+            contentStart.find('.card-body h5').text(response.source.title)
+            var address = response.source.address == '' ? `Distance: ${totalDistance}<br>ETA:${totalDuration}` : response.source.address
+            contentStart.find('.card-body p').html(address)
+            
+            address = response.destination.address == '' ? `Distance: ${totalDistance}<br>ETA:${totalDuration}` : response.destination.address
+            contentEnd.find('.card-body h5').text(response.destination.title)
+            contentEnd.find('.card-body p').text(response.destination.address)
+            
+            calcRoute(response.source.lat, response.source.lng, response.destination.lat, response.destination.lng)
+    
+        });
+    }
+    
+    
+    
+    setInterval(function() {
+        getProgress()
+        getMapPoints()
+    }, 30000);
+    
+        
+         
+    
 </script>
 @endsection
