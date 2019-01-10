@@ -36,7 +36,12 @@
     margin: 0px;
     padding: 0px
     }
-    /* background: #f56091; */
+
+    .progress {
+        height:2.5rem;
+        border-radius:0px;
+    }
+
 </style>
 @endsection
 @section('content')
@@ -58,7 +63,7 @@
                             </button>
                         </h5>
                     </div>
-                    <div id="booking-details" class="collapse show" aria-labelledby="headingOne">
+                    <div id="booking-details" class="collapse" aria-labelledby="headingOne">
                         <div class="card-body table-responsive">
                             <table class="table table-bordered table-sm">
                                 <tbody>
@@ -105,7 +110,7 @@
                             </button>
                         </h5>
                     </div>
-                    <div id="driver-details" class="collapse show">
+                    <div id="driver-details" class="collapse">
                         <div class="card-body row">
                             <div class="col-md-4 col-sm-4">
                                 <img class="card-img-top" src="{{$driver->profilePhotoUrl()}}" alt="Card image">
