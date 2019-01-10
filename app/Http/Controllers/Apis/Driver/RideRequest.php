@@ -246,6 +246,7 @@ class RideRequest extends Controller
 
         /** add driver reached to pickup location time */
         if($request->status == Ride::DRIVER_REACHED) {
+            $rideRequest->driver_started_time = date('Y-m-d H:i:s'); //ride started status removed from app, so update started time in reached
             $rideRequest->driver_reached_time = date('Y-m-d H:i:s');
         }
 
