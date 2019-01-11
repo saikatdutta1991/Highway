@@ -9,6 +9,7 @@ use App\Models\Driver;
 use App\Repositories\Email;
 use App\Repositories\Gateway;
 use Hash;
+use App\Jobs\ProcessDriverRating;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
 use App\Models\RideCancellationCharge as CancellationCharge;
@@ -436,32 +437,13 @@ class RideRequest extends Controller
             return $this->api->json(false, 'INVALID_RATING', 'You must have give rating within '.implode(',', Ride::RATINGS));
         }
 
+        //saving ride request rating
+        $rideRequest->driver_rating = $request->ratin;
+        $rideRequest->save();
 
-        //updatig both driver and ride request table
-        try {
 
-            list($ratingValue, $driverRating) = $rideRequest->calculateDriverRating($request->rating);
-
-            \DB::beginTransaction();
-
-            //saving ride request rating
-            $rideRequest->driver_rating = $ratingValue;
-            $rideRequest->save();  
-
-            //saving driver rating
-            $driver = $rideRequest->driver;
-            $driver->rating = $driverRating;
-            $driver->save();
-
-            \DB::commit();
-
-        } catch(\Exception $e) {
-            \DB::rollback();
-            \Log::info('DRIVER_RATING');
-            \Log::info($e->getMessage());
-            return $this->api->unknownErrResponse();
-        }
-        
+        /** push calcualte driver to job */
+        ProcessDriverRating::dispatch($rideRequest->driver_id);
 
         return $this->api->json(true, 'RATED', 'Driver rated successfully.');
 

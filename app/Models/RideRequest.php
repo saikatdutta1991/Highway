@@ -61,6 +61,15 @@ class RideRequest extends Model
 
 
 
+    /**
+     * get table name statically
+     */
+    public static function table()
+    {
+        return 'ride_requests';
+    }
+
+
     public function getTableName()
     {
         return $this->table;
@@ -178,36 +187,22 @@ class RideRequest extends Model
 
 
 
-    /**
-     * rating for this request and 
-     * calculate driver rating and ride request rating
-     */
-    public function calculateDriverRating($ratingValue)
-    {   
-        
-        //check if already rating given or not
-        if( in_array($this->driver_rating, self::RATINGS)) {
-            return [$this->driver_rating, $this->driver->rating];
-        }
-
-
+    /** 
+     * calculate driver rating for ride requests
+    */
+    public static function getDriverRideRatingDetails($driverId)
+    {  
         $selects = [
-            'SUM('.$this->getTableName().'.driver_rating) AS driver_rating_sum',
-            'COUNT('.$this->getTableName().'.id) AS ride_request_count'
+            'SUM('.self::table().'.driver_rating) AS driver_rating_sum',
+            'COUNT('.self::table().'.id) AS ride_request_count'
         ];
 
         //find total number of requests and sum of total ratings
-        $rating =$this->where('driver_id', $this->driver->id)->whereIn('driver_rating', self::RATINGS)
-        ->selectRaw(implode(',', $selects))->first();
-
-        //increment rating count and sum with new
-        $rating->ride_request_count += 1;
-        $rating->driver_rating_sum = $rating->driver_rating_sum + intval($ratingValue);
+        $record = self::where('driver_id', $driverId)
+            ->whereIn('driver_rating', self::RATINGS)
+            ->selectRaw(implode(',', $selects))->first();
         
-        //calculating rating
-        $updatedRating = $rating->driver_rating_sum / $rating->ride_request_count;
-
-        return [$ratingValue, $updatedRating];
+        return [(integer)$record->driver_rating_sum, $record->ride_request_count];
 
     }
 
@@ -233,7 +228,7 @@ class RideRequest extends Model
         ];
 
         //find total number of requests and sum of total ratings
-        $rating =$this->where('user_id', $this->user->id)->whereIn('user_rating', self::RATINGS)
+        $rating = $this->where('user_id', $this->user->id)->whereIn('user_rating', self::RATINGS)
         ->selectRaw(implode(',', $selects))->first();
 
         //increment rating count and sum with new

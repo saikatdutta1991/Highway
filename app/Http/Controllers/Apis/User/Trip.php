@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use App\Repositories\Email;
 use App\Repositories\Gateway;
+use App\jobs\ProcessDriverRating;
 use Illuminate\Http\Request;
 use App\Models\RideRequestInvoice as Invoice;
 use App\Models\Setting;
@@ -448,16 +449,12 @@ class Trip extends Controller
         if(!$booking || !in_array($request->rating, TripBooking::RATINGS)) {
             return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
         }
-
-
-        list($ratingValue, $driverRating) = $booking->calculateDriverRating($request->rating);
         
-        $booking->driver_rating = $ratingValue;
+        $booking->driver_rating = $$request->rating;
         $booking->save();
 
-        $driver = $booking->trip->driver;
-        $driver->rating = $driverRating;
-        $driver->save();
+        /** push calcualte driver to job */
+        ProcessDriverRating::dispatch($booking->trip->driver_id);
 
         return $this->api->json(true, 'RATING_DONE', 'Rating done');
 

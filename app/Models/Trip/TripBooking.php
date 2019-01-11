@@ -19,6 +19,14 @@ class TripBooking extends Model
 
     protected $table = 'trip_bookings';
 
+    /**
+     * get table name statically
+     */
+    public static function table()
+    {
+        return 'trip_bookings';
+    }
+
     public function getTableName()
     {
         return $this->table;
@@ -155,35 +163,25 @@ class TripBooking extends Model
 
 
     
-    /**
-     * rating for this booking and 
-     * calculate driver rating and ride request rating
-     */
-    public function calculateDriverRating($ratingValue)
+    /** 
+     * calculate driver rating for trips bookings
+    */
+    public static function getDriverRideRatingDetails($driverId)
     {   
-        
-        //check if already rating given or not
-        if( in_array($this->driver_rating, self::RATINGS)) {
-            return [$this->driver_rating, $this->trip->driver->rating];
-        }
-        
         $selects = [
-            'SUM('.$this->getTableName().'.driver_rating) AS driver_rating_sum',
-            'COUNT('.$this->getTableName().'.id) AS trip_request_count'
+            'SUM('.self::table().'.driver_rating) AS driver_rating_sum',
+            'COUNT('.self::table().'.id) AS trip_request_count'
         ];
 
         //find total number of requests and sum of total ratings
-        $rating = $this->join('trips', 'trips.id', '=', $this->getTableName().'.trip_id')
-        ->where('trips.driver_id', $this->trip->driver->id)
-        ->whereIn($this->getTableName().'.driver_rating', self::RATINGS)
+        $record = self::join('trips', 'trips.id', '=', self::table().'.trip_id')
+        ->where('trips.driver_id', $driverId)
+        ->whereIn(self::table().'.driver_rating', self::RATINGS)
         ->selectRaw(implode(',', $selects))->first();
-        //increment rating count and sum with new
-        $rating->trip_request_count += 1;
-        $rating->driver_rating_sum = $rating->driver_rating_sum + intval($ratingValue);
         
-        //calculating rating
-        $updatedRating = $rating->driver_rating_sum / $rating->trip_request_count;
-        return [$ratingValue, $updatedRating];
+
+        return [(integer)$record->driver_rating_sum, $record->trip_request_count];
+
     }
 
 
