@@ -438,7 +438,7 @@ class RideRequest extends Controller
         }
 
         //saving ride request rating
-        $rideRequest->driver_rating = $request->ratin;
+        $rideRequest->driver_rating = $request->rating;
         $rideRequest->save();
 
 

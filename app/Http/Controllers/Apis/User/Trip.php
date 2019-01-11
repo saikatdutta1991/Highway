@@ -450,7 +450,7 @@ class Trip extends Controller
             return $this->api->json(false, 'INVALID_REQUEST', 'Invalid Request, Try again.');
         }
         
-        $booking->driver_rating = $$request->rating;
+        $booking->driver_rating = $request->rating;
         $booking->save();
 
         /** push calcualte driver to job */
