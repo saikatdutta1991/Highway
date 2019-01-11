@@ -34,7 +34,7 @@ class ProcessDriverRating implements ShouldQueue
         \Log::info('calculated rating : ' . $rating);
 
         /** update driver rating */
-        Driver::update(['rating' => $rating])->where('id', $this->driverId);
+        Driver::where('id', $this->driverId)->update(['rating' => $rating]);
 
     }
 }
