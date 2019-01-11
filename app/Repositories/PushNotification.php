@@ -10,6 +10,9 @@ namespace App\Repositories;
 * @package    FirebaseCloudMessaging
 * @author     SAIKAT DUTTA <saikatdutta1991@gmail.com>
 */
+
+use App\Jobs\ProcessCurlPost;
+
 class PushNotification
 {
 
@@ -222,33 +225,10 @@ class PushNotification
    * Post data to a url and return response
    *
    */
-	protected function postURL($url, $headers, $fields)
-	{
-		try {
-			$ch = curl_init();
-		    curl_setopt($ch, CURLOPT_URL, $url);
-		    curl_setopt($ch, CURLOPT_POST, true);
-		    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-		    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		    if($this->isIPv4Resolve) {
-		    	curl_setopt ($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		    }
-		    $result = curl_exec($ch);
-		    
-		    if(curl_errno($ch)){
-		    	throw New \Exception(curl_error($ch), curl_errno($ch));
-			}
-			curl_close($ch);
-		    return $result;
-		} catch(\Exception $e) {
-			$this->clearLastError();
-			$this->lastErrorCode = $e->getCode();
-			$this->lastErrorMessage = $e->getMessage();
-			return null;
-		}
+	public function postURL($url, $headers, $fields)
+	{		
+		ProcessCurlPost::dispatch($url, $headers, $fields);
+		return '{"message" : "Pushed to queue"}';
 	}
 	protected function buildNotification()
 	{

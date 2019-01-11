@@ -178,6 +178,12 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
+Route::get('test', function(){
+
+    app('App\Repositories\Otp')->sendMessage('+91', '9093036897', 'Test Sms');
+    
+});
+
 Route::get('sync-vehicle-types', function(){
 
     app('App\Models\VehicleType')->syncWithDatabase();

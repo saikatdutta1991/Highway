@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\OtpToken;
 use App\Models\Setting;
 use Aloha\Twilio\Twilio;
+use App\Jobs\ProcessSms;
 
 
 class Otp 
@@ -18,13 +19,13 @@ class Otp
 	}
 
 
-	protected function twilioSid()
+	public function twilioSid()
 	{
 		return $this->setting->get('twilio_sid');
 		//return config('twilio.twilio.connections.twilio.sid');
 	}
 
-	protected function twilioToken()
+	public function twilioToken()
 	{
 		return $this->setting->get('twilio_token');
 		//return config('twilio.twilio.connections.twilio.token');
@@ -65,10 +66,11 @@ class Otp
 	}
 
 
-    /**
-     * send normal message to mobile number
-     */
-	public function sendMessage($countryCode, $mobileNo, $message, &$error = null)
+
+	/**
+	 * process sms from queue
+	 */
+	public function processSms($countryCode, $mobileNo, $message)
 	{
 		try{
 
@@ -122,15 +124,26 @@ class Otp
 
 			}
 
-
 			
       	} catch(\Exception $e){
 			 $error = $e->getMessage();
 			 \Log::info("SEND MESSAGE");
 			 \Log::info($e->getMessage());
-             return false;
         }
+	}
 
+
+
+
+
+
+    /**
+     * send normal message to mobile number
+     */
+	public function sendMessage($countryCode, $mobileNo, $message, &$error = null)
+	{
+		/** push sms to job queue */
+		ProcessSms::dispatch($countryCode, $mobileNo, $message);
         return true;
 	}
 
