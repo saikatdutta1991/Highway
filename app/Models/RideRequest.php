@@ -209,36 +209,22 @@ class RideRequest extends Model
 
 
 
-    /**
-     * rating for this request and 
-     * calculate user rating and ride request rating
-     */
-    public function calculateUserRating($ratingValue)
-    {   
-        
-        //check if already rating given or not
-        if( in_array($this->user_rating, self::RATINGS)) {
-            return [$this->user_rating, $this->user->rating];
-        }
-
-
+    /** 
+     * calculate driver rating for ride requests
+    */
+    public static function getUserRideRatingDetails($userId)
+    {  
         $selects = [
-            'SUM('.$this->getTableName().'.user_rating) AS user_rating_sum',
-            'COUNT('.$this->getTableName().'.id) AS ride_request_count'
+            'SUM('.self::table().'.user_rating) AS user_rating_sum',
+            'COUNT('.self::table().'.id) AS ride_request_count'
         ];
 
         //find total number of requests and sum of total ratings
-        $rating = $this->where('user_id', $this->user->id)->whereIn('user_rating', self::RATINGS)
-        ->selectRaw(implode(',', $selects))->first();
-
-        //increment rating count and sum with new
-        $rating->ride_request_count += 1;
-        $rating->user_rating_sum = $rating->user_rating_sum + intval($ratingValue);
+        $record = self::where('user_id', $userId)
+            ->whereIn('user_rating', self::RATINGS)
+            ->selectRaw(implode(',', $selects))->first();
         
-        //calculating rating
-        $updatedRating = $rating->user_rating_sum / $rating->ride_request_count;
-
-        return [$ratingValue, $updatedRating];
+        return [(integer)$record->user_rating_sum, $record->ride_request_count];
 
     }
 

@@ -178,9 +178,12 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
-Route::get('test', function(){
+/* Route::get('test', function(){
 
-    app('App\Repositories\Otp')->sendMessage('+91', '9093036897', 'Test Sms');
+    
+    $user = \App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
+    dd( \App\Models\User::calculateRating($user->id) );
+    
     
 });
 
@@ -240,3 +243,4 @@ Route::get('send_push', function(){
 
 });
 
+ */

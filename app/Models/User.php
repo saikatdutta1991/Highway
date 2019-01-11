@@ -7,6 +7,8 @@ use App\Models\DeviceToken;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Repositories\PushNotification;
+use App\Models\RideRequest;
+use App\Models\Trip\TripBooking;
 
 class User extends Model
 {
@@ -221,6 +223,21 @@ SMS_TEXT;
         return app('App\Repositories\Email')->sendUserPasswordResetAdmin($this, $newPassword);
     }
 
+
+
+    /**
+     * calculate driver rating
+     */
+    public static function calculateRating($id)
+    {
+        list($ratingSumRides, $ridesCount) = RideRequest::getUserRideRatingDetails($id);
+        list($ratingSumTrips, $tripsCount) = TripBooking::getUserRideRatingDetails($id);
+
+        $rating = ($ratingSumRides + $ratingSumTrips) / ($ridesCount + $tripsCount);
+
+        return $rating;
+        
+    }
 
 
 }

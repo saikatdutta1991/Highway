@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use App\Repositories\Email;
+use App\Jobs\ProcessUserRating;
 use Illuminate\Http\Request;
 use App\Models\RideFare;
 use App\Models\RideRequest as Ride;
@@ -671,18 +672,14 @@ class RideRequest extends Controller
         //updatig both driver and ride request table
         try {
 
-            list($ratingValue, $userRating) = $rideRequest->calculateUserRating($request->rating);
-
             \DB::beginTransaction();
 
             //saving ride request rating
-            $rideRequest->user_rating = $ratingValue;
+            $rideRequest->user_rating = $request->rating;
             $rideRequest->save();  
 
-            //saving driver rating
-            $user = $rideRequest->user;
-            $user->rating = $userRating;
-            $user->save();
+            /** push user rating calculation to job */
+            ProcessUserRating::dispatch($rideRequest->user_id);
 
 
             //making availble driver

@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Models\Trip\AdminTripRoute;
 use App\Http\Controllers\Controller;
 use DB;
+use App\Jobs\ProcessUserRating;
 use Illuminate\Http\Request;
 use App\Repositories\SocketIOClient;
 use App\Models\Trip\Trip as TripModel;
@@ -580,16 +581,13 @@ class Trip extends Controller
         /** validate trip belongs to driver */
         if(!$booking || $booking->trip->driver_id != $request->auth_driver->id || !in_array($request->rating, TripBooking::RATINGS)) {
             return $this->api->json(false, "INVALID_TRIP", 'Invalid trip');
-        }
-
-        list($ratingValue, $userRating) = $booking->calculateUserRating($request->rating);
+        }        
        
-        $booking->user_rating = $ratingValue;
+        $booking->user_rating = $request->rating;
         $booking->save();
 
-        $user = $booking->user;
-        $user->rating = $userRating;
-        $user->save();
+        /** push user rating calculation to job */
+        ProcessUserRating::dispatch($booking->user_id);
 
         return $this->api->json(true, 'RATING_DONE', 'Rating done');
 
