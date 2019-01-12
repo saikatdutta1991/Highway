@@ -176,7 +176,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ComposerServiceProvider::class,
-        App\Providers\ReferralServiceProvider::class
+        App\Providers\ReferralServiceProvider::class,
+        HTMLMin\HTMLMin\HTMLMinServiceProvider::class
 
     ],
 
