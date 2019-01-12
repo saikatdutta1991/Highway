@@ -10,13 +10,19 @@
     border-radius:0px;
     /* box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); */
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    border : none;
     }
     .acard:hover {
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     }
     .acard .card-header {
     background: #f56091;
+    border-radius:0;
+    background-image: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);
     }
+    
+    
     .acard .card-header h5 .btn {
     color:white;
     font-size: 15px;
