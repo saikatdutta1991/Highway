@@ -75,7 +75,7 @@ class RideRequestInvoice extends Model
             [$slat, $slng], [$dlat, $dlng]
         ]);
 
-        app('UtillRepo')->downloadFile($staticMapImageUrl, $absPath.'/'.$name);
+        app('UtillRepo')->downloadFileAsync($staticMapImageUrl, $absPath.'/'.$name);
     
         return [$path, $name];
 

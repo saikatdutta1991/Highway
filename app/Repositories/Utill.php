@@ -87,6 +87,19 @@ class Utill
 
 
 
+    /**
+     * download file and save to given path
+     * but process asynchronously with job queue
+     */
+    public function downloadFileAsync($url, $filename)
+    {
+        \App\Jobs\DownloadFile::dispatch($url, $filename);
+    }
+
+
+
+
+
 
     /**
      * download file and save to given path
