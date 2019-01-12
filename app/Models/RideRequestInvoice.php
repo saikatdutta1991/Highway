@@ -26,7 +26,7 @@ class RideRequestInvoice extends Model
     public function generateInvoiceReference()
     {
         $date = date('Y_m_d');
-        return $this->invoice_reference = strtoupper(uniqid('#invoice_'.$date.'_').rand(1000,9999));
+        return $this->invoice_reference = strtoupper(uniqid($date.'_'));
     }
 
 
