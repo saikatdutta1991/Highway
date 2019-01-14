@@ -221,14 +221,33 @@
                 </tr>
                 <tr>
                     <td bgcolor="#ffffff" style="padding:0px 40px 5px 40px;text-align:center;font-weight: 700;">
-                        <h5 style="margin: 0; font-family: sans-serif; line-height: 125%; color: #a59d9d; font-weight: normal;">{{$invoice->invoice_reference}}</h5>
+                        <h5 style="margin: 0; font-family: sans-serif; line-height: 125%; color: #a59d9d; font-weight: normal;">Booking Id : {{$booking->booking_id}}</h5>
                     </td>
                 </tr>
                 <tr>
                     <td bgcolor="#ffffff" style="padding:0px 40px 20px 40px;text-align:center;font-weight: 700;">
-                        <h3 style="margin: 0; font-family: sans-serif; line-height: 125%; color: black; font-weight: normal;border-bottom: 1px solid #b9a7a7;padding-bottom: 10px;">Thanks for travelling with us, {{$user->fname.' '.$user->lname}}</h3>
+                        <h3 style="margin: 0; font-family: sans-serif; line-height: 125%; color: black; font-weight: normal;border-bottom: 1px solid #b9a7a7;padding-bottom: 10px;">Thanks for booking with us, {{$user->fname}}</h3>
                     </td>
                 </tr>
+            </table>
+
+
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
+
+
+                <tr style="">
+                    <td colspan="2" bgcolor="#ffffff" style="vertical-align:top;padding: 0px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                        
+                        <p style="margin-top:0">
+                            <a target="_blank" href="{{$booking->trackBookingUrl()}}" style="background: #222222; border: 15px solid #222222; font-family: sans-serif; font-size: 13px; line-height: 110%; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;" class="button-a">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ffffff;">Track Your Booking By Clicking Here</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </a>
+                        </p>
+
+                        
+                    </td>
+                </tr>
+
             </table>
 
             
@@ -244,7 +263,7 @@
                         
                         <table style="width:100%;border-top: 1px solid #b1a8a8;">
                             <tr style="background-color: #d2d0d0;color:#353535">
-                                <td style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%;">Ride Fare</td>
+                                <td style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%;">Booking Fare</td>
                                 <td  style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%;">{{$currency_symbol}}{{$invoice->ride_fare}}</td>
                             </tr>
                             <tr style="">
