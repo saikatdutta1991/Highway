@@ -23,6 +23,34 @@ class Setting extends Controller
 
 
 
+
+    /**
+     * show seo settings page
+     */
+    public function showSeoSetting()
+    {
+        return view('admin.seo_management');
+    }
+
+
+
+    /**
+     * save seo settings
+     */
+    public function saveSeoSetting(Request $request)
+    {
+        $this->setting->set('seo_title', trim($request->seo_title));
+        $this->setting->set('seo_keywords', trim($request->seo_keywords));
+        $this->setting->set('seo_description', trim($request->seo_description));
+        return $this->api->json(true, 'SEO_SETTINGS_SAVED', 'SEO settings saved');
+    }
+
+
+
+
+
+
+
     /**
      * shows email settings view
      */
