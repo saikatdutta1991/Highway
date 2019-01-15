@@ -53,7 +53,7 @@
 @section('content')
 <header class="bg-gradient" style="padding-bottom: 3rem">
     <div class="container">
-        <h4 class="header-title">Track Your Booking</h4>
+        <h1 class="header-title">Track Your Booking</h1>
     </div>
 </header>
 <div class="section s-section">
