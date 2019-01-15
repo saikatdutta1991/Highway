@@ -5,8 +5,8 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="keywords" content="">
+        <meta name="description" content="{{$seo_description}}">
+        <meta name="keywords" content="{{$seo_keywords}}">
         <link rel="icon" href="{{$website_fav_icon_url}}" type="image/x-icon">
         <!-- Font -->
         <link rel="dns-prefetch" href="//fonts.googleapis.com">

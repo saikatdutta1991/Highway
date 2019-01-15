@@ -1,5 +1,5 @@
 @extends('home.layouts.master')
-@section('title', 'Welcome')
+@section('title', $seo_title)
 @section('content')
 <header class="bg-gradient" id="home">
     <div class="container mt-5">

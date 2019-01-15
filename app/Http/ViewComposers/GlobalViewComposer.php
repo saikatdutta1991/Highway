@@ -44,7 +44,10 @@ class GlobalViewComposer
         ->with('default_timezone', $this->setting->get('default_timezone'))
         ->with('google_maps_api_key', $this->setting->get('google_maps_api_key'))
         ->with('google_maps_api_key_booking_track', $this->setting->get('google_maps_api_key_booking_track'))
-        ->with('distance_unit', $this->setting->get('distance_unit'));
+        ->with('distance_unit', $this->setting->get('distance_unit'))
+        ->with('seo_title', $this->setting->get('seo_title'))
+        ->with('seo_description', $this->setting->get('seo_description'))
+        ->with('seo_keywords', $this->setting->get('seo_keywords'));
 
 
         $this->shareAdminDetails($view);
