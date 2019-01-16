@@ -47,7 +47,7 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::get('users', 'Admin\User@showUsers')->name('admin-users');
         Route::get('users/send-pushnotification', 'Admin\User@sendPushnotification');
-        Route::get('users/{user_id}', 'Admin\User@showUser');        
+        Route::get('users/{user_id}', 'Admin\User@showUser')->name('admin.show.user');        
         Route::post('users/{user_id}/update', 'Admin\User@updateUserProfile');
         Route::post('users/{user_id}/reset-password', 'Admin\User@resetUserPassword');
 
@@ -57,7 +57,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::get('drivers/send-pushnotification', 'Admin\Driver@sendPushnotification');
         
         Route::post('drivers/{driver_id}/approve/{is_approve}', 'Admin\Driver@approveDriver');
-        Route::get('drivers/{driver_id}', 'Admin\Driver@showDriver');
+        Route::get('drivers/{driver_id}', 'Admin\Driver@showDriver')->name('admin.show.driver');
         Route::post('drivers/{driver_id}/change-photo', 'Admin\Driver@changeDriverPhoto');
         Route::post('drivers/{driver_id}/update', 'Admin\Driver@updateDriverProfile');
         Route::post('drivers/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword');
@@ -147,9 +147,17 @@ Route::group(['prefix' => 'admin'], function(){
             Route::post('new', 'Admin\Trip@addNewRoute')->name('admin.add_new_route');//add new trip route
 
 
-            Route::get('canceled-bookings', 'Admin\Trip@showCanceledBookings')->name('admin.show_canceled_bookings');
-            Route::post('trips/bookings/{booking_id}/refund-full', 'Admin\Trip@fullRefundTripBooking');
-            Route::post('trips/bookings/{booking_id}/refund-partial', 'Admin\Trip@partialRefundTripBooking');
+            Route::group(['prefix' => 'trips'], function(){
+
+                Route::get('/', 'Admin\Trip@showTrips')->name('admin.show.trips');
+                Route::get('bookings', 'Admin\Trip@showBookings')->name('admin.show.bookings');
+
+                Route::get('canceled-bookings', 'Admin\Trip@showCanceledBookings')->name('admin.show_canceled_bookings');
+                Route::post('bookings/{booking_id}/refund-full', 'Admin\Trip@fullRefundTripBooking');
+                Route::post('bookings/{booking_id}/refund-partial', 'Admin\Trip@partialRefundTripBooking');
+            });
+
+
 
         });
         /** trip routes end */

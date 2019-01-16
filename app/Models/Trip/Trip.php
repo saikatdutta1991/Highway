@@ -68,7 +68,7 @@ class Trip extends Model
 
 
     /** trip formated timestamp */
-    public function tripFormatedTimestampString($timezone)
+    public function tripFormatedTimestampString($timezone = 'Asia/Kolkata')
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($timezone);
         return $date->formatLocalized('%d-%m-%Y').' '.$date->format('h:i A');
@@ -78,7 +78,7 @@ class Trip extends Model
     /**
      * formated journey date time
      */
-    public function formatedJourneyDate($timezone)
+    public function formatedJourneyDate($timezone = 'Asia/Kolkata')
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->trip_datetime)->timezone($timezone);
         return $date->format('D d-M-Y').' at '.$date->format('h:i A');

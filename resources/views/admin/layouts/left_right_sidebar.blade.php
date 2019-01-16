@@ -41,10 +41,16 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('intracity_rides_active')">
-                            <a href="{{url('admin/rides/intracity')}}">Inside City</a>
+                            <a href="{{url('admin/rides/intracity')}}">City Rides</a>
                         </li>
-                        <li class="@yield('intercity_rides_active')">
-                            <a href="{{url('')}}">Outside City</a>
+                        <li class="@yield('higiway_trips_active')">
+                            <a href="{{route('admin.show.trips')}}">Outside Rides</a>
+                        </li>
+                        <li class="@yield('higiway_trips_bookings_active')">
+                            <a href="{{route('admin.show.bookings')}}">Bookings</a>
+                        </li>
+                        <li class="@yield('canceled_bookings_active')">
+                            <a href="{{route('admin.show_canceled_bookings')}}">Canceled Bookings</a>
                         </li>
                     </ul>
                 </li>
@@ -151,9 +157,6 @@
                         </li>
                         <li class="@yield('trips_all_routes_active')">
                             <a href="{{url('admin/routes')}}">Routes</a>
-                        </li>
-                        <li class="@yield('canceled_bookings_active')">
-                            <a href="{{url('admin/routes/canceled-bookings')}}">Canceled Bookings</a>
                         </li>
                     </ul>
                 </li>

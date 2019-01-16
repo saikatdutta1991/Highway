@@ -45,6 +45,52 @@ class Trip extends Controller
 
 
 
+    /**
+     * show user trip bookings
+     */
+    public function showBookings(Request $request)
+    {
+        $bookings = TripBooking::orderBy('created_at', 'desc')
+            ->with(['trip', 'user', 'invoice']);
+
+        if($request->has('trip_id')) {
+            $bookings = $bookings->where("trip_id", $request->trip_id);
+        }
+
+        $bookings = $bookings->paginate(100);
+
+        return view('admin.trips.show_bookings', compact('bookings'));
+    
+            
+    }
+
+
+
+    /**
+     * show driver created trips 
+     */
+    public function showTrips(Request $request)
+    {
+
+        $trips = TripModel::orderBy('trip_datetime', 'desc')
+            ->with(['driver', 'adminRoute'])
+            ->withCount('bookings');
+        
+        if($request->has('trip_id')) {
+            $trips = $trips->where("id", $request->trip_id);
+        }
+
+
+        $trips = $trips->paginate(100);
+
+        return view('admin.trips.show_trips', compact('trips'));
+    }
+
+
+
+
+
+
     
 
     /**

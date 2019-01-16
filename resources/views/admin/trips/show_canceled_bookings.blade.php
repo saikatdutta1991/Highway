@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title', 'Canceled Bookings')
-@section('trips_active', 'active')
+@section('rides_active', 'active')
 @section('canceled_bookings_active', 'active')
 @section('top-header')
 <style>
