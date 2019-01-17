@@ -160,6 +160,20 @@
                         </li>
                     </ul>
                 </li>
+                <li class="@yield('promotions_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">cast</i>
+                    <span>Promotions</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('promotion_add_active')">
+                            <a href="{{route('admin.show.add.promotion')}}">Add New</a>
+                        </li>
+                        <li class="@yield('promotions_list_active')">
+                            <a href="{{route('admin.promotions')}}">Promotions</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
         <!-- #Menu -->

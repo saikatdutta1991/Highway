@@ -43,6 +43,11 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::group(['middleware' => 'adminAuth'], function(){
 
+        Route::group(['prefix' => 'promotions'], function(){
+            Route::get('/', 'Admin\Promotion@showPromotions')->name('admin.promotions');
+            Route::get('/add', 'Admin\Promotion@showAddPromotion')->name('admin.show.add.promotion');
+        });
+
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
 
         Route::get('users', 'Admin\User@showUsers')->name('admin-users');
