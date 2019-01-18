@@ -45,7 +45,10 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::group(['prefix' => 'promotions'], function(){
             Route::get('/', 'Admin\Promotion@showPromotions')->name('admin.promotions');
+            Route::post('/{promotion_id}/delete', 'Admin\Promotion@deletePromotion')->name('admin.promotion.delete');
+            Route::get('/{promotion_id}/preview', 'Admin\Promotion@previewPromotionEmail')->name('admin.promotion.email.preview');
             Route::get('/add', 'Admin\Promotion@showAddPromotion')->name('admin.show.add.promotion');
+            Route::get('/edit/{promotion_id}', 'Admin\Promotion@showEditPromotion')->name('admin.show.edit.promotion');
             Route::post('/save', 'Admin\Promotion@savePromotion')->name('admin.save.promotion');
             Route::get('/sample-email-template', 'Admin\Promotion@getSampleEmailTemplate')->name('admin.promotion.sample-template');
         });

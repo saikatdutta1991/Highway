@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Promotion as PromotionModel;
 use Validator;
 use DB;
+use View;
 
 
 class Promotion extends Controller
@@ -23,6 +24,38 @@ class Promotion extends Controller
 
 
 
+    /**
+     * preview email 
+     */
+    public function previewPromotionEmail(Request $request)
+    {
+        $promotion = PromotionModel::find($request->promotion_id);
+        
+        View::addNamespace('EMAIL', public_path("promotions/email_contents"));
+        $filename = basename($promotion->email_file, '.blade.php');        
+    
+        return View::make("EMAIL::{$filename}");
+    }
+
+
+
+
+    /**
+     * delete api
+     */
+    public function deletePromotion(Request $request)
+    {        
+        $promotion = PromotionModel::find($request->promotion_id);
+        $promotion->forceDelete();
+        if($promotion->has_email) {
+            unlink($promotion->email_file);
+        }
+
+        return $this->api->json(true, 'PROMOTION_DELETED', 'Promotion deleted successfully');
+    }
+
+
+
 
     /**
      * save promotion
@@ -31,6 +64,14 @@ class Promotion extends Controller
     {
         /** validate input parms based on new or update */
         $validator = Validator::make($request->all(), $request->has('id') ? [
+            'title' => 'required|max:128|unique:promotions,title,'.$request->id,
+            'broadcast_type' => 'required',
+            'has_pushnotification' => 'required|boolean',
+            'pushnotification_title' => 'max:256',
+            'pushnotification_message' => 'max:500',
+            'has_email' => 'required|boolean',
+            'email_content' => '',
+            'email_subject' => 'max:256',
         ] : [
             'title' => 'required|max:128|unique:promotions,title',
             'broadcast_type' => 'required',
@@ -39,7 +80,7 @@ class Promotion extends Controller
             'pushnotification_message' => 'max:500',
             'has_email' => 'required|boolean',
             'email_content' => '',
-            'email_subject' => 'max:256',
+            'email_subject' => 'max:256'
         ]);
 
         if($validator->fails()) {
@@ -81,7 +122,12 @@ class Promotion extends Controller
 
                 app('UtillRepo')->writeFile($file, $promotion->email_content);
 
+                /** save the file location in db */
+                $promotion->email_file = $file;
+                $promotion->save();
+
             }
+
        
             DB::commit();
             
@@ -92,7 +138,7 @@ class Promotion extends Controller
         }
 
 
-        return $this->api->json(true, 'PROMOTION_CREATED', 'Promotion created successfully');
+        return $this->api->json(true, 'PROMOTION_SAVED', 'Promotion saved successfully');
 
     }
 
@@ -116,6 +162,16 @@ class Promotion extends Controller
     public function showAddPromotion()
     {
         return view('admin.promotions.add_promotion');
+    }
+
+
+    /**
+     * show edit promotion
+     */
+    public function showEditPromotion(Request $request)
+    {
+        $promotion = PromotionModel::find($request->promotion_id);
+        return view('admin.promotions.add_promotion', compact('promotion'));
     }
 
 
