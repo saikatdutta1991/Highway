@@ -13,3 +13,5 @@ yarn-error.log
 /public/users/invoices/*
 /public/drivers/profile/photos/*
 composer.lock
+/public/promotions/email_contents/*
+!/public/promotions/email_contents/.empty

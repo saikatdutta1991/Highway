@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Promotion as PromotionModel;
 use Validator;
+use DB;
 
 
 class Promotion extends Controller
@@ -61,7 +62,35 @@ class Promotion extends Controller
         $promotion->email_content = $request->email_content ?: '';
         $promotion->email_subject = $request->email_subject ?: '';
         $promotion->status = (!$request->has('id')) ? PromotionModel::SCREATED : $promotion->status;
-        $promotion->save();
+        
+        
+        try {
+            
+            DB::beginTransaction();
+            
+            $promotion->save();
+
+            /** write email content to file if has_email */
+            if($promotion->has_email) {
+
+                /** generate file name */
+                $filename = "promotion_{$promotion->id}.blade.php";
+                
+                /** generate file with path */
+                $file = public_path("promotions/email_contents/{$filename}");
+
+                app('UtillRepo')->writeFile($file, $promotion->email_content);
+
+            }
+       
+            DB::commit();
+            
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            return $this->api->json(false, 'PROMOTION_FAILED', $e->getMessage());
+        }
+
 
         return $this->api->json(true, 'PROMOTION_CREATED', 'Promotion created successfully');
 

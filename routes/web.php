@@ -195,14 +195,17 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
-/* Route::get('test', function(){
+Route::get('test', function(){
 
-    
-    $user = \App\Models\User::where('email', 'saikatdutta1991@gmail.com')->first();
-    dd( \App\Models\User::calculateRating($user->id) );
+    $promotion = \App\Models\Promotion::first();
+    dd(View::make('admin.promotions.email_compile_helper'));
+    die();
+    return \Blade::compileString($promotion->email_content);
     
     
 });
+
+/* 
 
 Route::get('sync-vehicle-types', function(){
 

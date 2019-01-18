@@ -352,4 +352,24 @@ class Utill
 
 
 
+
+    /**
+     * delete and write new file
+     */
+    public static function writeFile($file, $content)
+    {
+        /** delete previous file if exists */                
+        if(file_exists($file)) {
+            unlink($file);
+        }
+
+        /** write file */
+        file_put_contents($file, $content);
+
+        return true;
+    }
+
+
+
+
 }

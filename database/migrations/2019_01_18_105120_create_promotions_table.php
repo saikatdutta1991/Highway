@@ -23,6 +23,7 @@ class CreatePromotionsTable extends Migration
             $table->boolean('has_email')->default(true);
             $table->longText('email_subject')->default('');
             $table->longText('email_content')->default('');
+            $table->string('email_file', 256)->default('');
             $table->string('status', 50);
             $table->timestamps();
             $table->softDeletes();
