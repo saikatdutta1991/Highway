@@ -29,12 +29,8 @@ class Promotion extends Controller
      */
     public function previewPromotionEmail(Request $request)
     {
-        $promotion = PromotionModel::find($request->promotion_id);
-        
-        View::addNamespace('EMAIL', public_path("promotions/email_contents"));
-        $filename = basename($promotion->email_file, '.blade.php');        
-    
-        return View::make("EMAIL::{$filename}");
+        $promotion = PromotionModel::find($request->promotion_id);      
+        return $promotion->getEmailView();
     }
 
 

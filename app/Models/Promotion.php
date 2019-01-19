@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use View;
 
 class Promotion extends Model
 {
@@ -47,6 +48,17 @@ class Promotion extends Model
         }
     }
 
+
+    /**
+     * get promotion view object
+     */
+    public function getEmailView()
+    {
+        View::addNamespace('EMAIL', public_path("promotions/email_contents"));
+        $filename = basename($this->email_file, '.blade.php');        
+    
+        return View::make("EMAIL::{$filename}");
+    }
 
 
 }
