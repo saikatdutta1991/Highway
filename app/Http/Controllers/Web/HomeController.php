@@ -10,6 +10,28 @@ use App\Models\Trip\TripBooking;
 class HomeController extends Controller
 {
 
+
+    /**
+     * show privacy policy
+     */
+    public function showPrivacyPolicy()
+    {
+        $privacyPolicy = app('App\Models\Setting')->get('privacy_policy');
+        return view('home.privacy_policy', compact('privacyPolicy'));
+    }
+
+
+    /**
+     * show privacy policy
+     */
+    public function showTerms()
+    {
+        $terms = app('App\Models\Setting')->get('terms');
+        return view('home.terms', compact('terms'));
+    }
+
+
+
     /**
      * show home landing page
      */

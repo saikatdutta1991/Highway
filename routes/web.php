@@ -15,12 +15,9 @@ Route::get('/', 'Web\HomeController@showHomepage');
 Route::get('track-booking/{bookingid}', 'Web\HomeController@trackBooking')->name('track-booking');
 Route::get('track-booking/{bookingid}/progress', 'Web\HomeController@trackBookingProgress')->name('track-booking-progress');
 Route::get('track-booking/{bookingid}/map', 'Web\HomeController@trackBookingMap')->name('track-booking-map');
-
-
-/**
- * coupon offers page
- */
-Route::get('offers', 'Admin\Coupon@showOffers')->name('offers');
+Route::get('offers', 'Admin\Coupon@showOffers')->name('offers'); /**coupon offers page */
+Route::get('privacy-policy', 'Web\HomeController@showPrivacyPolicy')->name('privacy-policy');
+Route::get('terms', 'Web\HomeController@showTerms')->name('terms');
 
 
 
@@ -42,6 +39,17 @@ Route::group(['prefix' => 'admin'], function(){
 
 
     Route::group(['middleware' => 'adminAuth'], function(){
+
+
+        Route::group(['prefix' => 'contents'], function(){
+            Route::get('privacy-policy', 'Admin\ContentManagement@showPrivacyPolicy')->name('admin.show.content.privacy-policy');
+            Route::post('privacy-policy/save', 'Admin\ContentManagement@savePrivacyPolicy')->name('admin.save.content.privacy-policy');
+            Route::get('terms', 'Admin\ContentManagement@showTerms')->name('admin.show.content.terms');
+            Route::post('terms/save', 'Admin\ContentManagement@saveTerms')->name('admin.save.content.terms');
+
+        });
+
+
 
         Route::group(['prefix' => 'promotions'], function(){
             Route::get('/', 'Admin\Promotion@showPromotions')->name('admin.promotions');

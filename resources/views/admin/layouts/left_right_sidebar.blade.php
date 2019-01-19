@@ -174,6 +174,20 @@
                         </li>
                     </ul>
                 </li>
+                <li class="@yield('content_management_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">content_paste</i>
+                    <span>Contents</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('privacy_policy_active')">
+                            <a href="{{route('admin.show.content.privacy-policy')}}">Privacy Policy</a>
+                        </li>
+                        <li class="@yield('terms_active')">
+                            <a href="{{route('admin.show.content.terms')}}">Terms & Conditions</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
         <!-- #Menu -->
