@@ -98,6 +98,8 @@ class Promotion extends Controller
         $promotion->has_email = $request->has_email;
         $promotion->email_content = $request->email_content ?: '';
         $promotion->email_subject = $request->email_subject ?: '';
+        $promotion->has_sms = $request->has_sms;
+        $promotion->sms_text = $request->sms_text ?: '';
         $promotion->status = (!$request->has('id')) ? PromotionModel::SCREATED : $promotion->status;
         
         

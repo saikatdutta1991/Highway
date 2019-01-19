@@ -17,6 +17,8 @@ class CreatePromotionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('title', 128);
             $table->string('broadcast_type', 50);
+            $table->boolean('has_sms')->default(true);
+            $table->string('sms_text', 1600)->default('');
             $table->boolean('has_pushnotification')->default(true);
             $table->string('pushnotification_title', 256)->default('');
             $table->string('pushnotification_message', 500)->default('');

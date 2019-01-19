@@ -55,6 +55,26 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-sm-12">
+                                <div class="switch">
+                                    <label for="has_sms">Has Sms</label>
+                                    <label>
+                                    <input type="checkbox" @if(!isset($promotion) || $promotion->has_sms) checked @endif id="has_sms" name="has_sms">
+                                    <span class="lever switch-col-deep-orange"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" id="sms_text_div">
+                                <div class="form-group">
+                                    <b>Sms Text
+                                    </b>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="sms_text" value="@if(isset($promotion)){{$promotion->sms_text}}@endif">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-sm-12">
                                 <div class="switch">
                                     <label for="has_pushnotification">Has Push Notificaiton</label>
@@ -164,6 +184,10 @@
                 name : 'email_content',
                 value : $("#has_email").is(':checked')?CKEDITOR.instances.email_content.getData():''
             })
+            data.push({
+                name : 'has_sms',
+                value : $("#has_sms").is(':checked')?1:0
+            })
     
             console.log(data)
     
@@ -208,6 +232,19 @@
             } else {
                 //$("#email_content").hide()
                 $("#email_subject_div").hide()
+            }
+    
+        }).change();
+
+
+        $("#has_sms").on('change', function(){
+    
+            if($(this).is(':checked')) {
+                //$("#email_content").show()
+                $("#sms_text_div").show()
+            } else {
+                //$("#email_content").hide()
+                $("#sms_text_div").hide()
             }
     
         }).change();

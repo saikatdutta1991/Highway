@@ -29,6 +29,7 @@
                         <th>TITLE</th>
                         <th>EMAIL</th>
                         <th>PUSH NOTIFICATION</th>
+                        <th>SMS</th>
                         <th>BROADCAST TYPE</th>
                         <th>STATUS</th>
                         <th>ACTION</th>
@@ -44,6 +45,10 @@
                         </td>
                         <td>
                             <input type="checkbox" disabled class="filled-in chk-col-pink" @if($promotion->has_pushnotification) checked @endif/>
+                            <label for=""></label>
+                        </td>
+                        <td>
+                            <input type="checkbox" disabled class="filled-in chk-col-pink" @if($promotion->has_sms) checked @endif/>
                             <label for=""></label>
                         </td>
                         <td>{{$promotion->broadcastTypeText()}}</td>
