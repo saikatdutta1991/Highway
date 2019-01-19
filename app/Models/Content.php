@@ -9,6 +9,8 @@ class Content extends Model
 
     protected $table = 'contents';
     public $timestamps = false;
+    protected $primaryKey = 'name';
+    public $incrementing = false;
     
     /**
      * get table name statically
