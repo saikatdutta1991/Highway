@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Trip\TripBooking;
-
+use App\Models\Content;
 
 class HomeController extends Controller
 {
@@ -16,7 +16,8 @@ class HomeController extends Controller
      */
     public function showPrivacyPolicy()
     {
-        $privacyPolicy = app('App\Models\Setting')->get('privacy_policy');
+        $content = Content::where('name', 'privacy_policy')->first();
+        $privacyPolicy = $content ? $content->content : '';
         return view('home.privacy_policy', compact('privacyPolicy'));
     }
 
@@ -26,7 +27,8 @@ class HomeController extends Controller
      */
     public function showTerms()
     {
-        $terms = app('App\Models\Setting')->get('terms');
+        $content = Content::where('name', 'terms')->first();
+        $terms = $content ? $content->content : '';
         return view('home.terms', compact('terms'));
     }
 

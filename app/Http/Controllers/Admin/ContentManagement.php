@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Setting;
+use App\Models\Content;
 
 
 class ContentManagement extends Controller
@@ -26,7 +26,8 @@ class ContentManagement extends Controller
      */
     public function showPrivacyPolicy()
     {
-        $privacy_policy = $this->setting->get('privacy_policy');
+        $content = Content::where('name', 'privacy_policy')->first();
+        $privacy_policy = $content ? $content->content : '';
         return view('admin.contents.privacy_policy', compact('privacy_policy'));
     }
 
@@ -36,7 +37,10 @@ class ContentManagement extends Controller
      */
     public function savePrivacyPolicy(Request $request)
     {
-        $this->setting->set('privacy_policy', $request->privacy_policy);
+        $content = Content::where('name', 'privacy_policy')->first() ?: new Content;
+        $content->name = 'privacy_policy';
+        $content->content = $request->privacy_policy;
+        $content->save();
         return $this->api->json(true, 'PRIVACY_POLICY_SAVED', 'Privacy policy saved');
     }
 
@@ -46,7 +50,8 @@ class ContentManagement extends Controller
      */
     public function showTerms()
     {
-        $terms = $this->setting->get('terms');
+        $content = Content::where('name', 'terms')->first();
+        $terms = $content ? $content->content : '';
         return view('admin.contents.terms', compact('terms'));
     }
 
@@ -56,7 +61,10 @@ class ContentManagement extends Controller
      */
     public function saveTerms(Request $request)
     {
-        $this->setting->set('terms', $request->terms);
+        $content = Content::where('name', 'terms')->first() ?: new Content;
+        $content->name = 'terms';
+        $content->content = $request->terms;
+        $content->save();
         return $this->api->json(true, 'TERMS_SAVED', 'terms saved');
     }
 
