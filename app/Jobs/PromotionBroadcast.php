@@ -67,7 +67,9 @@ class PromotionBroadcast implements ShouldQueue
 
             $this->broadcast(); //broacast process
 
-        } catch(\Exception $e) {dd($e->getMessage());
+        } catch(\Exception $e) {
+            \Log::info('Promotional:');
+            \Log::info($e->getMessage());
             /** if any error happends change promotion status to created */
             $this->promotion->status = Promotion::SCREATED;
             $this->promotion->save();
