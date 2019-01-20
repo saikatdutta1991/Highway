@@ -114,7 +114,7 @@ class PromotionBroadcast implements ShouldQueue
                 $emailids = $users->pluck('email')->toArray();
 
                 //send email goes here
-                Mail::send($this->promotion->getEmailViewName(), [], function ($message) use($emailids) {
+                Mail::queue($this->promotion->getEmailViewName(), [], function ($message) use($emailids) {
                     $message->subject($this->promotion->email_subject)
                         ->from(
                             $this->setting->get('email_support_from_address'), 
