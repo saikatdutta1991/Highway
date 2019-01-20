@@ -38,6 +38,11 @@ class User extends Model
         return $this->table;
     }
 
+    public static function table()
+    {
+        return 'users';
+    }
+
 
     public function fullMobileNumber()
     {
@@ -136,6 +141,14 @@ class User extends Model
     }
 
 
+
+    /**
+     * relation with device tokens
+     */
+    public function deviceTokens()
+    {
+        return $this->hasMany('App\Models\DeviceToken', 'entity_id')->where('entity_type', 'USER');
+    }
 
 
 

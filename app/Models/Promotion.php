@@ -54,11 +54,40 @@ class Promotion extends Model
      */
     public function getEmailView()
     {
-        View::addNamespace('EMAIL', public_path("promotions/email_contents"));
-        $filename = basename($this->email_file, '.blade.php');        
-    
-        return View::make("EMAIL::{$filename}");
+        self::loadEmailViewPath();
+        return View::make($this->getEmailViewName());
     }
+
+
+    /**
+     * load promotion email view path
+     */
+    public static function loadEmailViewPath()
+    {
+        View::addNamespace('EMAIL', public_path("promotions/email_contents"));
+    }
+
+
+
+    /**
+     * get email filename
+     */
+    public function getEmailFileName()
+    {
+        return basename($this->email_file, '.blade.php');        
+    }
+
+
+
+    /**
+     * get email view name
+     */
+    public function getEmailViewName()
+    {
+        $filename = $this->getEmailFileName();
+        return "EMAIL::{$filename}";
+    }
+
 
 
 }

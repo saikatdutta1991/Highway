@@ -21,4 +21,9 @@ class DeviceToken extends Model
         return $this->table;
     }
 
+    public static function table()
+    {
+        return 'push_notification_device_tokens';
+    }
+
 }

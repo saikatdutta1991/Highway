@@ -6,9 +6,11 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Promotion as PromotionModel;
+use App\Jobs\PromotionBroadcast;
 use Validator;
 use DB;
 use View;
+
 
 
 class Promotion extends Controller
@@ -21,6 +23,22 @@ class Promotion extends Controller
     {
         $this->api = $api;
     }
+
+
+
+    /**
+     * broadcast promotion
+     */
+    public function broadcastPromotion(Request $request)
+    {
+        $promotion = PromotionModel::find($request->promotion_id);
+        PromotionBroadcast::dispatch($promotion);
+        return $this->api->json(true, 'PROMOTION_BROADCASTED', 'Promotion pushed to queue for broadcasting');
+    }
+
+
+
+
 
 
 

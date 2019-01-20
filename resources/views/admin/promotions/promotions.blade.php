@@ -17,7 +17,7 @@
                 <small>List of all promotions created and status</small>
             </h2>
         </div>
-        <div class="body table-responsive">
+        <div class="body table-responsive" style="min-height:300px">
             @if($promotions->count() == 0)
             <div class="alert bg-pink">
                 No promotions found
@@ -61,6 +61,7 @@
                                 <ul class="dropdown-menu pull-right">
                                     <li><a href="javascript:void(0);" class="waves-effect waves-block delete-promotion-btn" data-delete-api="{{route('admin.promotion.delete', ['promotion_id' => $promotion->id])}}">Delete</a></li>
                                     <li><a href="javascript:void(0);" class="waves-effect waves-block preview-email-btn" data-email-url="{{route('admin.promotion.email.preview', ['promotion_id' => $promotion->id])}}">Preview Email</a></li>
+                                    <li><a href="javascript:void(0);" class="waves-effect waves-block broadcast-btn" data-broadcast-url="{{route('admin.promotion.broadcast', ['promotion_id' => $promotion->id])}}">Broadcast</a></li>
                                 </ul>
                             </li>
                         </td>
@@ -78,6 +79,30 @@
 <script>
 var _token = '{{csrf_token()}}'
 $(document).ready(function(){
+
+
+    $(".broadcast-btn").on('click', function(){
+
+        var broadcasturl = $(this).data('broadcast-url');
+        
+        $.post(broadcasturl, {_token : _token}, function(response){
+
+            if(response.success){
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                return;
+            }
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Try again !!', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
+    })
+
 
     $(".preview-email-btn").on('click', function(){
         var emailurl = $(this).data('email-url')

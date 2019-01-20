@@ -59,6 +59,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('/edit/{promotion_id}', 'Admin\Promotion@showEditPromotion')->name('admin.show.edit.promotion');
             Route::post('/save', 'Admin\Promotion@savePromotion')->name('admin.save.promotion');
             Route::get('/sample-email-template', 'Admin\Promotion@getSampleEmailTemplate')->name('admin.promotion.sample-template');
+            Route::post('{promotion_id}/broadcast', 'Admin\Promotion@broadcastPromotion')->name('admin.promotion.broadcast');
         });
 
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
