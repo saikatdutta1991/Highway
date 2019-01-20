@@ -67,7 +67,7 @@ class PromotionBroadcast implements ShouldQueue
 
             $this->broadcast(); //broacast process
 
-        } catch(\Exception $e) {
+        } catch(\Exception $e) {dd($e->getMessage());
             /** if any error happends change promotion status to created */
             $this->promotion->status = Promotion::SCREATED;
             $this->promotion->save();
@@ -114,7 +114,7 @@ class PromotionBroadcast implements ShouldQueue
                 $emailids = $users->pluck('email')->toArray();
 
                 //send email goes here
-                Mail::queue($this->promotion->getEmailViewName(), [], function ($message) use($emailids) {
+                Mail::send($this->promotion->getEmailViewName(), [], function ($message) use($emailids) {
                     $message->subject($this->promotion->email_subject)
                         ->from(
                             $this->setting->get('email_support_from_address'), 
@@ -127,8 +127,11 @@ class PromotionBroadcast implements ShouldQueue
 
 
             /** check promotion has sms then send sms each users */
-            foreach($users as $user) {
-                ProcessSms::dispatch($user->country_code, $user->mobile_number, $this->promotion->sms_text);
+            if($this->promotion->has_sms) {
+
+                foreach($users as $user) {
+                    ProcessSms::dispatch($user->country_code, $user->mobile_number, $this->promotion->sms_text);
+                }
             }
 
 
