@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\DeviceToken;
 use App\Repositories\PushNotification;
 use App\Jobs\ProcessSms;
+use App\Mail\PromotionEmail;
 use Mail;
 
 class PromotionBroadcast implements ShouldQueue
@@ -50,11 +51,6 @@ class PromotionBroadcast implements ShouldQueue
             ->setCustomPayload([])
             ->setPriority(PushNotification::HIGH)
             ->setContentAvailable(true); 
-
-
-        /** laod email view path */
-        Promotion::loadEmailViewPath();
-        $this->setting = app('App\Models\Setting');
 
 
 
@@ -116,14 +112,9 @@ class PromotionBroadcast implements ShouldQueue
                 $emailids = $users->pluck('email')->toArray();
 
                 //send email goes here
-                Mail::send($this->promotion->getEmailViewName(), [], function ($message) use($emailids) {
-                    $message->subject($this->promotion->email_subject)
-                        ->from(
-                            $this->setting->get('email_support_from_address'), 
-                            $this->setting->get('email_from_name')
-                        )
-                        ->to($emailids);
-                });
+                $resCode = Mail::to($emailids)->queue( new PromotionEmail($this->promotion->getEmailViewName(), $this->promotion->email_subject) );
+                \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+
 
             }
 
