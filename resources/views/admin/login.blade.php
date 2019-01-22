@@ -29,6 +29,9 @@
             margin: 0;
             background: #000; 
             }
+            .login-page {
+                background:none;
+            }
             video { 
             position: fixed;
             top: 50%;
@@ -39,14 +42,14 @@
             height: auto;
             z-index: -100;
             transform: translateX(-50%) translateY(-50%);
-            background: url('{{url('admin_assets/Orchestra/Snapshots/Orchestra.jpg')}}') no-repeat;
+            background: url('{{url('admin_assets/Orchestra/Mp4/Orchestra.mp4')}}') no-repeat;
             background-size: cover;
             transition: 1s opacity;
             }
         </style>
     </head>
     <body class="login-page">
-        <video poster="{{url('admin_assets/Orchestra/Snapshots/Orchestra.jpg')}}" id="bgvid" playsinline autoplay muted loop>
+        <video poster="{{url('admin_assets/Orchestra/Mp4/Orchestra.mp4')}}" id="bgvid" playsinline autoplay muted loop>
             <!-- WCAG general accessibility recommendation is that media such as background video play through only once. Loop turned on for the purposes of illustration; if removed, the end of the video will fade in the same way created by pressing the "Pause" button  -->
             <!-- <source src="{{url('admin_assets/Orchestra/WEBM/Orchestra.webm')}}" type="video/webm"> -->
             <source src="{{url('admin_assets/Orchestra/Mp4/Orchestra.mp4')}}" type="video/mp4">
