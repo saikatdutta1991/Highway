@@ -321,6 +321,8 @@ class Setting extends Controller
         $this->setting->set('website_contact_number', trim($request->website_contact_number));
         $this->setting->set('website_contact_email', trim($request->website_contact_email));
         $this->setting->set('website_address', trim($request->website_address));
+        $this->setting->set('currency_code', explode('-', $request->currency)[0]);
+        $this->setting->set('currency_symbol', explode('-', $request->currency)[1]);
         return $this->api->json(true, 'GENERAL_WEBSITE_SETTINGS_SAVED', 'Website settings saved');
     }
 

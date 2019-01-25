@@ -70,8 +70,8 @@
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Website Currency" data-content="This currency will be used to make all transctions. It is not changeable because multicurrency is not supported now. Multiple currency makes problem always. Admin is not supposed to change currency after installation.">help_outline</i>
                                     </b>
                                     <div class="form-line">
-                                        <select class="form-control" disabled name="">
-                                        <option value="{{$setting->get('currency_code')}}-{{$setting->get('currency_symbol')}}" @if($setting->get('currency_code') == 'INR') selected @endif>{{$setting->get('currency_code')}}({{$setting->get('currency_symbol')}})</option>
+                                        <select class="form-control" name="currency">
+                                        <option value="INR-₹" @if($setting->get('currency_code') == 'INR') selected @endif>INR-₹</option>
                                         </select>
                                     </div>
                                 </div>
