@@ -96,7 +96,7 @@
                                     <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Driver/user timezone" data-content="You are not supposed to change user or driver timezone after installation. Driver and user both should have same timezone and same country.">help_outline</i>
                                     </b>
                                     <div class="form-line">
-                                        <select class="form-control" data-live-search="true" disabled>
+                                        <select class="form-control" data-live-search="true" name="default_user_driver_timezone">
                                         @foreach($timezones as $timezone)
                                         <option value="{{$timezone}}" @if($setting->get('default_user_driver_timezone') == $timezone) selected="true" @endif>{{$timezone}}</option>
                                         @endforeach
