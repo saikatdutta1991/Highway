@@ -207,7 +207,15 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
-Route::get('test', function(){
+Route::get('new-route', function(){
+
+    return 'New route';
+        
+});
+
+
+
+/* Route::get('test', function(){
 
     $promotion = \App\Models\Promotion::first();
     dd(View::make('admin.promotions.email_compile_helper'));
@@ -215,7 +223,7 @@ Route::get('test', function(){
     return \Blade::compileString($promotion->email_content);
     
     
-});
+}); */
 
 /* 
 
