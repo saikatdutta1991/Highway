@@ -41,6 +41,10 @@ class ProcessCurlPost implements ShouldQueue
         
 		try {
 
+
+            \Log::info('fields');
+            \Log::info($this->fields);
+
 			$ch = curl_init();
 		    curl_setopt($ch, CURLOPT_URL, $this->url);
 		    curl_setopt($ch, CURLOPT_POST, true);
