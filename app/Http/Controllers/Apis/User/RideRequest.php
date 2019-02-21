@@ -240,7 +240,7 @@ class RideRequest extends Controller
          * send socket push to driver
          */
         $this->socketIOClient->sendEvent([
-            'to_ids' => $rideRequest->user_id,
+            'to_ids' => $rideRequest->driver_id,
             'entity_type' => 'driver', //socket will make it uppercase
             'event_type' => 'ride_request_status_changed',
             'data' => $notificationData
