@@ -15,3 +15,5 @@ yarn-error.log
 composer.lock
 /public/promotions/email_contents/*
 !/public/promotions/email_contents/.empty
+/NodeServer/node_modules
+/NodeServer/package-lock.json

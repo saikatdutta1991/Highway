@@ -1,31 +1,17 @@
-
-/**
-* This file is part of CarRepairNetwork App
-* Author : Saikat Dutta
-* Company : Provenlogic
-*/
-
+/** importing modules and initializing configurations */
+const app = require('express')();
+const fs = require('fs');
+const request = require('request');
+const mysql = require('mysql');
+const socketio = require('socket.io');
+const config = require('./SocketServerConfig').getConfig();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-//fetching server configuration
-var config = require('./SocketServerConfig').getConfig();
-console.log('config', config);
 
 
 
-
-//importing modules
-var app = require('express')();
-var fs = require('fs');
-var request = require('request');
-var mysql = require('mysql');
-var socketio = require('socket.io');
-
-
-
-
-
-//configuration https or http server
+/** configurating server ssl options */
+var server;
 if (config.IS_HTTPS) {
 
 	console.log('Https enabled');
@@ -37,73 +23,34 @@ if (config.IS_HTTPS) {
 		requestCert: false
 	};
 
-	var server = require('https').createServer(options, app);
+	server = require('https').createServer(options, app);
 
 } else {
 
 	console.log('Https not enabled');
-	var server = require('http').Server(app);
+	server = require('http').Server(app);
 }
 
 
+/** starting server on port and listen */
+server.listen(config.SERVER_PORT, function () {
+	console.log('listening on localhost:' + config.SERVER_PORT);
+});
 
-/**
- * initilizing mysql database connection
- */
+
+
+
+/** initializing database connection pool */
 var conn = mysql.createPool(config.mysql);
-conn.on('connection', function (connection) {
-	console.log('MYSQL : pool connection established')
-});
-
-conn.on('enqueue', function () {
-	console.log('Waiting for available connection slot');
-});
-
-conn.on('release', function (connection) {
-	console.log('MYSQL : pol connection %d released', connection.threadId);
-});
+var helper = require('./Helper')(conn); //initializing helper methods passing connection instance
 
 
-
-var helper = require('./Helper')(conn);
-
-
-/* initializing socket io server */
+/** creating socket io instance */
 var io = socketio(server);
-
-
-
-
-
 io.on('connection', function (socket) {
 
 	console.log('New socket connected, Socket Id : ' + socket.id);
 	var socket_room = '';
-
-	if (config.DEBUG) {
-		try {
-			socket.auth_entity = {
-				id: socket.handshake.query.e_id,
-				type: socket.handshake.query.e_type.toUpperCase(),
-				access_token: socket.handshake.query.access_token
-			};
-
-			//update driver is_connected_to_socket column
-			if (socket.auth_entity.type == 'DRIVER') {
-				helper.updateDriverSocketConnectionStatus(socket.auth_entity.id, 1);
-			}
-
-
-			//join to room
-			socket_room = socket.auth_entity.type + '_' + socket.auth_entity.id;
-			socket.join(socket_room);
-			console.log('room : ', socket_room);
-
-
-		} catch (e) { console.log('debug connction auth entity error') }
-	}
-
-
 
 
 	/**
@@ -122,11 +69,7 @@ io.on('connection', function (socket) {
 		console.log('from server connection');
 	} else {
 
-		if (config.DEBUG) {
-			socket.auth = true;
-		} else {
-			socket.auth = false;
-		}
+		socket.auth = false;
 
 
 		//wait and check for authenticated after 2 second if not disconnect socket
@@ -356,7 +299,3 @@ io.on('connection', function (socket) {
 
 
 
-/* starting server on port and listen */
-server.listen(config.SERVER_PORT, function () {
-	console.log('listening on localhost:' + config.SERVER_PORT);
-});
