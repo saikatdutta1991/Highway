@@ -133,7 +133,7 @@ io.on('connection', function (socket) {
 
 
 			/** send all previous stored messages */
-			message = messageStorage.pullMessage(socket_room)
+			let message = messageStorage.pullMessage(socket_room)
 			while (message != undefined) {
 				io.sockets.in(socket_room).emit(message.event_type, message.data);
 				message = messageStorage.pullMessage(socket_room);
