@@ -279,7 +279,7 @@ io.on('connection', function (socket) {
 				/** if room empty then store message */
 				var clients = io.sockets.adapter.rooms[room];
 				let emptyRoom = !(clients && clients.length);
-				if (emptyRoom) {
+				if (emptyRoom && data.store_messsage) {
 					messageStorage.pushMessage(room, data)
 				}
 

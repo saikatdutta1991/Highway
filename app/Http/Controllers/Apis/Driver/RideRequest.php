@@ -354,7 +354,8 @@ class RideRequest extends Controller
             'to_ids' => $rideRequest->user_id,
             'entity_type' => 'user', //socket will make it uppercase
             'event_type' => 'ride_request_status_changed',
-            'data' => $notificationData
+            'data' => $notificationData,
+            'store_messsage' => true
         ]);
 
 
