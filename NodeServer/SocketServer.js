@@ -5,6 +5,7 @@ const request = require('request');
 const mysql = require('mysql');
 const socketio = require('socket.io');
 const config = require('./SocketServerConfig').getConfig();
+const messageStorage = require("./MessageStorage");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 
@@ -129,6 +130,17 @@ io.on('connection', function (socket) {
 
 			socket.auth = true;
 			socket.emit('authenticated', { message: 'You are authenticated' });
+
+
+			/** send all previous stored messages */
+			message = messageStorage.pullMessage(socket_room)
+			while (message != undefined) {
+				io.sockets.in(socket_room).emit(message.event_type, message.data);
+				message = messageStorage.pullMessage(socket_room);
+			}
+
+
+
 		});
 
 		//update driver is_connected_to_socket column
@@ -263,6 +275,15 @@ io.on('connection', function (socket) {
 
 				room = data.entity_type.toUpperCase() + '_' + id;
 				console.log('send event to room ', room)
+
+				/** if room empty then store message */
+				var clients = io.sockets.adapter.rooms[room];
+				let emptyRoom = !(clients && clients.length);
+				if (emptyRoom) {
+					messageStorage.pushMessage(room, data)
+				}
+
+
 				io.sockets.in(room).emit(data.event_type, data.data);
 
 			} catch (e) {
