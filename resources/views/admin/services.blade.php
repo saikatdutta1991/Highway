@@ -79,6 +79,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>SERVICE NAME</th>
+                                <th>Order Number</th>
                                 <th>CREATED</th>
                                 <th>NO. DRIVERS</th>
                                 <th>ACTION</th>
@@ -89,6 +90,7 @@
                             <tr id="service_row_{{$service['id']}}" data-service-name="{{$service['name']}}">
                                 <td>{{$service['id']}}</td>
                                 <td>{{$service['name']}}</td>
+                                <td class="order">{{isset($service['order']) ? $service['order'] : 0}}</td>
                                 <td>{{date('d M, Y', strtotime($service['created_at']))}}</td>
                                 <td>{{$service['used_by_driver']}}</td>
                                 <td style="">
@@ -98,6 +100,7 @@
                                         </button>
                                         <ul class="dropdown-menu pull-right">
                                             <li class="service-edit-btn" data-service-id="{{$service['id']}}"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-green">mode_edit</i>Edit</a></li>
+                                            <li class="service-set-order-btn" data-service-id="{{$service['id']}}"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-green">list</i>Set Order</a></li>
                                             <li class="@if($service['used_by_driver']) disabled @endif service-delete-btn" @if($service['used_by_driver']) data-toggle="tooltip" data-placement="left" title="Service can't be deleted because drivers are registed with this service already" @endif data-service-id="{{$service['id']}}"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-red">delete</i>Delete</a></li>
                                             <li class="service_fare_btn" data-service-id="{{$service['id']}}"><a href="javascript:void(0);" class=" waves-effect waves-block"><i class="material-icons col-blue">attach_money</i>Service Fare</a></li>
                                         </ul>
@@ -365,6 +368,67 @@
     var save_tax_percentage = "{{url('admin/services/tax/save')}}";
     var save_cancellation_charge = "{{url('admin/services/cancellation-charge/save')}}";
 
+
+
+    $(".service-set-order-btn").on('click', async function(){
+    
+        var btnELem = $(this);
+
+        swal({
+            title: "",
+            text: "Set Service Order Manually",
+            type: "input",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            animation: "slide-from-top",
+            inputPlaceholder: "Enter service order number"
+        }, function(inputValue){
+            
+            if (inputValue === false) return false;
+
+            if (inputValue === "" || Number.isInteger(inputValue)) {
+                swal.showInputError("You need to type integer");
+                return false
+            }
+
+
+            var service_id = btnELem.data('service-id')
+            var service_name = $('#service_row_'+service_id).data('service-name')
+
+            var data = {
+                service_id : service_id,
+                service_name : service_name,
+                order : inputValue,
+                _token : csrf_token,
+                _action : 'set_order'
+            };
+            $.post(service_add_url, data, function(response){
+
+                if(response.success) {
+                    $('#service_row_'+service_id).find('.order').text(inputValue)
+                    swal("Service order updated successfully", "", "success"); 
+                } 
+
+            }).fail(function(){
+                swal("Internal server error. Try later.", "", "error");
+            });
+
+
+            //swal.close(); 
+        
+        });
+
+
+
+    })
+
+
+
+
+
+
+
+
     $("#tax-percentage-button").on('click', function(){
         $("#ride_fare_tax_modal").modal('show')
     })
@@ -516,14 +580,8 @@
     
 
 
-    //make boostrap dropdown overflow out of responsive table
-    /* $('.table-responsive').on('show.bs.dropdown', function () {
-        $('.table-responsive').css( "overflow", "inherit" );
-    });
-
-    $('.table-responsive').on('hide.bs.dropdown', function () {
-        $('.table-responsive').css( "overflow", "auto" );
-    }) */
+    
+    
 
 
     $(".service-delete-btn").on('click', function(){

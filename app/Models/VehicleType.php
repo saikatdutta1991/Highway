@@ -55,8 +55,9 @@ class VehicleType extends Model
      */
     public function allTypes()
     {
-        $vTypes = config('vehicle_types');
-        return $vTypes ? $vTypes : [];
+        $vTypes = collect(config('vehicle_types'));
+        
+        return $vTypes ? $vTypes->sortBy('order')->values() : [];
 
     }
 
@@ -94,18 +95,13 @@ class VehicleType extends Model
     public function updateServiceType($newName, &$errorCode = '')
     {
         //check new service new name exists or not for other services
-        $code = strtoupper($this->cleanString($newName));
-        $service = $this->where(function($query) use($code, $newName) {
-            $query->where('code', $code)->orWhere('name', $newName);
-        })->where('id', '<>', $this->id)->exists();
+        $service = $this->where('name', $newName)->where('id', '<>', $this->id)->exists();
 
         if($service) {
            $errorCode = 'EXISTS';
            return false;
         }
 
-
-        $this->code = $code;
         $this->name = ucfirst($newName);
         $this->save();
 
@@ -119,6 +115,20 @@ class VehicleType extends Model
 
 
 
+    /**
+     * set service type order
+     */
+    public static function setOrder($serviceid, $order)
+    {
+        $service = self::find($serviceid);
+        $service->order = $order;
+        $service->save();
+ 
+        //fetch all vehicle types and save
+        self::saveToFile(self::all()->toArray());
+        return true;
+    }
+
 
 
 
@@ -127,7 +137,7 @@ class VehicleType extends Model
      */
     public function addType($type, &$errorCode = '')
     {
-        $code = strtoupper($this->cleanString($type));
+        $code = app('UtillRepo')->randomChars(8); //generate code for service type        
         if($this->where('code', $code)->orWhere('name', $type)->exists()) {
            $errorCode = 'EXISTS';
            return false;
@@ -151,7 +161,7 @@ class VehicleType extends Model
     /**
      * save alll vehicle types to file
      */
-    public function saveToFile($array)
+    public static function saveToFile($array)
     {
         $phpArrayCodingFormat = "<?php \n\n return ";
         $phpArrayCodingFormat .= var_export($array, true);

@@ -85,11 +85,19 @@ class Service extends Controller
     {
 
         //validation service name
-        if($request->service_name == '' || !in_array($request->_action, ["update", 'add', 'delete'])) {
+        if($request->service_name == '' || !in_array($request->_action, ["update", 'add', 'delete', 'set_order'])) {
             return $this->api->json(false, 'MISSING_PARAMTERS', 'Missing parameters');
         }
 
         switch ($request->_action) {
+
+
+            case 'set_order' : 
+
+                $this->vehicleType->setOrder($request->service_id, $request->order);            
+                return $this->api->json(true, 'UPDATED', 'Service order updated successfully');
+                break;
+
             case 'add':
                 
                 $error = '';
@@ -108,12 +116,8 @@ class Service extends Controller
 
             case 'update':
                 $error = '';
-                $serviceType = $this->vehicleType->find($request->service_id);
-                $oldServiceCode = $serviceType->code;
+                $serviceType = $this->vehicleType->find($request->service_id);                
                 $serviceType = $serviceType->updateServiceType($request->service_name, $error);
-                
-                //if service type name changed then update all drivers vehicle_types
-                $this->driver->where('vehicle_type', $oldServiceCode)->update(['vehicle_type' => $serviceType->code]);
                 
                 //check if service already exists
                 if($serviceType === false && $error == 'EXISTS') {
