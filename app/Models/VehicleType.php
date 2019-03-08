@@ -116,6 +116,22 @@ class VehicleType extends Model
 
 
     /**
+     * set is_highway_enabled 
+     */
+    public static function enableHighway($serviceid, $enable)
+    {
+        $service = self::find($serviceid);
+        $service->is_highway_enabled = $enable;
+        $service->save();
+ 
+        //fetch all vehicle types and save
+        self::saveToFile(self::all()->toArray());
+        return true;
+    }
+
+
+
+    /**
      * set service type order
      */
     public static function setOrder($serviceid, $order)
@@ -192,9 +208,11 @@ class VehicleType extends Model
     {
         foreach(config('vehicle_types') as $sKey => $sValue) {
             $vType = $this->where('code', $sValue['code'])->first() ?: new $this;
+            $vType->id = $sValue['id'];
             $vType->code = $sValue['code'];
             $vType->name = $sValue['name'];
             $vType->order = isset($sValue['order']) ? $sValue['order'] : 0;
+            $vType->is_highway_enabled = isset($sValue['is_highway_enabled']) ? $sValue['order'] : 1;
             $vType->save();
         }
     }

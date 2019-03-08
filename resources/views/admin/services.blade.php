@@ -82,6 +82,7 @@
                                 <th>Order Number</th>
                                 <th>CREATED</th>
                                 <th>NO. DRIVERS</th>
+                                <th>HIGHWAY</th>
                                 <th>ACTION</th>
                             </tr>
                         </thead>
@@ -93,6 +94,11 @@
                                 <td class="order">{{isset($service['order']) ? $service['order'] : 0}}</td>
                                 <td>{{date('d M, Y', strtotime($service['created_at']))}}</td>
                                 <td>{{$service['used_by_driver']}}</td>
+                                <td>
+                                    <div class="switch enable-highway-switch">
+                                        <label><input type="checkbox" data-service-id="{{$service['id']}}" @if(isset($service['is_highway_enabled']) && $service['is_highway_enabled']==1) checked @endif><span class="lever switch-col-deep-orange"></span></label>
+                                    </div>
+                                </td>
                                 <td style="">
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn bg-pink btn-xs waves-effect dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -367,6 +373,37 @@
     var csrf_token = "{{csrf_token()}}";
     var save_tax_percentage = "{{url('admin/services/tax/save')}}";
     var save_cancellation_charge = "{{url('admin/services/cancellation-charge/save')}}";
+
+
+    $(".enable-highway-switch input[type='checkbox']").on('change', function(){
+
+        var btnELem = $(this);       
+        var enable = $(this).is(":checked") ? 'true' : 'false';
+        var service_id = btnELem.data('service-id')
+        var service_name = $('#service_row_'+service_id).data('service-name')
+
+        var data = {
+            service_id : service_id,
+            service_name : service_name,
+            enable : enable,
+            _token : csrf_token,
+            _action : 'enable_highway'
+        };
+
+        $.post(service_add_url, data, function(response){
+            if(response.success) {
+                return;
+            } 
+            btnELem.prop('checked', !btnELem.is(":checked"))
+
+        }).fail(function(){
+            swal("Internal server error. Try later.", "", "error");
+            btnELem.prop('checked', !btnELem.is(":checked"))
+        });
+
+
+    })
+
 
 
 
