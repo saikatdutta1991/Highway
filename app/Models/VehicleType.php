@@ -184,6 +184,21 @@ class VehicleType extends Model
         $this->saveToFile($this->all()->toArray());
     }
 
+    
+    /**
+     * sync database with config file
+     */
+    public function syncWithConfigFile()
+    {
+        foreach(config('vehicle_types') as $sKey => $sValue) {
+            $vType = $this->where('code', $sValue['code'])->first() ?: new $this;
+            $vType->code = $sValue['code'];
+            $vType->name = $sValue['name'];
+            $vType->order = isset($sValue['order']) ? $sValue['order'] : 0;
+            $vType->save();
+        }
+    }
+
 
 
 

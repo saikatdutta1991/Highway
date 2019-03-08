@@ -284,3 +284,9 @@ Route::get('send_push', function(){
 });
 
  */
+
+Route::get('sync-vehicle-types-with-config', function(){
+
+    app('App\Models\VehicleType')->syncWithConfigFile();
+
+});
