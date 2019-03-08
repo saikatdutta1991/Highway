@@ -18,7 +18,7 @@ class VehicleType extends Model
     /**
      * returns vehicle type id by code
      */
-    public function getIdByCode($vCode)
+    public static function getIdByCode($vCode)
     {
         $vTypes = config('vehicle_types') ? : [];
         $vTCollection = collect(config('vehicle_types'));

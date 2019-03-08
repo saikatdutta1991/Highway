@@ -19,6 +19,7 @@ use App\Repositories\Email;
 use App\Models\Setting;
 use App\Models\RideRequestInvoice as RideInvoice;
 use App\Models\Transaction;
+use App\Models\VehicleType;
 use Validator;
 
 class Trip extends Controller
@@ -96,6 +97,14 @@ class Trip extends Controller
      */
     public function createTrip(Request $request)
     {
+
+        /** check driver vehicle/service type is allowed to create trip */
+        if(!VehicleType::where('code', $request->auth_driver->vehicle_type)->where('is_highway_enabled', true)->exists()) {
+            return $this->api->json(false, 'INVALID_SERVICE_TYPE', 'Sorry, Your service type is not allowed to create highway trip');
+        }
+        
+
+
 
         /** validating request other */
         $validator = Validator::make(
