@@ -202,7 +202,9 @@ class RideRequest extends Controller
 
                     $user = $request->auth_user;
                     $currencySymbol = $this->setting->get('currency_symbol');
-                    $user->sendPushNotification("Cancellation Charge Added", "You will be charged {$currencySymbol}{$cCharge->cancellation_charge} as cancellation ride on next ride.");
+                    $message = "You will be charged {$currencySymbol}{$cCharge->cancellation_charge} as cancellation ride on next ride.";
+                    $user->sendPushNotification("Cancellation Charge Added", $message);
+                    $user->sendSms($message);
                 }
 
             }
