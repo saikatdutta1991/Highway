@@ -43,22 +43,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-6 card-outer">
-                <div class="card col-md-12 p-0 mb-5">
-                    <h5 class="card-header">{{$coupon->name}}</h5>
-                    <div class="card-body">
-                        <!-- <h5 class="card-title">Special title treatment</h5> -->
-                        @if($coupon->discount_type=='flat'){{$currency_symbol}}@endif{{intval($coupon->discount_amount)}}@if($coupon->discount_type=='percentage')%@endif
-                        @if($coupon->discount_type=='flat')-Minimum : {{$coupon->minimum_purchase}}{{$currency_symbol}}@endif
-                        @if($coupon->discount_type=='percentage')-Upto : {{$coupon->maximum_discount_allowed}}{{$currency_symbol}}@endif
-                        <p class="card-text">{{$coupon->description}}</p>
-                        Use Code <button class="btn btn-primary">{{$coupon->code}}</button>
-                    </div>
-                    <div class="card-footer text-muted">
-                        Expires: {{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $coupon->expires_at)->setTimezone($default_timezone)->format('d-m-Y')}}
-                    </div>
-                </div>
-            </div>
             @endforeach
         </div>
     </div>
