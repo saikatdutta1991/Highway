@@ -78,7 +78,7 @@ class Trip extends Controller
         
         /** if date param passed then search for specific date or return all beyond current datetime */
         $trips = is_array($dateRange) 
-        ? $trips->whereBetween("trip_datetime", $dateRange) 
+        ? $trips->whereBetween("trip_datetime", $dateRange)->where('trip_datetime', ">", date('Y-m-d H:i:s'))
         : $trips = $trips->where("trip_datetime", ">=", date('Y-m-d H:i:s'));
 
         $trips = $trips->with('adminRoute', 'points', 'driver')->get();
