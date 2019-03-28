@@ -152,10 +152,17 @@ class Coupon extends Model
     {       
         $discountAmt = 0;
         if($this->discount_type == Coupon::FLAT) {
-
-            if($total > $this->minimum_purchase && $total >= $this->discount_amount) {
-                $total -= $this->discount_amount;
-                $discountAmt = $this->discount_amount;
+               //&& $total >= $this->discount_amount
+            if($total > $this->minimum_purchase) { //total must be more than minimum purchase
+                
+                //if total is more than discount amount
+                if($total >= $this->discount_amount) {
+                    $total -= $this->discount_amount;
+                    $discountAmt = $this->discount_amount;
+                } else { //if total amount is less than disocunt amount
+                    $discountAmt = $total;
+                    $total = 0;
+                }
             }
     
 
