@@ -64,6 +64,8 @@ class Trip extends Controller
      */
     public function searchTrips(Request $request)
     {
+        $this->api->log('Apis.User.Trip.searchTrips() : request_body', $request->all());
+
         $source = $request->source;
         $dest = $request->destination;
 

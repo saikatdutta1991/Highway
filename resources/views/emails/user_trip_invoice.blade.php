@@ -193,14 +193,17 @@
             <!-- Email Body : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <!-- Hero Image, Flush : BEGIN -->
-                <tr>
+                <!-- <tr>
                     <td rowspan="2" bgcolor="#ffffff" align="center" style="position:relative">
                         <img src="{{url('images/email_templates/background.jpg')}}" width="600" height="" alt="alt_text" border="0" align="center" style=" max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="g-img">
                     </td>
-                </tr>
+                </tr> -->
                 <tr>
-                    <td colspan="2">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;"><img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">{{$website_name}}</label>
+                    <td colspan="2" style="text-align: center;padding: 50px;background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);">
+                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">
+                            <!-- <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle"> -->
+                            {{$website_name}}
+                        </label>
                     </td>
                 </tr>
             </table>
@@ -311,14 +314,14 @@
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <tr>
                     
-                    <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                        <div style="border-top: 1px solid #b1a8a8;padding-top: 10px;">
-                        <img src="{{$driver->profilePhotoUrl()}}" style="width:70px;float: left;margin-right:10px">
-                        <div>
-                            <label>Driver Name : <span>{{$driver->fname.' '.$driver->lname}}</span></label>
-                            <br>
-                            <label>Vehicle Number : <span>{{$driver->vehicle_number}}</span></label>
-                        </div>
+                    <td bgcolor="#ffffff" style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%;">
+                        <div style="margin-top:50px;display: flex;">
+                            <img src="{{$driver->profilePhotoUrl()}}" style="width: 50px;margin-right: 10px;border-radius: 100px;height: 50px;border: 2px solid black;">
+                            <span style="vertical-align:middle">
+                                <label>Driver Name : <span>{{$driver->fname.' '.$driver->lname}}</span></label>
+                                <br>
+                                <label>Vehicle Number : <span>{{$driver->vehicle_number}}</span></label>
+                            </span>
                         </div>
                     </td>
                 </tr>
@@ -412,9 +415,10 @@
             
             <!-- Email Body : END -->
             <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: #888888; font-size: 12px; line-height: 140%;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%;">
                 <tr>
-                    <td style="padding: 40px 10px; width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; color: #888888;" class="x-gmail-data-detectors">
+                <!-- padding: 40px 10px; -->
+                    <td style=" width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);" class="x-gmail-data-detectors">
                         <!-- <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion> -->
                         <br><br>
                         {{$website_name}}<br>{{$website_address}}<br>{{$website_contact_number}}

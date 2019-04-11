@@ -207,13 +207,13 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
-// Route::get('invoice', function(){
+Route::get('invoice', function(){
 
-//     $booking = \App\Models\Trip\TripBooking::where('booking_id','Y00ETFU54')->first();
+    $booking = \App\Models\Trip\TripBooking::where('booking_id','Y00ETFU54')->first();
    
-//     return new \App\Mail\TripInvoice($booking);
+    return new \App\Mail\TripInvoice($booking);
         
-// });
+});
 
 
 
