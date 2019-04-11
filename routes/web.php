@@ -207,11 +207,13 @@ Route::group(['prefix' => 'admin'], function(){
  * this routes for debug purpose. Should be removed on production before going live
  */
 
-Route::get('new-route', function(){
+// Route::get('invoice', function(){
 
-    return 'New route';
+//     $booking = \App\Models\Trip\TripBooking::where('booking_id','Y00ETFU54')->first();
+   
+//     return new \App\Mail\TripInvoice($booking);
         
-});
+// });
 
 
 
@@ -285,8 +287,8 @@ Route::get('send_push', function(){
 
  */
 
-Route::get('sync-vehicle-types-with-config', function(){
+// Route::get('sync-vehicle-types-with-config', function(){
 
-    app('App\Models\VehicleType')->syncWithConfigFile();
+//     app('App\Models\VehicleType')->syncWithConfigFile();
 
-});
+// });
