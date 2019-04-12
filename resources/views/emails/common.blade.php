@@ -177,30 +177,13 @@
     </head>
     <body width="100%" bgcolor="#222222" style="margin: 0; mso-line-height-rule: exactly;">
         <center style="width: 100%; background: #222222; text-align: left;">
-            <!-- Visually Hidden Preheader Text : BEGIN -->
-           
-            <!-- Visually Hidden Preheader Text : END -->
-            <!-- Email Header : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
-                <!-- <tr>
-                    <td style="padding: 20px 0; text-align: center">
-                        <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; background: #222222; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">{{$website_name}}</label>
-                    </td>
-                    </tr> -->
-            </table>
-            <!-- Email Header : END -->
-            <!-- Email Body : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
-                <!-- Hero Image, Flush : BEGIN -->
                 <tr>
-                    <td rowspan="2" bgcolor="#ffffff" align="center" style="position:relative">
-                        <img src="{{url('images/email_templates/background.jpg')}}" width="600" height="" alt="alt_text" border="0" align="center" style=" max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="g-img">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;"><img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">{{$website_name}}</label>
+                    <td colspan="2" style="text-align: center;padding: 50px;background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);">
+                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">
+                            <!-- <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle"> -->
+                            {{$website_name}}
+                        </label>
                     </td>
                 </tr>
             </table>
@@ -234,9 +217,10 @@
             </table>
             <!-- Email Body : END -->
             <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: #888888; font-size: 12px; line-height: 140%;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%;">
                 <tr>
-                    <td style="padding: 40px 10px; width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; color: #888888;" class="x-gmail-data-detectors">
+                <!-- padding: 40px 10px; -->
+                    <td style=" width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);" class="x-gmail-data-detectors">
                         <!-- <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion> -->
                         <br><br>
                         {{$website_name}}<br>{{$website_address}}<br>{{$website_contact_number}}
