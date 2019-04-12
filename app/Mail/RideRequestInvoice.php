@@ -10,12 +10,14 @@ use App\Models\RideRequest;
 use App\Models\RideRequestInvoice as Invoice;
 use App\Models\Driver;
 use App\Models\User;
+use App\Models\VehicleType;
 
 class RideRequestInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $rideRequest;
+    public $vehicleType;
 
     /**
      * Create a new message instance.
@@ -26,6 +28,7 @@ class RideRequestInvoice extends Mailable
     public function __construct(RideRequest $rideRequest)
     {
         $this->rideRequest = $rideRequest;
+        $this->vehicleType = VehicleType::where('code', $rideRequest->ride_vehicle_type)->first();
     }
 
     /**
@@ -52,7 +55,8 @@ class RideRequestInvoice extends Mailable
             'user' => $this->rideRequest->user,
             'driver' => $this->rideRequest->driver,
             'invoice' => $this->rideRequest->invoice,
-            'rideRequest' => $this->rideRequest
+            'rideRequest' => $this->rideRequest,
+            'service_name' => $this->vehicleType->name
         ]);
         
     }

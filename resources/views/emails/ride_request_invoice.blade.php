@@ -307,7 +307,7 @@
                             <br>
                             <label>Vehicle Number : <span>{{$driver->vehicle_number}}</span></label>
                             <br>
-                            <label>Service Type : <span>{{$rideRequest->ride_vehicle_type}}</span></label>
+                            <label>Service Type : <span>{{$service_name}}</span></label>
                         </div>
                         </div>
                     </td>
