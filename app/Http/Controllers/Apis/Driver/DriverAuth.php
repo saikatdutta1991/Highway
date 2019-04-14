@@ -157,6 +157,9 @@ class DriverAuth extends Controller
             $request->aadhaar_card_photo
         );
 
+        //save driver timezone
+        $driver->saveTimezone($request->timezone, true);
+
 
         DB::beginTransaction();
 

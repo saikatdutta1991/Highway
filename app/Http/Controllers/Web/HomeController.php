@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Trip\TripBooking;
 use App\Models\Content;
+use App\Models\VehicleType;
 
 class HomeController extends Controller
 {
@@ -50,13 +51,14 @@ class HomeController extends Controller
      * track booking page
      */
     public function trackBooking(Request $request)
-    {
+    {   
         $booking = TripBooking::where('booking_id', $request->bookingid)->first();
         $user = $booking->user;
         $pickupPoint = $booking->boardingPoint;
         $dropPoint = $booking->destPoint;
         $driver = $booking->trip->driver;
         $trip = $booking->trip;
+        $servicename = VehicleType::where('code', $driver->vehicle_type)->first()->name;
 
         return view('tracking.track_booking', [
             'booking' => $booking,
@@ -64,7 +66,8 @@ class HomeController extends Controller
             'pickupPoint' => $pickupPoint,
             'dropPoint' => $dropPoint,
             'driver' => $driver,
-            'trip' => $trip
+            'trip' => $trip,
+            'servicename' => $servicename
         ]);
     }
 

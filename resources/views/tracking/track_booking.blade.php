@@ -134,7 +134,7 @@
                                         </tr>
                                         <tr>
                                             <td>Car</td>
-                                            <td>{{$driver->vehicle_type}}</td>
+                                            <td>{{$servicename}}</td>
                                         </tr>
                                         <tr>
                                             <td>Car Number</td>
@@ -211,7 +211,7 @@
     function initialize() 
     {
         map = new google.maps.Map(document.getElementById('map-canvas'), {
-            zoom: 14,
+            zoom:16,
             center: initLocation
         });
         directionsDisplay.setMap(map);
@@ -220,17 +220,64 @@
     
     google.maps.event.addDomListener(window, 'load', initialize);
     
-            
-    function calcRoute(slat, slng, dlat, dlng) 
+    var driverCarMarker;
+    function calcRoute(slat, slng, dlat, dlng, showDriverCarMarker) 
     {
         totalDistance = '';
         totalDuration = '';
     
         var start = new google.maps.LatLng(slat, slng);
         var end = new google.maps.LatLng(dlat, dlng);
+
+        
+
+        if(showDriverCarMarker) {
+            
+            if(driverCarMarker) {
+                driverCarMarker.setMap(null);
+            }
+
+            driverCarMarker = new google.maps.Marker({
+                animation: google.maps.Animation.BOUNCE,
+                position: new google.maps.LatLng(slat, slng),
+                map: map,
+                icon : {
+                
+                        url: "https://cdn2.iconfinder.com/data/icons/wsd-map-markers-1/512/wsd_markers_26-512.png",
+                        scaledSize: new google.maps.Size(50, 50), // scaled size
+                        origin: new google.maps.Point(0,0), // origin
+                        anchor: new google.maps.Point(25, 20) // anchor
+                    
+                }
+            });
+
+            contentStart.hide();
+            let infowindow = new google.maps.InfoWindow({
+            content: `<h6>${contentStart.find('h5').text()}</h6>
+                <p style="margin:0;">${contentStart.find('.card-text').text()}</p>`
+            });
+
+            google.maps.event.addListener(driverCarMarker, 'click', function() {
+                infowindow.open(map,driverCarMarker);
+            });
+
+            infowindow.open(map, driverCarMarker);
+            
+        } else {
+            contentStart.show();
+            var popup1 = new Popup(start, document.getElementById('content-start'));
+            popup1.setMap(map);
+
+        }
+
     
-        var popup1 = new Popup(start, document.getElementById('content-start'));
-        popup1.setMap(map);
+        
+
+        
+        
+        
+
+
         var popup2 = new Popup(end, document.getElementById('content-end'));
         popup2.setMap(map);
                        
@@ -241,6 +288,8 @@
         };
     
         directionsService.route(request, function (response, status) {
+
+            console.log('response', response);
             
             var legs = response.routes[0].legs;
             totalDistance = legs[0].distance.text;
@@ -249,6 +298,7 @@
             if (status == google.maps.DirectionsStatus.OK) {
                 
                 directionsDisplay.setOptions({
+                    preserveViewport: true,
                     suppressMarkers: true,
                     polylineOptions: {
                         strokeColor: 'black',
@@ -258,7 +308,13 @@
                     }
                 })
                 directionsDisplay.setDirections(response);
-    
+
+                var bounds = new google.maps.LatLngBounds();
+                bounds.union(directionsDisplay.getDirections().routes[0].bounds);
+                map.setCenter(bounds.getCenter()); 
+                map.fitBounds(bounds);
+                map.setZoom(map.getZoom() + 0.3)
+
             } 
     
         });
@@ -282,8 +338,9 @@
             address = response.destination.address == '' ? `Distance: ${totalDistance}<br>ETA:${totalDuration}` : response.destination.address
             contentEnd.find('.card-body h5').text(response.destination.title)
             contentEnd.find('.card-body p').text(response.destination.address)
-            
-            calcRoute(response.source.lat, response.source.lng, response.destination.lat, response.destination.lng)
+
+            let showDriverCarMarker = response.source.address == '';
+            calcRoute(response.source.lat, response.source.lng, response.destination.lat, response.destination.lng, showDriverCarMarker)
     
         });
     }
