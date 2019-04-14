@@ -740,4 +740,16 @@ SMS_TEXT;
     }
 
 
+
+    /**
+     * relation with bank details
+     */
+    public function bank() 
+    {
+        return $this->hasOne('App\Models\DriverBank', 'driver_id');
+    }
+
+
+
+
 }

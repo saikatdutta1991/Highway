@@ -10,6 +10,7 @@ use App\Repositories\PushNotification;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Driver;
+use App\Models\DriverBank;
 use App\Models\Setting;
 use App\Models\VehicleType;
 
@@ -67,6 +68,7 @@ class DriverProfile extends Controller
         $driver->is_old_password_required = $driver->password == '' ? false : true;
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
+        $driver->bank;
 
 
         return $this->api->json(true, 'PROFILE', 'Profile fetched', [
@@ -76,6 +78,66 @@ class DriverProfile extends Controller
         ]);
 
     }
+
+
+
+
+
+
+
+    /** 
+     * update driver bank details
+     * if bank details does not exists then create new recorod
+     */
+    public function updateBank(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'bank_name' => 'required|max:128',
+            'bank_account_holder_name' => 'required|max:256',
+            'bank_ifsc_code' => 'required|max:50',
+            'bank_account_number' => 'required|max:50',
+            'bank_extra_info' => 'min:5|max:256'
+        ]);
+
+        if($validator->fails()) {
+
+            $e = $validator->errors();
+            $msg = [];
+            ($e->has('bank_name')) ? $msg['bank_name'] = $e->get('bank_name')[0] : '';
+            ($e->has('bank_account_holder_name')) ? $msg['bank_account_holder_name'] = $e->get('bank_account_holder_name')[0] : '';
+            ($e->has('bank_ifsc_code')) ? $msg['bank_ifsc_code'] = $e->get('bank_ifsc_code')[0] : '';
+            ($e->has('bank_account_number')) ? $msg['bank_account_number'] = $e->get('bank_account_number')[0] : '';
+            ($e->has('bank_extra_info')) ? $msg['bank_extra_info'] = $e->get('bank_extra_info')[0] : '';
+
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
+
+        }   
+
+        /** get driver from request */
+        $driver = $request->auth_driver;
+
+
+        /** save driver bank */
+        $bank = DriverBank::where('driver_id', $driver->id)->first() ? : new DriverBank;
+        $bank->driver_id = $driver->id;
+        $bank->bank_name = ucwords($request->bank_name);
+        $bank->account_holder_name = ucwords($request->bank_account_holder_name);
+        $bank->ifsc_code = ucfirst($request->bank_ifsc_code);
+        $bank->account_number = strtoupper($request->bank_account_number);
+        $bank->extra_info = $request->bank_extra_info ?: '';
+        $bank->save(); 
+
+        return $this->api->json(true, 'BANK_UPDATED', 'Bank updated successfully.', [
+            'bank' => $bank
+        ]);
+
+
+
+    }
+
+
+
+
 
 
 
@@ -113,7 +175,7 @@ class DriverProfile extends Controller
             'vehicle_commercial_driving_license_plate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_police_verification_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'bank_passbook_or_canceled_check_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
-            'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
+            'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png'
         ]);
 
         if($validator->fails()) {
@@ -257,9 +319,9 @@ class DriverProfile extends Controller
         );
 
 
-
         $driver->save();
-        
+
+
         //dont call save or update on driver object
         $driver->is_old_password_required = $driver->password == '' ? false : true;
         $driver->profile_photo_url = $driver->profilePhotoUrl();

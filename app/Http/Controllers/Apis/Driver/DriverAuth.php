@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use DB;
 use App\Models\Driver;
+use App\Models\DriverBank;
 use App\Repositories\Email;
 use Hash;
 use App\Repositories\Otp;
@@ -73,8 +74,14 @@ class DriverAuth extends Controller
             'vehicle_police_verification_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'bank_passbook_or_canceled_check_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
-        ]);
+            'bank_name' => 'required|max:128',
+            'bank_account_holder_name' => 'required|max:256',
+            'bank_ifsc_code' => 'required|max:50',
+            'bank_account_number' => 'required|max:50',
+            'bank_extra_info' => 'min:5|max:256'
 
+        ]);
+       
 
 
         if($validator->fails()) {
@@ -103,6 +110,11 @@ class DriverAuth extends Controller
             ($e->has('vehicle_police_verification_certificate_photo')) ? $msg['vehicle_police_verification_certificate_photo'] = $e->get('vehicle_police_verification_certificate_photo')[0] : '';
             ($e->has('bank_passbook_or_canceled_check_photo')) ? $msg['bank_passbook_or_canceled_check_photo'] = $e->get('bank_passbook_or_canceled_check_photo')[0] : '';
             ($e->has('aadhaar_card_photo')) ? $msg['aadhaar_card_photo'] = $e->get('aadhaar_card_photo')[0] : '';
+            ($e->has('bank_name')) ? $msg['bank_name'] = $e->get('bank_name')[0] : '';
+            ($e->has('bank_account_holder_name')) ? $msg['bank_account_holder_name'] = $e->get('bank_account_holder_name')[0] : '';
+            ($e->has('bank_ifsc_code')) ? $msg['bank_ifsc_code'] = $e->get('bank_ifsc_code')[0] : '';
+            ($e->has('bank_account_number')) ? $msg['bank_account_number'] = $e->get('bank_account_number')[0] : '';
+            ($e->has('bank_extra_info')) ? $msg['bank_extra_info'] = $e->get('bank_extra_info')[0] : '';
 
             return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
 
@@ -158,7 +170,16 @@ class DriverAuth extends Controller
         );
 
         //save driver timezone
-        $driver->saveTimezone($request->timezone, true);
+        $driver->saveTimezone($request->timezone, false);
+
+
+        //add driver bank details
+        $bank = new DriverBank;
+        $bank->bank_name = ucwords($request->bank_name);
+        $bank->account_holder_name = ucwords($request->bank_account_holder_name);
+        $bank->ifsc_code = ucfirst($request->bank_ifsc_code);
+        $bank->account_number = strtoupper($request->bank_account_number);
+        $bank->extra_info = $request->bank_extra_info ?: '';
 
 
         DB::beginTransaction();
@@ -173,6 +194,9 @@ class DriverAuth extends Controller
 
             //create and save accesstoken
             $accessToken = $this->api->saveAccessToken($driver->id, 'driver')->access_token;
+
+            $bank->driver_id = $driver->id;
+            $bank->save(); //insert bank details
 
             DB::commit();
 
@@ -189,6 +213,7 @@ class DriverAuth extends Controller
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
+        $driver->bank;
 
 
         //send new driver registration mail
@@ -272,6 +297,7 @@ class DriverAuth extends Controller
         //adding profile photo url dont save after adding this attribute
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
+        $driver->bank;
 
         return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
             'accesss_token' => $accessToken,

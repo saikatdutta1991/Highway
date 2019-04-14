@@ -145,6 +145,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
         Route::post('push-token/update', 'Apis\Driver\DriverProfile@updatePushToken');
         Route::get('profile', 'Apis\Driver\DriverProfile@getDriverProfile');
         Route::post('profile/update', 'Apis\Driver\DriverProfile@updateDriverProfile');
+        Route::post('bank/update', 'Apis\Driver\DriverProfile@updateBank');
 
         Route::get('ride-request/check', 'Apis\Driver\RideRequest@checkRideRequest');
         Route::post('ride-request/accept', 'Apis\Driver\RideRequest@acceptRideRequest');
