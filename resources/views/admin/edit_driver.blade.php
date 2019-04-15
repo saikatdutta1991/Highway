@@ -244,6 +244,71 @@
             </div>
         </div>
     </div>
+
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <i class="material-icons" style="vertical-align:sub">account_balance</i>
+                        BANK DETIALS
+                    </h2>
+                    <small>These are driver bank details</small>
+                </div>
+                <div class="body">
+                    <div class="alert bg-pink" style="display:none" id="bank-update-alert"></div>
+                    <div class="row clearfix">
+                        <form id="bank-form">
+                            {!! csrf_field() !!}
+                            <div class="col-sm-6">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" value="{{$driver->bank->account_holder_name}}">
+                                        <label class="form-label">Account Holder Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" value="{{$driver->bank->bank_name}}">
+                                        <label class="form-label">Bank Name</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" value="{{$driver->bank->ifsc_code}}">
+                                        <label class="form-label">IFSC Code</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" value="{{$driver->bank->account_number}}">
+                                        <label class="form-label">Account Number</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <textarea rows="1" class="form-control no-resize" placeholder="Extra information">{{$driver->bank->extra_info}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
