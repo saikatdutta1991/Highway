@@ -102,6 +102,26 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-md-6">
+                                <b>Aprox. Trip Time Duration</b>
+                                <div style="display:flex;">
+                                    <i class="material-icons" style="padding: 6px 12px;padding-left: 0;">access_time</i>
+                                    <div class="input-group" style="width: 120px;">
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="1" max="99" name="aprox_time_hour" value="{{explode(':', $route->time)[0]}}" step="1" onchange="if(parseInt(this.value,10)<10)this.value='0'+this.value;" required>
+                                        </div>
+                                        <span class="input-group-addon">Hour</span>
+                                    </div>
+                                    <span style="padding: 6px 12px;font-weight: bold;padding-top:12px;">:</span>
+                                    <div class="input-group" style="width: 120px;">
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" max="99" name="aprox_time_min" value="{{explode(':', $route->time)[1]}}" step="1" onchange="if(parseInt(this.value,10)<10)this.value='0'+this.value;" required>
+                                        </div>
+                                        <span class="input-group-addon">Min.</span>
+                                    </div>
+                                </div>
+                            </div>
                             
                             
                         </div>

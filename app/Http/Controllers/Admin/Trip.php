@@ -241,6 +241,7 @@ class Trip extends Controller
         $route->access_fee = $request->access_fee;
         $route->total_fare = $request->total_fare;
         $route->status = AdminTripRoute::ENABLED;
+        $route->time = "{$request->aprox_time_hour}:{$request->aprox_time_min}:00";
         $route->save();
 
         return $this->api->json(true, 'CREATED', 'Route created', [
