@@ -19,7 +19,7 @@ class Setting extends Model
     /**
      * get setting value by key
      */
-    public function get($key)
+    public static function get($key)
     {
         return config('settings.'.$key);
     }

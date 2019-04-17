@@ -6,6 +6,7 @@ use App\Models\OtpToken;
 use App\Models\Setting;
 use Aloha\Twilio\Twilio;
 use App\Jobs\ProcessSms;
+use App\Repositories\Utill;
 
 
 class Otp 
@@ -149,17 +150,36 @@ class Otp
 
 
 
+
+	/**
+	 * generate otp message using device type and app type and otp code
+	 */
+	public function generateOtpMessage($devicetype, $apptype, $otp)
+	{
+		return Utill::transMessage('app_messages.otp_message', [
+			'otp' => $otp,
+			'appname' => $this->setting->get('website_name'),
+			'apphash' => Utill::appHashSms($devicetype, $apptype)
+		]);
+	}
+
+
+
+
+
     /**
      * send otp to mobile number
      */
-	public function sendOTP($countryCode, $mobileNo, $message, $entityId, &$error = null)
+	public function sendOTP($devicetype, $apptype, $countryCode, $mobileNo, $entityId, &$error = null)
 	{
-
+		/** delete all otp records for particular mobile number */
 		$this->otpToken->where('full_mobile_number', $countryCode.$mobileNo)->delete();
 
+		/** generate otp code */
         $otp = $this->createOtpToken($countryCode, $mobileNo);
-        
-        $message = str_replace("{{otp_code}}", $otp->token, $message);
+		
+		/** generate messsage */
+		$message = $this->generateOtpMessage($devicetype, $apptype, $otp->token);
 
         $ismsgsent = $this->sendMessage($countryCode, $mobileNo, $message, $error);
 

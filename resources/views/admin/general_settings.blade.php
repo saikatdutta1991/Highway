@@ -135,6 +135,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Android Driver App Hash</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="android_driver_apphash_sms" value="{{$setting->get('android_driver_apphash_sms')}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Android User App Hash</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="android_user_apphash_sms" value="{{$setting->get('android_user_apphash_sms')}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row clearfix">
                             <div class="col-sm-12 text-right">

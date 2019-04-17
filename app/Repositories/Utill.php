@@ -371,5 +371,23 @@ class Utill
 
 
 
+    /**
+     * returns app hash
+     */
+    public static function appHashSms($devicetype, $apptype)
+    {
+        return Setting::get("{$devicetype}_{$apptype}_apphash_sms");
+    }
+
+
+    /**
+     * returns localization message string
+     */
+    public static function transMessage($key, $data = [])
+    {
+        return __($key, $data);
+    }
+
+
 
 }

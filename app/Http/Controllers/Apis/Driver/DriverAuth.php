@@ -327,9 +327,10 @@ class DriverAuth extends Controller
 
         //sending otp
         $success = $this->otp->sendOTP(
+            'android', //this tells the api that message for android device
+            'driver', //this says the api that message for driver app
             $driver->country_code, 
-            $driver->mobile_number, 
-            'Your one time password is : {{otp_code}}',
+            $driver->mobile_number,
             $driver->id, 
             $error
         );

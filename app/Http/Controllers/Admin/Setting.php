@@ -314,6 +314,8 @@ class Setting extends Controller
     public function saveGeneralSettings(Request $request)
     {
         $this->setting->set('website_name', trim($request->website_name));
+        $this->setting->set('android_driver_apphash_sms', trim($request->android_driver_apphash_sms));
+        $this->setting->set('android_user_apphash_sms', trim($request->android_user_apphash_sms));
         $this->setting->set('website_title', trim($request->website_title));
         $this->setting->set('website_company_name', trim($request->website_company_name));
         $this->setting->set('website_copyright', trim($request->website_copyright));

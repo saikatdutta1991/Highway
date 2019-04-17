@@ -214,9 +214,10 @@ class UserRegister extends Controller
 
         //sending otp
         $success = $this->otp->sendOTP(
+            'android', //this tells the api that message for android device
+            'user', //this says the api that message for driver app
             $user->country_code, 
             $user->mobile_number, 
-            'Your one time password is : {{otp_code}}',
             $user->id, 
             $error
         );
