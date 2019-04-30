@@ -120,7 +120,7 @@ io.on('connection', function (socket) {
 			+ accessToken + "' LIMIT 1";
 
 		conn.query(sql, function (err, result) {
-			if (err && !result.length) return;
+			if (err || !result.length) return;
 
 
 			//join to room
