@@ -22,6 +22,14 @@
 {
     text-decoration:none;
 }
+
+.driver_image_thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    margin-right: 5px;
+}
+
 </style>
 @endsection
 @section('content')
@@ -226,7 +234,6 @@
                                 <!-- #ID -->
                             </th>
                             <th>NAME</th>
-                            <th>EMAIL</th>
                             <th>MOBILE</th>
                             <th>VEHICLE NO.</th>
                             <th>RATING</th>
@@ -238,12 +245,19 @@
                     <tbody>
                         @foreach($drivers as $driver)
                         <tr>
-                            <th>
+                            <th>                            
                                 <input type="checkbox" id="checkbox-driver-id-{{$driver->id}}" class="filled-in chk-col-pink driver-list-id-checkbox" data-driver-id="{{$driver->id}}"/>
                                 <label for="checkbox-driver-id-{{$driver->id}}"></label>
                             </th>
-                            <td><a data-toggle="tooltip" data-placement="left" title="Click to edit driver" href="javascript:void(0)" class="edit-driver-btn" data-driver-id="{{$driver->id}}">{{$driver->fname.' '.$driver->lname}}</a></td>
-                            <td>{{$driver->email}}</td>
+                            <td style="display:flex;">                                                    
+                                <span>
+                                    <img src="{{$driver->profilePhotoUrl()}}" class="driver_image_thumb">
+                                </span>
+                                <span style="display: flex;flex-direction: column;">
+                                    <span><a data-toggle="tooltip" data-placement="left" title="Click to edit driver" href="javascript:void(0)" class="edit-driver-btn" data-driver-id="{{$driver->id}}">{{$driver->fname.' '.$driver->lname}}</a></span>
+                                    <span>{{$driver->email}}</span>
+                                </span>
+                            </td>                            
                             <td>{{$driver->full_mobile_number}}</td>
                             <td>{{$driver->vehicle_number}}</td>
                             <td>{{$driver->rating}}</td>
