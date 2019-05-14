@@ -40,7 +40,8 @@
                             <tr>
                                 <th>From&nbsp;<i style="vertical-align:middle" class="material-icons">flight_takeoff</i></th>
                                 <th>To&nbsp;<i style="vertical-align:middle" class="material-icons">flight_land</i></th>
-                                <th>Fare</th>
+                                <th>AC Fare</th>
+                                <th>Non-AC Fare</th>
                                 <th>Aprox. Duration</th>
                                 <th>Status</th>
                                 <th>Created</th>
@@ -54,6 +55,9 @@
                             <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{url('admin/routes/locations/'.$route->to_location.'/points')}}'" style="text-decoration:underline;cursor:pointer">{{$route->to->name}}</td>
                             <td>{{$route->total_fare}}
                                 <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Fare Breakdown" data-content="Base Fare: {{$route->base_fare}} | Tax Fee: {{$route->tax_fee}} | Access Fee: {{$route->access_fee}}">help_outline</i>
+                            </td>
+                            <td>{{$route['non_ac_route']->total_fare}}
+                                <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Fare Breakdown" data-content="Base Fare: {{$route['non_ac_route']->base_fare}} | Tax Fee: {{$route['non_ac_route']->tax_fee}} | Access Fee: {{$route['non_ac_route']->access_fee}}">help_outline</i>
                             </td>
                             <td>{{explode(':', $route->time)[0]}}h-{{explode(':', $route->time)[0]}}min</td>
                             <td>{{$route->status}}</td>

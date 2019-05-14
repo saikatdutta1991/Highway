@@ -57,47 +57,99 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <b>Base Fare</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        {{$currency_symbol}}
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_fare" value="0.00">
+                            
+                            <div class="col-md-12">
+                                <h5>Calculate and Add fares for Air-Condition Type : </h5><br>
+                                <div class="col-md-3">
+                                    <b>Base Fare</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_fare" value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <b>Tax Fee</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee" value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <b>Access Fee</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee" value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <b>Total</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="total_fare" style="cursor: not-allowed;font-size: 25px;font-weight: 700;" value="0.00">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <b>Tax Fee</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        {{$currency_symbol}}
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee" value="0.00">
+
+                            <div class="col-md-12">
+                                <h5>Calculate and Add fares for Non-Air-Condition Type : </h5><br>
+                                <div class="col-md-3">
+                                    <b>Base Fare</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="base_fare_nonac" value="0.00">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <b>Access Fee</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        {{$currency_symbol}}
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee" value="0.00">
+                                <div class="col-md-3">
+                                    <b>Tax Fee</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee_nonac" value="0.00">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <b>Total</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        {{$currency_symbol}}
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="total_fare" style="cursor: not-allowed;font-size: 25px;font-weight: 700;" value="0.00">
+                                <div class="col-md-3">
+                                    <b>Access Fee</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="access_fee_nonac" value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <b>Total</b>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            {{$currency_symbol}}
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="number" class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="total_fare_nonac" style="cursor: not-allowed;font-size: 25px;font-weight: 700;" value="0.00">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -154,12 +206,27 @@ var fareOnblurCallback = function(){
     $("input[name='total_fare']").val(total)
 }
 
+
+var nonacfareOnblurCallback = function(){
+        
+    var base_fare = parseFloat($("input[name='base_fare_nonac']").val())
+    var tax_fee = parseFloat($("input[name='tax_fee_nonac']").val())
+    var access_fee = parseFloat($("input[name='access_fee_nonac']").val())
+    var total = (base_fare + access_fee + tax_fee).toFixed(2)
+    console.log(base_fare)
+    $("input[name='total_fare_nonac']").val(total)
+}
+
 $(document).ready(function(){
     
 
     $("input[name='base_fare']").on('blur', fareOnblurCallback)
     $("input[name='tax_fee']").on('blur', fareOnblurCallback)
     $("input[name='access_fee']").on('blur', fareOnblurCallback)
+
+    $("input[name='base_fare_nonac']").on('blur', nonacfareOnblurCallback)
+    $("input[name='tax_fee_nonac']").on('blur', nonacfareOnblurCallback)
+    $("input[name='access_fee_nonac']").on('blur', nonacfareOnblurCallback)
 
 
     $("#add-new-route-form").on('submit', function(event){

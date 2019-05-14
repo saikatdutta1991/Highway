@@ -154,6 +154,7 @@ class Trip extends Controller
         $trip->seats_available = $request->seats;
         $trip->admin_route_ref_id = $adminRoute->id;
         $trip->status = TripModel::CREATED;
+        $trip->is_ac_enabled = $adminRoute->is_ac_enabled;
         $trip->trip_datetime = $this->utill->timestampStringToUTC($request->date_time, $request->auth_driver->timezone)->toDateTimeString();
 
 

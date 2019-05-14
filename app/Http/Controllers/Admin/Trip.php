@@ -209,24 +209,28 @@ class Trip extends Controller
      * create new route or update route if route_id param exists
      */
     public function addNewRoute(Request $request)
-    {
-        //check any route exists with same source and destination
-        $route = $this->route->where('from_location', $request->from_location)->where('to_location', $request->to_location);
-        if($request->route_id != '') {
-            $route = $route->where('id', '<>', $request->route_id);
-        }
-        $route = $route->first();
+    {   
 
-        if($route) {
-            return $this->api->json(false, 'ROUTE_EXISTS', 'Same source and destination route already exists.');
+        /** if admin creating new route then, check and stop from creating duplicate  */
+        if($request->route_id == '' 
+            && $this->route->where('from_location', $request->from_location)->where('to_location', $request->to_location)->exists()) {
+
+            return $this->api->json(false, 'ROUTE_EXISTS', 'You are not supposed to create duplicate route.');
+
         }
 
-        //if route_id exists then fetch saved route and update
-        if($request->route_id != '') {
-            $route = $this->route->find($request->route_id);
-        } else  {
-            $route = new $this->route;
-        }
+
+        /** find ac and non-ac routes by from and to location id */
+        $acRoute = $this->route->where('from_location', $request->from_location)
+            ->where('to_location', $request->to_location)
+            ->where('is_ac_enabled', true)
+            ->first() ?: new $this->route;
+
+        $nonAcRoute = $this->route->where('from_location', $request->from_location)
+            ->where('to_location', $request->to_location)
+            ->where('is_ac_enabled', false)
+            ->first() ?: new $this->route;
+
 
         //if from and to location id same return error
         if($request->from_location == $request->to_location) {
@@ -234,18 +238,31 @@ class Trip extends Controller
         }
 
         
-        $route->from_location = $request->from_location;
-        $route->to_location = $request->to_location;
-        $route->base_fare = $request->base_fare;
-        $route->tax_fee = $request->tax_fee;
-        $route->access_fee = $request->access_fee;
-        $route->total_fare = $request->total_fare;
-        $route->status = AdminTripRoute::ENABLED;
-        $route->time = "{$request->aprox_time_hour}:{$request->aprox_time_min}:00";
-        $route->save();
+        $acRoute->is_ac_enabled = true;
+        $acRoute->from_location = $request->from_location;
+        $acRoute->to_location = $request->to_location;
+        $acRoute->base_fare = $request->base_fare;
+        $acRoute->tax_fee = $request->tax_fee;
+        $acRoute->access_fee = $request->access_fee;
+        $acRoute->total_fare = $request->total_fare;
+        $acRoute->status = AdminTripRoute::ENABLED;
+        $acRoute->time = "{$request->aprox_time_hour}:{$request->aprox_time_min}:00";
+        $acRoute->save();
+
+        $nonAcRoute->is_ac_enabled = false;
+        $nonAcRoute->from_location = $request->from_location;
+        $nonAcRoute->to_location = $request->to_location;
+        $nonAcRoute->base_fare = $request->base_fare_nonac;
+        $nonAcRoute->tax_fee = $request->tax_fee_nonac;
+        $nonAcRoute->access_fee = $request->access_fee_nonac;
+        $nonAcRoute->total_fare = $request->total_fare_nonac;
+        $nonAcRoute->status = AdminTripRoute::ENABLED;
+        $nonAcRoute->time = "{$request->aprox_time_hour}:{$request->aprox_time_min}:00";
+        $nonAcRoute->save();
 
         return $this->api->json(true, 'CREATED', 'Route created', [
-            'route' => $route
+            'acRoute' => $acRoute,
+            'nonAcRoute' => $nonAcRoute
         ]);
 
 
@@ -259,7 +276,16 @@ class Trip extends Controller
      */
     public function showRoutes()
     {
-        $routes = $this->route->orderBy('updated_at', 'desc')->paginate(100);
+        $routes = $this->route->orderBy('updated_at', 'desc')->where('is_ac_enabled', true)->paginate(1000);
+        
+        $routes->getCollection()->transform(function($acRoute){
+            $acRoute['non_ac_route'] = $this->route->where('from_location', $acRoute->from_location)
+                ->where('to_location', $acRoute->to_location)
+                ->where('is_ac_enabled', false)
+                ->first();
+            return $acRoute;
+        });
+
         return view('admin.trips.show_all_routes', compact('routes'));
     }
 
@@ -270,8 +296,16 @@ class Trip extends Controller
     public function showEditRoute(Request $request)
     {
         $route = $this->route->find($request->route_id);
+        $acroute = $this->route->where('from_location', $route->from_location)
+            ->where('to_location', $route->to_location)
+            ->where('is_ac_enabled', true)->first();
+        
+        $nonacroute = $this->route->where('from_location', $route->from_location)
+            ->where('to_location', $route->to_location)
+            ->where('is_ac_enabled', false)->first();
+
         $locations = $this->location->orderBy('name')->get();
-        return view('admin.trips.edit_route', compact('route', 'locations'));
+        return view('admin.trips.edit_route', compact('route', 'locations', 'nonacroute', 'acroute'));
     }
 
 
