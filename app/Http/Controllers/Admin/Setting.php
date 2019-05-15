@@ -326,6 +326,8 @@ class Setting extends Controller
         $this->setting->set('default_user_driver_timezone', trim($request->default_user_driver_timezone));
         $this->setting->set('currency_code', explode('-', $request->currency)[0]);
         $this->setting->set('currency_symbol', explode('-', $request->currency)[1]);
+        $this->setting->set('android_user_app_package', trim($request->android_user_app_package));
+        
         return $this->api->json(true, 'GENERAL_WEBSITE_SETTINGS_SAVED', 'Website settings saved');
     }
 

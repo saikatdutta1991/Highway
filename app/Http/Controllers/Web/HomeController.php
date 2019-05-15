@@ -8,6 +8,7 @@ use App\Models\Trip\TripBooking;
 use App\Models\Content;
 use App\Models\VehicleType;
 use Browser;
+use App\Models\Setting;
 
 class HomeController extends Controller
 {
@@ -24,6 +25,9 @@ class HomeController extends Controller
         if(Browser::isDesktop()) {
             return view('home.referral_share', ['referrer_code' => $request->referrer_code]);
         }
+
+        $androidUserAppPackage = Setting::get('android_user_app_package');
+        return redirect("https://play.google.com/store/apps/details?id={$androidUserAppPackage}&referrer={$request->referrer_code}");
 
     }
 
