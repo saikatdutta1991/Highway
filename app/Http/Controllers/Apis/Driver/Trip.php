@@ -144,6 +144,30 @@ class Trip extends Controller
         /* end check source and destination points */
 
 
+        /** dont allow driver creating trip if same day 5 hours trip created */
+        $tripDatetimeObject = $this->utill->timestampStringToUTC($request->date_time, $request->auth_driver->timezone);
+        $allowedDatetimeRange = [$tripDatetimeObject->subHour(5)->toDateTimeString(), $tripDatetimeObject->addHour(10)->toDateTimeString()];
+        print_r($allowedDatetimeRange);
+        
+        $previousTripCount = $this->trip
+            ->join(
+                $this->adminTripRoute->getTableName(), 
+                $this->adminTripRoute->getTableName().'.id', 
+                $this->trip->getTableName().'.admin_route_ref_id'
+            )
+            ->select([$this->trip->getTableName().'.*', $this->adminTripRoute->getTableName().'.from_location', $this->adminTripRoute->getTableName().'.to_location'])
+            ->where($this->adminTripRoute->getTableName().'.from_location', $adminRoute->from_location)
+            ->where($this->trip->getTableName().'.driver_id', $request->auth_driver->id)
+            ->whereNotIn($this->trip->getTableName().'.status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED_DRIVER])
+            ->whereBetween($this->trip->getTableName().'.trip_datetime', $allowedDatetimeRange)
+            ->count();
+
+
+        if($previousTripCount) {
+            return $this->api->json(false, 'TRIP_CREATE_NOT_ALLOWED', 'You are not allowed to create trip at this time since each trip must have minimum 5 hours gap.');
+        }
+
+
         /** store trip details */
         $trip = new $this->trip;
         $trip->driver_id = $request->auth_driver->id;
