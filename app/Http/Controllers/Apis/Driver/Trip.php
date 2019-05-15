@@ -80,10 +80,14 @@ class Trip extends Controller
             unset($route->to->points);
             unset($route->to);
         });
-
+        
+        $acEnabledRouteId = $routes->where('is_ac_enabled', true)->first()->id;
+        $nonAcEnabledRouteId = $routes->where('is_ac_enabled', false)->first()->id;
 
         return $this->api->json(true, 'ROUTES', 'Routes fetched', [
-            'routes' => $routes
+            'routes' => $routes,
+            'acEnabledRouteId' => $acEnabledRouteId,
+            'nonAcEnabledRouteId' => $nonAcEnabledRouteId,
         ]);
         
     }
