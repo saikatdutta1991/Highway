@@ -147,7 +147,6 @@ class Trip extends Controller
         /** dont allow driver creating trip if same day 5 hours trip created */
         $tripDatetimeObject = $this->utill->timestampStringToUTC($request->date_time, $request->auth_driver->timezone);
         $allowedDatetimeRange = [$tripDatetimeObject->subHour(5)->toDateTimeString(), $tripDatetimeObject->addHour(10)->toDateTimeString()];
-        print_r($allowedDatetimeRange);
         
         $previousTripCount = $this->trip
             ->join(
