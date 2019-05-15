@@ -12,6 +12,7 @@
         "aloha/twilio": "*",
         "fideloper/proxy": "~3.3",
         "google/apiclient": "*",
+        "hisorange/browser-detect": "^3.1",
         "htmlmin/htmlmin": "^5.7",
         "laravel/framework": "5.5.*",
         "laravel/socialite": "*",

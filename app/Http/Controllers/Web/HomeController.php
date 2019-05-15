@@ -7,9 +7,29 @@ use Illuminate\Http\Request;
 use App\Models\Trip\TripBooking;
 use App\Models\Content;
 use App\Models\VehicleType;
+use Browser;
 
 class HomeController extends Controller
 {
+
+
+
+    /**
+     * redirect and open app if user opens this link in mobile
+     * or if browser then show some page
+     */
+    public function redirectReferral(Request $request)
+    {
+
+        if(Browser::isDesktop()) {
+            return view('home.referral_share', ['referrer_code' => $request->referrer_code]);
+        }
+
+    }
+
+
+
+
 
 
     /**

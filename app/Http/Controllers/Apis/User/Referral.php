@@ -41,7 +41,8 @@ class Referral extends Controller
         return $this->api->json(true, 'REFERRAL_INFO', 'Referral info fetched', [
             'code' => $referralCode,
             'bonus_amount' => $referralBonusAmount,
-            'module_enabled' => $this->referral->isEnabled()
+            'module_enabled' => $this->referral->isEnabled(),
+            'share_url' => route('referrals.redirect', ['referrer_code' => $referralCode])
         ]);
 
         

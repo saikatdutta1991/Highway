@@ -18,6 +18,7 @@ Route::get('track-booking/{bookingid}/map', 'Web\HomeController@trackBookingMap'
 Route::get('offers', 'Admin\Coupon@showOffers')->name('offers'); /**coupon offers page */
 Route::get('privacy-policy', 'Web\HomeController@showPrivacyPolicy')->name('privacy-policy');
 Route::get('terms', 'Web\HomeController@showTerms')->name('terms');
+Route::get('referrals/{referrer_code}', 'Web\HomeController@redirectReferral')->name('referrals.redirect'); //?referrer_code
 
 
 
