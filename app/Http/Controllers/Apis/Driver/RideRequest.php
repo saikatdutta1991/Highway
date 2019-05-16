@@ -312,7 +312,7 @@ class RideRequest extends Controller
 
         /** check driver cancel limit */
         $todaysCancelCount = $this->rideRequest->where('driver_id', $request->auth_driver->id)
-            ->where('status', Ride::DRIVER_CANCELED)
+            ->where('ride_status', Ride::DRIVER_CANCELED)
             ->where('created_at', 'like', date('Y-m-d').'%')
             ->count();
 
