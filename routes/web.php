@@ -94,6 +94,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('services/{service_id}/ridefare', 'Admin\Service@createOrUpdateRideFare');
         Route::post('services/tax/save', 'Admin\Service@saveRideTaxPercentage');
         Route::post('services/cancellation-charge/save', 'Admin\Service@saveRideRequestCancellationCharge');
+        Route::post('services/driver-cancel-ride-request-limit/save', 'Admin\Service@saveDriverCancelRideRequestLimit')->name('admin.service.driver-cancel-ride-request-limit');
         
 
         Route::group(['prefix' => 'settings'], function(){

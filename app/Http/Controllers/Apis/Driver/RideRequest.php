@@ -310,6 +310,21 @@ class RideRequest extends Controller
         }
 
 
+        /** check driver cancel limit */
+        $todaysCancelCount = $this->rideRequest->where('driver_id', $request->auth_driver->id)
+            ->where('status', Ride::DRIVER_CANCELED)
+            ->where('created_at', 'like', date('Y-m-d').'%')
+            ->count();
+
+        $cancelLimitCount = $this->setting->get('driver_cancel_ride_request_limit') ?: 0;
+        if($todaysCancelCount >= $cancelLimitCount) {
+            return $this->api->json(false, 'CANCEL_NOW_ALLOWED', 'You have exceeded the cancellation limit for today'); 
+        }
+
+
+
+
+
         $authDriver = $request->auth_driver;
 
         try {

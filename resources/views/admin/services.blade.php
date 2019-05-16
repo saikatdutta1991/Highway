@@ -4,43 +4,21 @@
 @section('top-header')
 <!-- Bootstrap Select Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
-<style></style>
+<style>
+.header-buttons {
+    position: relative !important;
+    padding-left:15px;
+    margin-top:15px;
+    top:initial !important;
+}
+</style>
 @endsection
 @section('content')
 <div class="container-fluid">
     <div class="block-header">
         <h2>SERVICES</h2>
     </div>
-    <!-- <div class="row clearfix">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="card">
-                <div class="header">
-                    <h2>
-                        ADD OR EDIT SERVICE
-                        <small>Here you can add or update service</small>
-                    </h2>
-                </div>
-                <div class="body">
-        
-                    <div class="row clearfix">
-                                <div class="col-md-3">
-                                   
-                                    <div class="form-group">
-                                  
-                                        <b>Service Name</b>
-                             
-                                        <div class="form-line">
-                                            <input type="text" class="form-control" placeholder="Ex: Prime">
-                                        </div>
-                                    </div>
-        
-                                </div>
-                    </div>
-        
-                </div>
-            </div>
-        </div>
-        </div> -->
+    
     <!-- With Material Design Colors -->
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -50,7 +28,7 @@
                         LIST OF ALL SERVICES
                         <small>Here you can see all services, add, edit, update services</small>
                     </h2>
-                    <ul class="header-dropdown m-r--5">
+                    <ul class="header-dropdown m-r--5 header-buttons">
                         <li>
                             <button id="add-service-btn" type="button" data-toggle="tooltip" data-placement="left" title="Add new service" class="font-bold btn bg-red btn-block btn-xs waves-effect">
                                 <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>New Service
@@ -64,6 +42,11 @@
                         <li>
                             <button type="button" id="cancellation-charge-button" data-toggle="tooltip" data-placement="left" title="Set ride cancellation charge" class="font-bold btn bg-red btn-block btn-xs waves-effect">
                             <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Cancellation Charge
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" id="driver-cancel-ride-limit" data-toggle="tooltip" data-placement="left" title="Set driver cancel ride request limit" class="font-bold btn bg-red btn-block btn-xs waves-effect">
+                            <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Driver Ride Cancel Limit
                             </button>
                         </li>
                     </ul>
@@ -362,6 +345,37 @@
 </div>
 <!-- end cancellation charge modal -->
 
+<!-- driver cancel ride limit modal -->
+<div class="modal fade" id="driver_cancel_ride_limit_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">DRIVER CANCEL RIDE REQUEST LIMIT</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <form id="driver_cancel_ride_limit_form">
+                        <input type="hidden" value="{{csrf_token()}}" name="_token">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="number" required class="form-control" value="{{$driver_cancel_ride_request_limit}}" min="0" step="1" onblur="this.value=parseInt(this.value)" name="driver_cancel_ride_request_limit">
+                                    <label class="form-label">Maximum Cancel Limit</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="driver-cancel-ride-limit-save-btn">SAVE</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- driver cancel ride limit modal end -->
+
 @endsection
 @section('bottom')
 <script>
@@ -373,6 +387,7 @@
     var csrf_token = "{{csrf_token()}}";
     var save_tax_percentage = "{{url('admin/services/tax/save')}}";
     var save_cancellation_charge = "{{url('admin/services/cancellation-charge/save')}}";
+    var save_drirver_ride_cancel_limit = "{{route('admin.service.driver-cancel-ride-request-limit')}}";
 
 
     $(".enable-highway-switch input[type='checkbox']").on('change', function(){
@@ -474,6 +489,30 @@
         $("#cancellation_charge_modal").modal('show')
     })
 
+    $("#driver-cancel-ride-limit").on('click', function(){
+        $("#driver_cancel_ride_limit_modal").modal('show')
+    })
+    
+    
+
+    $("#driver-cancel-ride-limit-save-btn").on('click', function(){
+
+        var data = $('#driver_cancel_ride_limit_form').serializeArray();
+        console.log(data)
+        $.post(save_drirver_ride_cancel_limit, data, function(response){
+
+            if(response.success) {
+                $("#driver_cancel_ride_limit_modal").modal('hide')
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            } 
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Contact to developer', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
+    })
 
     $("#cancellation-charge-save-btn").on('click', function(){
 

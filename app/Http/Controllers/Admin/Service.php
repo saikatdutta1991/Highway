@@ -47,8 +47,25 @@ class Service extends Controller
         $rideTaxPecentage = $this->setting->get('vehicle_ride_fare_tax_percentage');
         $cancellationCharge = $this->setting->get('ride_request_cancellation_charge');
         $cancellationChargeAfterMinute = $this->setting->get('ride_request_cancellation_charge_after_minute_trip_started');
-        return view('admin.services', compact('services', 'rideTaxPecentage', 'cancellationCharge', 'cancellationChargeAfterMinute'));
+        $driver_cancel_ride_request_limit = $this->setting->get('driver_cancel_ride_request_limit');
+        
+        return view('admin.services', compact('services', 'rideTaxPecentage', 'cancellationCharge', 'cancellationChargeAfterMinute', 'driver_cancel_ride_request_limit'));
     }
+
+
+
+
+
+    /**
+     * save driver cancel ride request limit
+     */
+    public function saveDriverCancelRideRequestLimit(Request $request)
+    {
+        $this->setting->set('driver_cancel_ride_request_limit', $request->driver_cancel_ride_request_limit);
+        return $this->api->json(true, 'SAVED', 'Driver cancel ride request limit set');
+    }
+
+
 
 
 
