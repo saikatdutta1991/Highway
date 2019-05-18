@@ -42,6 +42,12 @@ Route::group(['prefix' => 'admin'], function(){
     Route::group(['middleware' => 'adminAuth'], function(){
 
 
+        Route::group(['prefix' => 'support'], function(){
+            Route::get('settings', 'Admin\Support@showSettings')->name('admin.support.show.settings');
+            Route::post('settings/general/save', 'Admin\Support@saveGeneralSettings')->name('admin.support.general.save');
+        });
+
+
         Route::group(['prefix' => 'contents'], function(){
             Route::get('privacy-policy', 'Admin\ContentManagement@showPrivacyPolicy')->name('admin.show.content.privacy-policy');
             Route::post('privacy-policy/save', 'Admin\ContentManagement@savePrivacyPolicy')->name('admin.save.content.privacy-policy');

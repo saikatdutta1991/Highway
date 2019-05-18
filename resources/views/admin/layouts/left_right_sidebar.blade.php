@@ -160,6 +160,23 @@
                         </li>
                     </ul>
                 </li>
+                <li class="@yield('support_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">headset_mic</i>
+                    <span>Support</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('support_settings')">
+                            <a href="{{route('admin.support.show.settings')}}">Settings</a>
+                        </li>
+                        <li class="@yield('user_support_tickets')">
+                            <a href="{{url('')}}">User Tickets</a>
+                        </li>
+                        <li class="@yield('driver_support_tickets')">
+                            <a href="{{url('')}}">Driver Tickets</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="@yield('promotions_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">cast</i>

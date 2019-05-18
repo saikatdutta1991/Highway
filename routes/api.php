@@ -36,7 +36,14 @@ Route::group(['prefix' => '/v1/user'], function(){
 
 
 
-    Route::group(['middleware' => 'userApiAuth'], function(){
+    Route::group(['middleware' => 'userApiAuth'], function() {
+
+        Route::group(['prefix' => 'support'], function() {
+            Route::get('tickets', 'Apis\User\Support@getTickets');
+            Route::post('tickets/create', 'Apis\User\Support@createTicket');
+        });
+
+
 
         Route::post('push-token/update', 'Apis\User\UserProfile@updatePushToken');
         Route::post('otp/send', 'Apis\User\UserRegister@sendOtp');

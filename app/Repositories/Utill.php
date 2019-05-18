@@ -75,7 +75,7 @@ class Utill
     /**
      * generate random caps caracters
      */
-    public function randomChars($limit = 9)
+    public static function randomChars($limit = 9)
     {
         $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $res = "";
