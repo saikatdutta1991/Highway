@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\Support\UserTicket as Ticket;
 use Validator;
 use App\Repositories\Utill;
+use App\Models\Setting;
+use Mail;
+use App\Mail\CommonTemplate;
 
 
 class Support extends Controller
@@ -82,6 +85,13 @@ class Support extends Controller
         }
 
         $ticket->save();
+
+
+        /** send mail to support admins */
+        $mailids = explode(',', Setting::get('support_ticket_notify_emails'));
+        $body = "User {$request->auth_user->email} has raised new support ticket. Check out from admin panel.";
+        $resCode = Mail::to($mailids)->queue( new CommonTemplate('Admin', 'New Support Ticket Raised', $body) );
+        \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
 
 
         return $this->api->json(true, 'TICKET_RAISED', 'Ticket raised successfully');
