@@ -17,11 +17,6 @@ class UserTicket extends Model
 
     protected $appends = ['photo1_url', 'photo2_url' , 'photo3_url'];
 
-    public static function tablename()
-    {
-        return 'coupon_codes';
-    }
-
 
     /** 
      * save and return photo path

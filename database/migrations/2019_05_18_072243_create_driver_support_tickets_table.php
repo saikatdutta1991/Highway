@@ -15,7 +15,7 @@ class CreateDriverSupportTicketsTable extends Migration
     {
         Schema::create('driver_support_tickets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('driver_id')->unsigned();
             $table->string('number', 50);
             $table->string('type', 256);
             $table->text('description')->nullable();

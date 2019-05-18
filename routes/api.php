@@ -146,6 +146,12 @@ Route::group(['prefix' => '/v1/driver'], function(){
     //driver's authenticated routes
     Route::group(['middleware' => 'driverApiAuth'], function(){
 
+
+        Route::group(['prefix' => 'support'], function() {
+            Route::get('tickets', 'Apis\Driver\Support@getTickets');
+            Route::post('tickets/create', 'Apis\Driver\Support@createTicket');
+        });
+
         Route::post('otp/send', 'Apis\Driver\DriverAuth@sendOtp');
         Route::post('otp/verify', 'Apis\Driver\DriverAuth@verifydOtp');
 
