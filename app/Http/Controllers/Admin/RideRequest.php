@@ -50,14 +50,19 @@ class RideRequest extends Controller
 
         try {
 
+            $user = $ride->user;
+            $driver = $ride->driver;
+
             $ride->ride_status = $request->on_behalf == 'user' ? Ride::USER_CANCELED : Ride::DRIVER_CANCELED;
             $ride->ride_cancel_remarks = $request->cancel_remarks;
             $ride->save();
 
+            //chaning driver availability to 0
+            $driver->is_available = 1;
+            $driver->save();
+
 
             /** send push notificaiton and socket evnet to user */
-            $user = $ride->user;
-            $driver = $ride->driver;
             $notificationData = ['ride_request_id' => $ride->id, 'ride_status' => $ride->ride_status];
             $user->sendPushNotification("Ride Cancelled", "Your ride has been cancelled");
             $driver->sendPushNotification("Ride Cancelled", "Your ride has been cancelled");
