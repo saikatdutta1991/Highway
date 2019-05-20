@@ -24,6 +24,7 @@ class CreateDriverSupportTicketsTable extends Migration
             $table->string('photo1', 512)->nullable();
             $table->string('photo2', 512)->nullable();
             $table->string('photo3', 512)->nullable();
+            $table->string('voice', 512)->nullable();
             
             $table->timestamps();
             $table->softDeletes();
