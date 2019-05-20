@@ -161,6 +161,7 @@
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block user-rides-menu-item" data-user-id="{{$ride->user->id}}">Only this user rides</a></li>
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block driver-rides-menu-item" data-driver-id="{{$ride->driver->id}}">Only this driver rides</a></li>
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block view-in-details" data-ride-request-id="{{$ride->id}}">View in detail</a></li>
+                                    <li><a href="javascript:void(0);" class=" waves-effect waves-block cancel-ride-menu-btn" data-ride-request-id="{{$ride->id}}">Cancel</a></li>
                                 </ul>
                             </li>
                         </td>
@@ -177,9 +178,93 @@
     </div>
     <!-- #END# With Material Design Colors -->
 </div>
+
+<!-- cancel ride modal -->
+<div class="modal fade" id="cancel_ride_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">CANCEL RIDE REQUEST</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <form id="cance_ride_form">
+                        <input type="hidden" value="{{csrf_token()}}" name="_token">
+                        <input type="hidden" name="ride_reqeust_id" id="cancel_ride_reqeust_id">
+                        <div class="col-sm-12">
+                            <label for="cancel_ride_check_for_user">Cancel ride on behalf</label>
+                            <div class="form-group">
+                                <input name="on_behalf" class="with-gap radio-col-green" type="radio" id="cancel_ride_check_for_user" value="user" checked/>
+                                <label for="cancel_ride_check_for_user">User</label>
+
+                                <input name="on_behalf" class="with-gap radio-col-green" type="radio" id="cancel_ride_check_for_driver" value="driver"/>
+                                <label for="cancel_ride_check_for_driver">Driver</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <b>Remarks/Comment</b>
+                                <div class="form-line">
+                                    <input type="text" required class="form-control" placeholder="Type you remarks or comment here" name="cancel_remarks" id="cancel_ride_remarks">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="cancel_ride_reqeust_btn">CANCEL</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- cancel ride modal end -->
+
+
 @endsection
 @section('bottom')
 <script>
+
+    var cancelRideRequestApi = "{{route('admin.rides.city.cancel', ['ride_reqeust_id' => '*'])}}";
+    $("#cancel_ride_reqeust_btn").on('click', function(event){
+        event.preventDefault();
+
+        var data = $('#cance_ride_form').serializeArray();
+        console.log(data)
+
+        let rideRequestId = $("#cancel_ride_reqeust_id").val();
+        let apiurl = cancelRideRequestApi.replace('*', rideRequestId)
+
+        console.log(apiurl)
+
+        $.post(apiurl, data, function(response){
+            console.log(response)
+
+            if(response.success){
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            }
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Try again !!', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
+    })
+
+
+    $(".cancel-ride-menu-btn").on('click', function(){
+        $("#cancel_ride_modal").modal('show');
+        
+        let rideRequestId = $(this).data('ride-request-id');
+        $("#cancel_ride_reqeust_id").val(rideRequestId);
+
+        $("#cancel_ride_remarks").val('');
+
+    })
+
     
     function openInNewTab(url) {
         var win = window.open(url, '_blank');

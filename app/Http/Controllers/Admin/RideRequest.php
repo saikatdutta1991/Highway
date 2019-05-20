@@ -12,6 +12,7 @@ use Validator;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\VehicleType;
+use App\Repositories\SocketIOClient;
 
 
 class RideRequest extends Controller
@@ -20,7 +21,7 @@ class RideRequest extends Controller
     /**
      * init dependencies
      */
-    public function __construct(RideRequestInvoice $rideRequestInvoice, Ride $rideRequest, Setting $setting, Api $api, Driver $driver, User $user)
+    public function __construct(SocketIOClient $socketIOClient, RideRequestInvoice $rideRequestInvoice, Ride $rideRequest, Setting $setting, Api $api, Driver $driver, User $user)
     {
         $this->rideRequestInvoice = $rideRequestInvoice;
         $this->rideRequest = $rideRequest;
@@ -28,7 +29,66 @@ class RideRequest extends Controller
         $this->api = $api;
         $this->driver = $driver;
         $this->user = $user;
+        $this->socketIOClient = $socketIOClient;
+        
     }
+
+
+
+
+
+    /**
+     * cancel ride request from admin panel
+     * if ride is not complete or cancelled yet
+     */
+    public function cancelRide(Request $request)
+    {
+
+        $ride = $this->rideRequest->where('id', $request->ride_request_id)
+            ->whereNotIn('ride_status', [Ride::USER_CANCELED, Ride::DRIVER_CANCELED, Ride::COMPLETED, Ride::INITIATED, Ride::TRIP_ENDED])
+            ->first();
+
+        try {
+
+            $ride->ride_status = $request->on_behalf == 'user' ? Ride::USER_CANCELED : Ride::DRIVER_CANCELED;
+            $ride->ride_cancel_remarks = $request->cancel_remarks;
+            $ride->save();
+
+
+            /** send push notificaiton and socket evnet to user */
+            $user = $ride->user;
+            $driver = $ride->driver;
+            $notificationData = ['ride_request_id' => $ride->id, 'ride_status' => $ride->ride_status];
+            $user->sendPushNotification("Ride Cancelled", "Your ride has been cancelled");
+            $driver->sendPushNotification("Ride Cancelled", "Your ride has been cancelled");
+            $this->socketIOClient->sendEvent([
+                'to_ids' => $user->id,
+                'entity_type' => 'user', //socket will make it uppercase
+                'event_type' => 'ride_request_status_changed',
+                'data' => $notificationData,
+                'store_messsage' => true
+            ]);
+            $this->socketIOClient->sendEvent([
+                'to_ids' => $driver->id,
+                'entity_type' => 'driver', //socket will make it uppercase
+                'event_type' => 'ride_request_status_changed',
+                'data' => $notificationData,
+                "store_messsage" => true
+            ]);
+
+
+
+        } catch(\Exception $e) {
+            return $this->api->json(false, 'NOT_CANCELLED', 'Ride might be cancelled or completed or you might not allowed to cancel.');
+        }
+        
+
+        return $this->api->json(true, 'CANCELLED', 'Request cancelled');
+
+    }
+
+
+
 
 
 
