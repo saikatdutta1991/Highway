@@ -245,6 +245,8 @@
         </div>
     </div>
 
+
+    @if($driver->bank)
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
@@ -304,6 +306,17 @@
                            
                         </form>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <small>See all city rides <a href="{{route('admin.rides.city')."?driver_id={$driver->id}&name={$driver->fullname()}"}}">Click here</a></small>
                 </div>
             </div>
         </div>

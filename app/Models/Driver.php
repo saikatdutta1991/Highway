@@ -67,6 +67,15 @@ class Driver extends Model
 
 
     /**
+     * returns full name
+     */
+    public function fullname()
+    {
+        return $this->fname.' '.$this->lname;
+    }
+
+
+    /**
      * return string full mobile number (country_code + mobile_number)
      */
     public function fullMobileNumber()

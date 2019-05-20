@@ -89,7 +89,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::post('drivers/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword');
 
 
-        Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests');
+        Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests')->name('admin.rides.city');
         Route::get('rides/intracity/{ride_request_id}/details', 'Admin\RideRequest@showIntracityRideRequestDetails');
 
 

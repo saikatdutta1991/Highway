@@ -8,6 +8,14 @@
 <div class="container-fluid">
 <div class="block-header">
     <h2>INTRACITY RIDES</h2>
+
+    @if(request()->has('user_id')) 
+    <small>City Rides of user : {{request()->name}}</small>
+    @endif
+
+    @if(request()->has('driver_id')) 
+    <small>City Rides of driver : {{request()->name}}</small>
+    @endif
 </div>
 <!-- Widgets -->
 <div class="row clearfix">
@@ -99,7 +107,9 @@
             <table class="table table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <!-- <th>ID</th> -->
+                        <th>USER</th>
+                        <th>DRIVER</th>
                         <th>SERVICE</th>
                         <th>PICKUP</th>
                         <th>DROP</th>
@@ -112,8 +122,10 @@
                 <tbody>
                     @foreach($rides as $ride)
                     <tr>
-                        <td>{{$ride->id}}</td>
-                        <td>{{$ride->ride_vehicle_type}}</td>
+                        <!-- <td>{{$ride->id}}</td> -->
+                        <td>{{$ride->user->fullname()}}</td>
+                        <td>{{$ride->driver->fullname()}}</td>
+                        <td>{{$serviceTypes->where('code', $ride->ride_vehicle_type)->first()['name']}}</td>
                         <td style="max-width: 200px;">
                             <i class="material-icons col-green" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>
                             {{$ride->source_address}} @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}}@endif
@@ -135,7 +147,7 @@
                             @else 
                                 class="col-red" title="Not paid"
                             @endif>
-                            @if($ride->invoice){{$currency_symbol}}{{$ride->invoice->total}}@else {{$ride->estimated_fare}} @endif
+                            @if($ride->invoice){{$currency_symbol}}{{$ride->invoice->total}}@else {{$currency_symbol}}{{$ride->estimated_fare}} @endif
                         </td>
                         <td>{{$ride->ride_status}}</td>
                         <td>

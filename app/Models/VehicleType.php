@@ -53,7 +53,7 @@ class VehicleType extends Model
     /**
      * get all 
      */
-    public function allTypes()
+    public static function allTypes()
     {
         $vTypes = collect(config('vehicle_types'));
         
