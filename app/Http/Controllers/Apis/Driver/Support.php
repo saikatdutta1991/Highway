@@ -47,6 +47,7 @@ class Support extends Controller
             'photo1' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'photo2' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'photo3' => 'sometimes|required|image|mimes:jpg,jpeg,png',
+            'voice' => 'sometimes|required|mimes:mp3,mpeg,ogg,wav,mpga',
         ]);
 
         if($validator->fails()) {
@@ -58,6 +59,7 @@ class Support extends Controller
             ($e->has('photo1')) ? $msg['photo1'] = $e->get('photo1')[0] : '';
             ($e->has('photo2')) ? $msg['photo2'] = $e->get('photo2')[0] : '';
             ($e->has('photo3')) ? $msg['photo3'] = $e->get('photo3')[0] : '';
+            ($e->has('voice')) ? $msg['voice'] = $e->get('voice')[0] : '';
 
             return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
 
@@ -82,6 +84,10 @@ class Support extends Controller
 
         if($request->has('photo3')) {
             $ticket->photo3 = Ticket::savePhoto($request->photo3);
+        }
+
+        if($request->has('voice')) {
+            $ticket->voice = Ticket::saveVoice($request->voice);
         }
 
         $ticket->save();

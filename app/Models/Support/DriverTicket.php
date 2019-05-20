@@ -13,9 +13,9 @@ class DriverTicket extends Model
 
     protected $table = 'driver_support_tickets';
 
-    protected $hidden = ['photo1', 'photo2', 'photo3'];
+    protected $hidden = ['photo1', 'photo2', 'photo3', 'voice'];
 
-    protected $appends = ['photo1_url', 'photo2_url' , 'photo3_url'];
+    protected $appends = ['photo1_url', 'photo2_url' , 'photo3_url', 'voice_url'];
 
 
     /** 
@@ -31,6 +31,19 @@ class DriverTicket extends Model
     }
 
 
+    /** 
+     * save and return voice path
+     */
+    public static function saveVoice($file)
+    {
+        $fileName = self::generatePhotoName('ticket', $file->extension());
+        $path = self::generateVoicePath();
+        $file->storeAs($path, $fileName);
+
+        return $path.'/'.$fileName;
+    }
+
+
     /**
      * generate photo name
      */
@@ -40,6 +53,14 @@ class DriverTicket extends Model
         return $prefix.'_'.md5(uniqid(mt_rand(), true)).'_'.time().$ext;
     }
 
+
+    /**
+     * generate and return path for saving voice
+     */
+    public static function generateVoicePath()
+    {
+        return 'support/tickets/voices';
+    }
 
 
     /**
@@ -75,6 +96,14 @@ class DriverTicket extends Model
     public function getPhoto3UrlAttribute()
     {
         return $this->photo3 ? url($this->photo3) : '';
+    }
+
+    /**
+     * get voice url
+     */
+    public function getVoiceUrlAttribute()
+    {
+        return $this->voice ? url($this->voice) : '';
     }
 
 }
