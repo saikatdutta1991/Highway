@@ -243,6 +243,7 @@
 
             if(response.success){
                 showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                $("#cancel_ride_modal").modal('hide');
                 return;
             }
 
