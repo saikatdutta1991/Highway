@@ -55,39 +55,34 @@ class Trip extends Controller
 
 
     /**
-     * get admin trip routes with location and location points
+     * get admin trip route with location and location points
      */
     public function getTripRoutes(Request $request)
     {
-        $routes = $this->adminTripRoute->with(['from', 'from.points', 'to', 'to.points'])->orderBy('updated_at', 'desc');
-        
-        if($request->has('from_location') && $request->has('to_location')) {
-            $routes = $routes->where('from_location', $request->from_location)
-            ->where('to_location', $request->to_location);
-        }
-        
-        $routes = $routes->get();
+        $routeRecord = $this->adminTripRoute
+            ->with(['from', 'from.points', 'to', 'to.points'])
+            ->where('from_location', $request->from_location)
+            ->where('to_location', $request->to_location)
+            ->where('is_ac_enabled', true)
+            ->first();
 
-        $routes->map(function($route){
-            $route->source = $route->from->name;
-            $route->destination = $route->to->name;
 
-            $route->source_points = $route->from->points;
-            $route->destination_points = $route->to->points;
-
-            unset($route->from->points);
-            unset($route->from);
-            unset($route->to->points);
-            unset($route->to);
-        });
-        
-        $acEnabledRouteId = $routes->where('is_ac_enabled', true)->first()->id;
-        $nonAcEnabledRouteId = $routes->where('is_ac_enabled', false)->first()->id;
+        $routeDetails = [];
+        $routeDetails['source'] = $routeRecord->from->name;
+        $routeDetails['destination'] = $routeRecord->to->name;
+        $routeDetails['time'] = $routeRecord->time;
+        $routeDetails['base_fare'] = $routeRecord->base_fare;
+        $routeDetails['tax_fee'] = $routeRecord->tax_fee;
+        $routeDetails['access_fee'] = $routeRecord->access_fee;
+        $routeDetails['total_fare'] = $routeRecord->total_fare;
+        $routeDetails['status'] = $routeRecord->status;
+        $routeDetails['source_points'] = $routeRecord->from->points->toArray();
+        $routeDetails['destination_points'] = $routeRecord->to->points->toArray();
+        $routeDetails['ac_enabled_routeid'] = $routeRecord->id;
+        $routeDetails['nonac_enabled_routeid'] = $this->adminTripRoute->where('is_ac_enabled', false)->where('from_location', $request->from_location)->where('to_location', $request->to_location)->first()->id;
 
         return $this->api->json(true, 'ROUTES', 'Routes fetched', [
-            'routes' => $routes,
-            'acEnabledRouteId' => $acEnabledRouteId,
-            'nonAcEnabledRouteId' => $nonAcEnabledRouteId,
+            'route' => $routeDetails
         ]);
         
     }
