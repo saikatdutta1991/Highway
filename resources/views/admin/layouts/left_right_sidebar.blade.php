@@ -170,7 +170,7 @@
                             <a href="{{route('admin.support.show.settings')}}">Settings</a>
                         </li>
                         <li class="@yield('user_support_tickets')">
-                            <a href="{{url('')}}">User Tickets</a>
+                            <a href="{{route('admin.support.user.tickets')}}">User Tickets</a>
                         </li>
                         <li class="@yield('driver_support_tickets')">
                             <a href="{{url('')}}">Driver Tickets</a>

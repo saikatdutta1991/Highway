@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use Validator;
+use App\Models\Support\UserTicket;
+use App\Models\Support\DriverTicket;
 
 
 class Support extends Controller
@@ -19,6 +21,36 @@ class Support extends Controller
     {
         $this->setting = $setting;
         $this->api = $api;
+    }
+
+
+
+
+    /**
+     * show user tickets
+     */
+    public function getUserTickets(Request $request)
+    {
+
+        $ticketsCount = UserTicket::count();
+        $pendingTickets = UserTicket::where('status', UserTicket::PENDING)->count();
+        $processingTickets = UserTicket::where('status', UserTicket::PROCESSING)->count();
+        $resolvedTickets = UserTicket::where('status', UserTicket::RESOLVED)->count();
+
+
+        $tickets = UserTicket::with('user')
+            ->orderByRaw("FIELD(status , '".UserTicket::PROCESSING."', '".UserTicket::PENDING."', '".UserTicket::RESOLVED."') ASC")
+            ->orderBy('created_at', 'desc')
+            ->paginate(1000);
+
+
+        return view('admin.support.user_tickets', [
+            'tickets' => $tickets,
+            'ticketsCount' => $ticketsCount,
+            'pendingTickets' => $pendingTickets,
+            'resolvedTickets' => $resolvedTickets,
+            'processingTickets' => $processingTickets
+        ]);
     }
 
 

@@ -45,6 +45,7 @@ Route::group(['prefix' => 'admin'], function(){
         Route::group(['prefix' => 'support'], function(){
             Route::get('settings', 'Admin\Support@showSettings')->name('admin.support.show.settings');
             Route::post('settings/general/save', 'Admin\Support@saveGeneralSettings')->name('admin.support.general.save');
+            Route::get('user/tickets', 'Admin\Support@getUserTickets')->name('admin.support.user.tickets');
         });
 
 

@@ -19,6 +19,15 @@ class UserTicket extends Model
 
 
     /** 
+     * relation with user
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+
+    /** 
      * save and return photo path
      */
     public static function savePhoto($file)
@@ -77,6 +86,16 @@ class UserTicket extends Model
         return $this->photo3 ? url($this->photo3) : '';
     }
 
+
+
+
+    /**
+     * returns reaise on formater date(created_at)
+     */
+    public function raisedOn($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
+    }
 
 
 
