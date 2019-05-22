@@ -35,6 +35,9 @@ class Support extends Controller
         $ticket->status = $request->status;
         $ticket->save();
 
+        /** send push to user */
+        $ticket->user->sendPushNotification("Ticket Status Changes #{$ticket->number}", "Current Status : {$ticket->status}. Remarks : {$ticket->remarks}");
+
         return $this->api->json(true, 'SAVED', 'Ticket updated successfully.', ['ticket' => $ticket]);
     }
 
@@ -48,6 +51,10 @@ class Support extends Controller
         $ticket->remarks = $request->remarks;
         $ticket->status = $request->status;
         $ticket->save();
+
+
+        /** send push to driver */
+        $ticket->driver->sendPushNotification("Ticket Status Changes #{$ticket->number}", "Current Status : {$ticket->status}. Remarks : {$ticket->remarks}");
 
         return $this->api->json(true, 'SAVED', 'Ticket updated successfully.', ['ticket' => $ticket]);
     }
