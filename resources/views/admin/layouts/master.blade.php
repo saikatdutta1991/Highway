@@ -231,7 +231,7 @@
                         $("#loader-wrapper").remove()
                     }, 500);
             
-                }, 500);
+                }, 100);
             }
             
             $(document).ready(()=>{
