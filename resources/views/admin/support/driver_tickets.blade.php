@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
-@section('title', 'User-Tickets')
+@section('title', 'Driver-Tickets')
 @section('support_active', 'active')
-@section('user_support_tickets', 'active')
+@section('driver_support_tickets', 'active')
 @section('top-header')
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/light-gallery/css/lightgallery.css" rel="stylesheet">
 <style></style>
@@ -9,7 +9,7 @@
 @section('content')
 <div class="container-fluid">
 <div class="block-header">
-    <h2>USER TICKETS</h2>
+    <h2>DRIVER TICKETS</h2>
 </div>
 <!-- Widgets -->
 <div class="row clearfix">
@@ -65,7 +65,7 @@
     <div class="card">
         <div class="header">
             <h2>
-                USER TICKETS
+                DRIVER TICKETS
             </h2>
         </div>
         <div class="body table-responsive">
@@ -77,6 +77,7 @@
                         <th>TYPE</th>
                         <th>DESCRIPTION</th>
                         <th>PHOTOS</th>
+                        <th>AUDIOS</th>
                         <th>STATUS</th>
                         <th>RAISED ON</th>
                         <th>ACTION</th>
@@ -86,13 +87,16 @@
                     @foreach($tickets as $ticket)
                     <tr>
                         <td>{{$ticket->number}}</td>
-                        <td><a data-toggle="tooltip" data-placement="left" title="Click to see user : {{$ticket->user->fullname()}}" href="{{route('admin.show.user', ['user_id' => $ticket->user->id])}}" target="_blank">{{$ticket->user->fullMobileNumber()}}</a></td>
+                        <td><a data-toggle="tooltip" data-placement="left" title="Click to see driver : {{$ticket->driver->fullname()}}" href="{{route('admin.show.driver', ['driver_id' => $ticket->driver->id])}}" target="_blank">{{$ticket->driver->fullMobileNumber()}}</a></td>
                         <td>{{$ticket->type}}</td>
                         <td>
                             <i style="cursor:pointer" title="Expand description" data-toggle="collapse" class="material-icons" data-target="#description_ticket_{{$ticket->id}}" >keyboard_arrow_down</i>
                         </td>
                         <td>
                             <i style="cursor:pointer" title="Expand photos" data-toggle="collapse" class="material-icons" data-target="#photos_ticket_{{$ticket->id}}" >keyboard_arrow_down</i>
+                        </td>
+                        <td>
+                            <i style="cursor:pointer" title="Expand photos" data-toggle="collapse" class="material-icons" data-target="#audios_ticket_{{$ticket->id}}" >keyboard_arrow_down</i>
                         </td>
                         <td id="ticket_status_{{$ticket->id}}">{{$ticket->status}}</td>
                         <td>{{$ticket->raisedOn($default_timezone)}}</td>
@@ -137,6 +141,19 @@
                                     </div>
                                 </div>
                             </div>
+                        </td>
+                    <tr>
+                    <tr class="collapse" id="audios_ticket_{{$ticket->id}}">
+                        <td colspan="8" >
+                            @if($ticket->voice_url)
+                            <audio controls autoplay>
+                                <source src="{{$ticket->voice_url}}" type="audio/ogg">
+                                <source src="{{$ticket->voice_url}}" type="audio/mpeg">
+                                <source src="{{$ticket->voice_url}}" type="audio/mp3">
+                                <source src="{{$ticket->voice_url}}" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                            @endif
                         </td>
                     <tr>
                     @endforeach
@@ -216,7 +233,7 @@
         @endforeach
 
 
-        var updateticketapi = "{{route('admin.support.user.ticket.update', ['ticket_number' => '*'])}}";
+        var updateticketapi = "{{route('admin.support.driver.ticket.update', ['ticket_number' => '*'])}}";
         $("#support_ticket_update_save_btn").on('click', function(){
 
             event.preventDefault();

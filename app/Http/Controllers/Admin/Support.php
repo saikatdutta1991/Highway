@@ -25,6 +25,63 @@ class Support extends Controller
 
 
 
+    /**
+     * update user support ticket
+     */
+    public function updateUserTicket(Request $request)
+    {
+        $ticket = UserTicket::where('number', $request->ticket_number)->first();
+        $ticket->remarks = $request->remarks;
+        $ticket->status = $request->status;
+        $ticket->save();
+
+        return $this->api->json(true, 'SAVED', 'Ticket updated successfully.', ['ticket' => $ticket]);
+    }
+
+
+    /**
+     * update driver support ticket
+     */
+    public function updateDriverTicket(Request $request)
+    {
+        $ticket = DriverTicket::where('number', $request->ticket_number)->first();
+        $ticket->remarks = $request->remarks;
+        $ticket->status = $request->status;
+        $ticket->save();
+
+        return $this->api->json(true, 'SAVED', 'Ticket updated successfully.', ['ticket' => $ticket]);
+    }
+
+
+
+    /**
+     * show driver tickets
+     */
+    public function getDriverTickets(Request $request)
+    {
+
+        $ticketsCount = DriverTicket::count();
+        $pendingTickets = DriverTicket::where('status', DriverTicket::PENDING)->count();
+        $processingTickets = DriverTicket::where('status', DriverTicket::PROCESSING)->count();
+        $resolvedTickets = DriverTicket::where('status', DriverTicket::RESOLVED)->count();
+
+
+        $tickets = DriverTicket::with('driver')
+            ->orderByRaw("FIELD(status , '".DriverTicket::PROCESSING."', '".DriverTicket::PENDING."', '".DriverTicket::RESOLVED."') ASC")
+            ->orderBy('created_at', 'desc')
+            ->paginate(1000);
+
+
+        return view('admin.support.driver_tickets', [
+            'tickets' => $tickets,
+            'ticketsCount' => $ticketsCount,
+            'pendingTickets' => $pendingTickets,
+            'resolvedTickets' => $resolvedTickets,
+            'processingTickets' => $processingTickets
+        ]);
+    }
+
+
 
     /**
      * show user tickets

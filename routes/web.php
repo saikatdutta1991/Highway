@@ -45,7 +45,12 @@ Route::group(['prefix' => 'admin'], function(){
         Route::group(['prefix' => 'support'], function(){
             Route::get('settings', 'Admin\Support@showSettings')->name('admin.support.show.settings');
             Route::post('settings/general/save', 'Admin\Support@saveGeneralSettings')->name('admin.support.general.save');
+            
             Route::get('user/tickets', 'Admin\Support@getUserTickets')->name('admin.support.user.tickets');
+            Route::post('user/tickets/{ticket_number}/update', 'Admin\Support@updateUserTicket')->name('admin.support.user.ticket.update');
+
+            Route::get('driver/tickets', 'Admin\Support@getDriverTickets')->name('admin.support.driver.tickets');
+            Route::post('driver/tickets/{ticket_number}/update', 'Admin\Support@updatedriverTicket')->name('admin.support.driver.ticket.update');
         });
 
 

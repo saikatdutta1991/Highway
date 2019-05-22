@@ -19,6 +19,14 @@ class DriverTicket extends Model
 
 
     /** 
+     * relation with driver
+     */
+    public function driver()
+    {
+        return $this->belongsTo('App\Models\Driver', 'driver_id');
+    }
+
+    /** 
      * save and return photo path
      */
     public static function savePhoto($file)
@@ -105,5 +113,14 @@ class DriverTicket extends Model
     {
         return $this->voice ? url($this->voice) : '';
     }
+
+    /**
+     * returns reaise on formater date(created_at)
+     */
+    public function raisedOn($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
+    }
+
 
 }
