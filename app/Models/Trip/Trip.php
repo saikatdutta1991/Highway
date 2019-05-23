@@ -32,6 +32,11 @@ class Trip extends Model
         return $this->table;
     }
 
+    public static function tablename()
+    {
+        return 'trips';
+    }
+
 
 
    

@@ -65,6 +65,11 @@ class Driver extends Model
         return $this->table;
     }
 
+    public static function tablename()
+    {
+        return 'drivers';
+    }
+
 
     /**
      * returns full name

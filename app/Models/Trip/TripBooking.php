@@ -27,6 +27,11 @@ class TripBooking extends Model
         return 'trip_bookings';
     }
 
+    public static function tablename()
+    {
+        return 'trip_bookings';
+    }
+
     public function getTableName()
     {
         return $this->table;

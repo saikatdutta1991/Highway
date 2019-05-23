@@ -161,7 +161,6 @@
     <body class="theme-pink">
         <!-- Page Loader -->
         <div id="loader-wrapper">
-            <span id="loader-text">Initiating Blockchain...</span>
             <div id="loader"></div>
             <div class="loader-section section-right"></div>
             <div class="loader-section section-left"></div>

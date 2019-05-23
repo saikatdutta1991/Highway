@@ -69,6 +69,11 @@ class RideRequest extends Model
         return 'ride_requests';
     }
 
+    public static function tablename()
+    {
+        return 'ride_requests';
+    }
+
 
     public function getTableName()
     {

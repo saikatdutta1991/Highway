@@ -19,6 +19,11 @@ class RideRequestInvoice extends Model
         return $this->table;
     }
 
+    public static function tablename()
+    {
+        return 'ride_request_invoices';
+    }
+
 
     /**
      * generate invoice reference id

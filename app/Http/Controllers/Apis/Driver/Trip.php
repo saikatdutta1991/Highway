@@ -764,6 +764,7 @@ class Trip extends Controller
 
 
         $trip->status = TripModel::COMPLETED;
+        $trip->end_time = date('Y-m-d H:i:s');
         $trip->save();
         
         $driver = $request->auth_driver;

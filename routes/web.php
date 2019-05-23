@@ -29,6 +29,9 @@ Route::get('referrals/{referrer_code}', 'Web\HomeController@redirectReferral')->
 Route::group(['prefix' => 'admin'], function(){
 
 
+    Route::get('payouts', 'Admin\Payout@showFilteredPayouts')->name('admin.payouts.show');
+
+
     Route::group(['middleware' => 'adminGuest'], function(){
         
         Route::get('/', function(){ return redirect()->route('admin-login'); });
