@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use DB;
 use App\Models\Trip\Trip;
 use App\Models\Trip\TripBooking;
+use App\Models\VehicleType;
 
 
 class Payout extends Controller
@@ -38,9 +39,22 @@ class Payout extends Controller
     {  
         /** varialbe to store records */
         $records = [];
-        $cityRidesChecked = $request->city_rides == 'on';
-        $highwayRidesChecked = $request->highway_rides == 'on';
         $totalRecords = 0;
+        $cityRidesChecked = true;
+        $highwayRidesChecked = false;
+        $full_mobile_number = $request->full_mobile_number;
+
+        if($request->ride_type == 'city_rides') {
+            $cityRidesChecked = true;
+            $highwayRidesChecked = false;
+        } else if($request->ride_type == 'highway_rides') {
+            $cityRidesChecked = false;
+            $highwayRidesChecked = true;
+
+        } else if($request->ride_type == 'both_city_highway_rides') {
+            $cityRidesChecked = true;
+            $highwayRidesChecked = true;
+        }
 
         /** if from is submit then only */
         if($request->submit) {
@@ -57,14 +71,14 @@ class Payout extends Controller
                 /** fetch all city rides */
                 $cityRides = [];
                 if($cityRidesChecked) {
-                    $cityRides = $this->getCityRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString())->toArray();
+                    $cityRides = $this->getCityRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString(), $full_mobile_number)->toArray();
                     $totalRecords += count($cityRides);
                 }
 
                 /** fetch all highway rides for this current driver */
                 $highwayRides = [];
                 if($highwayRidesChecked) {
-                    $highwayRides = $this->getHighwayRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString())->toArray();
+                    $highwayRides = $this->getHighwayRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString(), $full_mobile_number)->toArray();
                     $totalRecords += count($highwayRides);
                 }
 
@@ -83,6 +97,9 @@ class Payout extends Controller
             'TRIP_ENDED' => 'Completed'
         ];
 
+        /** get vehicle types */
+        $vehicleTypes = VehicleType::allTypes();
+
 
 
         return view('admin.payouts.payout_filter', [
@@ -92,7 +109,9 @@ class Payout extends Controller
             'highwayRides' => $highwayRidesChecked,
             'records' => $records,
             'statusCollection' => $statusCollection,
-            'totalRecords' => $totalRecords
+            'totalRecords' => $totalRecords,
+            'vehicleTypes' => $vehicleTypes,
+            'full_mobile_number' => $full_mobile_number
         ]);
     }
 
@@ -102,7 +121,7 @@ class Payout extends Controller
     /**
      * get only highway ride by date range and driver id
      */
-    protected function getHighwayRides($driverid, $fromDate, $toDate)
+    protected function getHighwayRides($driverid, $fromDate, $toDate, $full_mobile_number)
     {
         $highwayRides = Trip::where(Trip::tablename().".driver_id", $driverid)
             ->whereIn(Trip::tablename().".status", [Trip::COMPLETED, Trip::TRIP_CANCELED_DRIVER])
@@ -113,35 +132,40 @@ class Payout extends Controller
                 $join->on(TripBooking::tablename().'.invoice_id', '=', RideRequestInvoice::tablename().".id")
                     ->whereIn(TripBooking::tablename().'.booking_status', [TripBooking::BOOKING_CONFIRMED, Trip::TRIP_CANCELED_DRIVER]);
             })
-            ->groupBy(TripBooking::tablename().'.trip_id')
-            ->select([
-                DB::raw(Driver::tablename().".id as driver_id"),
-                DB::raw(Driver::tablename().".fname"),
-                DB::raw(Driver::tablename().".lname"),
-                DB::raw(Driver::tablename().".full_mobile_number"),
-                DB::raw(Driver::tablename().".vehicle_type"),
-                DB::raw(Driver::tablename().".vehicle_number"),
+            ->groupBy(TripBooking::tablename().'.trip_id');
 
-                Trip::tablename().".id",
-                DB::raw(Trip::tablename().".from as from_location"),
-                DB::raw(Trip::tablename().".to as to_location"),
-                DB::raw(Trip::tablename().".trip_datetime as date"),
-                Trip::tablename().".status",
-                DB::raw(Trip::tablename().".start_time as ride_start_time"),
-                DB::raw(Trip::tablename().".end_time as ride_end_time"),
-                DB::raw("'' as ride_cancel_remarks"),
+        if($full_mobile_number) {
+            $highwayRides = $highwayRides->where(Driver::tablename().".full_mobile_number", $full_mobile_number);
+        }
+            
+        $highwayRides = $highwayRides->select([
+            DB::raw(Driver::tablename().".id as driver_id"),
+            DB::raw(Driver::tablename().".fname"),
+            DB::raw(Driver::tablename().".lname"),
+            DB::raw(Driver::tablename().".full_mobile_number"),
+            DB::raw(Driver::tablename().".vehicle_type"),
+            DB::raw(Driver::tablename().".vehicle_number"),
 
-                RideRequestInvoice::tablename().".payment_mode",
-                RideRequestInvoice::tablename().".currency_type",
-                DB::raw("SUM(".RideRequestInvoice::tablename().".ride_fare) as ride_fare"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".access_fee) as access_fee"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".tax) as tax"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".total) as total"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".referral_bonus_discount) as referral_bonus_discount"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".cancellation_charge) as cancellation_charge"),
-                DB::raw("SUM(".RideRequestInvoice::tablename().".coupon_discount) as coupon_discount")
-            ])
-            ->get();
+            Trip::tablename().".id",
+            DB::raw(Trip::tablename().".from as from_location"),
+            DB::raw(Trip::tablename().".to as to_location"),
+            DB::raw(Trip::tablename().".trip_datetime as date"),
+            Trip::tablename().".status",
+            DB::raw(Trip::tablename().".start_time as ride_start_time"),
+            DB::raw(Trip::tablename().".end_time as ride_end_time"),
+            DB::raw("'' as ride_cancel_remarks"),
+
+            RideRequestInvoice::tablename().".payment_mode",
+            RideRequestInvoice::tablename().".currency_type",
+            DB::raw("SUM(".RideRequestInvoice::tablename().".ride_fare) as ride_fare"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".access_fee) as access_fee"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".tax) as tax"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".total) as total"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".referral_bonus_discount) as referral_bonus_discount"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".cancellation_charge) as cancellation_charge"),
+            DB::raw("SUM(".RideRequestInvoice::tablename().".coupon_discount) as coupon_discount")
+        ])
+        ->get();
         
         return $highwayRides;
 
@@ -153,41 +177,46 @@ class Payout extends Controller
     /**
      * get only city ride by date range and driver id
      */
-    protected function getCityRides($driverid, $fromDate, $toDate)
+    protected function getCityRides($driverid, $fromDate, $toDate, $full_mobile_number)
     {
         $cityRides = RideRequest::where(RideRequest::tablename().".driver_id", $driverid)
             ->whereIn(RideRequest::tablename().".ride_status", [RideRequest::COMPLETED, RideRequest::TRIP_ENDED, RideRequest::DRIVER_CANCELED])
             ->whereBetween(RideRequest::tablename().".created_at", [$fromDate, $toDate])
             ->leftJoin(RideRequestInvoice::tablename(), RideRequest::tablename().".ride_invoice_id", RideRequestInvoice::tablename().'.id')
-            ->join(Driver::tablename(), Driver::tablename().'.id', RideRequest::tablename().".driver_id")
-            ->select([
-                DB::raw(Driver::tablename().".id as driver_id"),
-                DB::raw(Driver::tablename().".fname"),
-                DB::raw(Driver::tablename().".lname"),
-                DB::raw(Driver::tablename().".full_mobile_number"),
-                DB::raw(Driver::tablename().".vehicle_type"),
-                DB::raw(Driver::tablename().".vehicle_number"),
+            ->join(Driver::tablename(), Driver::tablename().'.id', RideRequest::tablename().".driver_id");
 
-                RideRequest::tablename().".id",
-                DB::raw(RideRequest::tablename().".source_address as from_location"),
-                DB::raw(RideRequest::tablename().".destination_address as to_location"),
-                RideRequest::tablename().".ride_cancel_remarks",
-                DB::raw(RideRequest::tablename().".ride_status as status"),
-                RideRequest::tablename().".ride_start_time",
-                RideRequest::tablename().".ride_end_time",
-                DB::raw(RideRequest::tablename().".created_at as date"),
+        if($full_mobile_number) {
+            $cityRides = $cityRides->where(Driver::tablename().".full_mobile_number", $full_mobile_number);
+        }
 
-                RideRequestInvoice::tablename().".payment_mode",
-                RideRequestInvoice::tablename().".currency_type",
-                RideRequestInvoice::tablename().".ride_fare",
-                RideRequestInvoice::tablename().".access_fee",
-                RideRequestInvoice::tablename().".tax",
-                RideRequestInvoice::tablename().".total",
-                RideRequestInvoice::tablename().".referral_bonus_discount",
-                RideRequestInvoice::tablename().".cancellation_charge",
-                RideRequestInvoice::tablename().".coupon_discount"
-            ])
-            ->get();
+        $cityRides = $cityRides->select([
+            DB::raw(Driver::tablename().".id as driver_id"),
+            DB::raw(Driver::tablename().".fname"),
+            DB::raw(Driver::tablename().".lname"),
+            DB::raw(Driver::tablename().".full_mobile_number"),
+            DB::raw(Driver::tablename().".vehicle_type"),
+            DB::raw(Driver::tablename().".vehicle_number"),
+
+            RideRequest::tablename().".id",
+            DB::raw(RideRequest::tablename().".source_address as from_location"),
+            DB::raw(RideRequest::tablename().".destination_address as to_location"),
+            RideRequest::tablename().".ride_cancel_remarks",
+            DB::raw(RideRequest::tablename().".ride_status as status"),
+            RideRequest::tablename().".ride_start_time",
+            RideRequest::tablename().".ride_end_time",
+            DB::raw(RideRequest::tablename().".created_at as date"),
+
+            RideRequestInvoice::tablename().".payment_mode",
+            RideRequestInvoice::tablename().".currency_type",
+            RideRequestInvoice::tablename().".ride_fare",
+            RideRequestInvoice::tablename().".access_fee",
+            RideRequestInvoice::tablename().".tax",
+            RideRequestInvoice::tablename().".total",
+            RideRequestInvoice::tablename().".referral_bonus_discount",
+            RideRequestInvoice::tablename().".cancellation_charge",
+            RideRequestInvoice::tablename().".coupon_discount"
+        ])
+        ->get();
         
         return $cityRides;
 

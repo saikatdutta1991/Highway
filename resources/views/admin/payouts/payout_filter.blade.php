@@ -2,12 +2,16 @@
 @section('title', 'Payouts-Filter')
 @section('payouts_active', 'active')
 @section('top-header')
+<!-- Bootstrap Material Datetime Picker Css -->
+<link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+<!-- JQuery DataTable Css -->
+<link href="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 <style></style>
 @endsection
 @section('content')
 <div class="container-fluid">
 <div class="block-header">
-    <h2>PAYOUT FILTER</h2>
+    <h2>DRIVER PAYOUT FILTER</h2>
 </div>
 
 <!-- filter form -->
@@ -26,7 +30,7 @@
                                     <i class="material-icons">date_range</i>
                                 </span>
                                 <div class="form-line">
-                                    <input type="text" required name="from_date" class="form-control date" placeholder="From Date - Ex: 31/12/2016" value="{{$fromDate}}">
+                                    <input type="text" required name="from_date" class="form-control datetimepicker" placeholder="Ex: 31/12/1990"  value="{{$fromDate}}">
                                 </div>
                             </div>
                         </div>
@@ -36,20 +40,26 @@
                                     <i class="material-icons">date_range</i>
                                 </span>
                                 <div class="form-line">
-                                    <input type="text" required name="to_date" class="form-control date" placeholder="To Date - Ex: 31/12/2016" value="{{$toDate}}">
+                                <input type="text" required name="to_date" class="form-control datetimepicker" placeholder="Ex: 31/12/1990"  value="{{$toDate}}">
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <input type="checkbox" id="city_rides_checkbox" class="filled-in chk-col-red" name="city_rides" @if($cityRides) checked @endif> 
-                                <label for="city_rides_checkbox">City Rides</label>
+                                <div class="form-line">
+                                    <select class="form-control show-tick" name="ride_type">
+                                        <option value = "city_rides" @if($cityRides && !$highwayRides) selected @endif>City Rides</option>
+                                        <option value = "highway_rides" @if(!$cityRides && $highwayRides) selected @endif>Highway Rides</option>
+                                        <option value = "both_city_highway_rides" @if($cityRides && $highwayRides) selected @endif>City & Highway Rides</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <input type="checkbox" id="highay_rides_checkbox" class="filled-in chk-col-red" name="highway_rides" @if($highwayRides) checked @endif>
-                                <label for="highay_rides_checkbox">Highway Rides</label>
+                                <div class="form-line">
+                                    <input type="text" name="full_mobile_number" class="form-control" value="{{$full_mobile_number}}" placeholder="Phone number Ex:+919093036897(Optional)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -70,33 +80,30 @@
 </div>
 <!-- filter form end -->
 
-
-
-
 <!-- With Material Design Colors -->
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
             <div class="header">
                 <h2>
-                    Drivers rides between {{$fromDate}} - {{$toDate}} -- Records fetched {{$totalRecords}}
+                    Drivers payouts between {{$fromDate}} - {{$toDate}} -- Records fetched {{$totalRecords}}
                 </h2>
             </div>
             <div class="body table-responsive">
-                <table class="table table-condensed table-hover">
+                <table class="table table-condensed table-hover" id="data-table">
                     <thead>
                         <tr>
-                            <th>Slr. no<br>(Unique Id)</th>
-                            <th>Driver Name</th>
+                            <th>Slr. no</th>
+                            <th>Name</th>
                             <th>Phone</th>
                             <th>Vehicle No.</th>
                             <th>Vehicle Type</th>
                             <th>Date</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <th>Type of Ride</th>
-                            <th>From(Location)</th>
-                            <th>To(Location)</th>
+                            <th>Ride Type</th>
+                            <th>From</th>
+                            <th>To</th>
                             <th>Status<br>(Completed, Canceled)</th>
                             <th>Payment Mode</th>
                             <th>Base Fare</th>
@@ -115,10 +122,10 @@
                                 <td>{{$ride['fname']}} {{$ride['lname']}}</td>
                                 <td>{{$ride['full_mobile_number']}}</td>
                                 <td>{{$ride['vehicle_number']}}</td>
-                                <td>{{$ride['vehicle_type']}}</td>
-                                <td>{{$ride['date']}}</td>
-                                <td>{{$ride['ride_start_time']}}</td>
-                                <td>{{$ride['ride_end_time']}}</td>
+                                <td>{{$vehicleTypes->where('code', $ride['vehicle_type'])->first()['name']}}</td>
+                                <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['date'], 'UTC')->setTimezone($default_timezone)->format('d/m/Y')}}</td>
+                                <td>@if($ride['ride_start_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_start_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>
+                                <td>@if($ride['ride_end_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_end_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>
                                 <td>City</td>
                                 <td>{{$ride['from_location']}}</td>
                                 <td>{{$ride['to_location']}}</td>
@@ -165,8 +172,24 @@
 </div>
 @endsection
 @section('bottom')
-<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
+<!-- Moment Plugin Js -->
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/momentjs/moment.js"></script>
+<!-- Bootstrap Material Datetime Picker Plugin Js -->
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+<!-- Jquery DataTable Plugin Js -->
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/jquery.dataTables.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/buttons.flash.min.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/jszip.min.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/pdfmake.min.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/vfs_fonts.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/buttons.html5.min.js"></script>
+<script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
 <script>
+
+    let title = "Drivers_payouts_results_between_{{$fromDate}}_{{$toDate}}";
+    $('title').html(title);
 
     function hideSideBar() 
     {
@@ -179,9 +202,23 @@
 
 
     $(document).ready(()=>{
-        hideSideBar();
+        //hideSideBar();
 
-        $('.date').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
+        $('.datetimepicker').bootstrapMaterialDatePicker({
+            format: 'DD/MM/YYYY',
+            time:false
+        });
+
+        $('#data-table').DataTable( {
+            dom: 'Bfrtip',
+            pageLength: 100,
+            aLengthMenu: [[25, 50, 75, -1], [25, 50, 75, "All"]],
+            responsive: true,
+            buttons: [
+                'copy', 'csv', 'excel', 'print'
+            ]
+        });
+        
 
     });    
 </script>

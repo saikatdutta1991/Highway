@@ -8,6 +8,152 @@
         <title>@yield('title') | {{$website_title}}</title>
         <!-- Favicon-->
         <link rel="icon" href="{{$website_fav_icon_url}}" type="image/x-icon">
+
+        <style>
+            circle, .half, #bird .crest, #bird .face, .quarter, #bird .cheek, #bird .upperLip, #bird .lowerLip, #bird .eye {
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            }
+            .half, #bird .crest, #bird .face {
+            background-size: 50% 100%;
+            }
+            .quarter, #bird .cheek, #bird .upperLip, #bird .lowerLip {
+            background-size: 50% 50%;
+            }
+            #bird {
+            width: 20em;
+            height: 20em;
+            overflow: hidden;
+            position: relative;
+            transition: opacity 1s;
+            }
+            #bird > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            }
+            #bird .crest {
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, #A12A15, #A12A15);
+            animation: crest 2000ms infinite linear;
+            }
+            @keyframes crest {
+            0% {
+            transform: rotate(0deg);
+            }
+            25%, 50% {
+            transform: rotate(180deg);
+            }
+            75%, 100% {
+            transform: rotate(360deg);
+            }
+            }
+            #bird .face {
+            width: 65%;
+            height: 65%;
+            background-image: linear-gradient(to right, #FFF2FF, #FFF2FF);
+            animation: face 2000ms infinite linear;
+            }
+            @keyframes face {
+            0% {
+            transform: rotate(0deg);
+            }
+            25%, 50% {
+            transform: rotate(-180deg);
+            }
+            75%, 100% {
+            transform: rotate(-360deg);
+            }
+            }
+            #bird .cheek {
+            width: 65%;
+            height: 65%;
+            background-image: linear-gradient(to right, #E7E7E7, #E7E7E7);
+            animation: cheek 2000ms infinite linear;
+            }
+            @keyframes cheek {
+            0% {
+            transform: rotate(-90deg);
+            }
+            25%, 50% {
+            transform: rotate(-180deg);
+            }
+            75%, 100% {
+            transform: rotate(-450deg);
+            }
+            }
+            #bird .upperLip {
+            width: 65%;
+            height: 65%;
+            background-image: linear-gradient(to right, #F7CE42, #F7CE42);
+            animation: upperLip 2000ms infinite linear;
+            }
+            @keyframes upperLip {
+            0% {
+            transform: rotate(90deg);
+            }
+            25%, 50% {
+            transform: rotate(0deg);
+            }
+            75%, 100% {
+            transform: rotate(90deg);
+            }
+            }
+            #bird .lowerLip {
+            width: 35%;
+            height: 35%;
+            background-image: linear-gradient(to right, #F7A500, #F7A500);
+            animation: lowerLip 2000ms infinite linear;
+            }
+            @keyframes lowerLip {
+            0% {
+            transform: rotate(180deg);
+            }
+            25%, 50% {
+            transform: rotate(270deg);
+            }
+            75%, 100% {
+            transform: rotate(180deg);
+            }
+            }
+            #bird .eye {
+            width: 15%;
+            height: 15%;
+            background-color: #18233E;
+            transform: translate(-60%, -60%);
+            animation: eye 2000ms infinite linear;
+            }
+            @keyframes eye {
+            0% {
+            transform: translate(-60%, -60%);
+            }
+            25%, 50% {
+            transform: translate(60%, -60%);
+            }
+            75%, 100% {
+            transform: translate(-60%, -60%);
+            }
+            }
+            .bird-wrapper {
+            background-image: linear-gradient( 135deg, rgb(60, 8, 118) 0%, rgb(250, 0, 118) 100%);
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            z-index: 9999;    align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            }
+        </style>
+
+
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
@@ -28,142 +174,19 @@
         <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
         <!-- <link href="{{url('admin_assets/admin_bsb')}}/css/themes/all-themes.css" rel="stylesheet" /> -->
         <link href="{{url('admin_assets/admin_bsb')}}/css/themes/theme-pink.min.css" rel="stylesheet" />
-        <style>
-            /* width */
-            ::-webkit-scrollbar {
-            width: 5px;
-            }
-            /* Track */
-            ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            }
-            /* Handle */
-            ::-webkit-scrollbar-thumb {
-            background: #00baed; 
-            }
-            /* Handle on hover */
-            ::-webkit-scrollbar-thumb:hover {
-            background: #555; 
-            }
-            #loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            }
-            #loader {
-            display: block;
-            position: relative;
-            left: 50%;
-            top: 50%;
-            width: 150px;
-            height: 150px;
-            margin: -75px 0 0 -75px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #3498db;
-            -webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-            animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-            z-index: 1001;
-            }
-            #loader:before {
-            content: "";
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #e74c3c;
-            -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-            animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-            }
-            #loader:after {
-            content: "";
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #f9c922;
-            -webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
-            animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
-            }
-            @-webkit-keyframes spin {
-            0%   { 
-            -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
-            }
-            100% {
-            -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
-            }
-            }
-            @keyframes spin {
-            0%   { 
-            -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
-            }
-            100% {
-            -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
-            }
-            }
-            #loader-wrapper .loader-section {
-            position: fixed;
-            top: 0;
-            width: 51%;
-            height: 100%;
-            background: #222222;
-            z-index: 1000;
-            -webkit-transform: translateX(0);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: translateX(0);  /* Firefox 16+, IE 10+, Opera */
-            }
-            #loader-wrapper .loader-section.section-left {
-            left: 0;
-            }
-            #loader-wrapper .loader-section.section-right {
-            right: 0;
-            }
-            /* Loaded */
-            .loaded #loader-wrapper .loader-section.section-left {
-            -webkit-transform: translateX(-100%);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: translateX(-100%);  /* Firefox 16+, IE 10+, Opera */
-            -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);  
-            transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-            }
-            .loaded #loader-wrapper .loader-section.section-right {
-            -webkit-transform: translateX(100%);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: translateX(100%);  /* Firefox 16+, IE 10+, Opera */
-            -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);  
-            transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-            }
-            .loaded #loader {
-            opacity: 0;
-            -webkit-transition: all 0.3s ease-out;  
-            transition: all 0.3s ease-out;
-            }
-            .loaded #loader-wrapper {
-            visibility: hidden;
-            -webkit-transform: translateY(-100%);  /* Chrome, Opera 15+, Safari 3.1+ */  /* IE 9 */
-            transform: translateY(-100%);  /* Firefox 16+, IE 10+, Opera */
-            -webkit-transition: all 0.3s 1s ease-out;  
-            transition: all 0.3s 1s ease-out;
-            }
-        </style>
         @yield('top-header')
     </head>
     <body class="theme-pink">
         <!-- Page Loader -->
-        <div id="loader-wrapper">
-            <div id="loader"></div>
-            <div class="loader-section section-right"></div>
-            <div class="loader-section section-left"></div>
+        <div class="bird-wrapper">
+            <div id="bird">
+                <div class="lowerLip"></div>
+                <div class="crest"></div>
+                <div class="face"></div>
+                <div class="cheek"></div>
+                <div class="eye"></div>
+                <div class="upperLip"></div>
+            </div>
         </div>
         <!-- #END# Page Loader -->
         <!-- Overlay For Sidebars -->
@@ -221,16 +244,9 @@
         <script>
             function hideLoader()
             {
-                $("#loader").fadeOut()
                 setTimeout(() => {
-                    $(".section-left").animate({"left":"-1000px"}, "slow")
-                    $(".section-right").animate({"right":"-1000px"}, "slow")
-            
-                    setTimeout(() => {
-                        $("#loader-wrapper").remove()
-                    }, 500);
-            
-                }, 100);
+                    $('.bird-wrapper').fadeOut();
+                }, 500);
             }
             
             $(document).ready(()=>{
