@@ -79,7 +79,7 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    Drivers rides between {{$fromDate}} - {{$toDate}}
+                    Drivers rides between {{$fromDate}} - {{$toDate}} -- Records fetched {{$totalRecords}}
                 </h2>
             </div>
             <div class="body table-responsive">

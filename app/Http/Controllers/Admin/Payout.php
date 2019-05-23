@@ -40,6 +40,7 @@ class Payout extends Controller
         $records = [];
         $cityRidesChecked = $request->city_rides == 'on';
         $highwayRidesChecked = $request->highway_rides == 'on';
+        $totalRecords = 0;
 
         /** if from is submit then only */
         if($request->submit) {
@@ -49,9 +50,6 @@ class Payout extends Controller
 
             /** fetch all drivers */
             $drivers = Driver::select('id')->get();
-            // $driver = new \StdClass;
-            // $driver->id = 3;
-            // $drivers = [$driver];
 
             /** loop through all drivers and fetch city and highway ride details */
             foreach($drivers as $driver) {
@@ -60,12 +58,14 @@ class Payout extends Controller
                 $cityRides = [];
                 if($cityRidesChecked) {
                     $cityRides = $this->getCityRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString())->toArray();
+                    $totalRecords += count($cityRides);
                 }
 
                 /** fetch all highway rides for this current driver */
                 $highwayRides = [];
                 if($highwayRidesChecked) {
                     $highwayRides = $this->getHighwayRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString())->toArray();
+                    $totalRecords += count($highwayRides);
                 }
 
                 $records[$driver->id] = ['city_rides' => $cityRides, 'highway_rides' => $highwayRides];
@@ -91,7 +91,8 @@ class Payout extends Controller
             'cityRides' => $cityRidesChecked,
             'highwayRides' => $highwayRidesChecked,
             'records' => $records,
-            'statusCollection' => $statusCollection
+            'statusCollection' => $statusCollection,
+            'totalRecords' => $totalRecords
         ]);
     }
 
