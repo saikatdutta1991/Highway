@@ -6,7 +6,12 @@
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
 <!-- JQuery DataTable Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
-<style></style>
+<style>
+.dataTables_wrapper input[type="search"] {
+    border: 1px solid #ddd;
+    border-radius : 5px;
+}
+</style>
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -45,7 +50,10 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="material-icons">select_all</i>
+                                </span>
                                 <div class="form-line">
                                     <select class="form-control show-tick" name="ride_type">
                                         <option value = "city_rides" @if($cityRides && !$highwayRides) selected @endif>City Rides</option>
@@ -56,7 +64,10 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="material-icons">phone</i>
+                                </span>
                                 <div class="form-line">
                                     <input type="text" name="full_mobile_number" class="form-control" value="{{$full_mobile_number}}" placeholder="Phone number Ex:+919093036897(Optional)">
                                 </div>
@@ -86,7 +97,8 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    Drivers payouts between {{$fromDate}} - {{$toDate}} -- Records fetched {{$totalRecords}}
+                    <i class="material-icons" style="vertical-align: middle;">view_list</i>
+                    DRIVERS PAYOUTS BETWEEN {{$fromDate}} - {{$toDate}} -- RECORDS FOUND {{$totalRecords}}
                 </h2>
             </div>
             <div class="body table-responsive">
@@ -104,7 +116,7 @@
                             <th>Ride Type</th>
                             <th>From</th>
                             <th>To</th>
-                            <th>Status<br>(Completed, Canceled)</th>
+                            <th>Status</th>
                             <th>Payment Mode</th>
                             <th>Base Fare</th>
                             <th>Access Fee</th>
@@ -188,8 +200,10 @@
 <script src="{{url('admin_assets/admin_bsb')}}/plugins/jquery-datatable/extensions/export/buttons.print.min.js"></script>
 <script>
 
-    let title = "Drivers_payouts_results_between_{{$fromDate}}_{{$toDate}}";
+    @if($totalRecords)
+    let title = "DRIVERS_PAYOUTS_BETWEEN_{{$fromDate}}_{{$toDate}}";
     $('title').html(title);
+    @endif
 
     function hideSideBar() 
     {
@@ -218,7 +232,6 @@
                 'copy', 'csv', 'excel', 'print'
             ]
         });
-        
 
     });    
 </script>
