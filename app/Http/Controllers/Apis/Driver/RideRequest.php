@@ -724,7 +724,7 @@ class RideRequest extends Controller
         if($rideRequest->payment_mode == Ride::CASH) {
             $user->sendSms("Thank you!! We hope you enjoyed {$websiteName} service. See you next time.");
         } else {
-            $user->sendSms("We hope you enjoyed {$websiteName} service. Please make payment of {$currencySymbol}".$invoice->total);
+            $user->sendSms("We hope you enjoyed {$websiteName} service. Please make the payment of {$currencySymbol}".$invoice->total);
         }
 
 
