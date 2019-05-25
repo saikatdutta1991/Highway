@@ -146,7 +146,7 @@
                     <tr class="collapse" id="audios_ticket_{{$ticket->id}}">
                         <td colspan="8" >
                             @if($ticket->voice_url)
-                            <audio controls autoplay>
+                            <audio controls>
                                 <source src="{{$ticket->voice_url}}" type="audio/ogg">
                                 <source src="{{$ticket->voice_url}}" type="audio/mpeg">
                                 <source src="{{$ticket->voice_url}}" type="audio/mp3">
