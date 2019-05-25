@@ -633,7 +633,7 @@ class RideRequest extends Controller
         $user = $this->user->find($rideRequest->user_id);
         $currencySymbol = $this->setting->get('currency_symbol');
         $user->sendPushNotification("Your ride ended", "We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
-        $user->sendSms("We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
+        //$user->sendSms("We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
 
         /**
          * send socket push to user
@@ -715,6 +715,17 @@ class RideRequest extends Controller
             return $this->api->unknownErrResponse();
         }
         
+
+        /** send user that you made the payment message */
+        $user = $rideRequest->user;
+        $currencySymbol = $this->setting->get('currency_symbol');
+        $invoice = $rideRequest->invoice;
+        if($rideRequest->payment_mode == Ride::CASH) {
+            $user->sendSms("Thank you!! We hope you enjoyed our service. See you next time.");
+        } else {
+            $user->sendSms("We hope you enjoyed our service. Please make payment of {$currencySymbol}".$invoice->total);
+        }
+
 
         return $this->api->json(true, 'RATED', 'User rated successfully.');
 
