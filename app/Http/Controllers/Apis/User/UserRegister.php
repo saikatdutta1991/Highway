@@ -40,6 +40,7 @@ class UserRegister extends Controller
             'password' => 'required|min:6|max:100',
             'country_code' => 'required|regex:/^[+].+$/', 
             'mobile_number' => 'required|numeric',
+            'gender' => 'required|in:male,female,other'
         ]);
 
 
@@ -53,6 +54,7 @@ class UserRegister extends Controller
             ($e->has('password')) ? $msg['password'] = $e->get('password')[0] : '';
             ($e->has('country_code')) ? $msg['country_code'] = $e->get('country_code')[0] : '';
             ($e->has('mobile_number')) ? $msg['mobile_number'] = $e->get('mobile_number')[0] : '';
+            ($e->has('gender')) ? $msg['gender'] = $e->get('gender')[0] : '';
 
             return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
 
@@ -85,6 +87,7 @@ class UserRegister extends Controller
         $user->full_mobile_number = $user->fullMobileNumber();
         $user->last_access_time = date('Y-m-d H:i:s');
         $user->last_accessed_ip = $request->ip();
+        $user->gender = $request->has('gender') ? $request->gender : 'male';
         
         DB::beginTransaction();
 

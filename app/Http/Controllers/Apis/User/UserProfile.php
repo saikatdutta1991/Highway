@@ -92,6 +92,7 @@ class UserProfile extends Controller
             'old_password' => 'sometimes|required|min:6|max:100',
             'country_code' => 'sometimes|required|regex:/^[+].+$/', 
             'mobile_number' => 'sometimes|required|numeric',
+            'gender' => 'sometimes|required|in:male,female,other'
         ]);
 
         if($validator->fails()) {
@@ -105,6 +106,7 @@ class UserProfile extends Controller
             ($e->has('new_password')) ? $msg['new_password'] = $e->get('new_password')[0] : '';
             ($e->has('country_code')) ? $msg['country_code'] = $e->get('country_code')[0] : '';
             ($e->has('mobile_number')) ? $msg['mobile_number'] = $e->get('mobile_number')[0] : '';
+            ($e->has('gender')) ? $msg['gender'] = $e->get('gender')[0] : '';
 
             return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
 
@@ -119,6 +121,10 @@ class UserProfile extends Controller
 
         if($request->has('lname')) {
             $user->lname = trim($request->lname);
+        }
+
+        if($request->has('gender')) {
+            $user->gender = $request->gender;
         }
 
 
