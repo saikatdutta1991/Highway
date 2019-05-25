@@ -319,8 +319,9 @@ class RideRequest extends Controller
         $cancelLimitCount = $this->setting->get('driver_cancel_ride_request_limit') ?: 0;
         $this->api->log('cancel limit count', $cancelLimitCount);
         $this->api->log('todays cancel count', $todaysCancelCount);
-        if($todaysCancelCount >= $cancelLimitCount) {
-            return $this->api->json(false, 'CANCEL_NOW_ALLOWED', 'You have exceeded the cancellation limit for today'); 
+        $isForceCancel = $request->is_force_cancel == 1 ? true : false;
+        if(!$isForceCancel && $todaysCancelCount >= $cancelLimitCount) {
+            return $this->api->json(false, 'CANCEL_NOW_ALLOWED', 'You have exceeded the cancellation limit for today. You will be charged.'); 
         }
 
 
