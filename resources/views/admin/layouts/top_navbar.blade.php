@@ -4,7 +4,7 @@
         <div class="navbar-header">
             <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
             <a href="javascript:void(0);" class="bars"></a>
-            <a class="navbar-brand" href="{{url('admin/dashboard')}}">{{$website_name}} - ADMIN PANEL</a>
+            <a class="navbar-brand" href="{{url('admin/dashboard')}}"><span id="website_name_navbar">{{$website_name}}</span> - ADMIN PANEL</a>
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
