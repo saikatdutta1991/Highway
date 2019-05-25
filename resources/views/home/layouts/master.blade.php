@@ -8,7 +8,9 @@
         <meta name="description" content="{{$seo_description}}">
         <meta name="keywords" content="{{$seo_keywords}}">
         <link rel="icon" href="{{$website_fav_icon_url}}" type="image/x-icon">
-
+        <style>
+            #website_name_navbar { font-family: Baskerville; font-size: 29px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; }
+        </style>
         <style>
             circle, .half, #bird .crest, #bird .face, .quarter, #bird .cheek, #bird .upperLip, #bird .lowerLip, #bird .eye {
             border-radius: 50%;
