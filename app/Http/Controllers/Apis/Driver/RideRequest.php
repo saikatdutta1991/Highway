@@ -719,11 +719,12 @@ class RideRequest extends Controller
         /** send user that you made the payment message */
         $user = $rideRequest->user;
         $currencySymbol = $this->setting->get('currency_symbol');
+        $websiteName = $this->setting->get('website_name');
         $invoice = $rideRequest->invoice;
         if($rideRequest->payment_mode == Ride::CASH) {
-            $user->sendSms("Thank you!! We hope you enjoyed our service. See you next time.");
+            $user->sendSms("Thank you!! We hope you enjoyed {$websiteName} service. See you next time.");
         } else {
-            $user->sendSms("We hope you enjoyed our service. Please make payment of {$currencySymbol}".$invoice->total);
+            $user->sendSms("We hope you enjoyed {$websiteName} service. Please make payment of {$currencySymbol}".$invoice->total);
         }
 
 
