@@ -153,6 +153,19 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">accessibility</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <select class="form-control show-tick" name="gender">
+                                            <option value = "male" @if($user->gender == 'male') selected @endif>Male</option>
+                                            <option value = "female" @if($user->gender == 'female') selected @endif>Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>

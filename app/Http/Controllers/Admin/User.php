@@ -207,6 +207,7 @@ class User extends Controller
             'last_name' => 'required|max:128',
             'email' => 'required|email|max:128|unique:'.$this->user->getTable().',email,'.$user->id,
             'mobile_number' => 'required|regex:/^[+][0-9]+[-][0-9]+$/',
+            'gender' => 'required|in:male,female,other'
         ]);
 
         if($validator->fails()) {
@@ -238,6 +239,7 @@ class User extends Controller
         $user->country_code = $country_code;
         $user->mobile_number = $mobile_number;
         $user->full_mobile_number = $user->fullMobileNumber();
+        $user->gender = $request->gender;
 
         $user->save();
     
