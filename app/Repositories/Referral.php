@@ -99,7 +99,7 @@ class referral
      */
     public function generateReferralCode()
     {
-        return $this->utillRepo->randomChars(10);
+        return $this->utillRepo->randomChars(6);
     }
 
 
