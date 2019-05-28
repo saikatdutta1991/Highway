@@ -177,19 +177,16 @@
     </head>
     <body width="100%" bgcolor="#222222" style="margin: 0; mso-line-height-rule: exactly;">
         <center style="width: 100%; background: #222222; text-align: left;">
-            <!-- Visually Hidden Preheader Text : BEGIN -->
-           
-            <!-- Visually Hidden Preheader Text : END -->
-            <!-- Email Header : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
-                <!-- <tr>
-                    <td style="padding: 20px 0; text-align: center">
-                        <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; background: #222222; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">{{$website_name}}</label>
+                <tr>
+                    <td colspan="2" style="font-family: Baskerville;font-size: 29px;font-style: normal;font-variant: normal;font-weight: 700;line-height: 26.4px;text-align: center;padding: 20px;background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);">
+                        <label style="top: 5px;position: relative;font-size: 30px;font-weight: 700;color: white;">
+                            <!-- <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle"> -->
+                            {{$website_name}}
+                        </label>
                     </td>
-                    </tr> -->
+                </tr>
             </table>
-            <!-- Email Header : END -->
             <!-- Email Body : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <!-- Hero Image, Flush : BEGIN -->
