@@ -189,19 +189,6 @@
             </table>
             <!-- Email Body : BEGIN -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
-                <!-- Hero Image, Flush : BEGIN -->
-                <tr>
-                    <td rowspan="2" bgcolor="#ffffff" align="center" style="position:relative">
-                        <img src="{{url('images/email_templates/background.jpg')}}" width="600" height="" alt="alt_text" border="0" align="center" style=" max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="g-img">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;"><img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle">{{$website_name}}</label>
-                    </td>
-                </tr>
-            </table>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <!-- 1 Column Text + Button : BEGIN -->
                 <tr>
                     <td bgcolor="#ffffff" style="padding: 40px 40px 20px;">
