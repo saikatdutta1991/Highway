@@ -233,19 +233,6 @@
                 <!-- 1 Column Text + Button : END -->
             </table>
             <!-- Email Body : END -->
-            <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: #888888; font-size: 12px; line-height: 140%;">
-                <tr>
-                    <td style="padding: 40px 10px; width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; color: #888888;" class="x-gmail-data-detectors">
-                        <!-- <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion> -->
-                        <br><br>
-                        {{$website_name}}<br>{{$website_address}}<br>{{$website_contact_number}}
-                        <br><br>
-                        <!-- <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe> -->
-                    </td>
-                </tr>
-            </table>
-            <!-- Email Footer : END -->
         </center>
     </body>
 </html>

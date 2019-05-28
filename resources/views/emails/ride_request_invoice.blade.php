@@ -179,8 +179,8 @@
         <center style="width: 100%; background: #222222; text-align: left;">
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="margin: auto;" class="email-container">
                 <tr>
-                    <td colspan="2" style="text-align: center;padding: 50px;background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);">
-                        <label style="top: 5px;position: relative;text-transform: uppercase;font-size: 30px;font-weight: 700;color: white;">
+                    <td colspan="2" style="font-family: Baskerville;font-size: 29px;font-style: normal;font-variant: normal;font-weight: 700;line-height: 26.4px;text-align: center;padding: 20px;background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);">
+                        <label style="top: 5px;position: relative;font-size: 30px;font-weight: 700;color: white;">
                             <!-- <img src="{{$website_logo_url}}" width="200" height="50" alt="alt_text" border="0" style="width:50px;height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;vertical-align:middle"> -->
                             {{$website_name}}
                         </label>
@@ -382,22 +382,6 @@
                 <!-- 1 Column Text + Button : END -->
             </table>
 
-            
-            <!-- Email Body : END -->
-            <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%;">
-                <tr>
-                <!-- padding: 40px 10px; -->
-                    <td style=" width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; background: linear-gradient( 135deg, rgba(60, 8, 118, 0.8) 0%, rgba(250, 0, 118, 0.8) 100%);" class="x-gmail-data-detectors">
-                        <!-- <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold;">View as a Web Page</webversion> -->
-                        <br><br>
-                        {{$website_name}}<br>{{$website_address}}<br>{{$website_contact_number}}
-                        <br><br>
-                        <!-- <unsubscribe style="color: #888888; text-decoration: underline;">unsubscribe</unsubscribe> -->
-                    </td>
-                </tr>
-            </table>
-            <!-- Email Footer : END -->
         </center>
     </body>
 </html>
