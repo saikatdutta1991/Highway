@@ -687,6 +687,12 @@ class RideRequest extends Controller
         }
 
 
+        /** driver cannot give rating until user payment complete */
+        if($rideRequest->payment_status == Ride::NOT_PAID) {
+            return $this->api->json(false, 'USER_NOT_PAID', 'Ask user to pay before give rating');
+        }
+
+
         //updatig both driver and ride request table
         try {
 
