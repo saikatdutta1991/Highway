@@ -13,6 +13,7 @@ use App\Jobs\ProcessDriverRating;
 use Illuminate\Http\Request;
 use App\Models\RideRequest as Ride;
 use App\Models\RideCancellationCharge as CancellationCharge;
+use Illuminate\Validation\Rule;
 use App\Models\Setting;
 use App\Repositories\SocketIOClient;
 use App\Models\Transaction;
@@ -54,42 +55,6 @@ class RideRequest extends Controller
             'payment_modes' => $this->rideRequest->getPaymentModes()
         ]);
     }
-
-
-
-    /**
-     * updates ride request payment mode
-     * payment modes can be updated before driver accepted the request
-     */
-    public function updatePaymentMode(Request $request)
-    {
-        //if payment mode does not match 
-        if(!in_array($request->payment_mode, $this->rideRequest->getPaymentModes())) {
-            return $this->api->json(false, 'INVALID_PAYMENT_MODE', 'Invalid payment mode selected');
-        }
-
-        /**
-         *  if request_id in invalid or request not belongs to user
-         *  or request status is not allowed to change the payment status
-         */
-        $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
-        ->whereIn('ride_status', $this->rideRequest->updatePaymentModeAllowedStatusList())
-        ->first();
-
-        if(!$rideRequest) {
-            return $this->api->json(false, 'INVALID_RIDE_REQUEST', 'Invalid ride request'); 
-        }
-
-        $rideRequest->payment_mode = $request->payment_mode;
-        $rideRequest->save();
-
-        return $this->api->json(true, 'PAYMENT_MODE_UPDATED', 'Payment mode updated successfully'); 
-
-
-    }
-
-
-
 
 
 
@@ -313,6 +278,99 @@ class RideRequest extends Controller
     }
 
 
+
+
+
+
+    /**
+     * user can update payment mode after ride started
+     * ride request status must in not INITIATED, USER_CANCELED, DRIVER_CANCELED, TRIP_ENDED, COMPLETED
+     */
+    public function updatePaymentMode(Request $request)
+    {
+        /** validate update city ride payment mode */
+        $validator = Validator::make($request->all(), [
+            'ride_request_id' => [
+                'required',
+                Rule::exists(Ride::tablename(), 'id')->where(function ($query) use($request) {
+                    $query->where('user_id', $request->auth_user->id)
+                        ->whereNotIn('ride_status', [Ride::INITIATED, Ride::USER_CANCELED, Ride::DRIVER_CANCELED, Ride::COMPLETED])
+                        ->where('payment_mode', Ride::ONLINE);
+                })
+            ],
+            'payment_mode' => 'required|in:'.implode(',', $this->rideRequest->getPaymentModes()),
+        ]);
+
+
+        if($validator->fails()) {
+            return $this->api->json(false, 'ERROR', $validator->errors()->first());
+        }
+
+        /** fetch ride reqeust by id */
+        $rideRequest = Ride::find($request->ride_request_id);
+
+        try {
+            DB::beginTransaction();
+
+            /** change payment */
+            $rideRequest->payment_mode = $request->payment_mode;
+
+
+            /** if ride ended then, update invoice and transaction also */
+            if($rideRequest->ride_status == Ride::TRIP_ENDED) {
+                
+                /** make ride reqeust payment status as paid and status as completed */
+                $rideRequest->payment_status = Ride::PAID;
+                $rideRequest->ride_status = Ride::COMPLETED;
+
+                /** made invoice as paid */
+                $invoice = $rideRequest->invoice;
+                $invoice->payment_status = Ride::PAID;
+
+                /** create transaction because payment successfull here */
+                $transaction = new $this->transaction;
+                $transaction->trans_id = $invoice->invoice_reference;
+                $transaction->amount = $invoice->total;
+                $transaction->currency_type = $this->setting->get('currency_code');
+                $transaction->gateway = Ride::CASH;
+                $transaction->payment_method = Ride::COD;
+                $transaction->status = Transaction::SUCCESS;
+                $transaction->save();
+
+                /** add transaciton_table_id in invoice */
+                $invoice->transaction_table_id = $transaction->id;
+                $invoice->save();
+            }
+
+            /** ride request save call required uppper is portion called or not */
+            $rideRequest->save();
+            
+            DB::commit();
+        } catch(\Exception $e) {
+            DB::rollback();
+            $this->api->log('RAZORPAY_CHARGE_ERROR', $e);
+            return $this->api->json(false, 'UNKOWN_ERROR', 'Unknown error. Try again or contact to service provider');
+        }
+
+
+        /** send notification to driver */
+        $notificationData = ['ride_request_id' => $rideRequest->id, 'payment_mode' => $rideRequest->payment_mode];
+        
+        /**  send push notification to driver */
+        $rideRequest->driver->sendPushNotification("Payment Mode Changed", "User has change the payment mode to : {$rideRequest->payment_mode}");
+
+        /** send socket push to driver */
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $rideRequest->driver_id,
+            'entity_type' => 'driver', //socket will make it uppercase
+            'event_type' => 'ride_request_paymentmode_changed',
+            'data' => $notificationData
+        ]);
+
+        
+        return $this->api->json(false, 'PAYMENT_MODE_CHANGED', 'Payment mode changed');
+        
+    }
 
 
 

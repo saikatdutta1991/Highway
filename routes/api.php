@@ -57,7 +57,6 @@ Route::group(['prefix' => '/v1/user'], function(){
         Route::get('nearby-drivers/{lat_long}/{vehicle_type?}', 'Apis\User\RideRequest@getNearbyDrivers');
 
         Route::get('ride-request/payment-modes', 'Apis\User\RideRequest@getPaymentModes');
-        Route::post('ride-request/update-payment-mode', 'Apis\User\RideRequest@updatePaymentMode');
         Route::get('ride-request/check', 'Apis\User\RideRequest@checkRideRequest');
         Route::post('ride-request/{ride_request_id}/cancel', 'Apis\User\RideRequest@cancelRideRequest');
         Route::post('ride-request/initiate', 'Apis\User\RideRequest@initiateRideRequest');
@@ -68,6 +67,7 @@ Route::group(['prefix' => '/v1/user'], function(){
         /**
          * rasorpay payment apis
          */
+        Route::post('ride-requests/paymentmode/update', 'Apis\User\RideRequest@updatePaymentMode');
         Route::post('ride-requests/{ride_request_id}/razorpay/init', 'Apis\User\RideRequest@initRazorpay');
         Route::post('ride-requests/{ride_request_id}/razorpay/pay', 'Apis\User\RideRequest@makeRazorpayPayment');
 
