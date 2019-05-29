@@ -673,7 +673,7 @@ class RideRequest extends Controller
         //find ride request 
         $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
         ->where('driver_id', $request->auth_driver->id)
-        ->whereIn('ride_status', [Ride::TRIP_ENDED])
+        ->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
         ->first();
 
 

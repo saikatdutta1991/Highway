@@ -664,6 +664,11 @@ class RideRequest extends Controller
         $user->sendPushNotification("Payment successful", "{$currencySymbol}{$invoice->total} has been paid successfully");
         $user->sendSms("{$currencySymbol}{$invoice->total} has been paid successfully");
 
+
+        /** send push to driver */
+        $rideRequest->driver->sendPushNotification("User Paid", "User has paid {$currencySymbol}{$invoice->total} through online");
+
+
         return $this->api->json(true, 'PAID', 'Payment successful');
 
     }
