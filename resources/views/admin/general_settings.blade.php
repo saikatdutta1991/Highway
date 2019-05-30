@@ -159,6 +159,30 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Facebook Social Link</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="facebook_social_link" value="{{$facebook_social_link}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Twitter Social Link</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="twitter_social_link" value="{{$twitter_social_link}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Instagram Social Link</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="instagram_social_link" value="{{$instagram_social_link}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row clearfix">
                             <div class="col-sm-12 text-right">

@@ -47,7 +47,10 @@ class GlobalViewComposer
         ->with('distance_unit', $this->setting->get('distance_unit'))
         ->with('seo_title', $this->setting->get('seo_title'))
         ->with('seo_description', $this->setting->get('seo_description'))
-        ->with('seo_keywords', $this->setting->get('seo_keywords'));
+        ->with('seo_keywords', $this->setting->get('seo_keywords'))
+        ->with('facebook_social_link', $this->setting->get('facebook_social_link'))
+        ->with('twitter_social_link', $this->setting->get('twitter_social_link'))
+        ->with('instagram_social_link', $this->setting->get('instagram_social_link'));
 
 
         $this->shareAdminDetails($view);

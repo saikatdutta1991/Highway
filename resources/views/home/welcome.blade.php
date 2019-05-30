@@ -251,7 +251,7 @@ destination. There is so much more from just travelling to a comfort travel. <sp
     </div>
 </div>
 <!-- // end .section -->
-<div class="section">
+{{--<div class="section">
     <div class="container">
         <div class="section-title">
             <small>TESTIMONIALS</small>
@@ -278,7 +278,7 @@ destination. There is so much more from just travelling to a comfort travel. <sp
             </div>
         </div>
     </div>
-</div>
+</div>--}}
 <!-- // end .section -->
 <div class="section light-bg" id="gallery">
     <div class="container">

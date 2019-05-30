@@ -327,6 +327,9 @@ class Setting extends Controller
         $this->setting->set('currency_code', explode('-', $request->currency)[0]);
         $this->setting->set('currency_symbol', explode('-', $request->currency)[1]);
         $this->setting->set('android_user_app_package', trim($request->android_user_app_package));
+        $this->setting->set('facebook_social_link', trim($request->facebook_social_link));
+        $this->setting->set('twitter_social_link', trim($request->twitter_social_link));
+        $this->setting->set('instagram_social_link', trim($request->instagram_social_link));
         
         return $this->api->json(true, 'GENERAL_WEBSITE_SETTINGS_SAVED', 'Website settings saved');
     }

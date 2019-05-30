@@ -16,9 +16,15 @@
             </div>
             <div class="col-lg-6">
                 <div class="social-icons">
-                    <a href="#"><span class="ti-facebook"></span></a>
-                    <a href="#"><span class="ti-twitter-alt"></span></a>
-                    <a href="#"><span class="ti-instagram"></span></a>
+                    @if($facebook_social_link)
+                    <a href="{{$facebook_social_link}}"><span class="ti-facebook"></span></a>
+                    @endif
+                    @if($twitter_social_link)
+                    <a href="{{$twitter_social_link}}"><span class="ti-twitter-alt"></span></a>
+                    @endif
+                    @if($instagram_social_link)
+                    <a href="{{$instagram_social_link}}"><span class="ti-instagram"></span></a>
+                    @endif
                 </div>
             </div>
         </div>
