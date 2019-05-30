@@ -1,11 +1,31 @@
 @extends('home.layouts.master')
 @section('title', $seo_title)
+@section('top-header')
+<style>
+    #features > .container > .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-row-gap: 15px;
+        grid-column-gap: 15px;
+    }
+    .card.features {
+        height:100%;
+    }
+
+    @media screen and (max-width: 767px) {
+        #features > .container > .row {
+            grid-template-columns: auto;
+        }
+    }
+
+</style>
+@endsection
 @section('content')
 <header class="bg-gradient" id="home">
     <div class="container mt-5">
         <h1>Welcome to <span class="website_name">{{$website_name}}</span>!</h1>
         <p class="tagline" style="max-width: initial;">Enjoy hassle free rides within your own city or outside your city. <br>The ease of travel is on the finger tips, select the dates book your seats and hail towards your
-destination. There is so much more from just travelling to a comfort travel. Byroad presents to you various options to travel. **terms and conditions apply**</p>
+destination. There is so much more from just travelling to a comfort travel. <span class="website_name">{{$website_name}}</span> presents to you various options to travel. **terms and conditions apply**</p>
     </div>
     <div class="img-holder mt-3"><img src="{{asset('web/home/')}}/images/iphonex.png" alt="phone" class="img-fluid"></div>
 </header>
@@ -21,7 +41,7 @@ destination. There is so much more from just travelling to a comfort travel. Byr
             <h3>Services you love</h3>
         </div>
         <div class="row">
-            <div class="col-12 col-lg-6">
+            <div class="">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
@@ -34,7 +54,7 @@ destination. There is so much more from just travelling to a comfort travel. Byr
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
@@ -47,7 +67,7 @@ destination. There is so much more from just travelling to a comfort travel. Byr
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
@@ -60,7 +80,7 @@ destination. There is so much more from just travelling to a comfort travel. Byr
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
@@ -344,7 +364,7 @@ destination. There is so much more from just travelling to a comfort travel. Byr
         <div class="row pt-4">
             <div class="col-md-6">
                 <h4 class="mb-3">How do I download the app?</h4>
-                <p class="light-font mb-5">Click on the Google play icon and you will be directed to download the app. If doesn’t show up automatically, manually type Byroad customer to download customer app.</p>
+                <p class="light-font mb-5">Click on the Google play icon and you will be directed to download the app. If doesn’t show up automatically, manually type <span class="website_name">{{$website_name}}</span> customer to download customer app.</p>
                 <h4 class="mb-3">How do I sign up?</h4>
                 <p class="light-font mb-5">You can sign up using your mobile number or Google plus credentials. OTP will be sent on you or mobile and details will be reserved in the app.</p>
             </div>
