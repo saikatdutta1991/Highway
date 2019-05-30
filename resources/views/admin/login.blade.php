@@ -195,7 +195,7 @@
                             showSuccesMessage('Logged in!! Wait while redirecting to dashboard');
                             setTimeout(function(){
                                 window.location.reload();
-                            }, 2000);
+                            }, 100);
                             
                         }
             
