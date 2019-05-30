@@ -267,7 +267,7 @@ class Trip extends Controller
 
         })
         
-        ->paginate(200);
+        ->paginate(500);
 
         return $this->api->json(true, 'TRIPS', 'Your trips', [
             'trips' => $trips->items(),

@@ -372,7 +372,7 @@ class Trip extends Controller
         })
         ->with('trip', 'trip.driver', 'invoice', 'boardingPoint', 'destPoint')
         ->select($this->booking->getTableName().'.*')
-        ->paginate(100);
+        ->paginate(500);
 
         /** adding new data eg: invoice map url */
         $bookings->map(function($booking){

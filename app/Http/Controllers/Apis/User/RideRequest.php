@@ -524,7 +524,7 @@ class RideRequest extends Controller
         ->whereIn('ride_status', [Ride::COMPLETED, Ride::USER_CANCELED, Ride::DRIVER_CANCELED])
         ->with(['driver', 'invoice'])
         ->orderBy('updated_at', 'desc')
-        ->paginate(100);
+        ->paginate(500);
 
 
         $rideRequests->map(function($rideRequest){
