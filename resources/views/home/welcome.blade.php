@@ -3,57 +3,71 @@
 @section('content')
 <header class="bg-gradient" id="home">
     <div class="container mt-5">
-        <h1>Mobile App Landing Page Template</h1>
-        <p class="tagline">The one and only solution for any kind of mobila app landing needs. Just change the screenshots and texts and you are good to go. </p>
+        <h1>Welcome to <span class="website_name">{{$website_name}}</span>!</h1>
+        <p class="tagline" style="max-width: initial;">Enjoy hassle free rides within your own city or outside your city. <br>The ease of travel is on the finger tips, select the dates book your seats and hail towards your
+destination. There is so much more from just travelling to a comfort travel. Byroad presents to you various options to travel. **terms and conditions apply**</p>
     </div>
     <div class="img-holder mt-3"><img src="{{asset('web/home/')}}/images/iphonex.png" alt="phone" class="img-fluid"></div>
 </header>
-<div class="client-logos my-5">
+<!-- <div class="client-logos my-5">
     <div class="container text-center">
         <img src="{{asset('web/home/')}}/images/client-logos.png" alt="client logos" class="img-fluid">
     </div>
-</div>
+</div> -->
 <div class="section light-bg" id="features">
     <div class="container">
         <div class="section-title">
             <small>HIGHLIGHTS</small>
-            <h3>Features you love</h3>
+            <h3>Services you love</h3>
         </div>
         <div class="row">
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-6">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
                             <span class="ti-face-smile gradient-fill ti-3x mr-3"></span>
                             <div class="media-body">
-                                <h4 class="card-title">Simple</h4>
-                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque </p>
+                                <h4 class="card-title">City Ride</h4>
+                                <p class="card-text">Quick and easy rides within your city, choose from options like auto to SUVs depending on the number of people travelling and move on the go!</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-6">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
                             <span class="ti-settings gradient-fill ti-3x mr-3"></span>
                             <div class="media-body">
-                                <h4 class="card-title">Customize</h4>
-                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque </p>
+                                <h4 class="card-title">Highway Ride</h4>
+                                <p class="card-text">Easy travel like never before, schedule your trips few hours ago for out station ride from the available destination, and once confirmed fascinate your travel world or work commitments with a comfort travel in a cab rather than waiting for other modes of transport.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-6">
+                <div class="card features">
+                    <div class="card-body">
+                        <div class="media">
+                            <span class="ti-lock gradient-fill ti-3x mr-3"></span>
+                            <div class="media-body">
+                                <h4 class="card-title">Simple</h4>
+                                <p class="card-text">The app is user friendly and easy to use. Click on the sign up option, complete the KYC and there you land on the booking page with self explanatory options.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
                 <div class="card features">
                     <div class="card-body">
                         <div class="media">
                             <span class="ti-lock gradient-fill ti-3x mr-3"></span>
                             <div class="media-body">
                                 <h4 class="card-title">Secure</h4>
-                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque </p>
+                                <p class="card-text">All the user data is secured and is as per the privacy policy.</p>
                             </div>
                         </div>
                     </div>
@@ -67,10 +81,10 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6 offset-lg-6">
-                <div class="box-icon"><span class="ti-mobile gradient-fill ti-3x"></span></div>
-                <h2>Discover our App</h2>
-                <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Obcaecati vel exercitationem eveniet vero maxime ratione </p>
-                <a href="#" class="btn btn-primary">Read more</a>
+                <!-- <div class="box-icon"><span class="ti-mobile gradient-fill ti-3x"></span></div> -->
+                <h2>Our mission statement</h2>
+                <p class="mb-4">Our priorities are our customers. We would want to help customers succeed in there travel goals with the available transport options with us. Customers comfort and there choices matter to us. Hence, we believe in delivering quality services with customers as our primary source of facilitators.</p>
+                <a href="javascript:void(0)" class="btn btn-primary">Let India travel!!!</a>
             </div>
         </div>
         <div class="perspective-phone">
@@ -261,7 +275,7 @@
     </div>
 </div>
 <!-- // end .section -->
-<div class="section" id="pricing">
+{{--<div class="section" id="pricing">
     <div class="container">
         <div class="section-title">
             <small>PRICING</small>
@@ -319,7 +333,7 @@
         </div>
         <!-- // end .pricing -->
     </div>
-</div>
+</div>--}}
 <!-- // end .section -->
 <div class="section pt-0">
     <div class="container">
@@ -329,16 +343,16 @@
         </div>
         <div class="row pt-4">
             <div class="col-md-6">
-                <h4 class="mb-3">Can I try before I buy?</h4>
-                <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque pretium, nisi nisi fermentum enim, et sagittis dolor nulla vel sapien. Vestibulum sit amet mattis ante. </p>
-                <h4 class="mb-3">What payment methods do you accept?</h4>
-                <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque pretium, nisi nisi fermentum enim, et sagittis dolor nulla vel sapien. Vestibulum sit amet mattis ante. </p>
+                <h4 class="mb-3">How do I download the app?</h4>
+                <p class="light-font mb-5">Click on the Google play icon and you will be directed to download the app. If doesn’t show up automatically, manually type Byroad customer to download customer app.</p>
+                <h4 class="mb-3">How do I sign up?</h4>
+                <p class="light-font mb-5">You can sign up using your mobile number or Google plus credentials. OTP will be sent on you or mobile and details will be reserved in the app.</p>
             </div>
             <div class="col-md-6">
-                <h4 class="mb-3">Can I change my plan later?</h4>
-                <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque pretium, nisi nisi fermentum enim, et sagittis dolor nulla vel sapien. Vestibulum sit amet mattis ante. </p>
-                <h4 class="mb-3">Do you have a contract?</h4>
-                <p class="light-font mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer rutrum, urna eu pellentesque pretium, nisi nisi fermentum enim, et sagittis dolor nulla vel sapien. Vestibulum sit amet mattis ante. </p>
+                <h4 class="mb-3">What payments methods do you accept?</h4>
+                <p class="light-font mb-5">We accepts netbanking, card payments and cash payment depending on the city ride or highway ride chosen. Currently we have only online payments for highway ride which is outside the city.</p>
+                <h4 class="mb-3">How will I be notified for offers or coupons?</h4>
+                <p class="light-font mb-5">Customers may see notifications on the app for offers or coupons available. You might as well receive a text message if notifications are not provided and you can utilize them as per the instructions.</p>
             </div>
         </div>
     </div>
