@@ -66,7 +66,7 @@
     $(document).ready(function(){
         autosize($('textarea'));
     
-        var firebase_save_url = '{{url("admin/settings/firebase/save")}}'
+        var firebase_save_url = "{{route('admin.settings.firebase.save')}}";
         $("#firebase-push-notif-form").on('submit', function(event){
             event.preventDefault();
     

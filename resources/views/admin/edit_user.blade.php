@@ -210,7 +210,8 @@
             }, function (isConfirm) {
                 if (isConfirm) {
                     
-                    var url = "{{url('admin/users')}}/"+userId+'/reset-password';
+                    let userResetPasswordApi = "{{route('admin.user.password.reset', ['user_id' => '*'])}}";
+                    var url = userResetPasswordApi.replace('*', userId);
     
                     $.post(url, {_token:csrf_token}, function(response){
                         console.log(response)
@@ -239,7 +240,10 @@
         $("#profile-update-menu-item").on('click', function(){
     
             var userId = $(this).data('user-id');
-            var url = "{{url('admin/users')}}/"+userId+'/update';
+
+            let updateUserApi = "{{route('admin.user.update', ['user_id' => '*'])}}";
+            var url = updateUserApi.replace('*', userId);
+
             var data = $("#user-profile-form").serializeArray();
     
             console.log(url, data)

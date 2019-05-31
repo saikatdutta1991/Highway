@@ -182,7 +182,7 @@
                     var data = $(this).serializeArray();
             
             
-                    $.post('{{url('admin/login')}}', data, function(response){
+                    $.post('{{route("admin-login")}}', data, function(response){
             
                         console.log(response)
             

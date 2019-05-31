@@ -69,7 +69,7 @@
 <script>
     $(document).ready(function(){
     
-        var razorpay_save_url = '{{url("admin/settings/razorpay/save")}}'
+        var razorpay_save_url = '{{route("admin.settings.razorpay.save")}}';
         $("#razorpay-auth-form").on('submit', function(event){
             event.preventDefault();
     

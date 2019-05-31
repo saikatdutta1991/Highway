@@ -361,8 +361,9 @@
      $(".edit-driver-btn").on('click', function(){
 
         var driverId = $(this).data('driver-id');
-        console.log(driverId)
-        var url = "{{url('admin/drivers')}}/"+driverId;
+        
+        let driverDetailsUrl = "{{route('admin.show.driver', ['driver_id' => '*'])}}";
+        var url = driverDetailsUrl.replace('*', driverId);
         window.open(url, '_blank');
 
      });
@@ -377,7 +378,11 @@
         var csrf_token = "{{csrf_token()}}";
         var driverId = $(this).data('driver-id');
         var isApprove = $(this).is(":checked") ? 1 : 0;
-        var url = "{{url('admin/drivers')}}/"+driverId+'/approve/'+isApprove;
+
+        let approveDriverApi = "{{route('admin.driver.approve', ['driver_id' => '*', 'is_approve' => '**'])}}";
+        let url = approveDriverApi.replace('*', driverId).replace('**', isApprove);
+        console.log('approveDriverApi', approveDriverApi);
+
         var curElem = this;
         console.log(url)
 
@@ -582,7 +587,7 @@
         $("#push-notification-progressbar-div").fadeIn();
     
 
-        var sseUrl = "{{url('admin/drivers/send-pushnotification')}}"+objectToQueryString(finalObj);
+        var sseUrl = "{{route('admin.drivers.pushnotification.send')}}"+objectToQueryString(finalObj);
 
         pushnotificationSSE = new EventSource(sseUrl);
         pushnotificationSSE.onmessage = function(event) {
@@ -616,7 +621,7 @@
             finalObj = Object.assign(finalObj, temp);
         });
         
-        var url = '{{url("admin/drivers")}}' + objectToQueryString(finalObj);
+        var url = '{{route("admin-drivers")}}' + objectToQueryString(finalObj);
         console.log(url)
         window.location.href = url;
     
@@ -658,7 +663,7 @@
         urlVars.order_by=order_by;
         urlVars.order=order;
     
-        var url = '{{url("admin/drivers")}}' + objectToQueryString(urlVars);
+        var url = '{{route("admin-drivers")}}' + objectToQueryString(urlVars);
         
         console.log(url)
         window.location.href = url;

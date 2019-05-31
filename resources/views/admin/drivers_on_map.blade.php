@@ -66,7 +66,7 @@
 @endsection
 @section('bottom')
 <script>
-    var driver_base_url = "{{url('admin/drivers')}}/"
+    var driver_base_url = "{{route('admin.show.driver', ['driver_id' => '*'])}}/";
     var currLatitude = 12.963215;
     var currLongitude = 77.585568;
     var radius;
@@ -139,7 +139,8 @@
     {
         //drawCircle();
         radius = $("input[name='radius']").val();
-        var url = '{{url('admin/drivers/nearby')}}?current_latitude='+latitude+'&current_longitude='+longitude+'&radius='+radius;
+        var url = '{{route("admin-nearby-drivers")}}?';
+        url += 'current_latitude='+latitude+'&current_longitude='+longitude+'&radius='+radius;
         $.get(url, function(response){
     
             console.log(response.data.drivers)
@@ -194,7 +195,8 @@
                 labelClass: "my-custom-class-for-label", // your desired CSS class
                 labelInBackground: true
             });
-    
+            
+            let driverDetailsUrl = driver_base_url.replace('*', driver.id);
            
             var content = `
                     <h5>
@@ -203,7 +205,7 @@
                     <small>Name : ${driver.fname} ${driver.lname}</small><br>
                     <small>Vehile No. : ${driver.vehicle_number} </small><br>
                     <small>Mobile. : ${driver.full_mobile_number} </small><br>
-                    <small>Full Details : <a href="${driver_base_url}${driver.id}">Click Here</a></small>
+                    <small>Full Details : <a href="${driverDetailsUrl}">Click Here</a></small>
                `;
             /* infowindow.setContent(content);
             infowindow.open(map, marker); */

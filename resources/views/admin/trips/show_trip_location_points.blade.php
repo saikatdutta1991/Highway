@@ -554,7 +554,8 @@
             
             var data = $("#add-new-point-form").serializeArray();
             var locationId = $('input[name="location_id"]').val();
-            var url = "{{url('admin/routes/locations')}}/"+locationId+"/points/create"
+            let locationPointsCreateApi = "{{route('admin.add-locatin-points', ['location_id' => '*'])}}";
+            var url = locationPointsCreateApi.replace('*', locationId);
     
             console.log(data);
     

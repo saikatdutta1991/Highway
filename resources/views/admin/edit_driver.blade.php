@@ -514,7 +514,8 @@
             }, function (isConfirm) {
                 if (isConfirm) {
                     
-                    var url = "{{url('admin/drivers')}}/"+driverId+'/reset-password';
+                    let driverPasswordResetApi = "{{route('admin.driver.password.reset', ['driver_id' => '*'])}}";
+                    var url = driverPasswordResetApi.replace('*', driverId);
     
                     $.post(url, {_token:csrf_token}, function(response){
                         console.log(response)
@@ -546,7 +547,10 @@
         $("#profile-update-menu-item").on('click', function(){
     
             var driverId = $(this).data('driver-id');
-            var url = "{{url('admin/drivers')}}/"+driverId+'/update';
+
+            let driverUpdateApi = "{{route('admin.driver.update', ['driver_id' => '*'])}}";
+            var url = driverUpdateApi.replace("*", driverId);
+            
             var data = $("#driver-profile-form").serializeArray();
     
             console.log(url, data)
@@ -602,8 +606,8 @@
             var form_data = new FormData();
             form_data.append("photo", $("#uploadPhoto")[0].files[0])
             form_data.append("_token", "{{csrf_token()}}")
-    
-            var url = "{{url('admin/drivers')}}/{{$driver->id}}/change-photo";  
+            
+            var url = '{{route("admin.driver.update.photo", ["driver_id" => $driver->id])}}';
     
             console.log(url)
 
@@ -697,8 +701,10 @@
     
             var csrf_token = "{{csrf_token()}}";
             var driverId = $(this).data('driver-id');
-            var isApprove = $(this).data('is-approve')
-            var url = "{{url('admin/drivers')}}/"+driverId+'/approve/'+isApprove;
+            var isApprove = $(this).data('is-approve');
+
+            let driverApproveApi = "{{route('admin.driver.approve', ['driver_id' => '*', 'is_approve' => '**'])}}";
+            let url = driverApproveApi.replace('*', driverId).replace("**", isApprove);
             var curElem = this;
             console.log(url)
     

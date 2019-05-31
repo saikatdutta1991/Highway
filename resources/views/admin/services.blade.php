@@ -382,11 +382,11 @@
 
     
 
-    var service_add_url = "{{url('admin/services/add')}}";
-    var service_fare_base = "{{url('admin/services')}}";
+    var service_add_url = "{{route('admin.services.add')}}";
+    var service_fare_base = "{{route('admin.services')}}";
     var csrf_token = "{{csrf_token()}}";
-    var save_tax_percentage = "{{url('admin/services/tax/save')}}";
-    var save_cancellation_charge = "{{url('admin/services/cancellation-charge/save')}}";
+    var save_tax_percentage = "{{route('admin.services.tax.save')}}";
+    var save_cancellation_charge = "{{route('admin.services.cancellation-charge.save')}}";
     var save_drirver_ride_cancel_limit = "{{route('admin.service.driver-cancel-ride-request-limit')}}";
 
 

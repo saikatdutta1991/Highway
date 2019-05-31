@@ -274,14 +274,15 @@
 
     $(".view-in-details").on('click', function(){
         var ride_request_id = $(this).data('ride-request-id')
-        var url = "{{url('admin/rides/intracity')}}/"+ride_request_id+'/details';
+        let cityRideDetailsApi = "{{route('admin.rides.city.details', ['ride_request_id' => '*'])}}";
+        var url = cityRideDetailsApi.replace('*', ride_request_id);
         openInNewTab(url);
     });
 
     $(".driver-rides-menu-item").on('click', function(){
         var driverId = $(this).data('driver-id')
         var data = {'driver_id' : driverId};
-        var url = "{{url('/admin/rides/intracity')}}"+objectToQueryString(data);
+        var url = "{{route('admin.rides.city')}}"+objectToQueryString(data);
         console.log(url)
         window.location.href = url;
     })
@@ -289,21 +290,23 @@
     $(".user-rides-menu-item").on('click', function(){
         var userId = $(this).data('user-id')
         var data = {'user_id' : userId};
-        var url = "{{url('/admin/rides/intracity')}}"+objectToQueryString(data);
+        var url = "{{route('admin.rides.city')}}"+objectToQueryString(data);
         console.log(url)
         window.location.href = url;
     })
 
     $(".view-user-menu-item").on('click', function(){
-        var userId = $(this).data('user-id')
-        var url = "{{url('admin/users')}}/"+userId;
+        var userId = $(this).data('user-id');
+        let userDetailsApi = "{{route('admin.show.user', ['user_id' => '*'])}}";
+        var url = userDetailsApi.replace('*', userId);
         openInNewTab(url);
     })
     
     
     $(".view-driver-menu-item").on('click', function(){
-        var driverId = $(this).data('driver-id')
-        var url = "{{url('admin/drivers')}}/"+driverId;
+        var driverId = $(this).data('driver-id');
+        let driverDetailsApi = "{{route('admin.show.driver', ['driver_id' => '*'])}}";
+        var url = driverDetailsApi.replace('*', driverId);
         openInNewTab(url);
     })
     

@@ -51,8 +51,8 @@
                         <tbody>
                             @foreach($routes as $route)
                             <tr id="route-row-{{$route->id}}">
-                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{url('admin/routes/locations/'.$route->from_location.'/points')}}'" style="text-decoration:underline;cursor:pointer">{{$route->from->name}}</td>
-                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{url('admin/routes/locations/'.$route->to_location.'/points')}}'" style="text-decoration:underline;cursor:pointer">{{$route->to->name}}</td>
+                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{route("admin.routes.locations.points.show", ["location_id" => $route->from_location])}}'" style="text-decoration:underline;cursor:pointer">{{$route->from->name}}</td>
+                            <td data-toggle="tooltip" data-placement="left" title="Click to edit location" onclick="window.location.href='{{route("admin.routes.locations.points.show", ["location_id" => $route->to_location])}}'" style="text-decoration:underline;cursor:pointer">{{$route->to->name}}</td>
                             <td>{{$route->total_fare}}
                                 <i class="material-icons font-14 col-grey" style="cursor:pointer" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" title="Fare Breakdown" data-content="Base Fare: {{$route->base_fare}} | Tax Fee: {{$route->tax_fee}} | Access Fee: {{$route->access_fee}}">help_outline</i>
                             </td>
@@ -83,62 +83,4 @@
 </div>
 @endsection
 @section('bottom')
-<script>
-
-    var delete_route_url = "{{url('admin/routes')}}/";
-    var csrf_token = "{{csrf_token()}}";
-
-    $(document).ready(function(){
-        
-
-       /*  $(".delete-route-btn").on('click', function(){
-
-            var deleteBtnElem = $(this);
-        
-            swal({
-                title: "Are you sure to delete this route?",
-                text: "",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete",
-                cancelButtonText: "No, cancel",
-                closeOnConfirm: false,
-                closeOnCancel: true
-            }, function (isConfirm) {
-            
-                if (!isConfirm) {
-                    return false;
-                } 
-
-                var route_id = deleteBtnElem.data('route-id');
-
-                var data = {
-                    route_id : route_id,
-                    _token : csrf_token
-                };
-                
-                $.post(delete_route_url+route_id+'/delete', data, function(response){
-
-                    if(response.success) {
-                        
-                        swal("Route deleted successfully", "", "success"); 
-        
-                        $("#route-row-"+route_id).fadeOut();
-                        
-                    }
-                })
-                .fail(function(){
-                    swal("Internal server error. Try later.", "", "error");
-                });
-            
-            });
-
-        }); */
-
-        
-    });
-        
-    
-</script>
 @endsection

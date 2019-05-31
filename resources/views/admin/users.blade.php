@@ -313,8 +313,8 @@ $(document).ready(function(){
      $(".edit-user-btn").on('click', function(){
 
         var userId = $(this).data('user-id');
-        console.log(userId)
-        var url = "{{url('admin/users')}}/"+userId;
+        let showUserApi = "{{route('admin.show.user', ['user_id' => '*'])}}";
+        var url = showUserApi.replace('*', userId);
         window.open(url, '_blank');
 
      });
@@ -438,7 +438,7 @@ $(document).ready(function(){
         $("#push-notification-progressbar-div").fadeIn();
     
 
-        var sseUrl = "{{url('admin/users/send-pushnotification')}}"+objectToQueryString(finalObj);
+        var sseUrl = "{{route('admin.users.pushnotification.send')}}"+objectToQueryString(finalObj);
 
         pushnotificationSSE = new EventSource(sseUrl);
         pushnotificationSSE.addEventListener('error', function(e) {
@@ -476,7 +476,7 @@ $(document).ready(function(){
             finalObj = Object.assign(finalObj, temp);
         });
         
-        var url = '{{url("admin/users")}}' + objectToQueryString(finalObj);
+        var url = '{{route("admin-users")}}' + objectToQueryString(finalObj);
         console.log(url)
         window.location.href = url;
     
@@ -491,7 +491,7 @@ $(document).ready(function(){
         urlVars.order_by=order_by;
         urlVars.order=order;
     
-        var url = '{{url("admin/users")}}' + objectToQueryString(urlVars);
+        var url = '{{route("admin-users")}}' + objectToQueryString(urlVars);
         
         console.log(url)
         window.location.href = url;

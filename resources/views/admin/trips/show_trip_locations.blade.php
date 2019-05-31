@@ -104,7 +104,6 @@
 @section('bottom')
 <script>
 
-    var delete_route_url = "{{url('admin/routes')}}/";
     var csrf_token = "{{csrf_token()}}";
 
     $(document).ready(function(){
@@ -112,8 +111,8 @@
 
         $(".edit-location-btn").on('click', function(){
             var location_id = $(this).data('location-id')
-            console.log(location_id)
-            window.location.href="{{url('admin/routes/locations')}}/"+location_id+"/points"
+            let showLocationPointsApi = "{{route('admin.routes.locations.points.show', ['location_id' => '*'])}}";
+            window.location.href = showLocationPointsApi.replace('*', location_id);
         })
 
 

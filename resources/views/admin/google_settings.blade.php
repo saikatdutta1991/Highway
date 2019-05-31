@@ -123,7 +123,7 @@
     $(document).ready(function(){
 
 
-        var google_map_api_key_save_url = '{{url("admin/settings/google/map-key/save")}}'
+        var google_map_api_key_save_url = "{{route('admin.settings.google.mapkey.save')}}";
         $("#google-map-api-key-form").on('submit', function(event){
             event.preventDefault();
     
@@ -146,7 +146,7 @@
     
         })
     
-        var google_save_url = '{{url("admin/settings/google/save")}}'
+        var google_save_url = "{{route('admin.settings.google.save')}}";
         $("#google-auth-form").on('submit', function(event){
             event.preventDefault();
     

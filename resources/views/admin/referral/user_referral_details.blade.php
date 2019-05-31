@@ -157,8 +157,8 @@ $(document).ready(function(){
      $(".edit-user-btn").on('click', function(){
 
         var userId = $(this).data('user-id');
-        console.log(userId)
-        var url = "{{url('admin/users')}}/"+userId;
+        let showUserApi = "{{route('admin.show.user', ['user_id' => '*'])}}";
+        var url = showUserApi.replace('*', userId);
         window.open(url, '_blank');
 
      });

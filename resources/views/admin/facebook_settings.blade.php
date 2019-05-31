@@ -77,7 +77,7 @@
 <script>
     $(document).ready(function(){
     
-        var facebook_save_url = '{{url("admin/settings/facebook/save")}}'
+        var facebook_save_url = "{{route('admin.settings.email.test')}}";
         $("#facebook-auth-form").on('submit', function(event){
             event.preventDefault();
     

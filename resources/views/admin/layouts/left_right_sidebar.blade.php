@@ -13,7 +13,7 @@
                     <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                     <ul class="dropdown-menu pull-right">
                         <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
-                        <li><a href="{{url('admin/logout')}}"><i class="material-icons">input</i>Sign Out</a></li>
+                        <li><a href="{{route('admin.logout')}}"><i class="material-icons">input</i>Sign Out</a></li>
                     </ul>
                 </div>
             </div>
@@ -24,7 +24,7 @@
             <ul class="list">
                 <li class="header">MAIN NAVIGATION</li>
                 <li class="@yield('dashboard_active')">
-                    <a href="{{url('admin/dashboard')}}">
+                    <a href="{{route('admin-dashboard')}}">
                     <i class="material-icons">home</i>
                     <span>Dashboard</span>
                     </a>
@@ -42,7 +42,7 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('intracity_rides_active')">
-                            <a href="{{url('admin/rides/intracity')}}">City Rides</a>
+                            <a href="{{route('admin.rides.city')}}">City Rides</a>
                         </li>
                         <li class="@yield('higiway_trips_active')">
                             <a href="{{route('admin.show.trips')}}">Outside Rides</a>
@@ -56,7 +56,7 @@
                     </ul>
                 </li>
                 <li class="@yield('users_active')">
-                    <a href="{{url('admin/users')}}">
+                    <a href="{{route('admin-users')}}">
                     <i class="material-icons">people</i>
                     <span>Users</span>
                     </a>
@@ -69,10 +69,10 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('settings_referral_active')">
-                            <a href="{{url('admin/referral/settings')}}">Settings</a>
+                            <a href="{{route('admin.settings.referral')}}">Settings</a>
                         </li>
                         <li class="@yield('user_referrals_active')">
-                            <a href="{{url('admin/referral/users')}}">User Referrals</a>
+                            <a href="{{route('admin.show_referral_users')}}">User Referrals</a>
                         </li>
                     </ul>
                 </li>
@@ -99,15 +99,15 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('driver_list_active')">
-                            <a href="{{url('admin/drivers')}}">List View</a>
+                            <a href="{{route('admin-drivers')}}">List View</a>
                         </li>
                         <li class="@yield('driver_map_active')">
-                            <a href="{{url('admin/drivers/map')}}">Map View</a>
+                            <a href="{{route('admin-drivers-map')}}">Map View</a>
                         </li>
                     </ul>
                 </li>
                 <li class="@yield('services_active')">
-                    <a href="{{url('admin/services')}}">
+                    <a href="{{route('admin.services')}}">
                     <i class="material-icons">dialpad</i>
                     <span>Services</span>
                     </a>
@@ -119,28 +119,28 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('settings_general_active')">
-                            <a href="{{url('admin/settings/general')}}">General</a>
+                            <a href="{{route('admin.settings.general')}}">General</a>
                         </li>
                         <li class="@yield('settings_seo_active')">
                             <a href="{{route('admin.show.seo')}}">Seo Management</a>
                         </li>
                         <li class="@yield('settings_razorpay_active')">
-                            <a href="{{url('admin/settings/razorpay')}}">Razorpay Gateway</a>
+                            <a href="{{route('admin.settings.razorpay')}}">Razorpay Gateway</a>
                         </li>
                         <li class="@yield('settings_email_active')">
-                            <a href="{{url('admin/settings/email')}}">Email</a>
+                            <a href="{{route('admin.settings.email')}}">Email</a>
                         </li>
                         <li class="@yield('settings_sms_active')">
-                            <a href="{{url('admin/settings/sms')}}">Sms</a>
+                            <a href="{{route('admin.settings.sms')}}">Sms</a>
                         </li>
                         <li class="@yield('settings_firebase_active')">
-                            <a href="{{url('admin/settings/firebase')}}">Firebase</a>
+                            <a href="{{route('admin.settings.firebase')}}">Firebase</a>
                         </li>
                         <li class="@yield('settings_facebook_active')">
-                            <a href="{{url('admin/settings/facebook')}}">Facebook</a>
+                            <a href="{{route('admin.settings.facebook')}}">Facebook</a>
                         </li>
                         <li class="@yield('settings_google_active')">
-                            <a href="{{url('admin/settings/google')}}">Google</a>
+                            <a href="{{route('admin.settings.google')}}">Google</a>
                         </li>
                     </ul>
                 </li>
@@ -151,13 +151,13 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('trips_route_locations')">
-                            <a href="{{url('admin/routes/locations')}}">Locations</a>
+                            <a href="{{route('admin.show_all_locations')}}">Locations</a>
                         </li>
                         <li class="@yield('trips_new_route_active')">
-                            <a href="{{url('admin/routes/new')}}">New Route</a>
+                            <a href="{{route('admin.show-new-route')}}">New Route</a>
                         </li>
                         <li class="@yield('trips_all_routes_active')">
-                            <a href="{{url('admin/routes')}}">Routes</a>
+                            <a href="{{route('admin.show-all-routes')}}">Routes</a>
                         </li>
                     </ul>
                 </li>

@@ -186,8 +186,8 @@
 <script>
 
     var csrf_token = '{{csrf_token()}}'
-    var sms_save_url = '{{url("admin/settings/sms/save")}}'
-    var test_sms_url = '{{url("admin/settings/sms/test")}}'
+    var sms_save_url = '{{route("admin.settings.sms.save")}}';
+    var test_sms_url = '{{route("admin.settings.sms.test")}}';
     $('select[name="sms_provider"]').on('change', function(){
         var sms_provider = $('select[name="sms_provider"]').val()
         console.log(sms_provider)

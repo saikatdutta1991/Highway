@@ -319,7 +319,7 @@
             form_data.append("photo", $("#uploadFavicon")[0].files[0])
             form_data.append("_token", "{{csrf_token()}}")
     
-            var url = "{{url('admin/settings/general/website/favicon/save')}}";  
+            var url = "{{route('admin.settings.general.website.favicon.save')}}";
     
             console.log(url)
 
@@ -416,7 +416,7 @@
             form_data.append("photo", $("#uploadLogo")[0].files[0])
             form_data.append("_token", "{{csrf_token()}}")
     
-            var url = "{{url('admin/settings/general/website/logo/save')}}";  
+            var url = "{{route('admin.settings.general.website.logo.save')}}";
     
             console.log(url)
 
@@ -496,7 +496,7 @@
 
     
     
-        var general_website_save_url = '{{url("admin/settings/general/website/save")}}'
+        var general_website_save_url = "{{route('admin.settings.general.website.save')}}";
         $("#general-website-form").on('submit', function(event){
             event.preventDefault();
     

@@ -454,8 +454,8 @@
     
     var driver = '{{$setting->get('mail_driver')}}';
     var csrf_token = '{{csrf_token()}}'
-    var setting_save_url = '{{url("admin/settings/email/save")}}'
-    var test_emai_url = '{{url("admin/settings/email/test")}}'
+    var setting_save_url = "{{route('admin.settings.email.save')}}";
+    var test_emai_url = "{{route('admin.settings.email.test')}}";
     
     //on change driver check email credentials set or not
     $("input[name='m_driver']").on('change', function(){
