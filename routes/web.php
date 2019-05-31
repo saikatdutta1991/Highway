@@ -15,6 +15,7 @@ Route::get('/', 'Web\HomeController@showHomepage');
 Route::get('track-booking/{bookingid}', 'Web\HomeController@trackBooking')->name('track-booking');
 Route::get('track-booking/{bookingid}/progress', 'Web\HomeController@trackBookingProgress')->name('track-booking-progress');
 Route::get('track-booking/{bookingid}/map', 'Web\HomeController@trackBookingMap')->name('track-booking-map');
+Route::get('track-booking/{bookingid}/boarding-point-route', 'Web\HomeController@trackBookingBoardingPointRoute')->name('bookings.track.boarding-point-route');
 Route::get('offers', 'Admin\Coupon@showOffers')->name('offers'); /**coupon offers page */
 Route::get('privacy-policy', 'Web\HomeController@showPrivacyPolicy')->name('privacy-policy');
 Route::get('terms', 'Web\HomeController@showTerms')->name('terms');

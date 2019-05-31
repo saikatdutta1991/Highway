@@ -9,6 +9,7 @@ use App\Models\Content;
 use App\Models\VehicleType;
 use Browser;
 use App\Models\Setting;
+use App\Models\Trip\TripPoint;
 
 class HomeController extends Controller
 {
@@ -66,6 +67,23 @@ class HomeController extends Controller
     {
         return view('home.welcome');
     }
+
+
+
+
+
+
+    /**
+     * show google map and track booking boarding point route
+     */
+    public function trackBookingBoardingPointRoute(Request $request)
+    {
+        $booking = TripBooking::where('booking_id', $request->bookingid)->select(['id', 'boarding_point_id'])->first();
+        $pickupPoint = TripPoint::where('id', $booking->boarding_point_id)->select(['id', 'label', 'address', 'tag', 'latitude', 'longitude'])->first();
+        $mapUrl = "http://maps.google.com/maps?saddr=Your Location&daddr={$pickupPoint->latitude},{$pickupPoint->longitude}";
+        return redirect($mapUrl);
+    }
+
 
 
 
