@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\CreateAdmin::class
+        \App\Console\Commands\CreateAdmin::class,
+        \App\Console\Commands\AlertTripBookings::class
     ];
 
     /**
@@ -24,8 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('trip-bookings:alert')->everyFiveMinutes();
     }
 
     /**

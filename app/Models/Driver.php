@@ -70,6 +70,11 @@ class Driver extends Model
         return 'drivers';
     }
 
+    public static function table()
+    {
+        return 'drivers';
+    }
+
 
     /**
      * returns full name

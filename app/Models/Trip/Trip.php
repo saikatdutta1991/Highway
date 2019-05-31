@@ -37,6 +37,11 @@ class Trip extends Model
         return 'trips';
     }
 
+    public static function table()
+    {
+        return 'trips';
+    }
+
 
 
    
