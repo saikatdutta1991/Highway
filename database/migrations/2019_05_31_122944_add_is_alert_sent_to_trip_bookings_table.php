@@ -14,7 +14,8 @@ class AddIsAlertSentToTripBookingsTable extends Migration
     public function up()
     {
         Schema::table('trip_bookings', function (Blueprint $table) {
-            $table->boolean('is_alert_sent')->default(false);
+            $table->boolean('is_sms_alert_sent')->default(false);
+            $table->boolean('is_push_alert_sent')->default(false);
         });
     }
 

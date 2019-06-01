@@ -56,7 +56,17 @@ class AlertTripBookings extends Command
     public function handle()
     {
         $this->info('Trip Bookings Alert Command Started.');
+        $this->sendSmsAlert();
+        $this->sendPushAlert();
+        $this->info('Trip Bookings Alert Command Ended.');
+    }
 
+
+    /**
+     * sending push alert
+     */
+    protected function sendPushAlert()
+    {
         /** let take current time and add 2 hours to current time to create range */
         $minTime = Carbon::now();
         $maxTime = Carbon::now()->addHours(2);
@@ -64,27 +74,13 @@ class AlertTripBookings extends Command
         $this->line("maxTime : {$maxTime}");
 
         /** find bookings withing time range going to start which has not been notified yet */
-        $bookings = $this->getBookings($minTime, $maxTime);
+        $bookings = $this->getBookings($minTime, $maxTime, 2);
 
-        /** now, for each bookings send sms to user, push notification and socket event */
+
+        /** now, for each bookings send sms to user*/
         foreach($bookings as $booking) {
 
             $this->line("Processing sending alert for Booking id : {$booking->booking_id}");
-
-
-
-            $this->line("Sending sms to : {$booking->user_mobile_number}");
-            $message = Utill::transMessage('app_messages.booking_alert', [
-                'date' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('d-m-Y'),
-                'time' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('h:i A'),
-                'tracklink' => $booking->trackBookingUrl(),
-                'boardingpointlink' => route('bookings.track.boarding-point-route', ['bookingid' => $booking->booking_id])
-            ]);
-            $this->smsProvider->sendMessage($booking->user_country_code, $booking->user_mobile_number, $message);
-
-
-
-
             $this->line('Sending push notification to user');
             $pushBody = Utill::transMessage('app_messages.booking_alert_push', [
                 'date' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('d-m-Y'),
@@ -106,26 +102,68 @@ class AlertTripBookings extends Command
                 ->setContentAvailable(true)
                 ->setDeviceTokens($userDevicetokens, true)
                 ->push();
-
-            TripBooking::where('id', $booking->id)->update(['is_alert_sent' => true]);
-
+            
+            TripBooking::where('id', $booking->id)->update(['is_push_alert_sent' => true]);
         }
-    
     }
+
+
+
+    /**
+     * send sms alert
+     */
+    protected function sendSmsAlert()
+    {
+        /** let take current time and add 4 hours to current time to create range */
+        $minTime = Carbon::now();
+        $maxTime = Carbon::now()->addHours(4);
+        $this->line("minTime : {$minTime}");
+        $this->line("maxTime : {$maxTime}");
+
+        /** find bookings withing time range going to start which has not been notified yet */
+        $bookings = $this->getBookings($minTime, $maxTime, 1);
+
+
+        /** now, for each bookings send sms to user*/
+        foreach($bookings as $booking) {
+
+            $this->line("Processing sending alert for Booking id : {$booking->booking_id}");
+            $this->line("Sending sms to : {$booking->user_mobile_number}");
+            $message = Utill::transMessage('app_messages.booking_alert', [
+                'date' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('d-m-Y'),
+                'time' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('h:i A'),
+                'tracklink' => $booking->trackBookingUrl(),
+                'boardingpointlink' => route('bookings.track.boarding-point-route', ['bookingid' => $booking->booking_id])
+            ]);
+            $this->smsProvider->sendMessage($booking->user_country_code, $booking->user_mobile_number, $message);
+
+            TripBooking::where('id', $booking->id)->update(['is_sms_alert_sent' => true]);
+        }
+
+    }
+
+
+
 
 
     /** 
      * returns bookings those are not informed yet prior to spefic hours 
      * with time range
+     * alerttype : 1 for sms, 2 for push
      */
-    protected function getBookings($minTime, $maxTime)
+    protected function getBookings($minTime, $maxTime, $alerttype = 1)
     {
-        $bookings = TripBooking::join(Trip::table(), function ($join) use($minTime, $maxTime) {
+        $bookings = TripBooking::join(Trip::table(), function ($join) use($minTime, $maxTime, $alerttype) {
             
             $join->on(TripBooking::table().'.trip_id', '=', Trip::table().'.id')
-                ->where(TripBooking::table().'.is_alert_sent', '=', false)
                 ->whereBetween(Trip::table().'.trip_datetime', [$minTime, $maxTime])
                 ->where(TripBooking::table().'.booking_status', TripBooking::BOOKING_CONFIRMED);
+
+            if($alerttype == 1) {
+                $join->where(TripBooking::table().'.is_sms_alert_sent', '=', false);
+            } else if($alerttype == 2) {
+                $join->where(TripBooking::table().'.is_push_alert_sent', '=', false);
+            }
 
         })
         ->join(User::table(), User::table().'.id', '=', TripBooking::table().'.user_id')
