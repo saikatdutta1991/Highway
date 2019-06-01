@@ -110,6 +110,7 @@
                             <th>Phone</th>
                             <th>Vehicle No.</th>
                             <th>Vehicle Type</th>
+                            <th>Rating</th>
                             <th>Date</th>
                             <th>Start Time</th>
                             <th>End Time</th>
@@ -135,6 +136,7 @@
                                 <td>{{$ride['full_mobile_number']}}</td>
                                 <td>{{$ride['vehicle_number']}}</td>
                                 <td>{{$vehicleTypes->where('code', $ride['vehicle_type'])->first()['name']}}</td>
+                                <th>{{$ride['driver_rating']}}</td>
                                 <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['date'], 'UTC')->setTimezone($default_timezone)->format('d/m/Y')}}</td>
                                 <td>@if($ride['ride_start_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_start_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>
                                 <td>@if($ride['ride_end_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_end_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>

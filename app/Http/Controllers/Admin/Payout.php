@@ -37,6 +37,7 @@ class Payout extends Controller
      */
     public function showFilteredPayouts(Request $request)
     {  
+        
         /** varialbe to store records */
         $records = [];
         $totalRecords = 0;
@@ -61,7 +62,7 @@ class Payout extends Controller
 
             $fromDateConverted = Carbon::createFromFormat('d/m/Y H:i:s', $request->from_date.' 00:00:00', 'Asia/Kolkata')->setTimezone('UTC'); 
             $toDateConverted = Carbon::createFromFormat('d/m/Y H:i:s', $request->to_date.' 23:59:59', 'Asia/Kolkata')->setTimezone('UTC');
-
+            
             /** fetch all drivers */
             $drivers = Driver::select('id')->get();
 
@@ -71,14 +72,14 @@ class Payout extends Controller
                 /** fetch all city rides */
                 $cityRides = [];
                 if($cityRidesChecked) {
-                    $cityRides = $this->getCityRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString(), $full_mobile_number)->toArray();
+                    $cityRides = $this->getCityRides($driver->id, $fromDateConverted, $toDateConverted, $full_mobile_number)->toArray();
                     $totalRecords += count($cityRides);
                 }
 
                 /** fetch all highway rides for this current driver */
                 $highwayRides = [];
                 if($highwayRidesChecked) {
-                    $highwayRides = $this->getHighwayRides($driver->id, $fromDateConverted->toDateString(), $toDateConverted->toDateString(), $full_mobile_number)->toArray();
+                    $highwayRides = $this->getHighwayRides($driver->id, $fromDateConverted, $toDateConverted, $full_mobile_number)->toArray();
                     $totalRecords += count($highwayRides);
                 }
 
@@ -145,6 +146,7 @@ class Payout extends Controller
             DB::raw(Driver::tablename().".full_mobile_number"),
             DB::raw(Driver::tablename().".vehicle_type"),
             DB::raw(Driver::tablename().".vehicle_number"),
+            DB::raw(Driver::tablename().".rating as driver_rating"),
 
             Trip::tablename().".id",
             DB::raw(Trip::tablename().".from as from_location"),
@@ -196,6 +198,7 @@ class Payout extends Controller
             DB::raw(Driver::tablename().".full_mobile_number"),
             DB::raw(Driver::tablename().".vehicle_type"),
             DB::raw(Driver::tablename().".vehicle_number"),
+            DB::raw(Driver::tablename().".rating as driver_rating"),
 
             RideRequest::tablename().".id",
             DB::raw(RideRequest::tablename().".source_address as from_location"),
