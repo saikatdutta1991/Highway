@@ -153,6 +153,9 @@
             justify-content: center;
             flex-direction: column;
             }
+            .slimScrollBar {
+                width: 10px !important;
+            }
         </style>
 
 
