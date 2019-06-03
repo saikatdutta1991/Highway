@@ -730,9 +730,10 @@ class RideRequest extends Controller
         $invoice = $rideRequest->invoice;
         if($rideRequest->payment_mode == Ride::CASH) {
             $user->sendSms("Thank you!! We hope you enjoyed {$websiteName} service. See you next time.");
-        } else {
-            $user->sendSms("We hope you enjoyed {$websiteName} service. Please make the payment of {$currencySymbol}".$invoice->total);
-        }
+        } 
+        // else {
+        //     $user->sendSms("We hope you enjoyed {$websiteName} service. Please make the payment of {$currencySymbol}".$invoice->total);
+        // }
 
 
         return $this->api->json(true, 'RATED', 'User rated successfully.');
