@@ -81,7 +81,7 @@ class RazorPay extends Gateway
             }
 
             \Log::info('RazorPay::charge');
-            \Log::info($payment);
+            \Log::info(print_r($payment, true));
             
             return [
                 'success'        => true,
