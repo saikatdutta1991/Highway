@@ -223,10 +223,15 @@ function showPrice(priceData)
     });
 }
 
+
+var sourceMarker, destMarker;
+
 function calculateAndShowRoute(start, end) 
 {
-
-    new google.maps.Marker({
+    if(sourceMarker) {
+        sourceMarker.setMap(null);
+    }
+    sourceMarker = new google.maps.Marker({
         position: start,
         map: map,
         icon : {
@@ -239,7 +244,10 @@ function calculateAndShowRoute(start, end)
         }
     });
 
-    new google.maps.Marker({
+    if(destMarker) {
+        destMarker.setMap(null);
+    }
+    destMarker = new google.maps.Marker({
         animation: google.maps.Animation.BOUNCE,
         position: end,
         map: map,
