@@ -79,6 +79,9 @@ class RazorPay extends Gateway
             if($payment->status == 'authorized') {
                 $payment = $payment->capture(array('amount'=> $order->amount));
             }
+
+            \Log::info('RazorPay::charge');
+            \Log::info($payment);
             
             return [
                 'success'        => true,
