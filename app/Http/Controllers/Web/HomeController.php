@@ -10,9 +10,68 @@ use App\Models\VehicleType;
 use Browser;
 use App\Models\Setting;
 use App\Models\Trip\TripPoint;
+use App\Models\RideFare;
+use App\Repositories\Api;
 
 class HomeController extends Controller
 {
+
+    /**
+     * init dependencies
+     */
+    public function __construct(Api $api)
+    {
+        $this->api = $api;
+    }
+
+
+    /**
+     * api to get list to services with basic fare
+     * returns json response
+     */
+    public function getEstimatePrice(Request $request)
+    {
+        $pricesList = [];
+
+        /** get all services */
+        $services = VehicleType::allTypes();
+
+        $distance = $request->has('distance') ? ($request->distance / 1000) : 0;
+        
+        /** loop through all services, and fetch base fares */
+        foreach($services as $service) {
+
+            /** fetching vehicle service details by vehicle_type_id */
+            $serviceFare = RideFare::where('vehicle_type_id', $service['id'])->first();
+            $fareData = $serviceFare->calculateFare($distance, 0);
+
+            $pricesList[] = [
+                'service_id' => $service['id'],
+                'service_name' => $service['name'],
+                'fare' => [
+                    'ride_fare' => $fareData['ride_fare'],
+                    'access_fee' => $fareData['access_fee'],
+                    'taxes' => $fareData['taxes'],
+                    'total' => number_format($fareData['total'], 2, '.', '')
+                ]
+            ];
+           
+        }
+
+        return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $pricesList);
+        
+    }
+
+
+
+    /**
+     * show price estimate page
+     * user can enter source and destination to get price estimate
+     */
+    public function showPriceEstimate()
+    {
+        return view('home.estimate_price');
+    }
 
 
 

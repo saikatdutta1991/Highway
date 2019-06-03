@@ -160,7 +160,7 @@
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500" rel="stylesheet">
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="{{asset('web/home/')}}/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <!-- Themify Icons -->
         <link rel="stylesheet" href="{{asset('web/home/')}}/css/themify-icons.css">
         <!-- Owl carousel -->
@@ -173,6 +173,7 @@
         <meta name="msapplication-navbutton-color" content="#8d5b92">
         <!-- iOS Safari -->
         <meta name="apple-mobile-web-app-status-bar-style" content="#8d5b92">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         @yield('top-header')
     </head>
     <body data-spy="scroll" data-target="#navbar" data-offset="30">
@@ -192,8 +193,10 @@
         <!-- // end .section -->
         @include('home.layouts.footer')
         <!-- jQuery and Bootstrap -->
-        <script src="{{asset('web/home/')}}/js/jquery-3.2.1.min.js"></script>
-        <script src="{{asset('web/home/')}}/js/bootstrap.bundle.min.js"></script>
+        <!-- <script src="{{asset('web/home/')}}/js/jquery-3.2.1.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-- <script src="{{asset('web/home/')}}/js/bootstrap.bundle.min.js"></script> -->
         <!-- Plugins JS -->
         <script src="{{asset('web/home/')}}/js/owl.carousel.min.js"></script>
         <!-- Custom JS -->

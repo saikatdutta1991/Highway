@@ -20,6 +20,8 @@ Route::get('offers', 'Admin\Coupon@showOffers')->name('offers'); /**coupon offer
 Route::get('privacy-policy', 'Web\HomeController@showPrivacyPolicy')->name('privacy-policy');
 Route::get('terms', 'Web\HomeController@showTerms')->name('terms');
 Route::get('referrals/{referrer_code}', 'Web\HomeController@redirectReferral')->name('referrals.redirect'); //?referrer_code
+Route::get('price-estimate', 'Web\HomeController@showPriceEstimate')->name('priceestimate.show');
+Route::get('price-estimate/list', 'Web\HomeController@getEstimatePrice')->name('priceesimate.list');
 
 
 
