@@ -3,7 +3,16 @@
 @section('top-header')
 <style>
     .header-title {
-    color:white
+        font-size:2rem;
+        margin-bottom: 0.2rem;
+    }
+    .tagline {
+        max-width: initial;
+        font-size: 1rem;
+        color: white;
+    }
+    h3 {
+        font-family: 'UberMove', 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif;
     }
     .acard {
     margin-bottom:20px;
@@ -53,14 +62,15 @@
 @section('content')
 <header class="bg-gradient" style="padding-bottom: 3rem">
     <div class="container">
-        <h1 class="header-title">Track Your Booking</h1>
+        <h1 class="header-title">Track Booking by <span class="website_name">{{$website_name}}</span></h1>
+        <p class="tagline">Check your booking details and track live driver location and trip routes easily</p>
     </div>
 </header>
 <div class="section s-section">
     <div class="container" id="main-container">
         <span id="progress-container"></span>
         <div class="row">
-            <div class="col-md-6">
+            <div class="@if(!$booking->isBookingCancelled() && !$dropPoint->isDriverReached()) col-md-6 @else col-md-12 @endif">
                 <div class="card acard">
                     <div class="card-header">
                         <h5 class="mb-0">
@@ -69,7 +79,7 @@
                             </button>
                         </h5>
                     </div>
-                    <div id="booking-details" class="collapse" aria-labelledby="headingOne">
+                    <div id="booking-details" class="collapse show" aria-labelledby="headingOne">
                         <div class="card-body table-responsive">
                             <table class="table table-bordered table-sm">
                                 <tbody>
@@ -83,11 +93,11 @@
                                     </tr>
                                     <tr>
                                         <td>Pickup Address</td>
-                                        <td>{{$pickupPoint->address}}</td>
+                                        <td>{{$pickupPoint->label}}</td>
                                     </tr>
                                     <tr>
                                         <td>Drop Address</td>
-                                        <td>{{$dropPoint->address}}</td>
+                                        <td>{{$dropPoint->label}}</td>
                                     </tr>
                                     <tr>
                                         <td>Seats</td>
@@ -107,6 +117,7 @@
                     </div>
                 </div>
             </div>
+            @if(!$booking->isBookingCancelled() && !$dropPoint->isDriverReached())
             <div class="col-md-6">
                 <div class="card acard">
                     <div class="card-header">
@@ -116,7 +127,7 @@
                             </button>
                         </h5>
                     </div>
-                    <div id="driver-details" class="collapse">
+                    <div id="driver-details" class="collapse show">
                         <div class="card-body row">
                             <div class="col-md-4 col-sm-4">
                                 <img class="card-img-top" src="{{$driver->profilePhotoUrl()}}" alt="Card image">
@@ -130,7 +141,7 @@
                                         </tr>
                                         <tr>
                                             <td>Contact</td>
-                                            <td>{{$driver->fullMobileNumber()}}</td>
+                                            <td>{{$driver->fullMobileNumber()}} <a style="vertical-align: sub;" href="tel:{{$driver->fullMobileNumber()}}"><i class="material-icons">call</i></a></td>
                                         </tr>
                                         <tr>
                                             <td>Car</td>
@@ -147,6 +158,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         <div class="card acard">
             <div class="card-header">
