@@ -16,6 +16,10 @@ class Coupon extends Model
 
     protected $table = 'coupon_codes';
 
+    protected $hidden = ['banner_picture'];
+
+    protected $appends = ['banner_picture_url'];
+
     public function getTableName()
     {
         return $this->table;
@@ -45,6 +49,14 @@ class Coupon extends Model
     public static function generatePhotoPath()
     {
         return 'coupons/banners';
+    }
+
+    /**
+     * get photo 1 url
+     */
+    public function getBannerPictureUrlAttribute()
+    {
+        return $this->banner_picture ? url($this->banner_picture) : '';
     }
 
 
