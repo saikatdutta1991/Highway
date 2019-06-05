@@ -12,13 +12,13 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbar">
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#home">HOME <span class="sr-only">(current)</span></a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#features">FEATURES</a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#gallery">GALLERY</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{route('home')}}#home">HOME <span class="sr-only">(current)</span></a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{route('home')}}#features">FEATURES</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{route('home')}}#gallery">GALLERY</a> </li>
                             <li class="nav-item"> <a class="nav-link" href="{{route('priceestimate.show')}}">PRICE ESTIMATE</a> </li>
-                            <li class="nav-item"> <a class="nav-link" href="{{url('/')}}#contact">CONTACT</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{route('home')}}#contact">CONTACT</a> </li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('offers')}}#offers">OFFERS</a> </li>
-                            <li class="nav-item"><a href="#" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Download</a></li>
+                            <li class="nav-item"><a href="{{route('home')}}#download" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Download</a></li>
                         </ul>
                     </div>
                 </nav>
