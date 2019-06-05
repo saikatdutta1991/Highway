@@ -66,7 +66,7 @@ class Coupon extends Controller
             'maximum_discount_allowed' => 'required|numeric',
             'discount_type' => 'required',
             'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
-            'expires_at' => 'required|date_format:d-m-Y h:i A'
+            'expires_at' => 'required|date_format:d-m-Y h:i A',
         ]);
 
         if($validator->fails()) {
@@ -97,6 +97,11 @@ class Coupon extends Controller
         $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
         $coupon->minimum_purchase = $request->minimum_purchase;
         $coupon->maximum_discount_allowed = $request->maximum_discount_allowed;
+        
+        if($request->hasFile('banner_picture')) {
+            $coupon->banner_picture = CouponModel::savePhoto($request->banner_picture);
+        }
+
         $coupon->save();
 
 
@@ -128,7 +133,8 @@ class Coupon extends Controller
             'maximum_discount_allowed' => 'required|numeric',
             'discount_type' => 'required',
             'starts_at' => 'required|date_format:d-m-Y h:i A|before_or_equal:expires_at',
-            'expires_at' => 'required|date_format:d-m-Y h:i A'
+            'expires_at' => 'required|date_format:d-m-Y h:i A',
+            'banner_picture' => 'required|image|mimes:png,jpeg,jpg,bmp'
         ]);
 
         if($validator->fails()) {
@@ -159,6 +165,7 @@ class Coupon extends Controller
         $coupon->expires_at = $this->utill->strtoutc($request->expires_at, $this->setting->get('default_timezone'), 'd-m-Y h:i A')->toDateTimeString();
         $coupon->minimum_purchase = $request->minimum_purchase;
         $coupon->maximum_discount_allowed = $request->maximum_discount_allowed;
+        $coupon->banner_picture = CouponModel::savePhoto($request->banner_picture);
         $coupon->save();
 
 

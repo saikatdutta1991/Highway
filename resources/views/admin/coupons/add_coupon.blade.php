@@ -21,7 +21,7 @@
                     </h2>
                 </div>
                 <div class="body">
-                    <form id="add-coupon-form">
+                    <form id="add-coupon-form" method="POST">
                         {!! csrf_field() !!}
                         <div class="row clearfix">
                             <div class="col-sm-6">
@@ -152,6 +152,15 @@
                                 </div>
                             </div>
 
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <b>Banner Picture</b>
+                                    <div class="form-line">
+                                        <input type="file" class="form-control" name="banner_picture">
+                                    </div>
+                                </div>
+                            </div>
+
 
                         </div>
                         <div class="row clearfix">
@@ -206,24 +215,37 @@
         $("#add-coupon-form").on('submit', function(event){
             event.preventDefault();
 
-            let data = $(this).serializeArray()            
-            
-            $.post(add_coupon_url, data, function(response){
-                console.log(response)
-                if(response.success) {
-                    showNotification('bg-black', response.text+" , You will be redirected to coupon list", 'top', 'right', 'animated flipInX', 'animated flipOutX');
-                    setTimeout(function(){
+            let data = new FormData($(this)[0]);
 
-                        window.location.href = '{{route("admin.coupons.show")}}'
 
-                    }, 1500)
-                } else {
-                    showNotification('bg-red', response.data.errors[Object.keys(response.data.errors)[0]], 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            $.ajax({
+                type: "POST",
+                enctype: 'multipart/form-data',
+                url: add_coupon_url,
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (response) {
+
+                    console.log(response)
+                    if(response.success) {
+                        showNotification('bg-black', response.text+" , You will be redirected to coupon list", 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                        setTimeout(function(){
+
+                            window.location.href = '{{route("admin.coupons.show")}}'
+
+                        }, 1500)
+                    } else {
+                        showNotification('bg-red', response.data.errors[Object.keys(response.data.errors)[0]], 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    }
+
+                },
+                error: function (e) {
+                    showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
                 }
-            })
-            .fail(function(response) {
-                showNotification('bg-black', 'Unknown server error. Failed to approve driver', 'top', 'right', 'animated flipInX', 'animated flipOutX');
             });
+
 
         })
 

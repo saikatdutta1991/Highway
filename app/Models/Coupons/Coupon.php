@@ -27,6 +27,37 @@ class Coupon extends Model
     }
 
 
+    /** 
+     * save and return photo path
+     */
+    public static function savePhoto($file)
+    {
+        $fileName = self::generatePhotoName('coupon', $file->extension());
+        $path = self::generatePhotoPath();
+        $file->storeAs($path, $fileName);
+
+        return $path.'/'.$fileName;
+    }
+
+    /**
+     * generate and return path for saving photo
+     */
+    public static function generatePhotoPath()
+    {
+        return 'coupons/banners';
+    }
+
+
+    /**
+     * generate photo name
+     */
+    public static function generatePhotoName($prefix, $ext)
+    {
+        $ext = '.'.str_replace('.', '', $ext);
+        return $prefix.'_'.md5(uniqid(mt_rand(), true)).'_'.time().$ext;
+    }
+
+
 
     /**
      * relation with user coupon
