@@ -159,10 +159,11 @@
                                 <td>{{$ride['fname']}} {{$ride['lname']}}</td>
                                 <td>{{$ride['full_mobile_number']}}</td>
                                 <td>{{$ride['vehicle_number']}}</td>
-                                <td>{{$ride['vehicle_type']}}</td>
-                                <td>{{$ride['date']}}</td>
-                                <td>{{$ride['ride_start_time']}}</td>
-                                <td>{{$ride['ride_end_time']}}</td>
+                                <td>{{$vehicleTypes->where('code', $ride['vehicle_type'])->first()['name']}}</td>
+                                <th>{{$ride['driver_rating']}}</td>
+                                <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['date'], 'UTC')->setTimezone($default_timezone)->format('d/m/Y')}}</td>
+                                <td>@if($ride['ride_start_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_start_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>
+                                <td>@if($ride['ride_end_time']){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $ride['ride_end_time'], 'UTC')->setTimezone($default_timezone)->format('h:i A')}}@endif</td>
                                 <td>Highway</td>
                                 <td>{{$ride['from_location']}}</td>
                                 <td>{{$ride['to_location']}}</td>
