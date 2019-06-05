@@ -9,22 +9,29 @@
     }
     .card-outer {
     }
+    .header-title {
+        font-size:2rem;
+        margin-bottom: 0.2rem;
+    }
+    .tagline {
+        max-width: initial;
+        font-size: 1rem;
+        color: white;
+    }
+    h3 {
+        font-family: 'UberMove', 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif;
+    }
 </style>
 @endsection
 @section('content')
-<header class="bg-gradient" style="padding-bottom:100px;">
-    <div class="container mt-5">
-        <h2>Top {{$website_name}} Coupons & Exclusive Free Ride Codes</h2>
-        <!-- <p class="tagline">The one and only solution for any kind of mobila app landing needs. Just change the screenshots and texts and you are good to go. </p> -->
+<header class="bg-gradient" style="padding-bottom: 3rem">
+    <div class="container">
+        <h1 class="header-title">Hot offers from <span class="website_name">{{$website_name}}</span></h1>
+        <p class="tagline">We provide solutions that brings joy.</p>
     </div>
-    <!-- <div class="img-holder mt-3"><img src="{{asset('web/home/')}}/images/iphonex.png" alt="phone" class="img-fluid"></div> -->
 </header>
 <div class="section" id="offers">
     <div class="container">
-        <div class="section-title">
-            <small>OFFERS</small>
-            <!-- <h3>Upgrade to Pro</h3> -->
-        </div>
         <div class="row card-container">
             @foreach($coupons as $coupon)
             <div class="col-md-4 col-sm-6 card-outer">
