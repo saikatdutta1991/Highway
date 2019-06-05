@@ -183,6 +183,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Android User App Playstore Link</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="android_user_app_playsotre_link" value="{{$android_user_app_playsotre_link}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Android Driver App Playstore Link</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" placeholder="" name="android_driver_app_playsotre_link" value="{{$android_driver_app_playsotre_link}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row clearfix">
                             <div class="col-sm-12 text-right">

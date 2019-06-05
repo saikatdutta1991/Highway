@@ -50,7 +50,9 @@ class GlobalViewComposer
         ->with('seo_keywords', $this->setting->get('seo_keywords'))
         ->with('facebook_social_link', $this->setting->get('facebook_social_link'))
         ->with('twitter_social_link', $this->setting->get('twitter_social_link'))
-        ->with('instagram_social_link', $this->setting->get('instagram_social_link'));
+        ->with('instagram_social_link', $this->setting->get('instagram_social_link'))
+        ->with('android_user_app_playsotre_link', $this->setting->get('android_user_app_playsotre_link'))
+        ->with('android_driver_app_playsotre_link', $this->setting->get('android_driver_app_playsotre_link'));
 
 
         $this->shareAdminDetails($view);

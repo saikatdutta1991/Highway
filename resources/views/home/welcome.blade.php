@@ -384,8 +384,9 @@ destination. There is so much more from just travelling to a comfort travel. <sp
             <h2>Download Anywhere</h2>
             <p class="tagline">Available for all major mobile and desktop platforms. Rapidiously visualize optimal ROI rather than enterprise-wide methods of empowerment. </p>
             <div class="my-4">
-                <a href="#" class="btn btn-light"><img src="{{asset('web/home/')}}/images/appleicon.png" alt="icon"> App Store</a>
-                <a href="#" class="btn btn-light"><img src="{{asset('web/home/')}}/images/playicon.png" alt="icon"> Google play</a>
+                <!-- <a href="#" class="btn btn-light"><img src="{{asset('web/home/')}}/images/appleicon.png" alt="icon"> App Store</a> -->
+                <a target="_blank" href="{{$android_user_app_playsotre_link}}" class="btn btn-light"><img src="{{asset('web/home/')}}/images/playicon.png" alt="icon"> <span class="website_name">{{$website_name}}</span> user</a>
+                <a target="_blank" href="{{$android_driver_app_playsotre_link}}" class="btn btn-light"><img src="{{asset('web/home/')}}/images/playicon.png" alt="icon"> <span class="website_name">{{$website_name}}</span> partner</a>
             </div>
             <p class="text-primary"><small><i>*Works on iOS 10.0.5+, Android Kitkat and above. </i></small></p>
         </div>
