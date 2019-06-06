@@ -19,12 +19,7 @@
         <!-- Custom Css -->
         <link href="{{url('admin_assets/admin_bsb')}}/css/style.css" rel="stylesheet">
         <style>
-            /* body
-            {
-            background: url('{{url('admin_assets')}}/background.jpg');
-            background-position: center;
-            background-repeat: no-repeat;
-            } */
+            .website_name { font-family: Baskerville; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; }
             body {
             margin: 0;
             background: #000; 
@@ -46,6 +41,26 @@
             background-size: cover;
             transition: 1s opacity;
             }
+            .input-group {
+                border: 1px solid #ea3c64;
+                border-radius: 50px;
+                overflow: hidden;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+
+            ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #ea3c64;
+            opacity: 1; /* Firefox */
+            }
+
+            :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: #ea3c64;
+            }
+
+            ::-ms-input-placeholder { /* Microsoft Edge */
+            color: #ea3c64;
+            }
         </style>
     </head>
     <body class="login-page">
@@ -55,38 +70,34 @@
             <source src="{{url('admin_assets/Orchestra/Mp4/Orchestra.mp4')}}" type="video/mp4">
         </video>
         <div class="login-box">
-            <div class="logo">
-                <a href="javascript:void(0);">{{$website_title}}</b></a>
-                <small>Admin Panel {{$website_title}}</small>
-            </div>
+            
             <div class="card">
                 <div class="body">
-                    <form id="login-form" method="POST">
+                    <div class="logo">
+                        <a href="javascript:void(0);"><span class="website_name" style="color:#ea3c64">{{$website_name}}</span></b></a>
+                        <small style="color:#ea3c64"><span class="website_name">{{$website_name}}</span> Master Control Panel. Sign in to start your session</small>
+                    </div>
+                    <form id="login-form" method="POST" autocomplete="off">
                         <input type="hidden" name="_token" value="{{csrf_token()}}">
-                        <div class="msg">Sign in to start your session</div>
                         <div class="input-group">
                             <span class="input-group-addon">
                             <i class="material-icons">person</i>
                             </span>
-                            <div class="form-line">
-                                <input type="text" class="form-control" name="email" placeholder="Email" required autofocus>
+                            <div class="">
+                                <input type="text" class="form-control" name="email" placeholder="Email" required readonly>
                             </div>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">
                             <i class="material-icons">lock</i>
                             </span>
-                            <div class="form-line">
-                                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            <div class="">
+                                <input type="password" class="form-control" name="password" placeholder="Password" required readonly>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-8 p-t-5" style="visibility:hidden">
-                                <input type="checkbox" name="rememberme" id="rememberme" class="filled-in chk-col-pink">
-                                <label for="rememberme">Remember Me</label>
-                            </div>
-                            <div class="col-xs-4">
-                                <button class="btn btn-block bg-pink waves-effect" type="submit">SIGN IN</button>
+                            <div class="col-xs-12 text-center">
+                                <button class="btn btn-block bg-pink waves-effect" style="border-radius: 50px;" type="submit">SIGN IN</button>
                             </div>
                         </div>
                         <div class="row m-t-0 m-b-0" style="display:none" id="preloader-container">
@@ -170,6 +181,12 @@
             
             
             $(document).ready(function(){
+
+
+                setTimeout(function(){
+                    $("input[name=email]").attr('readonly', false).focus();
+                    $("input[name=password]").attr('readonly', false);
+                },500);
             
             
                 $("#login-form").on('submit', function(event){
