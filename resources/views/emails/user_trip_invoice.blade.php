@@ -255,7 +255,7 @@
                                 <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->access_fee}}</td>
                             </tr>
                             <tr style="">
-                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">Tax</td>
+                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">IGST</td>
                                 <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->tax}}</td>
                             </tr>
                             @if($invoice->referral_bonus_discount != 0)
