@@ -359,7 +359,7 @@ class Trip extends Controller
     {
 
         $bookings = $this->booking->where($this->booking->getTableName().'.user_id', $request->auth_user->id)
-        ->orderBy($this->booking->getTableName().'.created_at')
+        ->orderBy($this->trip->getTableName().'.trip_datetime', 'desc')
         ->join($this->trip->getTableName(), $this->trip->getTableName().'.id', '=', $this->booking->getTableName().'.trip_id')
         ->where(function($query){
 
