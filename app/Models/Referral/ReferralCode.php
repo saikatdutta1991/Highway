@@ -18,4 +18,10 @@ class ReferralCode extends Model
         return $this->table;
     }
 
+
+    public static function table()
+    {
+        return 'referral_codes';
+    }
+
 }

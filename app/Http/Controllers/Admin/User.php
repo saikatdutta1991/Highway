@@ -11,6 +11,7 @@ use App\Models\RideRequest as Ride;
 use App\Models\User as UserModel;
 use Validator;
 use App\Models\Setting;
+use App\Models\Referral\ReferralCode;
 
 
 class User extends Controller
@@ -36,7 +37,10 @@ class User extends Controller
     public function showUsers(Request $request)
     {
 
-        $users = $this->user->with('rideRequests');
+        $users = $this->user->with('rideRequests')->join(ReferralCode::table(), function($join) {
+            $join->on(ReferralCode::table().'.e_id', '=', UserModel::table().'.id')
+                ->where('e_type', 'user');
+        });
         
         try {
 
@@ -69,7 +73,7 @@ class User extends Controller
 
         } catch(\Exception $e){}
         
-        $users = $users->paginate(100)->setPath('users');
+        $users = $users->select(['users.*', ReferralCode::table().'.code'])->paginate(100)->setPath('users');
 
         $todaysUsers = $this->user->where('created_at', date('Y-m-d'))->count();
         $thisMonthUsers = $this->user->where('created_at', 'like', date('Y-m').'%')->count();

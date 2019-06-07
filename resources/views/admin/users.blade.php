@@ -209,6 +209,7 @@
                             <th>NAME</th>
                             <th>EMAIL</th>
                             <th>MOBILE</th>
+                            <th>REFERRAL CODE</th>
                             <th>RATING</th>
                             <th>RIDES</th>
                             <th>REGISTERD</th>
@@ -225,6 +226,7 @@
                             <td><a data-toggle="tooltip" data-placement="left" title="Click to edit user" href="javascript:void(0)" class="edit-user-btn" data-user-id="{{$user->id}}">{{$user->fname.' '.$user->lname}}</a></td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->full_mobile_number}}</td>
+                            <td>{{$user->code}}</td>
                             <td>{{$user->rating}}</td>
                             <td>{{$user->rideRequests()->where('ride_status', "COMPLETED")->count()}}</td>
                             <td>{{$user->registeredOn($default_timezone)}}</td>
