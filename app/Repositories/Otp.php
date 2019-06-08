@@ -6,6 +6,7 @@ use App\Models\OtpToken;
 use App\Models\Setting;
 use Aloha\Twilio\Twilio;
 use App\Jobs\ProcessSms;
+use App\Jobs\ProcessOtp;
 use App\Repositories\Utill;
 
 
@@ -43,7 +44,7 @@ class Otp
 	/**
 	 *  returns msg91 send sms api jsonbody
 	 */
-	protected function buildMsg91JsonBody($countryCode, $mobileNo, $msgText)
+	protected function buildMsg91JsonBody($countryCode, $mobileNo, $message)
 	{
 		$countryCode = ltrim($countryCode, '+');
 		$body = [
@@ -51,18 +52,12 @@ class Otp
 			'unicode' => '1',
 			'route' => '4',
 			'country' => $countryCode,
-			'sms' => [
-				[
-					'message' => $msgText,
-					'to' => [$mobileNo]
-				]
-			]
+			'message' => $message,
+			'mobiles' => $mobileNo,
+			'authkey' => $this->setting->get('msg91_auth_key'),
 		];
-		
-		\Log::info('MSG91_BODY_DATA');
-		\Log::info($body);
-		
-		return json_encode($body);
+	
+		return $body;
 
 	}
 
@@ -73,64 +68,50 @@ class Otp
 	 */
 	public function processSms($countryCode, $mobileNo, $message)
 	{
-		try{
 
-			if($this->smsProvider == 'twilio') {
+		if($this->smsProvider == 'twilio') {
 
-				$twilio = new Twilio($this->twilioSid(), $this->twilioToken(), $this->twilioFrom());
-				$twilio->message($countryCode.$mobileNo, $message);
+			$twilio = new Twilio($this->twilioSid(), $this->twilioToken(), $this->twilioFrom());
+			$twilio->message($countryCode.$mobileNo, $message);
 
-			}
-			// send sms via msg91 
-			else {
+		}
+		// send sms via msg91 
+		else {
 
-				$curl = curl_init();
+			$messageData = $this->buildMsg91JsonBody($countryCode, $mobileNo, $message);
+			$queryString = http_build_query($messageData);
+		
+			$curl = curl_init();
+			curl_setopt_array($curl, [
+				CURLOPT_URL => "https://api.msg91.com/api/sendhttp.php?{$queryString}",
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => "",
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 30,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => "GET",
+				CURLOPT_POSTFIELDS => "",
+				CURLOPT_SSL_VERIFYHOST => 0,
+				CURLOPT_SSL_VERIFYPEER => 0
+			]);
 
-				curl_setopt_array($curl, [
-  					CURLOPT_URL => "http://api.msg91.com/api/v2/sendsms",
-  					CURLOPT_RETURNTRANSFER => true,
-  					CURLOPT_ENCODING => "",
-  					CURLOPT_MAXREDIRS => 10,
-  					CURLOPT_TIMEOUT => 30,
-  					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  					CURLOPT_CUSTOMREQUEST => "POST",
-  					CURLOPT_POSTFIELDS => $this->buildMsg91JsonBody($countryCode, $mobileNo, $message),
-  					CURLOPT_SSL_VERIFYHOST => 0,
-  					CURLOPT_SSL_VERIFYPEER => 0,
-  					CURLOPT_HTTPHEADER => [
-						"authkey: ".$this->setting->get('msg91_auth_key'),
-						"content-type: application/json"
-					],
-				]);
+			$response = curl_exec($curl);
+			$err = curl_error($curl);
 
-				$response = curl_exec($curl);
-				$err = curl_error($curl);
+			curl_close($curl);
 
-				curl_close($curl);
-
-				if ($err) {
-					throw new \Exception($error);
-				} else {
-					
-					\Log::info("SEND MESSAGE msg91 response");
-					\Log::info($response);
-
-					$response = json_decode($response);
-					 
-					if($response->type == 'error') {
-						throw new \Exception($response->message, $response->code);
-					} 
-				}
-
-
+			if ($err) {
+				\Log::info('Otp::processSms() error');
+				\Log::info($err);
+			} else {
+				
+				\Log::info("Otp::processSms success");
+				\Log::info($response);
 			}
 
-			
-      	} catch(\Exception $e){
-			 $error = $e->getMessage();
-			 \Log::info("SEND MESSAGE");
-			 \Log::info($e->getMessage());
-        }
+
+		}
+
 	}
 
 
@@ -165,6 +146,68 @@ class Otp
 
 
 
+	/** 
+	 * returns string for msg91 otp body
+	 */
+	protected function buildMsg91OtpJsonBody($countryCode, $mobileNo, $message, $otpCode)
+	{
+		$countryCode = ltrim($countryCode, '+');
+		$body = [
+			'sender' => $this->setting->get('msg91_sender_id'),
+			'mobile' => "{$countryCode}{$mobileNo}",
+			'message' => $message,
+			'authkey' => $this->setting->get('msg91_auth_key'),
+			'otp' => $otpCode
+		];
+		
+		return $body;
+
+	}
+
+
+
+	/**
+	 * process otp
+	 * takes mobile number
+	 */
+	public function processOtp($countryCode, $mobileNo, $message, $otpCode)
+	{
+		$curl = curl_init();
+
+		$otpData = $this->buildMsg91OtpJsonBody($countryCode, $mobileNo, $message, $otpCode);
+		$queryString = http_build_query($otpData);
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => "https://control.msg91.com/api/sendotp.php?{$queryString}",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS => "",
+			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_SSL_VERIFYPEER => 0,
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+			\Log::info('Otp::processOtp() error');
+			\Log::info($err);
+		} else {
+			
+			\Log::info("Otp::processOtp success");
+			\Log::info($response);
+		}
+
+	} 
+
+
+
 
 
     /**
@@ -181,9 +224,10 @@ class Otp
 		/** generate messsage */
 		$message = $this->generateOtpMessage($devicetype, $apptype, $otp->token);
 
-        $ismsgsent = $this->sendMessage($countryCode, $mobileNo, $message, $error);
+		/** push otp send job to queue */
+		ProcessSms::dispatch($countryCode, $mobileNo, $message, $otp->token);
 
-        return $ismsgsent ? $otp->token : false;
+        return $otp->token;
 	}
 
 
