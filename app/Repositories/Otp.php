@@ -225,7 +225,7 @@ class Otp
 		$message = $this->generateOtpMessage($devicetype, $apptype, $otp->token);
 
 		/** push otp send job to queue */
-		ProcessSms::dispatch($countryCode, $mobileNo, $message, $otp->token);
+		ProcessOtp::dispatch($countryCode, $mobileNo, $message, $otp->token);
 
         return $otp->token;
 	}
