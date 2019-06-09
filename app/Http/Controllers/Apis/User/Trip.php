@@ -379,6 +379,8 @@ class Trip extends Controller
             if(!$booking->invoice) return;
             $booking->invoice['map_url'] = $booking->invoice->getStaticMapUrl();
             $booking->trip->driver['profile_photo_url'] = $booking->trip->driver->profilePhotoUrl();
+            $booking['tracking_link'] = $booking->trackBookingUrl();
+            $booking['boarding_point_link'] = $booking->boardingPointTrackUrl();
         });
 
 

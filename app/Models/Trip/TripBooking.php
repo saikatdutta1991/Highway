@@ -194,5 +194,14 @@ class TripBooking extends Model
     }
 
 
+    /** 
+     * source point or boarding point map track link
+     */
+    public function boardingPointTrackUrl()
+    {
+        return route('bookings.track.boarding-point-route', ['bookingid' => $this->booking_id]);
+    }
+
+
 
 }

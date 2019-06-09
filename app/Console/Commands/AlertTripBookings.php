@@ -96,7 +96,7 @@ class AlertTripBookings extends Command
                     'booking_id' => $booking->booking_id, 
                     'type' => 'BOOKING_ALERT',
                     'tracklink' => $booking->trackBookingUrl(),
-                    'boardingpointlink' => route('bookings.track.boarding-point-route', ['bookingid' => $booking->booking_id])
+                    'boardingpointlink' => $booking->boardingPointTrackUrl()
                 ])
                 ->setPriority(PushNotification::HIGH)
                 ->setContentAvailable(true)
@@ -133,7 +133,7 @@ class AlertTripBookings extends Command
                 'date' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('d-m-Y'),
                 'time' => Carbon::createFromFormat('Y-m-d H:i:s', $booking->trip_datetime)->setTimezone($booking->user_timezone)->format('h:i A'),
                 'tracklink' => $booking->trackBookingUrl(),
-                'boardingpointlink' => route('bookings.track.boarding-point-route', ['bookingid' => $booking->booking_id])
+                'boardingpointlink' => $booking->boardingPointTrackUrl(),
             ]);
             $this->smsProvider->sendMessage($booking->user_country_code, $booking->user_mobile_number, $message);
 
