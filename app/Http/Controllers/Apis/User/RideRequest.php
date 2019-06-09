@@ -368,7 +368,7 @@ class RideRequest extends Controller
         ]);
 
         
-        return $this->api->json(false, 'PAYMENT_MODE_CHANGED', 'Payment mode changed');
+        return $this->api->json(true, 'PAYMENT_MODE_CHANGED', 'Payment mode changed');
         
     }
 
