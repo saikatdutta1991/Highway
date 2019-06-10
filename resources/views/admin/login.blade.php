@@ -209,9 +209,9 @@
                         if(!response.success) {
                             showError('*'+response.text);
                         } else if(response.success){
-                            showSuccesMessage('Logged in!! Wait while redirecting to dashboard');
+                            showSuccesMessage('Logged in!! Wait while redirecting');
                             setTimeout(function(){
-                                window.location.reload();
+                                window.location.href=response.data.intended_url
                             }, 100);
                             
                         }
