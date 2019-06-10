@@ -275,8 +275,6 @@ class Trip extends Controller
             $trip['local_trip_datetime'] = $trip->formatedJourneyDate($driver->timezone);
         });
 
-
-        dd($trips->toArray());
         return $this->api->json(true, 'TRIPS', 'Your trips', [
             'trips' => $trips->items(),
              'paging' => [
