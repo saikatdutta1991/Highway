@@ -159,7 +159,7 @@ class Trip extends Controller
             ->where($this->trip->getTableName().'.driver_id', $request->auth_driver->id)
             ->whereNotIn($this->trip->getTableName().'.status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED_DRIVER])
             ->whereBetween($this->trip->getTableName().'.trip_datetime', $allowedDatetimeRange)
-            ->where($this->trip->getTableName().'.trip_datetime', '>', Carbon::now()->subMinutes(15)->toDateTimeString())
+            ->where($this->trip->getTableName().'.trip_datetime', '>', Carbon::now()->subMinutes(30)->toDateTimeString())
             ->count();
 
 
