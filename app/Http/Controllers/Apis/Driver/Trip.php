@@ -263,7 +263,7 @@ class Trip extends Controller
         // remove trips created but not started of previous date
         ->where(function($query){
 
-            $query->where('trip_datetime', ">", date('Y-m-d H:i:s'))
+            $query->where('trip_datetime', ">", Carbon::now()->subMinutes(30)->toDateTimeString())
             ->orWhere(function($query){
                 $query->where('trip_datetime', "<=", date('Y-m-d H:i:s'))
                 ->where('status', '<>', TripModel::CREATED);
