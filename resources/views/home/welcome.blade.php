@@ -27,7 +27,7 @@
         <p class="tagline" style="max-width: initial;">Enjoy hassle free rides within your own city or outside your city. <br>The ease of travel is on the finger tips, select the dates book your seats and hail towards your
 destination. There is so much more from just travelling to a comfort travel. <span class="website_name">{{$website_name}}</span> presents to you various options to travel. **terms and conditions apply**</p>
     </div>
-    <div class="img-holder mt-3"><img src="{{asset('web/home/')}}/images/iphonex.png" alt="phone" class="img-fluid"></div>
+    <div class="img-holder mt-3"><img src="{{asset('images/phone_images/main_screen.png')}}" alt="phone" class="img-fluid"></div>
 </header>
 <!-- <div class="client-logos my-5">
     <div class="container text-center">
@@ -97,7 +97,7 @@ destination. There is so much more from just travelling to a comfort travel. <sp
     </div>
 </div>
 <!-- // end .section -->
-<div class="section">
+{{--<div class="section">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 offset-lg-6">
@@ -111,7 +111,7 @@ destination. There is so much more from just travelling to a comfort travel. <sp
             <img src="{{asset('web/home/')}}/images/perspective.png" alt="perspective phone" class="img-fluid">
         </div>
     </div>
-</div>
+</div>--}}
 <!-- // end .section -->
 <div class="section light-bg">
     <div class="container">
@@ -202,13 +202,12 @@ destination. There is so much more from just travelling to a comfort travel. <sp
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <img src="{{asset('web/home/')}}/images/dualphone.png" alt="dual phone" class="img-fluid">
+                <img src="{{asset('images/phone_images/price_screen.png')}}" alt="dual phone" class="img-fluid">
             </div>
             <div class="col-md-6 d-flex align-items-center">
                 <div>
-                    <div class="box-icon"><span class="ti-rocket gradient-fill ti-3x"></span></div>
-                    <h2>Launch your App</h2>
-                    <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Obcaecati vel exercitationem eveniet vero maxime ratione </p>
+                    <h2>Our mission statement</h2>
+                    <p class="mb-4">Our priorities are our customers. We would want to help customers succeed in there travel goals with the available transport options with us. Customers comfort and there choices matter to us. Hence, we believe in delivering quality services with customers as our primary source of facilitators.</p>
                     <a href="#" class="btn btn-primary">Read more</a>
                 </div>
             </div>
@@ -245,7 +244,7 @@ destination. There is so much more from just travelling to a comfort travel. <sp
                 </ul>
             </div>
             <div class="col-md-4">
-                <img src="{{asset('web/home/')}}/images/iphonex.png" alt="iphone" class="img-fluid">
+                <img src="{{asset('images/phone_images/referral_screen.png')}}" alt="iphone" class="img-fluid">
             </div>
         </div>
     </div>
@@ -287,73 +286,15 @@ destination. There is so much more from just travelling to a comfort travel. <sp
             <h3>App Screenshots</h3>
         </div>
         <div class="img-gallery owl-carousel owl-theme">
-            <img src="{{asset('web/home/')}}/images/screen1.jpg" alt="image">
-            <img src="{{asset('web/home/')}}/images/screen2.jpg" alt="image">
-            <img src="{{asset('web/home/')}}/images/screen3.jpg" alt="image">
-            <img src="{{asset('web/home/')}}/images/screen1.jpg" alt="image">
+            <img src="{{asset('images/phone_images/login_screen.png')}}" alt="image">
+            <img src="{{asset('images/phone_images/register_screen.png')}}" alt="image">
+            <img src="{{asset('images/phone_images/price_screen.png')}}" alt="image">
+            <img src="{{asset('images/phone_images/rating_screen.png')}}" alt="image">
+            <img src="{{asset('images/phone_images/ride_history_screen.png')}}" alt="image">
+            <img src="{{asset('images/phone_images/trip_history_screen.png')}}" alt="image">
         </div>
     </div>
 </div>
-<!-- // end .section -->
-{{--<div class="section" id="pricing">
-    <div class="container">
-        <div class="section-title">
-            <small>PRICING</small>
-            <h3>Upgrade to Pro</h3>
-        </div>
-        <div class="card-deck">
-            <div class="card pricing">
-                <div class="card-head">
-                    <small class="text-primary">PERSONAL</small>
-                    <span class="price">$14<sub>/m</sub></span>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <div class="list-group-item">10 Projects</div>
-                    <div class="list-group-item">5 GB Storage</div>
-                    <div class="list-group-item">Basic Support</div>
-                    <div class="list-group-item"><del>Collaboration</del></div>
-                    <div class="list-group-item"><del>Reports and analytics</del></div>
-                </ul>
-                <div class="card-body">
-                    <a href="#" class="btn btn-primary btn-lg btn-block">Choose this Plan</a>
-                </div>
-            </div>
-            <div class="card pricing popular">
-                <div class="card-head">
-                    <small class="text-primary">FOR TEAMS</small>
-                    <span class="price">$29<sub>/m</sub></span>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <div class="list-group-item">Unlimited Projects</div>
-                    <div class="list-group-item">100 GB Storage</div>
-                    <div class="list-group-item">Priority Support</div>
-                    <div class="list-group-item">Collaboration</div>
-                    <div class="list-group-item">Reports and analytics</div>
-                </ul>
-                <div class="card-body">
-                    <a href="#" class="btn btn-primary btn-lg btn-block">Choose this Plan</a>
-                </div>
-            </div>
-            <div class="card pricing">
-                <div class="card-head">
-                    <small class="text-primary">ENTERPRISE</small>
-                    <span class="price">$249<sub>/m</sub></span>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <div class="list-group-item">Unlimited Projects</div>
-                    <div class="list-group-item">Unlimited Storage</div>
-                    <div class="list-group-item">Collaboration</div>
-                    <div class="list-group-item">Reports and analytics</div>
-                    <div class="list-group-item">Web hooks</div>
-                </ul>
-                <div class="card-body">
-                    <a href="#" class="btn btn-primary btn-lg btn-block">Choose this Plan</a>
-                </div>
-            </div>
-        </div>
-        <!-- // end .pricing -->
-    </div>
-</div>--}}
 <!-- // end .section -->
 <div class="section pt-0">
     <div class="container">
