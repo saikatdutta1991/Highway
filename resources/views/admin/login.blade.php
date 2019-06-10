@@ -210,7 +210,7 @@
                             showError('*'+response.text);
                         } else if(response.success){
                             showSuccesMessage('Logged in!! Wait while redirecting');
-                            setTimeout(function(){
+                            setTimeout(function(){ 
                                 window.location.href=response.data.intended_url
                             }, 100);
                             

@@ -63,7 +63,7 @@ class AuthController extends Controller
 
         Auth::guard('admin')->login($admin);
         return $this->api->json(true, 'LOGIN_SUCCESS', 'Logged in successfully', [
-            'intended_url' => redirect()->intended()->getTargetUrl()
+            'intended_url' => redirect()->intended(route('admin-dashboard'))->getTargetUrl()
         ]);
     }
 
