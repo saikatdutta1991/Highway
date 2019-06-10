@@ -253,8 +253,10 @@ class Trip extends Controller
     public function getTrips(Request $request)
     {
 
+        $driver = $request->auth_driver;
+
         $trips = $this->trip
-        ->where('driver_id', $request->auth_driver->id)
+        ->where('driver_id', $driver->id)
         ->orderBy('trip_datetime', 'desc')
         // remove trips created but not started of previous date
         ->where(function($query){
@@ -266,9 +268,15 @@ class Trip extends Controller
             // });
 
         })
-        
+        //->select('trip_datetime', 'name', 'status')
         ->paginate(500);
 
+        $trips->map(function($trip) use($driver){
+            $trip['local_trip_datetime'] = $trip->formatedJourneyDate($driver->timezone);
+        });
+
+
+        dd($trips->toArray());
         return $this->api->json(true, 'TRIPS', 'Your trips', [
             'trips' => $trips->items(),
              'paging' => [
