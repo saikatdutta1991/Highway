@@ -21,6 +21,7 @@ use App\Repositories\Referral;
 use App\Models\RideCancellationCharge as CancellationCharge;
 use App\Models\Coupons\Coupon;
 use App\Models\Coupons\UserCoupon;
+use App\Repositories\Utill;
 
 class RideRequest extends Controller
 {
@@ -124,7 +125,9 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Your ride accepted", "Driver {$authDriver->fname} has accepted your ride request");
+        $acceptTitle = Utill::transMessage('app_messages.accept_ride_title');
+        $acceptMessage = Utill::transMessage('app_messages.accept_ride_message', ['drivername' => $authDriver->fname, 'vehicleno' => $authDriver->vehicle_number]);
+        $user->sendPushNotification($acceptTitle, $acceptMessage);
 
 
         /**
@@ -260,11 +263,15 @@ class RideRequest extends Controller
         ];
 
 
-        /**
-         * send push notification to user
-         */
-        $pushNotificationTitle = ($request->status == Ride::DRIVER_STARTED) ? "Driver is on the way" : "Driver reached";
-        $pushNotificationText = ($request->status == Ride::DRIVER_STARTED) ? "Driver {$authDriver->fname} is on the way" : "Driver {$authDriver->fname} has reached the location";
+        /** send push notification to user */
+        if($request->status == Ride::DRIVER_STARTED) {
+            $pushNotificationTitle = Utill::transMessage('app_messages.driver_started_title');
+            $pushNotificationText = Utill::transMessage('app_messages.driver_started_message', ['drivername' => $authDriver->fname, 'vehicleno' => $authDriver->vehicle_number]);
+        } else if($request->status == Ride::DRIVER_REACHED) {
+            $pushNotificationTitle = Utill::transMessage('app_messages.driver_reached_title');
+            $pushNotificationText = Utill::transMessage('app_messages.driver_raached_message');
+        }
+
         $user = $this->user->find($rideRequest->user_id);
         $user->sendPushNotification($pushNotificationTitle, $pushNotificationText);
 
@@ -361,7 +368,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Driver canceled ride", "Driver {$authDriver->fname} has canceled your ride request");
+        $user->sendPushNotification(Utill::transMessage('app_messages.driver_cancel_ride_title'), Utill::transMessage('app_messages.driver_cancel_ride_message'));
 
 
         /**
@@ -422,7 +429,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification("Ride started", "Your trip has been started. Enjoy your ride.");
+        $user->sendPushNotification(Utill::transMessage('app_messages.ride_start_title'), Utill::transMessage('app_messages.ride_start_message'));
 
 
         /**
