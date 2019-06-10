@@ -21,6 +21,7 @@ use App\Models\RideRequestInvoice as RideInvoice;
 use App\Models\Transaction;
 use App\Models\VehicleType;
 use Validator;
+use Carbon\Carbon;
 
 class Trip extends Controller
 {
@@ -158,6 +159,7 @@ class Trip extends Controller
             ->where($this->trip->getTableName().'.driver_id', $request->auth_driver->id)
             ->whereNotIn($this->trip->getTableName().'.status', [TripModel::COMPLETED, TripModel::TRIP_CANCELED_DRIVER])
             ->whereBetween($this->trip->getTableName().'.trip_datetime', $allowedDatetimeRange)
+            ->where($this->trip->getTableName().'.trip_datetime', '>', Carbon::now()->subMinutes(15)->toDateTimeString())
             ->count();
 
 
@@ -261,14 +263,13 @@ class Trip extends Controller
         // remove trips created but not started of previous date
         ->where(function($query){
 
-            // $query->where('trip_datetime', ">", date('Y-m-d H:i:s'))
-            // ->orWhere(function($query){
-            //     $query->where('trip_datetime', "<=", date('Y-m-d H:i:s'))
-            //     ->where('status', '<>', TripModel::CREATED);
-            // });
+            $query->where('trip_datetime', ">", date('Y-m-d H:i:s'))
+            ->orWhere(function($query){
+                $query->where('trip_datetime', "<=", date('Y-m-d H:i:s'))
+                ->where('status', '<>', TripModel::CREATED);
+            });
 
         })
-        //->select('trip_datetime', 'name', 'status')
         ->paginate(500);
 
         $trips->map(function($trip) use($driver){
