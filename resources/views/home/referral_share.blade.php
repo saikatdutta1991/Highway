@@ -25,7 +25,7 @@
 </header>
 <div class="section s-section">
     <div class="container" id="main-container">
-        <h1 class="title" style=>You've been invited to {{$website_title}}!</h1>
+        <h1 class="title" style=>You've been invited to <span class="website_name">{{$website_name}}</span>!</h1>
         <div class="subtitle" data-hide-in="iOS,Android">
             <p>Please open this link from your mobile device.</p>
             <p><b class="shortlink">{{route('referrals.redirect', ['referrer_code' => $referrer_code])}}</b> Or copy and page code while register : {{$referrer_code}}</p>
