@@ -50,7 +50,7 @@ class VehicleType extends Model
     {
         $services = VehicleType::allTypes();
         $service = $services->where('code', $vCode)->first();
-        return $service->get('id', 0);
+        return $service ? $service['id'] : 0;
     }
 
 
