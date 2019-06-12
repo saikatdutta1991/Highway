@@ -36,7 +36,7 @@ class Setting extends Model
             Log::info("Setting::get() -> Retriving setting from db key : {$key}");
 
             $setting = Setting::where('key', $key)->select('value')->first();
-            return $setting->value;
+            return $setting ? $setting->value : '';
         });
     }
 
