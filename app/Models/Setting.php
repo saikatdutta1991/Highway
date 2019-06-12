@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Cache;
+use Log;
 
 class Setting extends Model
 {
@@ -15,100 +17,50 @@ class Setting extends Model
     }
 
 
+    /**
+     * returns cache expiration time in minutes
+     */
+    protected static function cacheExpirationTime()
+    {
+        return 60 * 24 * 365;
+    }
+
 
     /**
      * get setting value by key
      */
     public static function get($key)
     {
-        return config('settings.'.$key);
-    }
+        return Cache::rememberForever("settings.{$key}", function() use($key) {
 
+            Log::info("Setting::get() -> Retriving setting from db key : {$key}");
 
-    public function getAllSettings()
-    {
-        $settings = config('settings');
-        return $settings?:[];
+            $setting = Setting::where('key', $key)->select('value')->first();
+            return $setting->value;
+        });
     }
 
 
 
     /**
-     *  add new setting
+     * add new settings in db
+     * store in cache for later use
      */
-    public function set($key, $value)
-    {
-        $setting = $this->where('key', $key)->first();
-        $setting = $setting ?: new $this;
-        
-        $setting->key = $key;
-        $setting->value = $value;
+    public static function set($key, $value)
+    {   
+        Log::info("Setting::get() -> Storing setting into db key : {$key}");
 
-        $setting->save();
+        /** fetch setting from db or create new */
+        $record = Setting::where('key', $key)->first() ?: new Setting;
+        $record->key = $key;
+        $record->value = $value;
+        $record->save();
 
-        //fetch all settings and save
-        $settings = [];
-        foreach($this->all() as $s) {
-            $settings[$s->key] = $s->value;
-        }
+        /** update setting in cache */
+        Cache::forever("settings.{$key}", $value, Setting::cacheExpirationTime());
 
-        $this->saveToFile($settings);
-    
-        return $setting;
-        
+        return $record;
     }
-
-
-    /**
-     * save alll vehicle types to file
-     */
-    public function saveToFile($array)
-    {
-        $phpArrayCodingFormat = "<?php \n\n return ";
-        $phpArrayCodingFormat .= var_export($array, true);
-        $phpArrayCodingFormat .= ";";
-        
-        $file = config_path('settings.php');
-        file_put_contents($file, $phpArrayCodingFormat);
-
-    }
-
-
-
-
-
-    /**
-     * sync database with config file
-     */
-    public function syncWithConfigFile()
-    {
-        foreach($this->getAllSettings() as $sKey => $sValue) {
-            $s = $this->where('key', $sKey)->first() ?: new $this;
-            $s->key = $sKey;
-            $s->value = $sValue;
-            $s->save();
-        }
-    }
-
-
-
-
-
-    /**
-     * sysc with database
-     */
-    public function syncWithDatabase()
-    {
-        //fetch all settings and save
-        $settings = [];
-        foreach($this->all() as $s) {
-            $settings[$s->key] = $s->value;
-        }
-
-        $this->saveToFile($settings);   
-    }
-
-
 
 
 
@@ -117,7 +69,7 @@ class Setting extends Model
      */
     public function generateWebsiteLogoPath()
     {
-        return $this->get('website_logo_path');
+        return Setting::get('website_logo_path');
     }
 
   
@@ -128,7 +80,7 @@ class Setting extends Model
      */
     public function websiteLogoUrl()
     {
-        return url($this->get('website_logo_path') . '/' . $this->get('website_logo_name'));
+        return url(Setting::get('website_logo_path') . '/' . Setting::get('website_logo_name'));
     }
 
 
@@ -139,11 +91,11 @@ class Setting extends Model
     public function saveWebsiteLogo($uploadFile, $prefix = 'logo_')
     {
         $fileName = app('UtillRepo')->generatePhotoName($prefix, $uploadFile->extension());
-        $path = $this->get('website_logo_path');
+        $path = Setting::get('website_logo_path');
         $uploadFile->storeAs($path, $fileName);
         
-        $this->set('website_logo_name', $fileName);
-        return url($this->get('website_logo_path') . '/' . $fileName);
+        Setting::set('website_logo_name', $fileName);
+        return url(Setting::get('website_logo_path') . '/' . $fileName);
     }
     
 
@@ -156,7 +108,7 @@ class Setting extends Model
      */
     public function websiteFavIconUrl()
     {
-        return url($this->get('website_fav_icon_path') . '/' . $this->get('website_fav_icon_name'));
+        return url(Setting::get('website_fav_icon_path') . '/' . Setting::get('website_fav_icon_name'));
     }
 
 
@@ -167,11 +119,11 @@ class Setting extends Model
     public function saveWebsiteFavicon($uploadFile, $prefix = 'favicon_')
     {
         $fileName = app('UtillRepo')->generatePhotoName($prefix, $uploadFile->extension());
-        $path = $this->get('website_fav_icon_path');
+        $path = Setting::get('website_fav_icon_path');
         $uploadFile->storeAs($path, $fileName);
         
-        $this->set('website_fav_icon_name', $fileName);
-        return url($this->get('website_fav_icon_path') . '/' . $fileName);
+        Setting::set('website_fav_icon_name', $fileName);
+        return url(Setting::get('website_fav_icon_path') . '/' . $fileName);
     }
 
 

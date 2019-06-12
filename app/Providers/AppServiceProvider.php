@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->setting = app('App\Models\Setting');
+        $this->setEmailSettings();
     }
 
     /**
@@ -23,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
 
         /**
          * making App\Models\Setting singleton
@@ -52,10 +52,6 @@ class AppServiceProvider extends ServiceProvider
             return new \App\Repositories\Email(app('App\Models\Setting'));
         });
 
-
-        $this->setting = app('App\Models\Setting');
-        $this->setEmailSettings();
-        
     }
 
     /**
