@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Cache;
+use Log;
 
 class VehicleType extends Model
 {
@@ -16,48 +18,70 @@ class VehicleType extends Model
 
 
     /**
+     * returns cache expiration time in minutes
+     */
+    protected static function cacheExpirationTime()
+    {
+        return 60 * 24 * 365;
+    }
+
+
+
+    /**
+     * store all services in to cache as array
+     */
+    protected static function updateServicesCache()
+    {
+        /** fetch all services from database */
+        $services = VehicleType::all();
+
+        /** update setting in cache */
+        Cache::forever("services", $services->toArray(), Setting::cacheExpirationTime());
+    }
+
+
+
+
+
+    /**
      * returns vehicle type id by code
      */
     public static function getIdByCode($vCode)
     {
-        $vTypes = config('vehicle_types') ? : [];
-        $vTCollection = collect(config('vehicle_types'));
-        $vType = collect($vTCollection->where('code', $vCode)->first());
-        return $vType->get('id', 0);
+        $services = VehicleType::allTypes();
+        $service = $services->where('code', $vCode)->first();
+        return $service->get('id', 0);
     }
 
 
     /**
      * get all vehicle codes 
      */
-    public function allCodes()
+    public static function allCodes()
     {
-        $vTypes = config('vehicle_types');
-        
-        //return if null
-        if(!$vTypes) { 
-            return [];
-        }
-
-        $codes = [];
-        foreach($vTypes as $vType) {
-            $codes[] = $vType['code'];
-        } 
-
-        return $codes;
+        $services = VehicleType::allTypes();
+        return $services->pluck('code')->toArray();
     }
 
 
 
 
     /**
-     * get all 
+     * returns all services as array from cache and make it collection 
      */
     public static function allTypes()
     {
-        $vTypes = collect(config('vehicle_types'));
-        
-        return $vTypes ? $vTypes->sortBy('order')->values() : [];
+        $servicesArray = Cache::rememberForever("services", function() {
+
+            Log::info("VehicleType::allTypes() -> Retriving setting from db");
+
+            /** fetch all services from database */
+            $services = VehicleType::all();
+            return $services->toArray();
+
+        });
+
+        return collect($servicesArray)->sortBy('order')->values();
 
     }
 
@@ -69,18 +93,18 @@ class VehicleType extends Model
      */
     public function removeType($code, &$errorCode = '')
     {
-        $vType = $this->where('code', $code)->first();
+        $vType = VehicleType::where('code', $code)->first();
 
         if(!$vType) {
             $errorCode = 'INVALID';
             return false;
         }
 
-        //deleteing from database
+        /** deleteing from database */
         $vType->forceDelete();
 
-        //fetch all vehicle types and save
-        $this->saveToFile($this->all()->toArray());
+        /** updating cache */
+        VehicleType::updateServicesCache();
     
         return true;
         
@@ -95,7 +119,7 @@ class VehicleType extends Model
     public function updateServiceType($newName, &$errorCode = '')
     {
         //check new service new name exists or not for other services
-        $service = $this->where('name', $newName)->where('id', '<>', $this->id)->exists();
+        $service = VehicleType::where('name', $newName)->where('id', '<>', $this->id)->exists();
 
         if($service) {
            $errorCode = 'EXISTS';
@@ -105,8 +129,8 @@ class VehicleType extends Model
         $this->name = ucfirst($newName);
         $this->save();
 
-        //fetch all vehicle types and save
-        $this->saveToFile($this->all()->toArray());
+        /** updating cache */
+        VehicleType::updateServicesCache();
     
         return $this;
 
@@ -120,12 +144,13 @@ class VehicleType extends Model
      */
     public static function enableHighway($serviceid, $enable)
     {
-        $service = self::find($serviceid);
+        $service = VehicleType::find($serviceid);
         $service->is_highway_enabled = $enable;
         $service->save();
  
-        //fetch all vehicle types and save
-        self::saveToFile(self::all()->toArray());
+        /** updating cache */
+        VehicleType::updateServicesCache();
+
         return true;
     }
 
@@ -136,12 +161,13 @@ class VehicleType extends Model
      */
     public static function setOrder($serviceid, $order)
     {
-        $service = self::find($serviceid);
+        $service = VehicleType::find($serviceid);
         $service->order = $order;
         $service->save();
  
-        //fetch all vehicle types and save
-        self::saveToFile(self::all()->toArray());
+        /** updating cache */
+        VehicleType::updateServicesCache();
+
         return true;
     }
 
@@ -154,7 +180,7 @@ class VehicleType extends Model
     public function addType($type, &$errorCode = '')
     {
         $code = app('UtillRepo')->randomChars(8); //generate code for service type        
-        if($this->where('code', $code)->orWhere('name', $type)->exists()) {
+        if(VehicleType::where('code', $code)->orWhere('name', $type)->exists()) {
            $errorCode = 'EXISTS';
            return false;
         }
@@ -165,71 +191,11 @@ class VehicleType extends Model
         $vType->name = ucfirst($type);
         $vType->save();
 
-        //fetch all vehicle types and save
-        $this->saveToFile($this->all()->toArray());
+        /** updating cache */
+        VehicleType::updateServicesCache();
     
         return $vType;
         
     }
-
-
-
-    /**
-     * save alll vehicle types to file
-     */
-    public static function saveToFile($array)
-    {
-        $phpArrayCodingFormat = "<?php \n\n return ";
-        $phpArrayCodingFormat .= var_export($array, true);
-        $phpArrayCodingFormat .= ";";
-        
-        $file = config_path('vehicle_types.php');
-        file_put_contents($file, $phpArrayCodingFormat);
-
-    }
-
-
-
-
-    /**
-     * public function syncWith database
-     */
-    public function syncWithDatabase()
-    {
-        //fetch all vehicle types and save to file
-        $this->saveToFile($this->all()->toArray());
-    }
-
-    
-    /**
-     * sync database with config file
-     */
-    public function syncWithConfigFile()
-    {
-        foreach(config('vehicle_types') as $sKey => $sValue) {
-            $vType = $this->where('code', $sValue['code'])->first() ?: new $this;
-            $vType->id = $sValue['id'];
-            $vType->code = $sValue['code'];
-            $vType->name = $sValue['name'];
-            $vType->order = isset($sValue['order']) ? $sValue['order'] : 0;
-            $vType->is_highway_enabled = isset($sValue['is_highway_enabled']) ? $sValue['order'] : 1;
-            $vType->save();
-        }
-    }
-
-
-
-
-    /** 
-     * clean stgring replaces all ' ' with '_' and remove all special chrs
-     */
-    protected function cleanString($string)
-    {
-        $string = str_replace(' ', '_', $string); // Replaces all spaces with hyphens
-        $string = preg_replace('/[^A-Za-z0-9\_]/', '', $string); // Removes special chars.
-        return $string;
-    }
-
-
 
 }

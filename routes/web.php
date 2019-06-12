@@ -205,31 +205,3 @@ Route::group(['prefix' => 'admin'], function(){
 
 
 });
-
-
-
-/** test routes */
-Route::get('push-test', function(){
-
-    $pushBody = \App\Repositories\Utill::transMessage('app_messages.booking_alert_push', [
-        'date' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))->format('d-m-Y'),
-        'time' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))->format('h:i A')
-    ]);
-    $userDevicetokens = \App\Models\DeviceToken::where('entity_type', 'USER')->where('entity_id', request()->user_id)->get()->pluck('device_token')->all();
-    
-    $pushRes = app('App\Repositories\PushNotification')->setTitle('Booking Alert')
-        ->setBody($pushBody)
-        ->setIcon('logo')
-        ->setClickAction('')
-        ->setCustomPayload([
-            'booking_id' => 1, 
-            'type' => 'BOOKING_ALERT',
-            'tracklink' => 'http://highway.capefox.in/track-booking/Q0T9QKV2D   ',
-            'boardingpointlink' => 'http://highway.capefox.in/track-booking/Q0T9QKV2D/boarding-point-route'
-        ])
-        ->setPriority(\App\Repositories\PushNotification::HIGH)
-        ->setContentAvailable(true)
-        ->setDeviceTokens($userDevicetokens, true)
-        ->push();
-
-});
