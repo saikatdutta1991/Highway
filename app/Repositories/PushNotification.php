@@ -12,6 +12,7 @@ namespace App\Repositories;
 */
 
 use App\Jobs\ProcessCurlPost;
+use App\Models\Setting;
 
 class PushNotification
 {
@@ -100,20 +101,11 @@ class PushNotification
    * @param string $serverKey  fcm server key to send authentication
    * @param string $fcmURL  fcm pushnotification url
    */
-	public function __construct($serverKey = "", $fcmURL = "")
+	public function __construct($serverKey = "", $fcmURL = "https://fcm.googleapis.com/fcm/send")
 	{
-		if($serverKey !== "") {
-			$this->serverKey = $serverKey;
-		} else if(function_exists('config')) {
-			$this->serverKey = config('settings.firebase_cloud_messaging_server_key');
-		}
-		
-		if($fcmURL !== "") {
-			$this->fcmURL = $fcmURL;
-		} else if(function_exists('config') && !is_null($url = config('settings.firebase_cloud_messaging_fcm_push_url'))) {
-			$this->fcmURL = $url;
-		} 
-		$this->priority = self::LOW;
+		$this->serverKey = Setting::get('firebase_cloud_messaging_server_key');
+		$this->fcmURL = $fcmURL;
+		$this->priority = PushNotification::HIGH;
 	}
 	/* returns push manager instance (this class instance for facades) */
 	public static function getPushManager()
@@ -149,7 +141,7 @@ class PushNotification
 	}
 	public function setFcmURL($url)
 	{
-		$this->fcmURL = !is_null($url) ? $url : "https://fcm.googleapis.com/fcm/send";
+		$this->fcmURL = $url;
 		return $this;
 	}
 	public function setDeviceTokens($tokens, $merge = true)
