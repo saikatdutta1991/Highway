@@ -13,8 +13,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->setting = app('App\Models\Setting');
-        $this->setEmailSettings();
+        try {
+            $this->setting = app('App\Models\Setting');
+            $this->setEmailSettings();
+        } catch(\Exception $e) {
+            \Log::info('App\Providers::boot ' . $e->getMessage());
+        }
+        
     }
 
     /**
