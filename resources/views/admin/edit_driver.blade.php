@@ -361,7 +361,7 @@
                             </a>
                             <small>Vehicle Registration photo</small>
                         </div>
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_contract_permit_photo_url']}}" data-sub-html="Vehicle Contract Permit Photo">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_contract_permit_photo_url']}}">
                             </a>
@@ -379,21 +379,19 @@
                             </a>
                             <small>Vehicle Fitness Certificate photo</small>
                         </div>
-                        @if(isset($driver->vehicle_lease_agreement_photo_name) && $driver->vehicle_lease_agreement_photo_name != '')
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_lease_agreement_photo_url']}}" data-sub-html="Vehicle Lease Agreement Photo">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_lease_agreement_photo_url']}}">
                             </a>
                             <small>Vehicle Lease Agreement photo</small>
-                        </div>
-                        @endif
+                        </div> --}}        
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_photo_1_url']}}" data-sub-html="Vehicle Photo No. 1">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_1_url']}}">
                             </a>
                             <small>Vehicle photo No. 1</small>
                         </div>
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_photo_2_url']}}" data-sub-html="Vehicle Photo No. 2">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_2_url']}}">
                             </a>
@@ -410,14 +408,14 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_4_url']}}">
                             </a>
                             <small>Vehicle photo No. 4</small>
-                        </div>
+                        </div>--}}
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_commercial_driving_license_photo_url']}}" data-sub-html="Driver Commercial Driving Licence(DL)">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_commercial_driving_license_photo_url']}}">
                             </a>
                             <small>Driver Driving License Photo</small>
                         </div>
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_police_verification_certificate_photo_url']}}" data-sub-html="Vehicle Police Verifiecation Certificate">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_police_verification_certificate_photo_url']}}">
                             </a>
@@ -428,7 +426,7 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['bank_passbook_photo_url']}}">
                             </a>
                             <small>Driver Bank Passbook Photo</small>
-                        </div>
+                        </div>--}}
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['aadhaar_card_photo_url']}}" data-sub-html="Driver Id Card">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['aadhaar_card_photo_url']}}">
@@ -810,19 +808,18 @@
         console.log('socket connected')
     });
     
-    socket.on('driver_location_updated', function(data){
-    
-        if(data.driver_id != {{$driver->id}} && (!map || map == undefined) ) {
-            return;
+    socket.on('driver_location_updated', function(data) {
+        
+        if(data.driver_id == {{$driver->id}} && map) {
+            console.log('driver_location_updated',data);
+
+            latlng = new google.maps.LatLng(data.latitude, data.longitude);
+            latElem.text(data.latitude);
+            lngElem.text(data.longitude);
+            map.setCenter(latlng);
+            marker.setPosition(latlng);
+
         }
-    
-        console.log('driver_location_updated',data)
-    
-        latlng = new google.maps.LatLng(data.latitude, data.longitude);
-        latElem.text(data.latitude);
-        lngElem.text(data.longitude);
-        map.setCenter(latlng);
-        marker.setPosition(latlng);
     
     });
     
