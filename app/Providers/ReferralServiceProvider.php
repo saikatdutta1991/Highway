@@ -20,10 +20,17 @@ class ReferralServiceProvider extends ServiceProvider
         /**
          * observer when user and driver is being created only if referral module enabled
          */
-        if(app('App\Repositories\Referral')->isEnabled()) {
-            User::observe(UserObserver::class);
-            Driver::observe(DriverObserver::class);
+        try {
+            if(app('App\Repositories\Referral')->isEnabled()) {
+                User::observe(UserObserver::class);
+                Driver::observe(DriverObserver::class);
+            }
+        } catch(\Exception $e) {
+            \Log::info('App\ProvReferralServiceProvideriders::boot ' . $e->getMessage());
         }
+
+
+        
         
     }
 
