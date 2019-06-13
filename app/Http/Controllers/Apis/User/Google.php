@@ -89,6 +89,7 @@ class Google extends Controller
 
             $user->last_access_time = date('Y-m-d H:i:s');
             $user->last_accessed_ip = $request->ip();
+            $user->saveTimezone($request->timezone, false);
             $user->save();
 
             //save device token
