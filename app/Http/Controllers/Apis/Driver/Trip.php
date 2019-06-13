@@ -432,7 +432,7 @@ class Trip extends Controller
         $msg = "{$trip->name} started. We will notify you as driver reaches pickup location.";
         foreach($trip->bookings as $booking) {
             $booking->user->sendPushNotification($msgTitle, $msg);
-            $booking->user->sendSms($msgTxt." Track your booking here ".$booking->trackBookingUrl());
+            $booking->user->sendSms($msg." Track your booking here ".$booking->trackBookingUrl());
         }
     
 
