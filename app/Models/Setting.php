@@ -35,9 +35,18 @@ class Setting extends Model
 
             Log::info("Setting::get() -> Retriving setting from db key : {$key}");
 
-            $setting = Setting::where('key', $key)->select('value')->first();
-            return $setting ? $setting->value : '';
+            try {
+
+                $setting = Setting::where('key', $key)->select('value')->first();
+                return $setting ? $setting->value : '';
+
+            } catch(\Exception $e) {
+                Log::info('App\Models\Setting::get ' . $e->getMessage());
+                return '';
+            }
+
         });
+        
     }
 
 
