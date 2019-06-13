@@ -88,6 +88,7 @@ class UserRegister extends Controller
         $user->last_access_time = date('Y-m-d H:i:s');
         $user->last_accessed_ip = $request->ip();
         $user->gender = $request->has('gender') ? $request->gender : 'male';
+        $user->saveTimezone($request->timezone, false);
         
         DB::beginTransaction();
 
@@ -176,7 +177,7 @@ class UserRegister extends Controller
             ]);
         }
 
-        //save iser timezone
+        //save user timezone
         $user->saveTimezone($request->timezone, true);
 
         //save device token

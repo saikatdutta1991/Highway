@@ -129,6 +129,7 @@ class Google extends Controller
 
             $user->last_access_time = date('Y-m-d H:i:s');
             $user->last_accessed_ip = $request->ip();
+            $user->saveTimezone($request->timezone, false);
             $user->save();
 
             //create social login record, because social login record is not there 

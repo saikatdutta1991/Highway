@@ -127,6 +127,10 @@ class UserProfile extends Controller
             $user->gender = $request->gender;
         }
 
+        if($request->has('timezone')) {
+            $user->saveTimezone($request->timezone, false);
+        }
+
 
         // check email in request
         if($request->has('email')) {
