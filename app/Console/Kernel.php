@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\CreateAdmin::class,
+        \App\Console\Commands\ChangeAdminPassword::class,
         \App\Console\Commands\AlertTripBookings::class
     ];
 
