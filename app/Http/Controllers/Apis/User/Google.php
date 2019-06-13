@@ -166,6 +166,7 @@ class Google extends Controller
         $user->is_email_verified = $isEmailVerified;
         $user->last_access_time = date('Y-m-d H:i:s');
         $user->last_accessed_ip = $request->ip();
+        $user->saveTimezone($request->timezone, false);
         
         DB::beginTransaction();
 
