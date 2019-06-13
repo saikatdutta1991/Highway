@@ -116,11 +116,11 @@ class UserProfile extends Controller
 
 
         if($request->has('fname')) {
-            $user->fname = trim($request->fname);
+            $user->fname = ucfirst(trim($request->fname));
         }
 
         if($request->has('lname')) {
-            $user->lname = trim($request->lname);
+            $user->lname = ucfirst($request->lname);
         }
 
         if($request->has('gender')) {

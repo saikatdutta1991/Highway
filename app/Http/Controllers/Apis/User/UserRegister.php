@@ -76,8 +76,8 @@ class UserRegister extends Controller
 
 
         $user = new $this->user;
-        $user->fname = $request->fname;
-        $user->lname = $request->lname;
+        $user->fname = ucfirst($request->fname);
+        $user->lname = ucfirst($request->lname);
         $user->email = $request->email;
         $user->is_email_verified = 0;
         $user->password = Hash::make($request->password);

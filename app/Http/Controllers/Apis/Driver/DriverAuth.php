@@ -135,8 +135,8 @@ class DriverAuth extends Controller
 
 
         $driver = new $this->driver;
-        $driver->fname = $request->fname;
-        $driver->lname = $request->lname;
+        $driver->fname = ucfirst($request->fname);
+        $driver->lname = ucfirst($request->lname);
         $driver->email = $request->email;
         $driver->is_email_verified = 0;
         $driver->password = Hash::make($request->password);

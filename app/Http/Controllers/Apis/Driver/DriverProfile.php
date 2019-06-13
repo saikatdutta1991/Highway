@@ -220,15 +220,15 @@ class DriverProfile extends Controller
         }
 
         if($request->has('fname')) {
-            $driver->fname = trim($request->fname);
+            $driver->fname = ucfirst(trim($request->fname));
         }
 
         if($request->has('lname')) {
-            $driver->lname = trim($request->lname);
+            $driver->lname = ucfirst(trim($request->lname));
         }
 
         if($request->has('vehicle_number')) {
-            $driver->vehicle_number = $request->vehicle_number;
+            $driver->vehicle_number = strtoupper($request->vehicle_number);
         }
 
         if($request->has('vehicle_type')) {
