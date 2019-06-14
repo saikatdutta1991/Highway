@@ -6,6 +6,7 @@
                     <a class="navbar-brand" href="{{url('/')}}">
                         <!-- <img src="{{$website_logo_url}}" class="img-fluid" alt="logo"> -->
                         <span id="website_name_navbar">{{$website_name}}</span> 
+                        <p class="tagline-title">A smart way to Travel</p>
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> 
                         <span class="navbar-toggler-icon"></span> 

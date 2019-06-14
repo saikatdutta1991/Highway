@@ -154,6 +154,17 @@
             justify-content: center;
             flex-direction: column;
             }
+
+            .tagline-title {
+                color: white;
+                font-size: 14px;
+                position: absolute;
+                top: 32px;
+                left: 46px;
+                font-family: Baskerville;
+            }
+
+
         </style>
 
         <!-- Font -->
