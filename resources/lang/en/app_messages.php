@@ -17,5 +17,7 @@ return [
     "driver_cancel_ride_title" => "Booking Canceled",
     "driver_cancel_ride_message" => "Your ride has been canceled",
     "ride_start_title" => "Enjoy your ride",
-    "ride_start_message" => "Sit back and enjoy your hassle free ride!"
+    "ride_start_message" => "Sit back and enjoy your hassle free ride!",
+    "trip_cancel_driver_title" => "Booking canceled",
+    "trip_cancel_driver_message" => ":tripname booking has been canceled by driver. Refund will be processed within 24hrs. We regret for the inconvenience caused. Thank You!!"
 ];

@@ -668,10 +668,10 @@ class Trip extends Controller
                 $booking->save();
                 
                 $user = $booking->user;
-                $msgTxt = "{$trip->name} booking has been canceled by driver";
-                $msgTitle = "Booking canceled";
-                $user->sendPushNotification($msgTitle, $msgTxt);
-                $user->sendSms($msgTxt);
+                $message = Utill::transMessage('app_messages.trip_cancel_driver_message', ['tripname' => $trip->name]);
+                $title = Utill::transMessage('app_messages.trip_cancel_driver_title');
+                $user->sendPushNotification($title, $message);
+                $user->sendSms($message);
             }
 
 
