@@ -5,7 +5,7 @@
  * routes for user api
  * routes are alredy prefixed by '/api'
  */
-Route::group(['prefix' => '/v1/user'], function(){
+Route::group(['middleware' => 'cors', 'prefix' => '/v1/user'], function(){
 
     /** get coupon code */
     Route::get('coupons', 'Apis\User\Coupon@getCoupons');
@@ -115,7 +115,7 @@ Route::group(['prefix' => '/v1/user'], function(){
  * routes for driver apis
  * routes are alredy prefixed by '/api'
  */
-Route::group(['prefix' => '/v1/driver'], function(){
+Route::group(['middleware' => 'cors', 'prefix' => '/v1/driver'], function(){
 
     /**
      * password reset apis
