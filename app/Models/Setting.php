@@ -115,7 +115,7 @@ class Setting extends Model
     /**
      * returns website favicon url
      */
-    public function websiteFavIconUrl()
+    public static function websiteFavIconUrl()
     {
         return url(Setting::get('website_fav_icon_path') . '/' . Setting::get('website_fav_icon_name'));
     }

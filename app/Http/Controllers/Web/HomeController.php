@@ -25,6 +25,23 @@ class HomeController extends Controller
     }
 
 
+
+    /**
+     * common configs
+     */
+    public function getCommonConfigs()
+    {
+        return $this->api->json(true, 'COMMON_CONFIGS', 'Common configs', [
+            'website_name' => Setting::get('website_name'),
+            'website_title' => Setting::get('website_title'),
+            'currency_symbol' => Setting::get('currency_symbol'),
+            'favicon_url' => Setting::websiteFavIconUrl()
+        ]);
+    }
+
+
+
+
     /**
      * api to get list to services with basic fare
      * returns json response
