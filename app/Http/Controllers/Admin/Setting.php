@@ -332,6 +332,8 @@ class Setting extends Controller
         $this->setting->set('instagram_social_link', trim($request->instagram_social_link));
         $this->setting->set('android_user_app_playsotre_link', trim($request->android_user_app_playsotre_link));
         $this->setting->set('android_driver_app_playsotre_link', trim($request->android_driver_app_playsotre_link));
+        $this->setting->set('driver_portal_url', trim($request->driver_portal_url));
+        
         
         return $this->api->json(true, 'GENERAL_WEBSITE_SETTINGS_SAVED', 'Website settings saved');
     }

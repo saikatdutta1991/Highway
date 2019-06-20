@@ -24,5 +24,26 @@ class DriverAccountTransaction extends Model
     }
 
 
+    /**
+     * hide transactions from driver all
+     * except some input transaction ids
+     */
+    public static function hideTransactionsFromDriver($accountid, $exceptIds) 
+    {
+        DriverAccountTransaction::where('account_id', $accountid)
+            ->whereNotIn('id', $exceptIds)
+            ->update(['is_hidden_to_driver' => true]);
+    }
+
+
+    /**
+     * returns registerd on formater date(created_at)
+     */
+    public function createdOn($timezone)
+    {
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
+    }
+
+
 
 }

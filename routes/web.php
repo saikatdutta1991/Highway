@@ -38,13 +38,21 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::group(['middleware' => 'adminGuest'], function(){
         
-        Route::get('/', function(){ return redirect()->route('admin-login'); });
+        Route::get('/', function(){ 
+            return redirect()->route('admin-login'); 
+        });
         Route::get('/login', 'Admin\AuthController@showLogin')->name('admin-login');
         Route::post('/login', 'Admin\AuthController@doLogin')->name('admin-login');
 
     });
 
     Route::group(['middleware' => 'adminAuth'], function(){
+
+        Route::group(['prefix' => 'drivers'], function(){
+            Route::get('accounts', 'Admin\AccountManagement@showDriverAccounts')->name('admin.drivers.accounts');
+            Route::get('accounts/recharge', 'Admin\AccountManagement@showAccountRecharge')->name('admin.drivers.accounts.recharge');
+            Route::post('accounts/recharge/process', 'Admin\AccountManagement@processAccountRecharge')->name('admin.drivers.accounts.recharge.process');
+        });
 
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
         Route::get('payouts', 'Admin\Payout@showFilteredPayouts')->name('admin.payouts.show');

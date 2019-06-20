@@ -199,6 +199,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <b>Driver Portal Url</b>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" placeholder="" name="driver_portal_url" value="{{$driver_portal_url}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row clearfix">
                             <div class="col-sm-12 text-right">

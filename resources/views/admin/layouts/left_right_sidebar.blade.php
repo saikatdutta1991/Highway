@@ -101,6 +101,9 @@
                         <li class="@yield('driver_list_active')">
                             <a href="{{route('admin-drivers')}}">List View</a>
                         </li>
+                        <li class="@yield('driver_accounts_active')">
+                            <a href="{{route('admin.drivers.accounts')}}">Accounts</a>
+                        </li>
                         <li class="@yield('driver_map_active')">
                             <a href="{{route('admin-drivers-map')}}">Map View</a>
                         </li>

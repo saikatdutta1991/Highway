@@ -19,6 +19,7 @@
                             <li class="nav-item"> <a class="nav-link" href="{{route('priceestimate.show')}}">PRICE ESTIMATE</a> </li>
                             <li class="nav-item"> <a class="nav-link" href="{{route('home')}}#contact">CONTACT</a> </li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('offers')}}">OFFERS</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="{{$driver_portal_url}}">DRIVER PORTAL</a> </li>
                             <li class="nav-item"><a href="{{route('home')}}#download" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Download</a></li>
                         </ul>
                     </div>
