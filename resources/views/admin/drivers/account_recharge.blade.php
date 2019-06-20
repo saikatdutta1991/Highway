@@ -240,6 +240,10 @@
                 console.log(`${rechargeApi} response`, response);
                 showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
 
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
             }).fail(function(){
                 showNotification('bg-red', 'Server error. Contact to admin.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
             });
