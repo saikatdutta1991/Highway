@@ -242,7 +242,6 @@ class Trip extends Controller
         $acRoute->from_location = $request->from_location;
         $acRoute->to_location = $request->to_location;
         $acRoute->base_fare = $request->base_fare;
-        $acRoute->tax_fee = $request->tax_fee;
         $acRoute->access_fee = $request->access_fee;
         $acRoute->total_fare = $request->total_fare;
         $acRoute->status = AdminTripRoute::ENABLED;
@@ -253,7 +252,6 @@ class Trip extends Controller
         $nonAcRoute->from_location = $request->from_location;
         $nonAcRoute->to_location = $request->to_location;
         $nonAcRoute->base_fare = $request->base_fare_nonac;
-        $nonAcRoute->tax_fee = $request->tax_fee_nonac;
         $nonAcRoute->access_fee = $request->access_fee_nonac;
         $nonAcRoute->total_fare = $request->total_fare_nonac;
         $nonAcRoute->status = AdminTripRoute::ENABLED;

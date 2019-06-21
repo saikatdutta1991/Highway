@@ -162,10 +162,8 @@ class Trip extends Controller
             //calculate fare with multiple with no of seats
             $invoice->ride_fare = $this->utill->formatAmountDecimalTwo($trip->adminRoute->base_fare * $booking->booked_seats);
             $invoice->access_fee = $this->utill->formatAmountDecimalTwo($trip->adminRoute->access_fee * $booking->booked_seats);
-            $invoice->tax = $this->utill->formatAmountDecimalTwo($trip->adminRoute->tax_fee * $booking->booked_seats);
-            $invoice->total = $invoice->ride_fare + $invoice->access_fee + $invoice->tax;
-            $invoice->currency_type = $this->setting->get('currency_code');
-
+            $semi_total = $invoice->ride_fare + $invoice->access_fee;
+            
 
             /** calculate coupon discount block*/
             if($request->coupon_code != '') {
@@ -175,8 +173,8 @@ class Trip extends Controller
                     return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
                 }
 
-                $couponDeductionRes = $coupon->calculateDiscount($invoice->total);
-                $invoice->total = $couponDeductionRes['total'];
+                $couponDeductionRes = $coupon->calculateDiscount($semi_total);
+                $semi_total = $couponDeductionRes['total'];
                 $invoice->coupon_discount = $couponDeductionRes['coupon_discount'];
 
                 /** insert coupon used by user in db */
@@ -188,7 +186,11 @@ class Trip extends Controller
             }
             /** calculate coupon discount block end*/
 
-
+            $tax_percentage = Setting::get('vehicle_ride_fare_tax_percentage') ?: 0;
+            $tax = ($semi_total * $tax_percentage) / 100; 
+            $invoice->tax = $this->utill->formatAmountDecimalTwo($tax);
+            $invoice->total = $semi_total + $invoice->tax;
+            $invoice->currency_type = $this->setting->get('currency_code');
 
 
             list($invoiceImagePath, $invoiceImageName) = $invoice->saveGoogleStaticMap($sourcePoint->latitude, $sourcePoint->longitude, $destPoint->latitutde, $destPoint->longitude);

@@ -73,7 +73,6 @@ class Trip extends Controller
         $routeDetails['destination'] = $routeRecord->to->name;
         $routeDetails['time'] = $routeRecord->time;
         $routeDetails['base_fare'] = $routeRecord->base_fare;
-        $routeDetails['tax_fee'] = $routeRecord->tax_fee;
         $routeDetails['access_fee'] = $routeRecord->access_fee;
         $routeDetails['total_fare'] = $routeRecord->total_fare;
         $routeDetails['status'] = $routeRecord->status;

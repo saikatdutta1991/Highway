@@ -106,16 +106,23 @@ class PriceCalculator extends Controller
 
 
         /** calculate total fare */
-        $totalFare = $trip->adminRoute->base_fare + $trip->adminRoute->access_fee + $trip->adminRoute->tax_fee;
-        $totalFare = $totalFare * $request->no_of_seats;
+        $semi_total = $trip->adminRoute->base_fare + $trip->adminRoute->access_fee;
+        $semi_total *= $request->no_of_seats;
 
-        $couponDeductionRes = $coupon->calculateDiscount($totalFare);
-      
+        $couponDeductionRes = $coupon->calculateDiscount($semi_total);
+        $semi_total = $couponDeductionRes['total'];
+        
+
+        $tax_percentage = Setting::get('vehicle_ride_fare_tax_percentage') ?: 0;
+        $tax = ($semi_total * $tax_percentage) / 100; 
+        $totalFare = $semi_total + $tax;
+        $totalFare = $this->utill->formatAmountDecimalTwo($totalFare);
+
 
         return $this->api->json(true, 'VALID_COUPON', 'Coupon valid', [
-            'total' => $this->utill->formatAmountDecimalTwo($totalFare),
+            'total' => $totalFare,
             'no_of_seats' => $request->no_of_seats,
-            'after_deduction' => $this->utill->formatAmountDecimalTwo($couponDeductionRes['total']),
+            'after_deduction' => $totalFare,
             'coupon_discount' => $couponDeductionRes['coupon_discount']
         ]);
 
