@@ -72,7 +72,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <!-- <div class="col-md-3">
                                     <b>Tax Fee</b>
                                     <div class="input-group">
                                         <span class="input-group-addon">
@@ -82,7 +82,7 @@
                                             <input type="number" required class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee" value="@if(isset($acroute)){{$acroute->tax_fee}}@endif">
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-3">
                                     <b>Access Fee</b>
                                     <div class="input-group">
@@ -120,7 +120,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <!-- <div class="col-md-3">
                                     <b>Tax Fee</b>
                                     <div class="input-group">
                                         <span class="input-group-addon">
@@ -130,7 +130,7 @@
                                             <input type="number" required class="form-control" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)" name="tax_fee_nonac" value="@if(isset($nonacroute)){{$nonacroute->tax_fee}}@endif">
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-3">
                                     <b>Access Fee</b>
                                     <div class="input-group">
@@ -200,9 +200,8 @@
 var fareOnblurCallback = function(){
         
     var base_fare = parseFloat($("input[name='base_fare']").val())
-    var tax_fee = parseFloat($("input[name='tax_fee']").val())
     var access_fee = parseFloat($("input[name='access_fee']").val())
-    var total = (base_fare + access_fee + tax_fee).toFixed(2)
+    var total = (base_fare + access_fee).toFixed(2)
     console.log(base_fare)
     $("input[name='total_fare']").val(total)
 }
@@ -210,9 +209,8 @@ var fareOnblurCallback = function(){
 var nonacfareOnblurCallback = function(){
         
     var base_fare = parseFloat($("input[name='base_fare_nonac']").val())
-    var tax_fee = parseFloat($("input[name='tax_fee_nonac']").val())
     var access_fee = parseFloat($("input[name='access_fee_nonac']").val())
-    var total = (base_fare + access_fee + tax_fee).toFixed(2)
+    var total = (base_fare + access_fee).toFixed(2)
     console.log(base_fare)
     $("input[name='total_fare_nonac']").val(total)
 }
@@ -221,11 +219,9 @@ $(document).ready(function(){
     
 
     $("input[name='base_fare']").on('blur', fareOnblurCallback)
-    $("input[name='tax_fee']").on('blur', fareOnblurCallback)
     $("input[name='access_fee']").on('blur', fareOnblurCallback)
 
     $("input[name='base_fare_nonac']").on('blur', nonacfareOnblurCallback)
-    $("input[name='tax_fee_nonac']").on('blur', nonacfareOnblurCallback)
     $("input[name='access_fee_nonac']").on('blur', nonacfareOnblurCallback)
 
 
