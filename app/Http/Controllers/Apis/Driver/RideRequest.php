@@ -506,8 +506,9 @@ class RideRequest extends Controller
 
 
             //updating ride request table
+            $rideEndTime = date('Y-m-d H:i:s');
             $rideRequest->ride_distance = $request->ride_distance;
-            $rideRequest->ride_time = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, date('Y-m-d H:i:s'));
+            $rideRequest->ride_time = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
             $rideRequest->estimated_fare = $fare['total'];
             $rideRequest->ride_end_time = $rideEndTime;
             $rideRequest->ride_status = Ride::TRIP_ENDED;   
