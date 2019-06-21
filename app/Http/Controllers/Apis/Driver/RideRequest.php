@@ -476,60 +476,24 @@ class RideRequest extends Controller
         /** converting ride_request_distance meter to km and updating reqeust object*/
         $request->request->add(['ride_distance' => ($request->ride_distance/1000) ]);
 
-        /** fetching ride fare by vehile type id */        
-        $rideFare = $this->rideFare->where(
-            'vehicle_type_id', $this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type)
-        )->first();
-
-        $rideEndTime = date('Y-m-d H:i:s');
-        $rideTime = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
+        /** fetching vehicle service fare details by service id */
+        $serviceFare = RideFare::getServiceFareById($this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type));
         $rideWaitTiime = app('UtillRepo')->getDiffMinute($rideRequest->driver_reached_time, $rideRequest->ride_start_time);
-
-
-        /** caltulating basic fare details */
-        $fare = $rideFare->calculateFare($request->ride_distance, $rideWaitTiime);
-
-
-
-        /** calculate cancellation charge */
-        $cChargeAmt = $this->cCharge->calculateCancellationCharge($rideRequest->user_id);
-        $fare['total'] += $cChargeAmt;
-        $fare['cancellation_charge'] = $cChargeAmt;
-        $this->cCharge->clearCharges($rideRequest->user_id);
-        /** end calculate cancellation charge */
-
-
-
-        /** calculate referral bonus */
-        $bonusData = $this->referral->deductBounus($rideRequest->user_id, $fare['total']);
-       
-        if($bonusData !== false) {
-            $fare['total'] = $bonusData['total'];
-            $fare['bonusDiscount'] = $bonusData['bonusDiscount'];
-        }
-        /** end calculate referral bonus */
         
+        $coupon = $this->coupon->find($rideRequest->applied_coupon_id);
+        $validCoupon = $this->coupon->isValid($coupon->code, $rideRequest->user_id, $coupon);
 
-
-        /** calculate coupon discount if applied block */
-        $fare['coupon_discount'] = 0.00;
-        if($rideRequest->applied_coupon_id) {
-
-            $coupon = $this->coupon->find($rideRequest->applied_coupon_id);
-            $couponDeductionRes = $coupon->calculateDiscount($fare['total']);
-            $fare['total'] = $couponDeductionRes['total'];
-            $fare['coupon_discount'] = $couponDeductionRes['coupon_discount'];
-
-        }
-        /** calculate coupon discount if applied block end*/
-
-
-
-        /** rounding total fare, dont change total after this*/
-        $fare['total'] = round($fare['total']);
+        /** caltulating fare details */
+        $fare = $serviceFare->calculateCityRideFare(
+            $rideRequest->user_id, //user id
+            $request->ride_distance, //distance im km
+            $rideWaitTiime, //wait time 
+            $validCoupon === true ? $coupon->code : ''  //coupon code
+        );
 
         
-        try{
+        try {
+
             DB::beginTransaction();
 
             /** insert coupon used by user in db */
@@ -543,7 +507,7 @@ class RideRequest extends Controller
 
             //updating ride request table
             $rideRequest->ride_distance = $request->ride_distance;
-            $rideRequest->ride_time = $rideTime;
+            $rideRequest->ride_time = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, date('Y-m-d H:i:s'));
             $rideRequest->estimated_fare = $fare['total'];
             $rideRequest->ride_end_time = $rideEndTime;
             $rideRequest->ride_status = Ride::TRIP_ENDED;   
@@ -557,20 +521,10 @@ class RideRequest extends Controller
             $invoice->access_fee = $fare['access_fee'];
             $invoice->tax = $fare['taxes'];
             $invoice->total = $fare['total'];
-
-            /** cancellation charge added to invoice */
-            $invoice->cancellation_charge = $fare['cancellation_charge'];
-
-            /** if referral bonus */ 
-            if(isset($fare['bonusDiscount'])) {
-                $invoice->referral_bonus_discount = $fare['bonusDiscount'];
-            }
-
-            /** coupon discount added to invoice */
             $invoice->coupon_discount = $fare['coupon_discount'];
-
-            
-            $invoice->currency_type = $this->setting->get('currency_code');
+            $invoice->cancellation_charge = $fare['cancellation_charge'];
+            $invoice->referral_bonus_discount = $fare['bonusDiscount'];
+            $invoice->currency_type = Setting::get('currency_code');
 
             list($invoiceImagePath, $invoiceImageName) = $invoice->saveInvoiceMapImage($rideRequest);
             $invoice->invoice_map_image_path = $invoiceImagePath;
@@ -605,11 +559,9 @@ class RideRequest extends Controller
 
 
             /** now deduct referral bonus amount from user */
-            if(isset($fare['bonusDiscount'])) {
-                $userReferralRecord = $this->referral->createReferralCodeIfNotExists('user', $rideRequest->user_id);
-                $userReferralRecord->bonus_amount -= $fare['bonusDiscount'];
-                $userReferralRecord->save();
-            }
+            $userReferralRecord = $this->referral->createReferralCodeIfNotExists('user', $rideRequest->user_id);
+            $userReferralRecord->bonus_amount -= $fare['bonusDiscount'];
+            $userReferralRecord->save();
 
 
             DB::commit();

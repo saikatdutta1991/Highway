@@ -59,8 +59,8 @@ class HomeController extends Controller
         foreach($services as $service) {
 
             /** fetching vehicle service details by vehicle_type_id */
-            $serviceFare = RideFare::where('vehicle_type_id', $service['id'])->first();
-            $fareData = $serviceFare->calculateFare($distance, 0);
+            $serviceFare = RideFare::getServiceFareById($service['id']);
+            $fareData = $serviceFare->calculateCityRideFare( 0, $distance, 0, '');
 
             $pricesList[] = [
                 'service_id' => $service['id'],

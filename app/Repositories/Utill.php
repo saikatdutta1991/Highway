@@ -136,7 +136,7 @@ class Utill
 	*
 	* @return number formated as two decimal place(3.00)
 	*/
-	public function formatAmountDecimalTwo($amount = "")
+	public static function formatAmountDecimalTwo($amount = "")
 	{
 		return number_format(round($amount, 2), 2, '.', '');
     }
@@ -146,7 +146,7 @@ class Utill
     /**
      * formate amount to two decimal places without rount value
      */
-    public function formatAmountDecimalTwoWithoutRound($amount = "")
+    public static function formatAmountDecimalTwoWithoutRound($amount = "")
     {
         return number_format($amount, 2, '.', '');
     }

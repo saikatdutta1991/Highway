@@ -42,66 +42,39 @@ class PriceCalculator extends Controller
         /** log the request */
         $this->api->log('estimate price reqeust', $request->all());
 
-        /** fetching vehicle service details by vehicle_type_id */
-        $rFare = $this->rideFare->where('vehicle_type_id', $request->vehicle_type_id)->first();
+        /** fetching vehicle service fare details by service id */
+        $serviceFare = RideFare::getServiceFareById($request->vehicle_type_id);
 
 
         /** validate input params and vehile service */
-        if(!is_numeric($request->distance) || 
-            (!is_numeric($request->duration) || $request->duration < 0) 
-            || !$rFare)
+        if(!is_numeric($request->distance) ||  !$serviceFare)
         {
             return $this->api->json(false, 'INVALID_INPUT_PARAMS', 'Invalid input params');
         }
 
 
-        /** calculate fare by distance and duration */
-        $distance = $request->distance / 1000; //meter to km
-        $duration = intval($request->duration); //taking invalue from duration
-        $fareData = $rFare->calculateFare($distance, 0); //duration no need to pass because in price calculator waiting time calculated
+        /** calculate fare by distance, 
+         * waittime not required in price calculator because it will be needed in after complete ride
+         */
+        $distance = $request->distance / 1000; // converting meter to km
+        $fareDetails = $serviceFare->calculateCityRideFare(
+            $request->auth_user->id, //user id
+            $distance, //distance im km
+            0, //wait time 
+            $request->coupon_code //coupon code
+        );
 
-
-        $userId = $request->auth_user->id;
-
-        /** calculating referral bonus discount, this block in if condition
-         * because referral system can be disabled
-        */
-        if( ($bonusDeduction = $this->referral->deductBounus($userId, $fareData['total'])) !== false ) {
-            $fareData['total'] = $bonusDeduction['total'];
-            $fareData['bonusDiscount'] = $bonusDeduction['bonusDiscount'];
-        }
-
-
-        /** calculating cancellation charge */
-        $cancellaionCharge = $this->cCharge->calculateCancellationCharge($userId);
-        $fareData['total'] += $cancellaionCharge;
-        $fareData['cancellation_charge'] = $cancellaionCharge;
-
-
-
-        /** calculation for coupon on if coupon passed*/
-        $fareData['coupon_discount'] = '0.00';
-        if($request->coupon_code != '') {
-
-            $validCoupon = $this->coupon->isValid($request->coupon_code, $userId, $coupon);
-            if($validCoupon !== true) {
-                return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
-            }
-
-            //code comes here means coupon valid
-            $couponDeductionRes = $coupon->calculateDiscount($fareData['total']);
-            $fareData['total'] = $couponDeductionRes['total'];
-            $fareData['coupon_discount'] = $couponDeductionRes['coupon_discount'];
-        }
-        
-        /** calculation for coupon end*/
 
         /** log the fare */
-        $this->api->log('estimate price', $fareData);
+        $this->api->log('estimate price', $fareDetails);
 
 
-        $fareData['total'] = number_format(round($fareData['total']), 2, '.', '');
-        return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareData);
+        if(isset($fareDetails['errcode'])) {
+            return $this->api->json(false, $fareDetails['errcode'], $fareDetails['errmessage']);
+        }
+
+
+        return $this->api->json(true, 'FARE_DATA', 'Fare data fetched successfully', $fareDetails);
 
     }
 
