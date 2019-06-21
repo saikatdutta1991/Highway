@@ -481,7 +481,7 @@ class RideRequest extends Controller
         $rideWaitTiime = app('UtillRepo')->getDiffMinute($rideRequest->driver_reached_time, $rideRequest->ride_start_time);
         
         $coupon = $this->coupon->find($rideRequest->applied_coupon_id);
-        $validCoupon = $this->coupon->isValid($coupon->code, $rideRequest->user_id, $coupon);
+        $validCoupon = $this->coupon->isValid($coupon ? $coupon->code : '', $rideRequest->user_id, $coupon);
 
         /** caltulating fare details */
         $fare = $serviceFare->calculateCityRideFare(

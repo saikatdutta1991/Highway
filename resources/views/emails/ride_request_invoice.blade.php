@@ -242,10 +242,6 @@
                                 <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">Access Fee</td>
                                 <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->access_fee}}</td>
                             </tr>
-                            <tr style="">
-                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">IGST</td>
-                                <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->tax}}</td>
-                            </tr>
                             @if($invoice->referral_bonus_discount != 0)
                             <tr style="">
                                 <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">Referral Bonus Discount</td>
@@ -264,6 +260,10 @@
                                 <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->cancellation_charge}}</td>
                             </tr>
                             @endif
+                            <tr style="">
+                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">IGST</td>
+                                <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->tax}}</td>
+                            </tr>
                             <tr style="background-color: #d2d0d0;">
                                 <td style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;"><span style="color: black;font-weight: 700;">Total Fare</span><span style="font-size: 10px;">(rounded off)</span></td>
                                 <td style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: black;font-weight: 700;">{{$currency_symbol}}{{$invoice->total}}</td>
