@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Repositories\Referral;
 use App\Models\RideCancellationCharge as CancellationCharge;
 use App\Models\Coupons\Coupon;
+use App\Models\Setting;
 use App\Models\Trip\Trip as TripModel;
 
 class PriceCalculator extends Controller
