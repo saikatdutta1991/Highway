@@ -56,6 +56,8 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::get('dashboard', 'Admin\Dashboard@showDashboard')->name('admin-dashboard');
         Route::get('payouts', 'Admin\Payout@showFilteredPayouts')->name('admin.payouts.show');
+        Route::get('payouts/settings', 'Admin\Payout@showPayoutSettings')->name('admin.payouts.settings.show');
+        Route::post('payouts/settings', 'Admin\Payout@savePayoutSettings')->name('admin.payouts.settings.save');
 
         Route::group(['prefix' => 'support'], function(){
             Route::get('settings', 'Admin\Support@showSettings')->name('admin.support.show.settings');

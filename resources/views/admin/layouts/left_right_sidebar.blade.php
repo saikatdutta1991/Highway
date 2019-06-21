@@ -29,12 +29,6 @@
                     <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="@yield('payouts_active')">
-                    <a href="{{route('admin.payouts.show')}}">
-                    <i class="material-icons">local_parking</i>
-                    <span>Payouts</span>
-                    </a>
-                </li>
                 <li class="@yield('rides_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">send</i>
@@ -99,13 +93,19 @@
                     </a>
                     <ul class="ml-menu">
                         <li class="@yield('driver_list_active')">
-                            <a href="{{route('admin-drivers')}}">List View</a>
+                            <a href="{{route('admin-drivers')}}">Show Drivers List</a>
                         </li>
                         <li class="@yield('driver_accounts_active')">
-                            <a href="{{route('admin.drivers.accounts')}}">Accounts</a>
+                            <a href="{{route('admin.drivers.accounts')}}">Accounts Management</a>
                         </li>
                         <li class="@yield('driver_map_active')">
-                            <a href="{{route('admin-drivers-map')}}">Map View</a>
+                            <a href="{{route('admin-drivers-map')}}">Drivers In Map</a>
+                        </li>
+                        <li class="@yield('payouts_active')">
+                            <a href="{{route('admin.payouts.show')}}">Generate Payouts</a>
+                        </li>
+                        <li class="@yield('payout_settings_active')">
+                            <a href="{{route('admin.payouts.settings.show')}}">Payout Settings</a>
                         </li>
                     </ul>
                 </li>

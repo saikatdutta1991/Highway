@@ -29,6 +29,47 @@ class Payout extends Controller
     }
 
 
+    /**
+     * show driver payout settings
+     * Ex. driver city ride admin commission, driver highway ride admin commission
+     * driver city ride cancellation limit, city ride cancellation charge, highway ride cancellation charge etc.
+     */
+    public function showPayoutSettings()
+    {
+        return view('admin.payouts.settings', [
+            'driver_cancel_ride_request_limit' => Setting::get('driver_cancel_ride_request_limit'),
+            'city_ride_admin_commission' => Setting::get('city_ride_admin_commission'),
+            'highway_ride_admin_commission' => Setting::get('highway_ride_admin_commission'),
+            'driver_city_ride_cancellation_charge' => Setting::get('driver_city_ride_cancellation_charge'),
+            'driver_highway_ride_cancellation_charge' => Setting::get('driver_highway_ride_cancellation_charge'),
+        ]);
+    }
+
+
+    
+
+    /**
+     * save payout settings
+     */
+    public function savePayoutSettings(Request $request)
+    {
+
+        Setting::set('driver_cancel_ride_request_limit', trim($request->driver_cancel_ride_request_limit));
+        Setting::set('city_ride_admin_commission', trim($request->city_ride_admin_commission));
+        Setting::set('highway_ride_admin_commission', trim($request->highway_ride_admin_commission));
+        Setting::set('driver_city_ride_cancellation_charge', trim($request->driver_city_ride_cancellation_charge));
+        Setting::set('driver_highway_ride_cancellation_charge', trim($request->driver_highway_ride_cancellation_charge));
+
+        return $this->api->json(true, 'SETTINGS_SAVED', 'Settings saved');
+    }
+
+
+
+
+
+
+
+
 
     /**
      * This function filters and shows drivers payouts records

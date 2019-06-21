@@ -1,6 +1,7 @@
 @extends('admin.layouts.master')
 @section('title', 'Payouts-Filter')
 @section('payouts_active', 'active')
+@section('driver_active', 'active')
 @section('top-header')
 <!-- Bootstrap Material Datetime Picker Css -->
 <link href="{{url('admin_assets/admin_bsb')}}/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
