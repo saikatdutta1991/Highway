@@ -90,6 +90,8 @@ class PriceCalculator extends Controller
     public function validateCouponCodeForTrip(Request $request)
     {
 
+        $this->api->log('PriceCalculator::validateCouponCodeForTrip --> request data', $request->all());
+
         if($request->coupon_code == '' || $request->no_of_seats < 1) {
             return $this->api->json(false, 'INVALID_INPUT_PARAMS', 'Invalid input params');
         }
