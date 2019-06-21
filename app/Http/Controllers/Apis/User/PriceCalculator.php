@@ -98,10 +98,12 @@ class PriceCalculator extends Controller
 
         /** fetch trip from db */
         $trip = $this->trip->where('id', $request->trip_id)->first();
+        $this->api->log('PriceCalculator::validateCouponCodeForTrip --> trip data', $trip);
 
 
         /** check if coupon code is valid */
         $validCoupon = $this->coupon->isValid($request->coupon_code, $request->auth_user->id, $coupon, 2);
+        $this->api->log('PriceCalculator::validateCouponCodeForTrip --> validCoupon data', $validCoupon);
         if($validCoupon !== true) {
             return $this->api->json(false, $validCoupon['errcode'], $validCoupon['errmessage']);
         }
