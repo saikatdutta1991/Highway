@@ -128,7 +128,6 @@ class ProcessDriverInvoice implements ShouldQueue
         $driverInvoice->tax = $tax;
         $driverInvoice->admin_commission = $adminCommission;
         $driverInvoice->driver_earnings = $driverEarnings;
-        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
 
@@ -164,7 +163,6 @@ class ProcessDriverInvoice implements ShouldQueue
         $driverInvoice->ride_id = $this->rideid;
         $driverInvoice->ride_type = $this->ridetype;    
         $driverInvoice->cancellation_charge = $cancelcharge;
-        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
 
@@ -200,7 +198,6 @@ class ProcessDriverInvoice implements ShouldQueue
         $driverInvoice->ride_id = $this->rideid;
         $driverInvoice->ride_type = $this->ridetype;    
         $driverInvoice->cancellation_charge = $cancelcharge;
-        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
         
@@ -246,7 +243,6 @@ class ProcessDriverInvoice implements ShouldQueue
         $driverInvoice->tax = $invoice->tax;
         $driverInvoice->admin_commission = $adminCommission;
         $driverInvoice->driver_earnings = $driverEarnings;
-        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
 
