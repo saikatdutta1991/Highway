@@ -19,5 +19,7 @@ return [
     "ride_start_title" => "Enjoy your ride",
     "ride_start_message" => "Sit back and enjoy your hassle free ride!",
     "trip_cancel_driver_title" => "Booking canceled",
-    "trip_cancel_driver_message" => ":tripname booking has been canceled by driver. Refund will be processed within 24hrs. We regret for the inconvenience caused. Thank You!!"
+    "trip_cancel_driver_message" => ":tripname booking has been canceled by driver. Refund will be processed within 24hrs. We regret for the inconvenience caused. Thank You!!",
+    "driver_account_ride_commission_deduct_remarks" => "Your :appname A/c has been debited by :csymbol:amount for :ridetype ride id :rideid",
+    "driver_account_ride_cancellation_remarks" => "Your :appname A/c has been debited by :csymbol:amount for cancellation of :ridetype ride id :rideid"
 ];

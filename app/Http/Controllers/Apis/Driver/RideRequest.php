@@ -22,6 +22,7 @@ use App\Models\RideCancellationCharge as CancellationCharge;
 use App\Models\Coupons\Coupon;
 use App\Models\Coupons\UserCoupon;
 use App\Repositories\Utill;
+use App\Jobs\ProcessDriverInvoice;
 
 class RideRequest extends Controller
 {
@@ -324,15 +325,13 @@ class RideRequest extends Controller
             ->count();
 
         $cancelLimitCount = $this->setting->get('driver_cancel_ride_request_limit') ?: 0;
-        $this->api->log('cancel limit count', $cancelLimitCount);
-        $this->api->log('todays cancel count', $todaysCancelCount);
+        $cencelAmount = $this->setting->get('driver_city_ride_cancellation_charge');
+        $currencySymbol = $this->setting->get('currency_symbol');
+    
         $isForceCancel = $request->is_force_cancel == 1 ? true : false;
         if(!$isForceCancel && $todaysCancelCount >= $cancelLimitCount) {
-            return $this->api->json(false, 'CANCEL_NOW_ALLOWED', 'You have exceeded the cancellation limit for today. You will be charged.'); 
+            return $this->api->json(false, 'CANCEL_NOW_ALLOWED', "You have exceeded the cancellation limit for today. You will be charged {$currencySymbol}{$cencelAmount}"); 
         }
-
-
-
 
 
         $authDriver = $request->auth_driver;
@@ -381,6 +380,12 @@ class RideRequest extends Controller
             'data' => $notificationData,
             'store_messsage' => true
         ]);
+
+
+        /** if force to cancel, then charge cancellation */
+        if($isForceCancel) {
+            ProcessDriverInvoice::dispatch('city', $rideRequest->id);
+        }
 
 
         return $this->api->json(true, 'RIDE_REQUEST_CANCELED', 'Ride Request canceled successfully'); 
@@ -612,6 +617,9 @@ class RideRequest extends Controller
          * dont call invoice save method after this
          */
         $invoice->map_url = $invoice->getStaticMapUrl();
+
+
+        ProcessDriverInvoice::dispatch('city', $rideRequest->id);
 
         return $this->api->json(true, 'RIDE_REQUEST_ENDED', 'Ride request ended successfully', [
             'ride_request' => $rideRequest,
