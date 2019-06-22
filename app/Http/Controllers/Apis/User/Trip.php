@@ -177,11 +177,7 @@ class Trip extends Controller
                 $semi_total = $couponDeductionRes['total'];
                 $invoice->coupon_discount = $couponDeductionRes['coupon_discount'];
 
-                /** insert coupon used by user in db */
-                $userCoupon = new $this->userCoupon;
-                $userCoupon->user_id = $request->auth_user->id;
-                $userCoupon->coupon_id = $coupon->id;
-                $userCoupon->save();
+                $booking->coupon_id = $coupon->id;
 
             }
             /** calculate coupon discount block end*/
@@ -298,6 +294,19 @@ class Trip extends Controller
             $booking->payment_status = TripModel::PAID;
             $booking->booking_status = TripBooking::BOOKING_CONFIRMED;
             $booking->save();
+
+
+            /** insert coupon used by user in db */
+            if($booking->coupon_id) {
+                
+                $userCoupon = new $this->userCoupon;
+                $userCoupon->user_id = $request->auth_user->id;
+                $userCoupon->coupon_id = $booking->coupon_id;
+                $userCoupon->save();
+            }
+
+
+
 
             $transaction = new $this->transaction;
             $transaction->trans_id = $data['transaction_id'];
