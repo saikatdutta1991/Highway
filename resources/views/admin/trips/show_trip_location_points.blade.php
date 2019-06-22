@@ -275,7 +275,7 @@
 <!-- modal end -->
 @endsection
 @section('bottom')
-<script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key}}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key_booking_track}}&libraries=places"></script>
 <script>
     var geocoder;
     var map;
