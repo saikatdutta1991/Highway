@@ -108,16 +108,6 @@ class ProcessDriverInvoice implements ShouldQueue
         $amtDedcAcc = $tax + $adminCommission;
         $driverEarnings = $total - $amtDedcAcc;
         
-        $driverInvoice = new DriverInvoice;
-        $driverInvoice->driver_id = $this->driverid;
-        $driverInvoice->ride_id = $this->rideid;
-        $driverInvoice->ride_type = $this->ridetype;    
-        $driverInvoice->ride_cost = $total;
-        $driverInvoice->tax = $tax;
-        $driverInvoice->admin_commission = $adminCommission;
-        $driverInvoice->driver_earnings = $driverEarnings;
-        $driverInvoice->save();
-        
         $remarks = Utill::transMessage('app_messages.driver_account_ride_commission_deduct_remarks', [
             'appname' => Setting::get('website_name'),
             'csymbol' => Setting::get('currency_symbol'),
@@ -127,7 +117,20 @@ class ProcessDriverInvoice implements ShouldQueue
         ]);
         
 
-        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+        list($account, $transaction) = DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+
+
+        $driverInvoice = new DriverInvoice;
+        $driverInvoice->driver_id = $this->driverid;
+        $driverInvoice->ride_id = $this->rideid;
+        $driverInvoice->ride_type = $this->ridetype;    
+        $driverInvoice->ride_cost = $total;
+        $driverInvoice->tax = $tax;
+        $driverInvoice->admin_commission = $adminCommission;
+        $driverInvoice->driver_earnings = $driverEarnings;
+        $driverInvoice->account_transaction_id = $transaction->id;
+        $driverInvoice->save();
+
 
     }
 
@@ -146,23 +149,24 @@ class ProcessDriverInvoice implements ShouldQueue
     {
         $cancelcharge = Setting::get('driver_highway_ride_cancellation_charge') ?: 0;
 
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_cancellation_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $cancelcharge,
+            'ridetype' => 'Highway',
+            'rideid' => $this->rideid
+        ]);
+       
+        list($account, $transaction) = DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$cancelcharge, $remarks);
+
         $driverInvoice = new DriverInvoice;
         $driverInvoice->driver_id = $this->driverid;
         $driverInvoice->ride_id = $this->rideid;
         $driverInvoice->ride_type = $this->ridetype;    
         $driverInvoice->cancellation_charge = $cancelcharge;
+        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
-
-        $remarks = Utill::transMessage('app_messages.driver_account_ride_cancellation_remarks', [
-            'appname' => Setting::get('website_name'),
-            'csymbol' => Setting::get('currency_symbol'),
-            'amount' => $driverInvoice->cancellation_charge,
-            'ridetype' => 'Highway',
-            'rideid' => $this->rideid
-        ]);
-       
-        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$driverInvoice->cancellation_charge, $remarks);
 
         $driver = Driver::find($this->driverid);
         $driver->sendSms($remarks);
@@ -180,23 +184,26 @@ class ProcessDriverInvoice implements ShouldQueue
     {
         $cancelcharge = Setting::get('driver_city_ride_cancellation_charge') ?: 0;
 
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_cancellation_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $cancelcharge,
+            'ridetype' => 'City',
+            'rideid' => $this->rideid
+        ]);
+       
+
+        list($account, $transaction) = DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$cancelcharge, $remarks);
+
         $driverInvoice = new DriverInvoice;
         $driverInvoice->driver_id = $this->driverid;
         $driverInvoice->ride_id = $this->rideid;
         $driverInvoice->ride_type = $this->ridetype;    
         $driverInvoice->cancellation_charge = $cancelcharge;
+        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
 
-
-        $remarks = Utill::transMessage('app_messages.driver_account_ride_cancellation_remarks', [
-            'appname' => Setting::get('website_name'),
-            'csymbol' => Setting::get('currency_symbol'),
-            'amount' => $driverInvoice->cancellation_charge,
-            'ridetype' => 'City',
-            'rideid' => $this->rideid
-        ]);
-       
-        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$driverInvoice->cancellation_charge, $remarks);
+        
 
         $driver = Driver::find($this->driverid);
         $driver->sendSms($remarks);
@@ -219,6 +226,17 @@ class ProcessDriverInvoice implements ShouldQueue
         $amtDedcAcc = $invoice->tax + $adminCommission;
         $driverEarnings = $invoice->total - $amtDedcAcc;
         
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_commission_deduct_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $amtDedcAcc,
+            'ridetype' => 'City',
+            'rideid' => $this->rideid
+        ]);
+        
+        list($account, $transaction) = DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+
+
 
         $driverInvoice = new DriverInvoice;
         $driverInvoice->driver_id = $this->driverid;
@@ -228,18 +246,10 @@ class ProcessDriverInvoice implements ShouldQueue
         $driverInvoice->tax = $invoice->tax;
         $driverInvoice->admin_commission = $adminCommission;
         $driverInvoice->driver_earnings = $driverEarnings;
+        $driverInvoice->account_transaction_id = $transaction->id;
         $driverInvoice->save();
-        
 
-        $remarks = Utill::transMessage('app_messages.driver_account_ride_commission_deduct_remarks', [
-            'appname' => Setting::get('website_name'),
-            'csymbol' => Setting::get('currency_symbol'),
-            'amount' => $amtDedcAcc,
-            'ridetype' => 'City',
-            'rideid' => $this->rideid
-        ]);
-        
-        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+
         
     }
 
