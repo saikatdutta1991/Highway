@@ -15,6 +15,8 @@ use App\Models\DriverInvoice;
 use App\Models\DriverAccount;
 use App\Repositories\Utill;
 use App\Models\Driver;
+use App\Models\Trip\Trip;
+use App\Models\Trip\TripBooking;
 
 class ProcessDriverInvoice implements ShouldQueue
 {
@@ -63,8 +65,111 @@ class ProcessDriverInvoice implements ShouldQueue
 
     protected function processHighwayRide()
     {
+        /** fetch trip from db */
+        $trip = Trip::where('id', $this->rideid)->select('id', 'driver_id', 'status')->first();
+        $this->driverid = $trip->driver_id;
+        
+        /** check trip completed, then proess invoice from each  booking*/
+        if(in_array($trip->status, [Trip::TRIP_ENDED, Trip::COMPLETED])) {
+            $this->processHighwayRideAdminCommission();
+        } else if($trip->status == Trip::TRIP_CANCELED_DRIVER) {
+            $this->processHighwayRideCancel();
+        }
+       
 
     }
+
+
+
+    /**
+     * takes all booking inovices and make, take admin commision from driver account
+     */
+    protected function processHighwayRideAdminCommission()
+    {
+        $bookings = TripBooking::where('trip_id', $this->rideid)
+            ->where('payment_status', Trip::PAID)
+            ->select('id', 'invoice_id')
+            ->with(['invoice' => function($query) {
+                $query->select('id', 'tax', 'total');
+            }])
+            ->get();
+
+        $total = 0;
+        $tax = 0;
+
+        foreach($bookings as $booking) {
+            $tax += $booking->invoice->tax;
+            $total += $booking->invoice->total;
+        }
+
+        
+        $adminCommissionPercentage = Setting::get('highway_ride_admin_commission') ?: 0;
+        $adminCommission = ($total * $adminCommissionPercentage) / 100;
+        $amtDedcAcc = $tax + $adminCommission;
+        $driverEarnings = $total - $amtDedcAcc;
+        
+        $driverInvoice = new DriverInvoice;
+        $driverInvoice->driver_id = $this->driverid;
+        $driverInvoice->ride_id = $this->rideid;
+        $driverInvoice->ride_type = $this->ridetype;    
+        $driverInvoice->ride_cost = $total;
+        $driverInvoice->tax = $tax;
+        $driverInvoice->admin_commission = $adminCommission;
+        $driverInvoice->driver_earnings = $driverEarnings;
+        $driverInvoice->save();
+        
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_commission_deduct_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $amtDedcAcc,
+            'ridetype' => 'Highway',
+            'rideid' => $this->rideid
+        ]);
+        
+
+        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * duduct cancellation from driver account
+     */
+    public function processHighwayRideCancel()
+    {
+        $cancelcharge = Setting::get('driver_highway_ride_cancellation_charge') ?: 0;
+
+        $driverInvoice = new DriverInvoice;
+        $driverInvoice->driver_id = $this->driverid;
+        $driverInvoice->ride_id = $this->rideid;
+        $driverInvoice->ride_type = $this->ridetype;    
+        $driverInvoice->cancellation_charge = $cancelcharge;
+        $driverInvoice->save();
+
+
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_cancellation_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $driverInvoice->cancellation_charge,
+            'ridetype' => 'Highway',
+            'rideid' => $this->rideid
+        ]);
+       
+        DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$driverInvoice->cancellation_charge, $remarks);
+
+        $driver = Driver::find($this->driverid);
+        $driver->sendSms($remarks);
+    }
+
+
+
 
 
 

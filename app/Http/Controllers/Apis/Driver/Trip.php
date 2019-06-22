@@ -22,6 +22,7 @@ use App\Models\Transaction;
 use App\Models\VehicleType;
 use Validator;
 use Carbon\Carbon;
+use App\Jobs\ProcessDriverInvoice;
 
 class Trip extends Controller
 {
@@ -683,6 +684,8 @@ class Trip extends Controller
             return $this->api->unknownErrResponse(['error_text', $e->getMessage(), 'line' => $e->getLine(), 'file' => $e->getFile()]);
         }
 
+        ProcessDriverInvoice::dispatch('highway', $trip->id);
+
         return $this->api->json(true, "TRIP_CANCELED", "Trip canceled successfully");
     }
 
@@ -776,6 +779,9 @@ class Trip extends Controller
         $driver = $request->auth_driver;
         $driver->is_available = 1;
         $driver->save();
+
+
+        ProcessDriverInvoice::dispatch('highway', $trip->id);
 
         return $this->api->json(true, 'TRIP_COMPLETED', 'Trip completed');
 
