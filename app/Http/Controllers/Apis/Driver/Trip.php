@@ -128,7 +128,7 @@ class Trip extends Controller
             foreach($validator->errors()->getMessages() as $fieldName => $msgArr) {
                 $errors[$fieldName] = $msgArr[0];
             }
-            return $this->api->json(false, 'VALIDATION_ERROR', 'Fill all the fields before create trip', [
+            return $this->api->json(false, 'VALIDATION_ERROR', reset($errors), [
                 'errors' => $errors
             ]);
         }
