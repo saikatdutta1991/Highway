@@ -112,7 +112,13 @@ class Trip extends Controller
                 'route_id' => 'required|exists:'.$this->adminTripRoute->getTableName().',id',
                 'name' => 'required|max:256|min:1',
                 'seats' => 'required|numeric',
-                'date_time' => 'required|date_format:Y-m-d H:i:s'
+                'date_time' => ['required', 'date_format:Y-m-d H:i:s', function ($attribute, $value, $fail) {
+                
+                    $datetime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $value, 'Asia/Kolkata')->setTimezone('UTC');
+                    if($datetime <= \Carbon\Carbon::now()) {
+                        return $fail($attribute.' should be more than current time');
+                    }
+                }]
             ]
         );
 
