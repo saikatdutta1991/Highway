@@ -21,6 +21,7 @@ use App\Repositories\Utill;
 use Validator;
 use App\Models\VehicleType;
 use App\Models\Coupons\Coupon;
+use Browser;
 
 class RideRequest extends Controller
 {
@@ -41,6 +42,13 @@ class RideRequest extends Controller
         $this->vehicleType = $vehicleType;
         $this->driver = $driver;
         $this->coupon = app('App\Models\Coupons\Coupon');
+
+        \Log::info('Browser info');
+        \Log::info('useragent : ', Browser::userAgent());
+        \Log::info('platformName : ', Browser::platformName());
+        \Log::info('platformFamily', Browser::platformFamily());
+
+
     }
 
 
