@@ -26,7 +26,7 @@
         <h1>Welcome to <span class="website_name">{{$website_name}}</span>!</h1>
         <p class="tagline" style="max-width: initial;">Enjoy hassle free rides within your own city or outside your city. 
             <br>The ease of travel is on the finger tips, select the dates book your seats and hail towards your destination. There is so much more from just travelling to a comfort travel. 
-            <br><span class="website_name">{{$website_name}}</span> presents to you various options to travel. <a href="{{route('terms')}}" style="color: white;">**terms and conditions apply**</a>
+            <br><span class="website_name">{{$website_name}}</span> presents to you various options to travel.
         </p>
     </div>
     <div class="img-holder mt-3"><img src="{{asset('images/phone_images/main_screen.png')}}" alt="phone" class="img-fluid"></div>
