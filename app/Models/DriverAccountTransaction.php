@@ -40,7 +40,7 @@ class DriverAccountTransaction extends Model
      */
     public function createdOn($timezone)
     {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d M Y . h:m a');
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d M Y . h:i a');
     }
 
 
