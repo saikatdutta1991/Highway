@@ -93,7 +93,7 @@
         </div>
     </div>
 </div>
-<!-- <div class="section light-bg">
+{{--<div class="section light-bg">
     <div class="container">
         <div class="section-title">
             <small>FEATURES</small>
@@ -103,7 +103,7 @@
             <iframe width="966" height="543" src="https://www.youtube.com/embed/5Peo-ivmupE?autoplay=1&&controls=0&showinfo=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
-</div> -->
+</div>--}}
 <!-- // end .section -->
 <div class="section light-bg">
     <div class="container">
