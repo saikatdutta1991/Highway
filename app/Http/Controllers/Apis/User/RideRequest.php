@@ -44,9 +44,9 @@ class RideRequest extends Controller
         $this->coupon = app('App\Models\Coupons\Coupon');
 
         \Log::info('Browser info');
-        \Log::info('useragent : ', Browser::userAgent());
-        \Log::info('platformName : ', Browser::platformName());
-        \Log::info('platformFamily', Browser::platformFamily());
+        \Log::info('useragent : '. Browser::userAgent());
+        \Log::info('platformName : '. Browser::platformName());
+        \Log::info('platformFamily'. Browser::platformFamily());
 
 
     }
