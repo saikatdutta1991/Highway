@@ -35,13 +35,12 @@ class DriverAccountTransaction extends Model
             ->update(['is_hidden_to_driver' => true]);
     }
 
-
     /**
      * returns registerd on formater date(created_at)
      */
     public function createdOn($timezone)
     {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d-m-Y h:i A');
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->setTimezone($timezone)->format('d M Y . h:m a');
     }
 
 
