@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use App\Repositories\PushNotification;
 use App\Models\RideRequest;
 use App\Models\Trip\TripBooking;
+use Cache;
 
 class Driver extends Model
 {
@@ -768,6 +769,114 @@ SMS_TEXT;
         return $this->hasOne('App\Models\DriverBank', 'driver_id');
     }
 
+    
+    public static function getTotalCancellationCharges($driverid)
+    {
+        return Cache::remember("driver_{$driverid}_getTotalCancellationCharges", 60, function() use($driverid) {
+
+            return \App\Models\DriverInvoice::where('driver_id', $driverid)
+            ->sum('cancellation_charge');
+
+        });
+    }
+
+
+    public static function getTotalEarnings($driverid)
+    {
+        return Cache::remember("driver_{$driverid}_getTotalEarnings", 60, function() use($driverid) {
+
+            return \App\Models\DriverInvoice::where('driver_id', $driverid)
+            ->sum('driver_earnings');
+
+        });
+    }
+
+
+
+    public static function getCityRidesCount($driverid)
+    {
+     
+        return Cache::remember("driver_{$driverid}_getCityRidesCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\RideRequest::where('driver_id', $driverid)
+            ->whereIn('ride_status', [\App\Models\RideRequest::COMPLETED, \App\Models\RideRequest::TRIP_ENDED])
+            ->count();
+
+        });
+
+    }
+
+    public static function getCanceledCityRidesCount($driverid)
+    {
+     
+        return Cache::remember("driver_{$driverid}_getCanceledCityRidesCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\RideRequest::where('driver_id', $driverid)
+            ->whereIn('ride_status', [\App\Models\RideRequest::DRIVER_CANCELED])
+            ->count();
+
+        });
+
+    }
+
+
+
+    public static function getCityRidesCashCount($driverid)
+    {
+        return Cache::remember("driver_{$driverid}_getCityRidesCashCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\RideRequest::where('driver_id', $driverid)
+            ->whereIn('ride_status', [\App\Models\RideRequest::COMPLETED, \App\Models\RideRequest::TRIP_ENDED])
+            ->where('payment_mode', ["CASH"])
+            ->count();
+
+        });
+    }
+
+
+
+    public static function getCityRidesOnlineCount($driverid)
+    {
+        return Cache::remember("driver_{$driverid}_getCityRidesOnlineCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\RideRequest::where('driver_id', $driverid)
+            ->whereIn('ride_status', [\App\Models\RideRequest::COMPLETED, \App\Models\RideRequest::TRIP_ENDED])
+            ->where('payment_mode', ["ONLINE"])
+            ->count();
+
+        });
+    }
+
+
+
+    public static function getHighwayTripsCount($driverid) 
+    {
+        return Cache::remember("driver_{$driverid}_getHighwayTripsCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\Trip\Trip::where('driver_id', $driverid)
+            ->whereIn('status', [\App\Models\Trip\Trip::COMPLETED])
+            ->count();
+
+        });
+    }
+
+
+    public static function getCancelledHighwayTripsCount($driverid)
+    {
+        return Cache::remember("driver_{$driverid}_getCancelledHighwayTripsCount", 60, function() use($driverid) {
+
+            /** fetch driver city rides count , only completed */
+            return \App\Models\Trip\Trip::where('driver_id', $driverid)
+            ->whereIn('status', [\App\Models\Trip\Trip::TRIP_CANCELED_DRIVER])
+            ->count();
+
+        });
+    }
 
 
 

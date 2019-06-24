@@ -146,6 +146,7 @@ Route::group(['middleware' => 'cors', 'prefix' => '/v1/driver'], function(){
     //driver's authenticated routes
     Route::group(['middleware' => 'driverApiAuth'], function(){
 
+        Route::get('dashboard-details', 'Apis\Driver\Dashboard@getDetails')->name('driver.dashboard.details');
 
         Route::group(['prefix' => 'support'], function() {
             Route::get('tickets', 'Apis\Driver\Support@getTickets');
