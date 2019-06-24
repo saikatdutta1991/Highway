@@ -194,6 +194,8 @@ Route::group(['middleware' => 'cors', 'prefix' => '/v1/driver'], function(){
         }); 
 
 
+        Route::get('logout', 'Apis\Driver\DriverAuth@getLogout')->name('driver.logout');
+
 
     });
 

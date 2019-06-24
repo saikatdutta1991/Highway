@@ -25,7 +25,7 @@ class DriverApiAuth
         if($driver = $this->api->shouldPassThrough('driver', $accessToken)) {
 
             //adding auth_user with $request
-            $request->request->add(['auth_driver' => $driver]);
+            $request->request->add(['auth_driver' => $driver, 'access_token' => $accessToken]);
             return $next($request);
         }
 

@@ -472,6 +472,22 @@ class DriverAuth extends Controller
 
 
 
+    /** 
+     * logout driver from devices or current device
+     */
+    public function getLogout(Request $request)
+    {
+        $this->api->removeAccessToken(
+            $request->auth_driver->id, 
+            'DRIVER', 
+            $request->logout_all_devices ? false : $request->access_token
+        );
+
+        return $this->api->json(true, 'LOGOUT', "Logged out successfully");
+            
+    }
+
+
 
 
 

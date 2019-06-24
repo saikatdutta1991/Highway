@@ -127,8 +127,8 @@ class Api
 	 */
 	public function saveAccessToken($eId, $etype)
 	{
-		$at = $this->accessToken->where('entity_id', $eId)->where('entity_type', $etype)->first() ?: new $this->accessToken;
-
+		//$at = $this->accessToken->where('entity_id', $eId)->where('entity_type', $etype)->first() ?: new $this->accessToken;
+		$at = new $this->accessToken;
 		$at->entity_id = $eId;
 		$at->entity_type = strtoupper($etype);
 		$at->access_token = $this->createAccessToken($eId.'_');
@@ -136,6 +136,28 @@ class Api
 		return $at;
 
 	}
+
+
+
+	/** 
+	 * remove access token from db
+	 */
+	public static function removeAccessToken($entityid, $entitytype, $accesstoken)
+	{
+		$query = AccessToken::where('entity_id', $entityid)->where('entity_type', $entitytype);
+
+		if($accesstoken) {
+			$query = $query->where('access_token', $accesstoken);
+		}
+
+		$query->forceDelete();
+
+		return true;
+	}
+
+
+
+
 
 
 
