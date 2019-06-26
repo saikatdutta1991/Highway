@@ -36,7 +36,7 @@ Route::group(['middleware' => 'cors', 'prefix' => '/v1/user'], function(){
 
 
 
-    Route::group(['middleware' => 'userApiAuth'], function() {
+    Route::group(['middleware' => ['cors', 'userApiAuth']], function() {
 
         Route::group(['prefix' => 'support'], function() {
             Route::get('tickets', 'Apis\User\Support@getTickets');
@@ -144,7 +144,7 @@ Route::group(['middleware' => 'cors', 'prefix' => '/v1/driver'], function(){
 
 
     //driver's authenticated routes
-    Route::group(['middleware' => 'driverApiAuth'], function(){
+    Route::group(['middleware' => ['cors', 'driverApiAuth']], function(){
 
         Route::get('dashboard-details', 'Apis\Driver\Dashboard@getDetails')->name('driver.dashboard.details');
         Route::get('payouts', 'Apis\Driver\Dashboard@getPayoutDetails')->name('driver.dashboard.payout.details');
