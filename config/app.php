@@ -177,7 +177,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ComposerServiceProvider::class,
         App\Providers\ReferralServiceProvider::class,
-        HTMLMin\HTMLMin\HTMLMinServiceProvider::class
+        HTMLMin\HTMLMin\HTMLMinServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class
 
     ],
 
