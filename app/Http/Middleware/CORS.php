@@ -18,23 +18,26 @@ class CORS
        \Log::info('cors'); 
         $headers = [
             'Access-Control-Allow-Origin' => '*',
-            'Access-Control-Allow-Methods' => 'Allow, POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Methods' => 'HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS',
             'Access-Control-Allow-Headers' => 'Origin, Content-Type, Accept, Authorization, X-Request-With',
             'Access-Control-Allow-Credentials' => 'true'
         ];
         
-        if($request->getMethod() == "OPTIONS") {
-            $response = response("OK", 200);
-            foreach($headers as $key => $value)
-                $response->header($key, $value);
-           return $response;
+        //Intercepts OPTIONS requests
+        if($request->isMethod('OPTIONS')) {
+            $response = response('', 200);
+        } else {
+            // Pass the request to the next middleware
+            $response = $next($request);
         }
         
-
-        $response = $next($request);
         foreach($headers as $key => $value)
-            $response->header($key, $value);
-            
+                $response->header($key, $value);
+        $response->header('Access-Control-Allow-Headers', $request->header('Access-Control-Request-Headers'));
+
+        // Sends it
         return $response;
+        
+       
     }
 }
