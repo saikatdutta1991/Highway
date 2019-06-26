@@ -170,7 +170,7 @@ class Coupon extends Model
         ->first();
 
         if(!$coupon) {
-            return ['errcode' => 'INVALID_COUPON', 'errmessage' => 'Coupon code is invalid'];
+            return ['errcode' => 'INVALID_COUPON', 'errmessage' => 'You have entered invalid coupon code.'];
         }
 
         /** counting coupon uses by user */
@@ -179,7 +179,7 @@ class Coupon extends Model
         if( ($coupon->max_uses > 0 && $coupon->coupon_uses_count >= $coupon->max_uses) || 
             ($coupon->max_uses_user > 0 && $usesUser >= $coupon->max_uses_user)) 
         {
-            return ['errcode' => 'MAX_LIMIT', 'errmessage' => 'Coupon code uses limit exceeded'];
+            return ['errcode' => 'MAX_LIMIT', 'errmessage' => 'You have already used this coupon code or limit exceeded.'];
         }
 
         return true;
