@@ -12,7 +12,7 @@ return [
     |
     */
    
-    'supportsCredentials' => false,
+    'supportsCredentials' => true,
     'allowedOrigins' => ['*'],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['Origin, Content-Type, Accept, Authorization, X-Request-With, cache-control,postman-token, token'],
