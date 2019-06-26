@@ -48,8 +48,9 @@ class Service extends Controller
         $cancellationCharge = $this->setting->get('ride_request_cancellation_charge');
         $cancellationChargeAfterMinute = $this->setting->get('ride_request_cancellation_charge_after_minute_trip_started');
         $driver_cancel_ride_request_limit = $this->setting->get('driver_cancel_ride_request_limit');
+        $ride_request_driver_search_radius = $this->setting->get('ride_request_driver_search_radius');
         
-        return view('admin.services', compact('services', 'rideTaxPecentage', 'cancellationCharge', 'cancellationChargeAfterMinute', 'driver_cancel_ride_request_limit'));
+        return view('admin.services', compact('services', 'rideTaxPecentage', 'cancellationCharge', 'cancellationChargeAfterMinute', 'driver_cancel_ride_request_limit', 'ride_request_driver_search_radius'));
     }
 
 
@@ -63,6 +64,13 @@ class Service extends Controller
     {
         $this->setting->set('driver_cancel_ride_request_limit', $request->driver_cancel_ride_request_limit);
         return $this->api->json(true, 'SAVED', 'Driver cancel ride request limit set');
+    }
+
+
+    public function saveDriverSearchRadius(Request $request)
+    {
+        $this->setting->set('ride_request_driver_search_radius', $request->ride_request_driver_search_radius);
+        return $this->api->json(true, 'SAVED', 'Driver search radius saved.');
     }
 
 

@@ -247,7 +247,7 @@ class RideRequest extends Controller
         }
         
 
-        $radious = $this->setting->get('ride_request_driver_search_radious')?:7;
+        $radious = $this->setting->get('ride_request_driver_search_radius')?:7;
         $drivers = $this->driver->getNearbyDriversBuilder($latitude, $longitude, $radious);
         
         //if vehicle type is passed then filter drivers

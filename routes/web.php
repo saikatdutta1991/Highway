@@ -126,6 +126,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::post('/tax/save', 'Admin\Service@saveRideTaxPercentage')->name('admin.services.tax.save');
             Route::post('/cancellation-charge/save', 'Admin\Service@saveRideRequestCancellationCharge')->name('admin.services.cancellation-charge.save');
             Route::post('/driver-cancel-ride-request-limit/save', 'Admin\Service@saveDriverCancelRideRequestLimit')->name('admin.service.driver-cancel-ride-request-limit');
+            Route::post('/driver-search-radius/save', 'Admin\Service@saveDriverSearchRadius')->name('admin.service.driver-search-radius.save');
         });
         
         Route::group(['prefix' => 'settings'], function(){

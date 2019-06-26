@@ -49,6 +49,11 @@
                             <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Driver Ride Cancel Limit
                             </button>
                         </li>
+                        <li>
+                            <button type="button" data-toggle="modal" data-target="#driver_search_radius_modal" class="font-bold btn bg-red btn-block btn-xs waves-effect">
+                            <i class="material-icons col-pink" style="vertical-align:middle;top:0px;font-size: 17px;">add</i>Driver Search Radius
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 <div class="body table-responsive">
@@ -376,6 +381,37 @@
 </div>
 <!-- driver cancel ride limit modal end -->
 
+<!-- driver search radius modal -->
+<div class="modal fade" id="driver_search_radius_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">DRIVER SEARCH RADIUS</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <form id="driver_search_radius_form">
+                        <input type="hidden" value="{{csrf_token()}}" name="_token">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="number" required class="form-control" value="{{$ride_request_driver_search_radius}}" min="0" step="1" onblur="this.value=parseInt(this.value)" name="ride_request_driver_search_radius">
+                                    <label class="form-label">Driver Search Radius In Km.</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" id="driver_search_radius_save_btn">SAVE</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- driver search radius modal end-->
+
 @endsection
 @section('bottom')
 <script>
@@ -388,6 +424,27 @@
     var save_tax_percentage = "{{route('admin.services.tax.save')}}";
     var save_cancellation_charge = "{{route('admin.services.cancellation-charge.save')}}";
     var save_drirver_ride_cancel_limit = "{{route('admin.service.driver-cancel-ride-request-limit')}}";
+    var driver_search_radius_save_api = "{{route('admin.service.driver-search-radius.save')}}";
+
+
+    $("#driver_search_radius_save_btn").on('click', function(){
+
+        var data = $('#driver_search_radius_form').serializeArray();
+        
+        $.post(driver_search_radius_save_api, data, function(response){
+
+            if(response.success) {
+                $("#driver_search_radius_modal").modal('hide')
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                return;
+            } 
+
+            showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        }).fail(function(){
+            showNotification('bg-black', 'Internal server error. Contact to developer', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+        })
+
+    })
 
 
     $(".enable-highway-switch input[type='checkbox']").on('change', function(){
