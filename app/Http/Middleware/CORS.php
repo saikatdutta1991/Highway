@@ -23,12 +23,12 @@ class CORS
             'Access-Control-Allow-Credentials' => 'true'
         ];
         
-//         if($request->getMethod() == "OPTIONS") {
-//             $response = response("OK", 200);
-//             foreach($headers as $key => $value)
-//                 $response->header($key, $value);
-//            return $response;
-//         }
+        if($request->getMethod() == "OPTIONS") {
+            $response = response("OK", 200);
+            foreach($headers as $key => $value)
+                $response->header($key, $value);
+           return $response;
+        }
         
 
         $response = $next($request);
