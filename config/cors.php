@@ -17,7 +17,7 @@ return [
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['Origin, Content-Type, Accept, Authorization, X-Request-With, cache-control,postman-token, token'],
     'allowedMethods' => ['*'],
-    'exposedHeaders' => [],
+    'exposedHeaders' => ['Origin, Content-Type, Accept, Authorization, X-Request-With, cache-control,postman-token, token'],
     'maxAge' => 0,
 
 ];
