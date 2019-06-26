@@ -15,7 +15,7 @@ class CORS
      */
     public function handle($request, Closure $next)
     {
-       \Log::info('cors');
+       \Log::info('cors'); 
         $headers = [
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'Allow, POST, GET, OPTIONS, PUT, DELETE',
