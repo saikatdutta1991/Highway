@@ -15,9 +15,7 @@ class CORS
      */
     public function handle($request, Closure $next)
     {
-        header('Access-Control-Allow-Origin: *');
-        
-
+       
         $headers = [
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'Allow, POST, GET, OPTIONS, PUT, DELETE',
@@ -26,7 +24,10 @@ class CORS
         ];
         
         if($request->getMethod() == "OPTIONS") {
-            return Response::make('OK', 200, $headers);
+            $response = response("OK", 200);
+            foreach($headers as $key => $value)
+                $response->header($key, $value);
+           return $response;
         }
         
 
