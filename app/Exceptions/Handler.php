@@ -50,9 +50,9 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         //if request uri contains /api/v1/ and app debug mode false
-//         if (strpos($request->getRequestUri(), '/api/v1/') !== false && !env('APP_DEBUG')) {
-//             return app('App\Repositories\Api')->json(false, 'Api not found');
-//         }
+        if (strpos($request->getRequestUri(), '/api/v1/') !== false && !env('APP_DEBUG')) {
+            return app('App\Repositories\Api')->json(false, 'Api not found');
+        }
 
 
         /** if not in debug mode */
