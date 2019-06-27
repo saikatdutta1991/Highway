@@ -47,7 +47,7 @@ class Dashboard extends Controller
             'account_balance' => Utill::formatAmountDecimalTwoWithoutRound($account->balance),
             'transactions' => $transacitons->items(),
             'paging' => [
-                'has_more' => $transacitons->hasPages(),
+                'has_more' => $transacitons->hasMorePages(),
                 'next_page_url' => $transacitons->nextPageUrl(),
             ]
         ]);
