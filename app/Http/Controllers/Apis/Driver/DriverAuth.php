@@ -214,6 +214,7 @@ class DriverAuth extends Controller
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
         $driver->bank;
+        $driver->service_name = $this->vehicleType->allTypes()->where('code', $driver->vehicle_type)->first()['name'];
 
 
         //send new driver registration mail
@@ -298,6 +299,8 @@ class DriverAuth extends Controller
         $driver->profile_photo_url = $driver->profilePhotoUrl();
         $driver->extra_photos_urls = $driver->getExtraPhotosUrl();
         $driver->bank;
+
+        $driver->service_name = $this->vehicleType->allTypes()->where('code', $driver->vehicle_type)->first()['name'];
 
         return $this->api->json(true, 'LOGIN_SUCCESS', 'You have logged in successfully.', [
             'accesss_token' => $accessToken,
