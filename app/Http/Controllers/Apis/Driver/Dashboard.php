@@ -47,7 +47,7 @@ class Dashboard extends Controller
             'account_balance' => Utill::formatAmountDecimalTwoWithoutRound($account->balance),
             'transactions' => $transacitons->items(),
             'paging' => [
-                'has_more' => $transacitons->hasPages(),
+                'has_more' => $transacitons->hasMorePages(),
                 'next_page_url' => $transacitons->nextPageUrl(),
             ]
         ]);
@@ -95,7 +95,7 @@ class Dashboard extends Controller
             'currency_symbol' => Setting::get('currency_symbol'), 
             'records' => $invoices,
             'paging' => [
-                'has_more' => $records->hasPages(),
+                'has_more' => $records->hasMorePages(),
                 'next_page_url' => $records->nextPageUrl(),
             ]
         ]);
