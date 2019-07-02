@@ -6,6 +6,8 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Referral as ReferralRepo;
+use App\Repositories\Utill;
+use App\Models\Setting;
 
 class Referral extends Controller
 {
@@ -37,12 +39,22 @@ class Referral extends Controller
             $referralBonusAmount = $rcRow->bonus_amount;
         }
 
+        $share_url = route('referrals.redirect', ['referrer_code' => $referralCode]);
+        $refertext = Utill::transMessage('app_messages.user_referral_text', [
+            'url' => $share_url, 
+            'code' => $referralCode,
+            'referrer_amount' => Setting::get('referrer_bonus_amount'),
+            'referee_amount' => Setting::get('referred_bonus_amount'),
+            'currency_symbol' => Setting::get('currency_symbol')
+        ]);
+
 
         return $this->api->json(true, 'REFERRAL_INFO', 'Referral info fetched', [
             'code' => $referralCode,
             'bonus_amount' => $referralBonusAmount,
             'module_enabled' => $this->referral->isEnabled(),
-            'share_url' => route('referrals.redirect', ['referrer_code' => $referralCode])
+            'share_url' => $share_url,
+            'refer_text' => $refertext
         ]);
 
         
