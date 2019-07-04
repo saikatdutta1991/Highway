@@ -19,6 +19,8 @@ Route::get('track-booking/{bookingid}/boarding-point-route', 'Web\HomeController
 Route::get('offers', 'Admin\Coupon@showOffers')->name('offers'); /**coupon offers page */
 Route::get('privacy-policy', 'Web\HomeController@showPrivacyPolicy')->name('privacy-policy');
 Route::get('terms', 'Web\HomeController@showTerms')->name('terms');
+Route::get('driver-terms', 'Web\HomeController@showDriverTerms')->name('driver.terms');
+Route::get('cancellation-policy', 'Web\HomeController@showCancellationPolicy')->name('cancellation.policy');
 Route::get('referrals/{referrer_code}', 'Web\HomeController@redirectReferral')->name('referrals.redirect'); //?referrer_code
 Route::get('price-estimate', 'Web\HomeController@showPriceEstimate')->name('priceestimate.show');
 Route::get('price-estimate/list', 'Web\HomeController@getEstimatePrice')->name('priceesimate.list');
@@ -75,7 +77,10 @@ Route::group(['prefix' => 'admin'], function(){
             Route::post('privacy-policy/save', 'Admin\ContentManagement@savePrivacyPolicy')->name('admin.save.content.privacy-policy');
             Route::get('terms', 'Admin\ContentManagement@showTerms')->name('admin.show.content.terms');
             Route::post('terms/save', 'Admin\ContentManagement@saveTerms')->name('admin.save.content.terms');
-
+            Route::get('driver-terms', 'Admin\ContentManagement@showDriverTerms')->name('admin.show.content.driver.terms');
+            Route::post('driver-terms/save', 'Admin\ContentManagement@saveDriverTerms')->name('admin.save.content.driver.terms');
+            Route::get('cancellation-policy', 'Admin\ContentManagement@showCancellationPolicy')->name('admin.show.content.cancellation.policy');
+            Route::post('cancellation-policy/save', 'Admin\ContentManagement@saveCancellationPolicy')->name('admin.save.content.cancellation.policy');
         });
 
         Route::group(['prefix' => 'promotions'], function(){

@@ -136,6 +136,27 @@ class HomeController extends Controller
 
 
 
+    public function showCancellationPolicy()
+    {
+        $content = Content::where('name', 'cancellation_policy')->first();
+        $terms = $content ? $content->content : '';
+        return view('home.cancellation_policy', compact('terms'));
+    }
+
+    public function showDriverTerms()
+    {
+        $content = Content::where('name', 'driver_terms')->first();
+        $terms = $content ? $content->content : '';
+        return view('home.driver_terms', compact('terms'));
+    }
+
+
+    
+
+    
+
+
+
     /**
      * show home landing page
      */

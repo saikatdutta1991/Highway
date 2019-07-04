@@ -259,7 +259,7 @@ class RideRequest extends Controller
         $dt = $this->driver->getTableName();
         $nearbyDriversDetails = $drivers->where($dt.'.is_approved', 1)
         ->where($dt.'.is_available', 1)
-        ->where($dt.'.is_connected_to_socket', 1)
+        //->where($dt.'.is_connected_to_socket', 1) // this is not required now
         ->orderBy($dt.'.rating', 'desc')
         ->select([
             $dt.'.id',            

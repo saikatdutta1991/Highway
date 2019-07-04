@@ -207,6 +207,12 @@
                         <li class="@yield('terms_active')">
                             <a href="{{route('admin.show.content.terms')}}">Terms & Conditions</a>
                         </li>
+                        <li class="@yield('driver_terms_active')">
+                            <a href="{{route('admin.show.content.driver.terms')}}">Driver Terms & Conditions</a>
+                        </li>
+                        <li class="@yield('cancellation_policy_active')">
+                            <a href="{{route('admin.show.content.cancellation.policy')}}">Cancellation Policy</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
