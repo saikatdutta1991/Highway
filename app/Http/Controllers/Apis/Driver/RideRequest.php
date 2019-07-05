@@ -569,6 +569,9 @@ class RideRequest extends Controller
             $userReferralRecord->bonus_amount -= $fare['bonusDiscount'];
             $userReferralRecord->save();
 
+            /** clear cancelaltion charges */
+            $this->cCharge->clearCharges($rideRequest->user_id);
+
 
             DB::commit();
         } catch(\Exception $e) {
