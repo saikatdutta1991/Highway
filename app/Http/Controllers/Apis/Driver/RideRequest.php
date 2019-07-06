@@ -467,6 +467,10 @@ class RideRequest extends Controller
     public function endRideRequest(Request $request)
     {
 
+        /** request input log */
+        $this->api->log('RideReqeust@endRideRequest', "request id : {$request->ride_request_id}");
+
+
         /** fetching ride request from db by ride request table id */
         $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
         ->where('driver_id', $request->auth_driver->id)
