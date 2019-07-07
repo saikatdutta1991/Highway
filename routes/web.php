@@ -120,6 +120,7 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests')->name('admin.rides.city');
         Route::post('rides/intracity/{ride_request_id}/cancel', 'Admin\RideRequest@cancelRide')->name('admin.rides.city.cancel');
+        Route::post('rides/intracity/{ride_request_id}/complete', 'Admin\RideRequest@completeRide')->name('admin.rides.city.complete');
         Route::get('rides/intracity/{ride_request_id}/details', 'Admin\RideRequest@showIntracityRideRequestDetails')->name('admin.rides.city.details');
 
         /** service routes */

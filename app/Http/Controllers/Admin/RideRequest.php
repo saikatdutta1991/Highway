@@ -35,6 +35,23 @@ class RideRequest extends Controller
 
 
 
+    /** complete ride request from admin panel */
+    public function completeRide(Request $request)
+    {
+        /** find driver */
+        $ride = $this->rideRequest->find($request->ride_request_id);
+
+
+        /** create request object to call complete api */
+        $request->request->add([ 
+            'auth_driver' => $ride->driver,
+            'ride_request_id' => $request->ride_request_id,
+            'ride_distance' => $ride->ride_distance * 1000 // make km to meter, becaues this api takes distance in meter
+        ]);
+
+        $response = app('App\Http\Controllers\Apis\Driver\RideRequest')->endRideRequest($request);
+        return $response;
+    }
 
 
     /**

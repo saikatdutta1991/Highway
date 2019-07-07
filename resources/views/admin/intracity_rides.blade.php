@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title', 'Intracity Rides')
+@section('title', 'City Rides')
 @section('rides_active', 'active')
 @section('intracity_rides_active', 'active')
 @section('top-header')
@@ -7,7 +7,7 @@
 @section('content')
 <div class="container-fluid">
 <div class="block-header">
-    <h2>INTRACITY RIDES</h2>
+    <h2>CITY RIDES</h2>
 
     @if(request()->has('user_id')) 
     <small>City Rides of user : {{request()->name}}</small>
@@ -93,7 +93,7 @@
     <div class="card">
         <div class="header">
             <h2>
-                LIST OF ALL INTRACITY RIDES
+                LIST OF ALL CITY RIDES
                 <small>You can see all intracity rides, fitler and many more.</small>
             </h2>
         </div>
@@ -162,6 +162,7 @@
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block driver-rides-menu-item" data-driver-id="{{$ride->driver->id}}">Only this driver rides</a></li>
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block view-in-details" data-ride-request-id="{{$ride->id}}">View in detail</a></li>
                                     <li><a href="javascript:void(0);" class=" waves-effect waves-block cancel-ride-menu-btn" data-ride-request-id="{{$ride->id}}">Cancel</a></li>
+                                    <li><a href="javascript:void(0);" class=" waves-effect waves-block complete-ride-menu-btn" data-ride-request-id="{{$ride->id}}">Complete</a></li>
                                 </ul>
                             </li>
                         </td>
@@ -225,6 +226,55 @@
 @endsection
 @section('bottom')
 <script>
+
+
+    var completerideapi = "{{route('admin.rides.city.complete', ['ride_reqeust_id' => '*'])}}"
+    $('.complete-ride-menu-btn').on('click', function(){
+        let rideId = $(this).data('ride-request-id');
+        console.log('ride request id', rideId);
+
+
+        swal({
+            title: `City ride id ${rideId} will be completed`,
+            text: "",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonColor: "green",
+            confirmButtonText: "Yes, complete",
+            cancelButtonText: "No, cancel",
+            closeOnConfirm: false,
+            closeOnCancel: true
+        }, function (isConfirm) {
+            
+            if (!isConfirm) {
+                return false;
+            } 
+
+            let apiurl = completerideapi.replace('*', rideId);
+            $.post(apiurl, {_token : "{{csrf_token()}}"}, function(response){
+                
+                console.log(response)
+
+                if(response.success){
+                    showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                    return;
+                }
+
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+
+            }).fail(function(){
+                showNotification('bg-black', 'Internal server error. Try again !!', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            })
+                
+            swal.close();        
+            return true;
+
+        });
+
+
+
+    });
+
 
     var cancelRideRequestApi = "{{route('admin.rides.city.cancel', ['ride_reqeust_id' => '*'])}}";
     $("#cancel_ride_reqeust_btn").on('click', function(event){
