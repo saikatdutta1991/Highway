@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('trip-bookings:alert')->everyFiveMinutes();
-        $schedule->command('driverservice:wakeup')->everyMinute();
+        $schedule->command('driverservice:wakeup')->everyFiveMinutes();
     }
 
     /**

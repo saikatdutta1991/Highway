@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Driver;
 use App\Repositories\PushNotification;
-use App\Models\Setting;
 
 class DriverServerWakeup extends Command
 {
@@ -35,10 +34,9 @@ class DriverServerWakeup extends Command
         $deviceTokens = $drivers->pluck('deviceTokens.*.device_token')->flatten()->toArray();
 
         /** send push message */
-        $appname = Setting::get('website_name');
         $this->firebase
-            ->setTitle("{$appname} Service Disconnected")
-            ->setBody("Stay connected to byroad service to receive incoming rides or go offline by pressing offline button.")
+            ->setTitle("Service Disconnected")
+            ->setBody("Go offline by pressing offline button or stay connected to byroad service to receive incoming rides")
             ->setCustomPayload([ 'wake_service' => true ])
             ->setPriority(PushNotification::HIGH)
             ->setDeviceTokens($deviceTokens)
