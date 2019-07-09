@@ -36,55 +36,58 @@ class PushNotification
 	* curl ipv4 address resolve
 	*/
 	protected $isIPv4Resolve = false;
-	/**
-	* last error code
-	*/
-	protected $lastErrorCode = 0;
-	/**
-	* last error message
-	*/
-	protected $lastErrorMessage = "";
+	
 	/**
 	* firebase push notification title
 	*/
 	protected $notifTitle = "";
+
 	/**
 	* firebase push notification body
 	*/
 	protected $notifBody = "";
+
 	/**
 	* firebase push notification icon
 	*/
 	protected $notifIcon = "";
+
 	/**
 	* firebase push notification click action
 	*/
 	protected $notifClickAction = "";
+
 	/**
 	* firebase push notification click action
 	*/
 	protected $notifCustomPayload = [];
+
 	/**
 	* firebase push notification device tokens
 	*/
 	protected $deviceTokens = [];
+
 	/**
 	* firebase push notification respnose raw string
 	*/
 	const RAW = 1;
+
 	/**
 	* firebase push notification respnose php standard class object type
 	*/
 	const STDCLASS = 2;
+
 	/**
 	* firebase push notification respnose php array type
 	*/
 	const ARRY = 3;
+
 	/**
 	* firebase push notification priority constants
 	*/
 	const HIGH = 'high';
 	const LOW = 'low';
+
 	/**
 	* firebase push notification priority
 	*/
@@ -93,7 +96,7 @@ class PushNotification
 	/**
 	* firebase push notification option content availabe
 	*/
-	protected $content_available = false;
+	protected $content_available = true;
 	/**
    * initialize the sender id and server key
    *
@@ -101,117 +104,96 @@ class PushNotification
    * @param string $serverKey  fcm server key to send authentication
    * @param string $fcmURL  fcm pushnotification url
    */
-	public function __construct($serverKey = "", $fcmURL = "https://fcm.googleapis.com/fcm/send")
+	public function __construct()
 	{
 		$this->serverKey = Setting::get('firebase_cloud_messaging_server_key');
-		$this->fcmURL = $fcmURL;
 		$this->priority = PushNotification::HIGH;
 	}
-	/* returns push manager instance (this class instance for facades) */
-	public static function getPushManager()
-	{
-		return app('PushNotificationRepository');
-	}
+
 	
 	public function setPriority($priority)
 	{
 		$this->priority = $priority;
 		return $this;
 	}
-	public function getPriority()
-	{
-		return $this->priority;
-	}
+
 	public function setContentAvailable($bool = false)
 	{
 		$this->content_available = $bool;
 		return $this;
 	}
-	public function isContentAvailable()
-	{
-		return $this->content_available;
-	}
-	public function getServerKey()
-	{
-		return $this->serverKey;
-	}
-	public function getFcmURL()
-	{
-		return $this->fcmURL;
-	}
-	public function setFcmURL($url)
-	{
-		$this->fcmURL = $url;
-		return $this;
-	}
+
+
+	/** 
+	 * set device tokens to send push
+	 * convert device tokens as array always
+	 */
 	public function setDeviceTokens($tokens, $merge = true)
 	{
-		if(is_array($tokens)) {
-			if($merge) {
-				$this->deviceTokens = array_merge($this->deviceTokens, $tokens);
-			} else {
-				$this->deviceTokens = $tokens;
-			}
-			
-		} else if(is_string($tokens)) {
-			if($merge) {
-				$this->deviceTokens[] = $tokens;
-			} else {
-				$this->deviceTokens = [$tokens];
-			}
-		}
+		/** make tokens array, if string also */
+		$tokens = is_string($tokens) ? [$tokens] : $tokens;
+
+		/** need to merge with previous tokens */
+		$this->deviceTokens = $merge ? array_merge($this->deviceTokens, $tokens) : $tokens;
 		
 		return $this;
 	}
-	public function getDeviceTokens()
-	{
-		return $this->deviceTokens;
-	}
+
+
+	/** 
+	 * set notification title
+	 */
 	public function setTitle($title = "")
 	{
 		$this->notifTitle = $title;
 		return $this;
 	}
+
+	/**
+	 * set notification message body
+	 */
 	public function setBody($body = "")
 	{
 		$this->notifBody = $body;
 		return $this;
 	}
+
+	/** 
+	 * set notification icon
+	 */
 	public function setIcon($icon = "")
 	{
 		$this->notifIcon = $icon;
 		return $this;
 	}
+
+	/** 
+	 * set notification click action
+	 */
 	public function setClickAction($actionUrl = "")
 	{
 		$this->notifClickAction = $actionUrl;
 		return $this;
 	}
-	public function setCustomPayload($payload = [])
+
+	/** 
+	 * set custom payload
+	 * custom payload must be an associate array with values
+	 */
+	public function setCustomPayload($payload)
 	{
 		$this->notifCustomPayload = is_array($payload) ? $payload : [];
 		return $this;
 	}
+
+
 	public function setIPv4Resolve($bool)
 	{
 		$this->isIPv4Resolve = $bool;
 		return $this;
 	}
-	protected function clearLastError()
-	{
-		$this->lastErrorCode = 0;
-		$this->lastErrorMessage = "";
-		
-		return $this;
-	}
-	public function getLastErrorCode()
-	{
-		return $this->lastErrorCode;
-	}
-	public function getLastErrorMessage()
-	{
-		return $this->lastErrorMessage;
-	}
+
+	
 	/**
    * 
    * Post data to a url and return response
@@ -222,46 +204,52 @@ class PushNotification
 		ProcessCurlPost::dispatch($url, $headers, $fields);
 		return '{"message" : "Pushed to queue"}';
 	}
+
+
 	protected function buildNotification()
 	{
-		return [
-			'title'        => $this->notifTitle,
-			'body'         => $this->notifBody,
-			'icon'         => $this->notifIcon,
-			'click_action' => $this->notifClickAction,
-			'sound'        => 'default'
-		];
+		$notiffication = [];
+		$notification['title'] = $this->notifTitle;
+		$notification['body'] = $this->notifBody;
+		$notification['icon'] = $this->notifIcon;
+		$notification['click_action'] = $this->notifClickAction;
+
+		return array_filter($notification);
 	}
-	public function push($resType = self::RAW)
+
+	/** 
+	 * sends push message to firebase server via curl..
+	 * laravel job queue is used to send this post request
+	 */
+	public function push()
 	{
-		$ndata = $this->notifCustomPayload;
-		$ndata['notification'] = $this->buildNotification();
-		$fields = [
+		/** set params for firebase */
+		$params = [
 			"registration_ids" => $this->deviceTokens,
-			"notification" => $this->buildNotification(),
 			"priority" => $this->priority,
-			'content_available' => $this->content_available,
-	        'data' => $ndata,
-	    ];
-	    $fields = json_encode($fields);
+			'content_available' => $this->content_available
+		];
+
+		
+		/** set data payload if not empty */
+		if(!empty($this->notifCustomPayload)) {
+			$params['data'] = $this->notifCustomPayload;
+		}
+
+		/** set notification if not empty */
+		$notification = $this->buildNotification();
+		if(!empty($notification)) {
+			$params['data']['notification'] = $notification;
+		}
+	
+	    $fields = json_encode($params);
 	    $headers = [
 	        'Authorization: key=' . $this->serverKey,
 	        'Content-Type: application/json'
 	    ];
 		$response = $this->postURL($this->fcmURL, $headers, $fields);
-		
-		\Log::info('PUSH NOTIFICATION FIREBASE');
-		\Log::info($response);
 
-	    if($resType == self::STDCLASS) {
-	    	return json_decode($response);
-	    } else if($resType == self::ARRY) {
-	    	return json_decode($response, true);
-		}
-		
-		
-	    
-	    return $response;
+		return $response;		
 	}
 	
 

@@ -162,9 +162,8 @@ class User extends Model
         $pushHelper = new PushNotification;
         $res = $pushHelper->setTitle($title)
         ->setBody($body)
-        ->setIcon('logo')
-        ->setClickAction('')
-        ->setCustomPayload(['custom_data' => $custom])
+        ->setClickAction($clickAction)
+        ->setCustomPayload($custom)
         ->setPriority(PushNotification::HIGH)
         ->setContentAvailable(true)
         ->setDeviceTokens($deviceTokens)
