@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\CreateAdmin::class,
         \App\Console\Commands\ChangeAdminPassword::class,
-        \App\Console\Commands\AlertTripBookings::class
+        \App\Console\Commands\AlertTripBookings::class,
+        \App\Console\Commands\DriverServerWakeup::class
     ];
 
     /**
@@ -27,6 +28,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('trip-bookings:alert')->everyFiveMinutes();
+        $schedule->command('driverservice:wakeup')->everyMinute();
     }
 
     /**
