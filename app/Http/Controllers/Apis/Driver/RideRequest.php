@@ -474,7 +474,7 @@ class RideRequest extends Controller
         /** fetching ride request from db by ride request table id */
         $rideRequest = $this->rideRequest->where('id', $request->ride_request_id)
         ->where('driver_id', $request->auth_driver->id)
-        ->whereIn('ride_status', [Ride::TRIP_STARTED])
+        ->whereIn('ride_status', [Ride::DRIVER_ACCEPTED, Ride::DRIVER_STARTED, Ride::DRIVER_REACHED, Ride::TRIP_STARTED])
         ->first();
 
         if(!$rideRequest || !$request->has('ride_distance')) {
