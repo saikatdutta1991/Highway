@@ -128,11 +128,11 @@
                         <td>{{$serviceTypes->where('code', $ride->ride_vehicle_type)->first()['name']}}</td>
                         <td style="max-width: 200px;">
                             <i class="material-icons col-green" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>
-                            {{$ride->source_address}} @if($ride->ride_start_time)<br>{{$ride->getStartTime($default_timezone)}}@endif
+                            {{$ride->source_address}} <br>{{$ride->getStartTime($default_timezone)}}
                         </td>
                         <td style="max-width: 200px;">
                             <i class="material-icons col-red" style="font-size:10px;vertical-align: middle;">fiber_manual_record</i>
-                            {{$ride->destination_address}} @if($ride->ride_end_time)<br>{{$ride->getStartTime($default_timezone)}}@endif
+                            {{$ride->destination_address}} @if($ride->ride_end_time)<br>{{$ride->getEndTime($default_timezone)}}@endif
                         </td>
                         <td>
                             @if($ride->ride_end_time)

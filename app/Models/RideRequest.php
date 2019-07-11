@@ -178,7 +178,11 @@ class RideRequest extends Model
      */
     public function getStartTime($timezone)
     {
-        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $this->ride_start_time)->setTimezone($timezone)->format('h:i a');
+        $time = $this->ride_start_time;
+        if(!$this->ride_start_time) {
+            $time = $this->created_at;
+        }
+        return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $time)->setTimezone($timezone)->format('h:i a');
     }
 
     /**

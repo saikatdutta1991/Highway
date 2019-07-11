@@ -487,7 +487,7 @@ class RideRequest extends Controller
 
         /** fetching vehicle service fare details by service id */
         $serviceFare = RideFare::getServiceFareById($this->vehicleType->getIdByCode($rideRequest->ride_vehicle_type));
-        $rideWaitTiime = app('UtillRepo')->getDiffMinute($rideRequest->driver_reached_time, $rideRequest->ride_start_time);
+        $rideWaitTiime = app('UtillRepo')->getDiffMinute($rideRequest->driver_reached_time ?: $rideRequest->created_at, $rideRequest->ride_start_time?:$rideRequest->updated_at);
         
         $coupon = $this->coupon->find($rideRequest->applied_coupon_id);
         $validCoupon = $this->coupon->isValid($coupon ? $coupon->code : '', $rideRequest->user_id, $coupon);
@@ -517,7 +517,7 @@ class RideRequest extends Controller
             //updating ride request table
             $rideEndTime = date('Y-m-d H:i:s');
             $rideRequest->ride_distance = $request->ride_distance;
-            $rideRequest->ride_time = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time, $rideEndTime);
+            $rideRequest->ride_time = app('UtillRepo')->getDiffMinute($rideRequest->ride_start_time ?: $rideRequest->updated_at, $rideEndTime);
             $rideRequest->estimated_fare = $fare['total'];
             $rideRequest->ride_end_time = $rideEndTime;
             $rideRequest->ride_status = Ride::TRIP_ENDED;   
