@@ -28,21 +28,25 @@ class DriverServerWakeup extends Command
         ->where('is_available', true)
         ->where('is_connected_to_socket', false)
         ->with('deviceTokens:device_token,entity_id')
-        ->get();
+        ->chunk(50, function($drivers){
 
-        /** get only tokens */
-        $deviceTokens = $drivers->pluck('deviceTokens.*.device_token')->flatten()->toArray();
+           
+            /** get only tokens */
+            $deviceTokens = $drivers->pluck('deviceTokens.*.device_token')->flatten()->toArray();
 
-        /** send push message */
-        $this->firebase
-            ->setTitle("Service Disconnected")
-            ->setBody("Go offline by pressing offline button or stay connected to byroad service to receive incoming rides")
-            ->setCustomPayload([ 'wake_service' => true ])
-            ->setPriority(PushNotification::HIGH)
-            ->setDeviceTokens($deviceTokens)
-            ->push();
+            /** send push message */
+            $this->firebase
+                ->setTitle("Service Disconnected")
+                ->setBody("Go offline by pressing offline button or stay connected to byroad service to receive incoming rides")
+                ->setCustomPayload([ 'wake_service' => true ])
+                ->setPriority(PushNotification::HIGH)
+                ->setDeviceTokens($deviceTokens, false)
+                ->push();
 
 
+        });
+
+        
         $this->info('DriverServerWakeup@handle --> ended');    
 
     }
