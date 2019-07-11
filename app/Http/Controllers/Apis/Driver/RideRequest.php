@@ -242,7 +242,7 @@ class RideRequest extends Controller
         $authDriver = $request->auth_driver;
 
         //changing ride request status
-        $rideRequest->ride_status = $request->status;
+        $rideRequest->ride_status = Ride::DRIVER_REACHED; //$request->status; make always reach in this. because driver started button not available.
 
         /** add driver_started_time */
         if($request->status == Ride::DRIVER_STARTED) {
