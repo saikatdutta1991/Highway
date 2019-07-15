@@ -163,19 +163,23 @@ class Utill
     {
         $radiusConst = $radiusUnit == "km" ? 111.045 : 69;
 
-        $latitude = number_format($latitude, 7, '.', '');
-		$longitude = number_format($longitude, 7, '.', '');
+        $latitude = number_format($latitude, 8, '.', '');
+		$longitude = number_format($longitude, 8, '.', '');
 
         $minlng      = $longitude - ($radius / abs(cos(deg2rad($latitude)) * $radiusConst));
 		$maxlng      = $longitude + ($radius / abs(cos(deg2rad($latitude)) * $radiusConst));
 		$minlat      = $latitude - ($radius / $radiusConst);
-		$maxlat      = $latitude + ($radius / $radiusConst);
+        $maxlat      = $latitude + ($radius / $radiusConst);
+        
+
+        \Log::info("Utill::getRadiousLatitudeLongitude");
+        \Log::info("minlat : {$minlat}, maxlat : {$maxlat}, minlng : {$minlng}, maxlng : {$maxlng}");
         
         return [
-            number_format($minlat, 7, '.', ''),
-            number_format($maxlat, 7, '.', ''),
-            number_format($minlng, 7, '.', ''),
-            number_format($maxlng, 7, '.', ''),
+            number_format($minlat, 8, '.', ''),
+            number_format($maxlat, 8, '.', ''),
+            number_format($minlng, 8, '.', ''),
+            number_format($maxlng, 8, '.', ''),
         ];
 		
     }
