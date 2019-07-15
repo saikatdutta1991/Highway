@@ -395,7 +395,7 @@
                         <div class="col-sm-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="number" required class="form-control" value="{{$ride_request_driver_search_radius}}" min="0" step="1" onblur="this.value=parseInt(this.value)" name="ride_request_driver_search_radius">
+                                    <input type="number" required class="form-control" value="{{$ride_request_driver_search_radius}}" min="0" step="1" onblur="this.value=parseFloat(this.value)" name="ride_request_driver_search_radius">
                                     <label class="form-label">Driver Search Radius In Km.</label>
                                 </div>
                             </div>
