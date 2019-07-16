@@ -33,6 +33,16 @@ class Driver extends Controller
     }
 
 
+    /** show fake locations */
+    public function showFakeLocations()
+    {
+        return view('admin.drivers.fake_locations');
+    }
+
+
+
+
+
 
     /**
      * shows admin dashboard

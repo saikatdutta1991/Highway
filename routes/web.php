@@ -116,6 +116,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::post('/{driver_id}/change-photo', 'Admin\Driver@changeDriverPhoto')->name('admin.driver.update.photo');
             Route::post('/{driver_id}/update', 'Admin\Driver@updateDriverProfile')->name('admin.driver.update');
             Route::post('/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword')->name('admin.driver.password.reset');
+            Route::get('fake/locations', 'Admin\Driver@showFakeLocations')->name('admin.driver.fake.locations.show');
         });
 
         Route::get('rides/intracity', 'Admin\RideRequest@showIntracityRideRequests')->name('admin.rides.city');

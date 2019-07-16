@@ -107,6 +107,9 @@
                         <li class="@yield('payout_settings_active')">
                             <a href="{{route('admin.payouts.settings.show')}}">Payout Settings</a>
                         </li>
+                        <li class="@yield('fake_locations_active')">
+                            <a href="{{route('admin.driver.fake.locations.show')}}">Fake Locations</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="@yield('services_active')">
