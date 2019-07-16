@@ -159,7 +159,7 @@ class Utill
      * calculate radious(min latitude, longitude and max latititude, longitude)
      *  for a given distance and center latitude, longitude
      */
-    public function getRadiousLatitudeLongitude($latitude, $longitude, $radius, $radiusUnit = 'km')
+    public static function getRadiousLatitudeLongitude($latitude, $longitude, $radius, $radiusUnit = 'km')
     {
         $radiusConst = $radiusUnit == "km" ? 111.045 : 69;
 

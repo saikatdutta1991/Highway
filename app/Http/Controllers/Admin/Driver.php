@@ -13,6 +13,7 @@ use App\Models\Driver as DriverModel;
 use Validator;
 use App\Models\VehicleType;
 use App\Models\Setting;
+use App\Models\FakeLocation;
 
 
 class Driver extends Controller
@@ -33,15 +34,35 @@ class Driver extends Controller
     }
 
 
-    /** show fake locations */
-    public function showFakeLocations()
+    /** save fake locations */
+    public function saveFakeLocations(Request $request)
     {
-        return view('admin.drivers.fake_locations');
+        /** delete all locations first */
+        FakeLocation::truncate();
+        FakeLocation::insert($request->locations);
+        return $this->api->json(true, 'SAVED', 'Locations saved successfully.');
     }
 
 
 
 
+    /** show fake locations */
+    public function showFakeLocations()
+    {
+        $locations = FakeLocation::all();
+        return view('admin.drivers.fake_locations', [ 
+            'locations' => $locations
+        ]);
+    }
+
+
+
+    /** enable or distable fake locations */
+    public function enableFakeLocations(Request $request)
+    {
+        $this->setting->set('fake_location_enabled', $request->enable);
+        return $this->api->json(true, 'SAVED', 'Settings saved successfully.');
+    }
 
 
     /**

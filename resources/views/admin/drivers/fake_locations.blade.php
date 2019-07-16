@@ -4,21 +4,38 @@
 @section('fake_locations_active', 'active')
 @section('top-header')
 <style>
-    .add_new_marker {
-    cursor:pointer;
-    }
+
     .input-group-addon .material-icons {
-    font-size: xx-large !important;
+        font-size: xx-large !important;
+        cursor:pointer;
     }   
     .input-group-addon {
-    vertical-align: text-bottom;
+        vertical-align: text-bottom;
     }
     #autocomplete {
-    border: 1px solid #0000002b;
-    padding: 15px;
-    border-radius: 50px;
+        border: 1px solid #0000002b;
+        padding: 15px;
+        border-radius: 50px;
     }
-    .gm-style {
+    /* .enable-btn {
+        display: inline-block;
+        border-radius: 23px;
+        background: #81818159;
+        color: black;
+        margin-top: 15px;
+        position: relative;
+        padding: 5px 5px 5px 10px;
+        box-shadow: inset 0 0 10px #00000033;
+    } */
+    .map-loader {
+        display: inline-block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-family: sans-serif;
+        font-weight: 500;
+        font-size: 20px;
     }
 </style>
 @endsection
@@ -35,6 +52,9 @@
                 <h2>
                     ADD OR REMOVE FAKE LOCATIONS FOR NEARBY DRIVERS
                     <small>Add + button to add new marker, click on marker, then remove button to delete marker. Click save button to save locations.</small>
+                    <div class="switch enable-btn">
+                        <label>Enable or Disable<input type="checkbox" @if($fake_location_enabled == 'on') checked @endif id="enable-input"><span class="lever switch-col-pink"></span></label>
+                    </div>
                 </h2>
             </div>
             <div class="body">
@@ -49,13 +69,13 @@
                             </div>
                             <span class="input-group-addon">
                             <i class="material-icons add_new_marker col-red" title="Add new marker">add</i>
-                            <i class="material-icons add_new_marker col-green" title="Save">save</i>
+                            <i class="material-icons save_locations_btn col-green" title="Save">save</i>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div class="row clearfix">
-                    <div id="map" class="col-md-12" style="height:450px;"></div>
+                    <div id="map" class="col-md-12" style="height:450px;position:relative;"><div class="map-loader">Loading map..</div></div>
                 </div>
             </div>
         </div>
@@ -100,9 +120,9 @@
     
     
     var markers = [
-        getMarker(12.946420666754207, 77.54415974443361),
-        getMarker(12.978539762259349, 77.73607716386721),
-        getMarker(12.963149879497227, 77.55068287675783)
+        @foreach($locations as $location) 
+            getMarker({{$location->latitude}}, {{$location->longitude}}),
+        @endforeach
     ];
     
     
@@ -150,7 +170,7 @@
     
         map = new google.maps.Map(document.getElementById('map'), {
             center: latlng,
-            zoom: 12,
+            zoom: 17,
             mapTypeId: 'roadmap'
         });
     
@@ -192,7 +212,37 @@
     
     
     $(document).ready(function(){
+
+        $(".save_locations_btn").on("click", function(){
+
+            let locations = [];
+            markers.forEach( marker => {
+                locations.push({ 'latitude' : marker.position.lat(), 'longitude' : marker.position.lng() });
+            });
+
+            $.post("{{route('admin.driver.fake.locations.save')}}", {_token:"{{csrf_token()}}", locations : locations}, function(response){
+                console.log(response)
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            })
+            .fail(function(response) {
+                showNotification('bg-black', 'Unknown server error', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            });
+
+
+        });
     
+
+        $("#enable-input").on("change", function(){
+            let enable = $("#enable-input").is(':checked') ? 'on' : 'off';
+            $.post("{{route('admin.driver.fake.locations.enable')}}", {_token:"{{csrf_token()}}", enable : enable}, function(response){
+                console.log(response)
+                showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            })
+            .fail(function(response) {
+                showNotification('bg-black', 'Unknown server error', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            });
+        });
+
     
         $(".add_new_marker").on("click", function(){
             addNewMarker(currLatitude, currLongitude);

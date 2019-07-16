@@ -21,6 +21,7 @@ use App\Repositories\Utill;
 use Validator;
 use App\Models\VehicleType;
 use App\Models\Coupons\Coupon;
+use App\Models\FakeLocation;
 
 class RideRequest extends Controller
 {
@@ -271,8 +272,14 @@ class RideRequest extends Controller
 
         Api::log('NEARBY_DRIVERS_API_DRIVERS', $nearbyDriversDetails->toArray());
 
+
+        /** import fake drivers and merge */
+        $fakeDrivers = FakeLocation::fakeDriversWithService($latitude, $longitude, $radious, 'km', $request->vehicle_type);
+        
+        $nDrivers = array_merge($nearbyDriversDetails->toArray(), $fakeDrivers);
+
         return $this->api->json(true, 'NEARBY_DRIVERS', 'Nearby drivers', [
-            'drivers' => $nearbyDriversDetails
+            'drivers' => $nDrivers
         ]);
 
     }
