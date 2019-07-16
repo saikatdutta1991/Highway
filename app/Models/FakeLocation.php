@@ -31,13 +31,17 @@ class FakeLocation extends Model
                 ->whereBetween(self::tablename().'.longitude', [$minLong, $maxLong]);  
         })->get();
 
-        
-        $locations->map(function($location) use($servicename) {
-            $location['id'] = -1;
-            $location['vehicle_type'] = $servicename;
-        });
+        $drivers = [];
+        foreach($locations as $index => $location) {
+            $drivers[] = [
+                'id' => -$index,
+                'latitude' => $location->latitude,
+                'longitude' => $location->longitude,
+                'vehicle_type' => $servicename
+            ];
+        }
 
-        return $locations->toArray();
+        return $drivers;
     }
 
 
