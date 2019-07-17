@@ -16,6 +16,7 @@ class CreateFakeLocationsTable extends Migration
         Schema::create('fake_locations', function (Blueprint $table) {
             $table->decimal('latitude', 10, 8)->default(0.0);
             $table->decimal('longitude', 10, 8)->default(0.0);
+            $table->string('service', 20)->default('');
         });
     }
 

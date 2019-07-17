@@ -49,9 +49,11 @@ class Driver extends Controller
     /** show fake locations */
     public function showFakeLocations()
     {
+        $services = VehicleType::select('code', 'name')->get();
         $locations = FakeLocation::all();
         return view('admin.drivers.fake_locations', [ 
-            'locations' => $locations
+            'locations' => $locations,
+            'services' => $services
         ]);
     }
 

@@ -26,7 +26,7 @@ class FakeLocation extends Model
      
         list($minLat, $maxLat, $minLong, $maxLong) = Utill::getRadiousLatitudeLongitude($latitude, $longitude, $radius, $radiusUnit);
 
-		$locations = FakeLocation::where(function ($query) use ($minLat, $maxLat, $minLong, $maxLong) {
+		$locations = FakeLocation::where('service', $servicename)->where(function ($query) use ($minLat, $maxLat, $minLong, $maxLong) {
             $query->whereBetween(self::tablename().'.latitude', [$minLat, $maxLat])
                 ->whereBetween(self::tablename().'.longitude', [$minLong, $maxLong]);  
         })->get();

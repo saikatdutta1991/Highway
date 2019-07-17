@@ -4,6 +4,37 @@
 @section('fake_locations_active', 'active')
 @section('top-header')
 <style>
+.iframe-container{
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Ratio 16:9 ( 100%/16*9 = 56.25% ) */
+}
+.iframe-container > *{
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+    .service_icon_box {
+        background: #00000038;
+        padding: 10px;
+        margin: 1px;
+        width: 70px;
+        height: 70px;
+        text-align: center;
+    }
+
+    .service_icon_text {
+        color: black;
+        font-weight: 700;
+        font-size: 10px;
+    }
 
     .input-group-addon .material-icons {
         font-size: xx-large !important;
@@ -28,14 +59,10 @@
         box-shadow: inset 0 0 10px #00000033;
     } */
     .map-loader {
-        display: inline-block;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
         font-family: sans-serif;
         font-weight: 500;
         font-size: 20px;
+        text-align: center;
     }
 </style>
 @endsection
@@ -75,7 +102,15 @@
                     </div>
                 </div>
                 <div class="row clearfix">
-                    <div id="map" class="col-md-12" style="height:450px;position:relative;"><div class="map-loader">Loading map..</div></div>
+                    <div id="map" class="iframe-container" ><div class="map-loader">Loading map..</div></div>
+                </div>
+                <div class="" style="display: flex;">
+                    @foreach($services as $service)
+                    <div class="service_icon_box">
+                        <img data-service="{{$service->code}}" class="service_icon">
+                        <br><span class="service_icon_text">{{$service->name}}</span>
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -86,8 +121,53 @@
 @section('bottom')
 <script src="https://maps.googleapis.com/maps/api/js?key={{$google_maps_api_key}}&libraries=places"></script>
 <script>    
+
+    var icons = {
+        AUTO : '{{asset("images/auto-ricksaw.png")}}',
+        MICRO : '{{asset("images/taxi.png")}}',
+        PRIME : '{{asset("images/automobile.png")}}'
+    };
+
+
+    function getIcon(service)
+    {
+        return icons[service] == undefined ? 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' :  icons[service];
+    }
+
+
+    function changeMarkerService(id, obj)
+    {
+        console.log(`changeMarkerService(${id})`);
+    
+        let marker = markers.find( (marker) =>{
+            return marker.unique_id == id;
+        });
+        console.log('marker', marker, obj.value);
+    
+        if(!marker) {
+            return;
+        }
+        marker['service'] = obj.value;
+        marker.setIcon(getIcon(obj.value));
+       
+    }
+
+
+
     function addInfoWindow(marker) {
-        let content = `<button class="btn btn-block bg-orange" onclick="removeMarker('${marker.unique_id}')">Remove</button>`;
+        
+        let content = `
+
+            <select onchange="changeMarkerService('${marker.unique_id}', this)">
+                <option value="">Select</option>
+                @foreach($services as $service)
+                <option value="{{$service->code}}">{{$service->name}}</option>
+                @endforeach
+            </select>
+            <i class="material-icons col-red" onclick="removeMarker('${marker.unique_id}')" style="cursor:pointer;vertical-align: middle;">delete_forever</i>
+       
+        `;
+        
         google.maps.event.addListener(marker, 'click', function() {
             marker.setAnimation(null);
             infowindow.setContent(content);
@@ -108,12 +188,14 @@
     }
     
     
-    function getMarker(latitude, longitude) {
+    function getMarker(latitude, longitude, service = '') {
         let marker = new google.maps.Marker({
             position: new google.maps.LatLng(latitude, longitude),
-            draggable:true
+            draggable:true,
+            icon : getIcon(service)
         });
         marker['unique_id'] = uniqueId();
+        marker['service'] = service;
         addInfoWindow(marker);
         return marker;
     }
@@ -121,7 +203,7 @@
     
     var markers = [
         @foreach($locations as $location) 
-            getMarker({{$location->latitude}}, {{$location->longitude}}),
+            getMarker({{$location->latitude}}, {{$location->longitude}}, '{{$location->service}}'),
         @endforeach
     ];
     
@@ -135,7 +217,7 @@
     
     
     function addNewMarker(latitude, longitude) {
-        let marker = getMarker(latitude, longitude);
+        let marker = getMarker(latitude, longitude, 'AUTO');
         marker.setAnimation(google.maps.Animation.BOUNCE);
         markers.push(marker);
         placeMarkers();
@@ -213,11 +295,17 @@
     
     $(document).ready(function(){
 
+        /** load service sample images */
+        $(".service_icon").each(function(index, item){
+            $(item).attr('src', getIcon($(item).data('service')));
+        });
+
+
         $(".save_locations_btn").on("click", function(){
 
             let locations = [];
             markers.forEach( marker => {
-                locations.push({ 'latitude' : marker.position.lat(), 'longitude' : marker.position.lng() });
+                locations.push({ 'latitude' : marker.position.lat(), 'longitude' : marker.position.lng(), 'service' : marker.service });
             });
 
             $.post("{{route('admin.driver.fake.locations.save')}}", {_token:"{{csrf_token()}}", locations : locations}, function(response){
