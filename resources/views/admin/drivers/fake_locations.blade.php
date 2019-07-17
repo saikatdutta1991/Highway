@@ -25,8 +25,8 @@
         background: #00000038;
         padding: 10px;
         margin: 1px;
-        width: 70px;
-        height: 70px;
+        width: 100px;
+        height: 100px;
         text-align: center;
     }
 
@@ -104,7 +104,7 @@
                 <div class="row clearfix">
                     <div id="map" class="iframe-container" ><div class="map-loader">Loading map..</div></div>
                 </div>
-                <div class="" style="display: flex;">
+                <div class="" style="display: flex;margin-top:15px;">
                     @foreach($services as $service)
                     <div class="service_icon_box">
                         <img data-service="{{$service->code}}" class="service_icon">
@@ -123,9 +123,9 @@
 <script>    
 
     var icons = {
-        AUTO : '{{asset("images/auto-ricksaw.png")}}',
-        MICRO : '{{asset("images/taxi.png")}}',
-        PRIME : '{{asset("images/automobile.png")}}'
+        AUTO : '{{asset("images/ic_booking_auto_map_topview.png")}}',
+        MICRO : '{{asset("images/ic_booking_micro_map_topview.png")}}',
+        PRIME : '{{asset("images/ic_booking_suv_map_topview.png")}}'
     };
 
 
