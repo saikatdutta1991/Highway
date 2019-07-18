@@ -235,6 +235,34 @@ io.on('connection', function (socket) {
 	});
 
 
+	/** 
+	 * send drivers that request is canceled or accepted
+	 */
+	socket.on("stop_incoming_request", function(data){
+
+		console.log('stop_incoming_request', data);
+
+		/** if not authenticated, do nothing */
+		if (!socket.auth) { return; }
+
+		/** extract driver ids from data */
+		var ids = (`${data.ids}`).split(',');
+
+		/** send stop_incoming_request to all drivers on by one */
+		ids.forEach(function (id) {
+
+			let room = `DRIVER_${id}`;
+			console.log("stop_incoming_request", room);
+
+			/** emit to driver room */
+			io.sockets.in(room).emit("stop_incoming_request", { request_id : data.request_id });
+
+		});
+
+
+	});
+
+
 
 	/**
 	 * reject new ride request from user by driver
