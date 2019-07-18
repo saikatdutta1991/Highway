@@ -5,6 +5,10 @@
     .s-section {
     padding : 40px 0;
     }
+    .header-title {
+        font-size:2rem;
+        margin-bottom: 0.2rem;
+    }
 </style>
 @endsection
 @section('content')
