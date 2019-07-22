@@ -169,7 +169,8 @@ class Service extends Controller
 
                     $this->vehicleType->where('id', $request->service_id)->forceDelete();
                     $this->rideFare->where('vehicle_type_id', $request->service_id)->forceDelete();
-                    $this->vehicleType->syncWithDatabase();
+                    /** updating cache */
+                    VehicleType::updateServicesCache();
 
                     \DB::commit();
 

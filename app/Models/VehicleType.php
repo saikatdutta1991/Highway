@@ -30,7 +30,7 @@ class VehicleType extends Model
     /**
      * store all services in to cache as array
      */
-    protected static function updateServicesCache()
+    public static function updateServicesCache()
     {
         /** fetch all services from database */
         $services = VehicleType::all();
