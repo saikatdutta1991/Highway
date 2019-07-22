@@ -132,11 +132,11 @@ class Service extends Controller
             case 'add':
                 
                 $error = '';
-                $serviceType = $this->vehicleType->addType($request->service_name, $error);
+                $serviceType = $this->vehicleType->addType($request->service_code, $request->service_name, $error);
 
                 //check if service already exists
                 if($serviceType === false && $error == 'EXISTS') {
-                    return $this->api->json(false, 'EXISTS', 'Service already exists');
+                    return $this->api->json(false, 'EXISTS', 'Service or code already exists');
                 }
 
                 return $this->api->json(true, 'ADDED', 'Service created successfully', [

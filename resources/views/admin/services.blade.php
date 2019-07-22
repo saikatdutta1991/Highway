@@ -76,7 +76,7 @@
                         </thead>
                         <tbody>
                             @foreach($services as $service)
-                            <tr id="service_row_{{$service['id']}}" data-service-name="{{$service['name']}}">
+                            <tr id="service_row_{{$service['id']}}" data-service-name="{{$service['name']}}" data-service-code="{{$service['code']}}">
                                 <td>{{$service['id']}}</td>
                                 <td>{{$service['name']}}</td>
                                 <td class="order">{{isset($service['order']) ? $service['order'] : 0}}</td>
@@ -122,6 +122,10 @@
                     <form id="service_add_form">
                         <div class="col-sm-12">
                             <div class="form-group">
+                                <div class="form-line">
+                                    <b>Service Name</b>
+                                    <input type="text" class="form-control" placeholder="Ex: AUTO" name="service_code" onkeyup="this.value=this.value.toUpperCase()">
+                                </div>
                                 <div class="form-line">
                                     <b>Service Name</b>
                                     <input type="hidden" class="form-control" name="_token" value="{{csrf_token()}}">
@@ -787,6 +791,7 @@
         hideMessageErrorResDiv()
         $("#service_modal input[name='service_id']").val('')
         $("#service_modal input[name='service_name']").val('')
+        $("#service_modal input[name='service_code']").val('')
         $("#service_modal input[name='_action']").val('add')
         $("#service_modal").modal('show');
     
@@ -800,9 +805,11 @@
     $(".service-edit-btn").on('click',function(){
         hideMessageErrorResDiv()
         var service_id = $(this).data('service-id');
-        var service_name = $('#service_row_'+service_id).data('service-name')
+        var service_name = $('#service_row_'+service_id).data('service-name');
+        var service_code = $('#service_row_'+service_id).data('service-code')
         $("#service_modal input[name='service_id']").val(service_id)
         $("#service_modal input[name='service_name']").val(service_name)
+        $("#service_modal input[name='service_code']").val(service_code)
         $("#service_modal input[name='_action']").val('update')
         $("#service_modal").modal('show');
         setTimeout(function(){

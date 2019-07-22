@@ -177,9 +177,9 @@ class VehicleType extends Model
     /**
      * add new vehicle type and save to settings file
      */
-    public function addType($type, &$errorCode = '')
+    public function addType($code, $type, &$errorCode = '')
     {
-        $code = app('UtillRepo')->randomChars(8); //generate code for service type        
+        //$code = app('UtillRepo')->randomChars(8); //generate code for service type        
         if(VehicleType::where('code', $code)->orWhere('name', $type)->exists()) {
            $errorCode = 'EXISTS';
            return false;
