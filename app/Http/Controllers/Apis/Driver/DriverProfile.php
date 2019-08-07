@@ -161,7 +161,7 @@ class DriverProfile extends Controller
             'country_code' => 'sometimes|required|regex:/^[+].+$/', 
             'mobile_number' => 'sometimes|required|numeric',
             'photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
-            'vehicle_type' => 'sometimes|required|in:'.implode(',', $this->vehicleType->allCodes()),
+            //'vehicle_type' => 'sometimes|required_if:ready_to_get_hired,0|in:'.implode(',', $this->vehicleType->allCodes()),
             'vehicle_number' => 'sometimes|required',
             'vehicle_registration_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_contract_permit_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
@@ -175,45 +175,31 @@ class DriverProfile extends Controller
             'vehicle_commercial_driving_license_plate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_police_verification_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'bank_passbook_or_canceled_check_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
-            'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png'
+            'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
+            'manual_transmission' => 'sometimes|required|boolean',
+            'automatic_transmission' => 'sometimes|required|boolean'
         ]);
 
         if($validator->fails()) {
 
-            $e = $validator->errors();
-            $msg = [];
-            ($e->has('is_available')) ? $msg['is_available'] = $e->get('is_available')[0] : '';
-            ($e->has('fname')) ? $msg['fname'] = $e->get('fname')[0] : '';
-            ($e->has('lname')) ? $msg['lname'] = $e->get('lname')[0] : '';
-            ($e->has('email')) ? $msg['email'] = $e->get('email')[0] : '';
-            ($e->has('old_password')) ? $msg['old_password'] = $e->get('old_password')[0] : '';
-            ($e->has('new_password')) ? $msg['new_password'] = $e->get('new_password')[0] : '';
-            ($e->has('country_code')) ? $msg['country_code'] = $e->get('country_code')[0] : '';
-            ($e->has('mobile_number')) ? $msg['mobile_number'] = $e->get('mobile_number')[0] : '';
-            ($e->has('photo')) ? $msg['photo'] = $e->get('photo')[0] : '';
-            ($e->has('vehicle_type')) ? $msg['vehicle_type'] = $e->get('vehicle_type')[0] : '';
-            ($e->has('vehicle_number')) ? $msg['vehicle_number'] = $e->get('vehicle_number')[0] : '';
-            ($e->has('vehicle_registration_certificate_photo')) ? $msg['vehicle_registration_certificate_photo'] = $e->get('vehicle_registration_certificate_photo')[0] : '';
-            ($e->has('vehicle_contract_permit_photo')) ? $msg['vehicle_contract_permit_photo'] = $e->get('vehicle_contract_permit_photo')[0] : '';
-            ($e->has('vehicle_insurance_certificate_photo')) ? $msg['vehicle_insurance_certificate_photo'] = $e->get('vehicle_insurance_certificate_photo')[0] : '';
-            ($e->has('vehicle_fitness_certificate_photo')) ? $msg['vehicle_fitness_certificate_photo'] = $e->get('vehicle_fitness_certificate_photo')[0] : '';
-            ($e->has('vehicle_lease_agreement_photo')) ? $msg['vehicle_lease_agreement_photo'] = $e->get('vehicle_lease_agreement_photo')[0] : '';
-            ($e->has('vehicle_photo_first')) ? $msg['vehicle_photo_first'] = $e->get('vehicle_photo_first')[0] : '';
-            ($e->has('vehicle_photo_second')) ? $msg['vehicle_photo_second'] = $e->get('vehicle_photo_second')[0] : '';
-            ($e->has('vehicle_photo_third')) ? $msg['vehicle_photo_third'] = $e->get('vehicle_photo_third')[0] : '';
-            ($e->has('vehicle_photo_fourth')) ? $msg['vehicle_photo_fourth'] = $e->get('vehicle_photo_fourth')[0] : '';
-            ($e->has('vehicle_commercial_driving_license_plate_photo')) ? $msg['vehicle_commercial_driving_license_plate_photo'] = $e->get('vehicle_commercial_driving_license_plate_photo')[0] : '';
-            ($e->has('vehicle_police_verification_certificate_photo')) ? $msg['vehicle_police_verification_certificate_photo'] = $e->get('vehicle_police_verification_certificate_photo')[0] : '';
-            ($e->has('bank_passbook_or_canceled_check_photo')) ? $msg['bank_passbook_or_canceled_check_photo'] = $e->get('bank_passbook_or_canceled_check_photo')[0] : '';
-            ($e->has('aadhaar_card_photo')) ? $msg['aadhaar_card_photo'] = $e->get('aadhaar_card_photo')[0] : '';
+            $messages = [];
+            foreach($validator->errors()->getMessages() as $attr => $errArray) {
+                $messages[$attr] = $errArray[0];
+            }
 
-            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $messages);
 
         }
 
         $driver = $request->auth_driver;
 
+        if($request->has('manual_transmission')) {
+            $driver->manual_transmission = $request->manual_transmission;
+        }
 
+        if($request->has('automatic_transmission')) {
+            $driver->automatic_transmission = $request->automatic_transmission;
+        }
 
         if($request->has('is_available')) {
             $driver->is_available = $request->is_available == 1 ? 1 : 0;
@@ -231,9 +217,9 @@ class DriverProfile extends Controller
             $driver->vehicle_number = strtoupper($request->vehicle_number);
         }
 
-        if($request->has('vehicle_type')) {
-            $driver->vehicle_type = $request->vehicle_type;
-        }
+        // if($request->has('vehicle_type')) {
+        //     $driver->vehicle_type = $request->vehicle_type;
+        // }
 
         
         // check email in request

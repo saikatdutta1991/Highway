@@ -59,8 +59,8 @@ class DriverAuth extends Controller
             'country_code' => 'required|regex:/^[+].+$/', 
             'mobile_number' => 'required|numeric',
             'photo' => 'required|image|mimes:jpg,jpeg,png',
-            'vehicle_type' => 'required|in:'.implode(',', $this->vehicleType->allCodes()),
-            'vehicle_number' => 'required',
+            'vehicle_type' => 'required_if:ready_to_get_hired,0|in:'.implode(',', $this->vehicleType->allCodes()),
+            'vehicle_number' => 'required_if:ready_to_get_hired,0',
             'vehicle_registration_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_contract_permit_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_insurance_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
@@ -78,48 +78,24 @@ class DriverAuth extends Controller
             'bank_account_holder_name' => 'required|max:256',
             'bank_ifsc_code' => 'required|max:50',
             'bank_account_number' => 'required|max:50',
-            'bank_extra_info' => 'min:5|max:256'
-
+            'bank_extra_info' => 'min:5|max:256',
+            'manual_transmission' => 'required|boolean',
+            'automatic_transmission' => 'required|boolean',
+            'ready_to_get_hired' => 'required|boolean'
         ]);
        
 
 
         if($validator->fails()) {
 
-            $e = $validator->errors();
-            $msg = [];
-            ($e->has('fname')) ? $msg['fname'] = $e->get('fname')[0] : '';
-            ($e->has('lname')) ? $msg['lname'] = $e->get('lname')[0] : '';
-            ($e->has('email')) ? $msg['email'] = $e->get('email')[0] : '';
-            ($e->has('password')) ? $msg['password'] = $e->get('password')[0] : '';
-            ($e->has('country_code')) ? $msg['country_code'] = $e->get('country_code')[0] : '';
-            ($e->has('mobile_number')) ? $msg['mobile_number'] = $e->get('mobile_number')[0] : '';
-            ($e->has('photo')) ? $msg['photo'] = $e->get('photo')[0] : '';
-            ($e->has('vehicle_type')) ? $msg['vehicle_type'] = $e->get('vehicle_type')[0] : '';
-            ($e->has('vehicle_number')) ? $msg['vehicle_number'] = $e->get('vehicle_number')[0] : '';
-            ($e->has('vehicle_registration_certificate_photo')) ? $msg['vehicle_registration_certificate_photo'] = $e->get('vehicle_registration_certificate_photo')[0] : '';
-            ($e->has('vehicle_contract_permit_photo')) ? $msg['vehicle_contract_permit_photo'] = $e->get('vehicle_contract_permit_photo')[0] : '';
-            ($e->has('vehicle_insurance_certificate_photo')) ? $msg['vehicle_insurance_certificate_photo'] = $e->get('vehicle_insurance_certificate_photo')[0] : '';
-            ($e->has('vehicle_fitness_certificate_photo')) ? $msg['vehicle_fitness_certificate_photo'] = $e->get('vehicle_fitness_certificate_photo')[0] : '';
-            ($e->has('vehicle_lease_agreement_photo')) ? $msg['vehicle_lease_agreement_photo'] = $e->get('vehicle_lease_agreement_photo')[0] : '';
-            ($e->has('vehicle_photo_first')) ? $msg['vehicle_photo_first'] = $e->get('vehicle_photo_first')[0] : '';
-            ($e->has('vehicle_photo_second')) ? $msg['vehicle_photo_second'] = $e->get('vehicle_photo_second')[0] : '';
-            ($e->has('vehicle_photo_third')) ? $msg['vehicle_photo_third'] = $e->get('vehicle_photo_third')[0] : '';
-            ($e->has('vehicle_photo_fourth')) ? $msg['vehicle_photo_fourth'] = $e->get('vehicle_photo_fourth')[0] : '';
-            ($e->has('vehicle_commercial_driving_license_plate_photo')) ? $msg['vehicle_commercial_driving_license_plate_photo'] = $e->get('vehicle_commercial_driving_license_plate_photo')[0] : '';
-            ($e->has('vehicle_police_verification_certificate_photo')) ? $msg['vehicle_police_verification_certificate_photo'] = $e->get('vehicle_police_verification_certificate_photo')[0] : '';
-            ($e->has('bank_passbook_or_canceled_check_photo')) ? $msg['bank_passbook_or_canceled_check_photo'] = $e->get('bank_passbook_or_canceled_check_photo')[0] : '';
-            ($e->has('aadhaar_card_photo')) ? $msg['aadhaar_card_photo'] = $e->get('aadhaar_card_photo')[0] : '';
-            ($e->has('bank_name')) ? $msg['bank_name'] = $e->get('bank_name')[0] : '';
-            ($e->has('bank_account_holder_name')) ? $msg['bank_account_holder_name'] = $e->get('bank_account_holder_name')[0] : '';
-            ($e->has('bank_ifsc_code')) ? $msg['bank_ifsc_code'] = $e->get('bank_ifsc_code')[0] : '';
-            ($e->has('bank_account_number')) ? $msg['bank_account_number'] = $e->get('bank_account_number')[0] : '';
-            ($e->has('bank_extra_info')) ? $msg['bank_extra_info'] = $e->get('bank_extra_info')[0] : '';
+            $messages = [];
+            foreach($validator->errors()->getMessages() as $attr => $errArray) {
+                $messages[$attr] = $errArray[0];
+            }
 
-            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $msg);
-
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $messages);
         }
-
+        
 
         //check mobile number already exists
         $full_mobile_number = $request->country_code.$request->mobile_number;
@@ -146,8 +122,10 @@ class DriverAuth extends Controller
         $driver->full_mobile_number = $driver->fullMobileNumber();
         $driver->last_access_time = date('Y-m-d H:i:s');
         $driver->last_accessed_ip = $request->ip();
-        $driver->vehicle_type = $request->vehicle_type;
-        $driver->vehicle_number = strtoupper($request->vehicle_number);
+        $driver->vehicle_type = $request->vehicle_type ?: '';
+        $driver->vehicle_number = $request->vehicle_number ? strtoupper($request->vehicle_number) : '';
+        $driver->manual_transmission = $request->manual_transmission;
+        $driver->automatic_transmission = $request->automatic_transmission;
 
         //by default is_approved will be 0
         $driver->is_approved = 0;
