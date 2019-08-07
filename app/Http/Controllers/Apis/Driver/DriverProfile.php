@@ -162,7 +162,7 @@ class DriverProfile extends Controller
             'mobile_number' => 'sometimes|required|numeric',
             'photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             //'vehicle_type' => 'sometimes|required_if:ready_to_get_hired,0|in:'.implode(',', $this->vehicleType->allCodes()),
-            'vehicle_number' => 'sometimes|required',
+            'vehicle_number' => 'sometimes|required_if:ready_to_get_hired,0',
             'vehicle_registration_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_contract_permit_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'vehicle_insurance_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
@@ -177,7 +177,8 @@ class DriverProfile extends Controller
             'bank_passbook_or_canceled_check_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'manual_transmission' => 'sometimes|required|boolean',
-            'automatic_transmission' => 'sometimes|required|boolean'
+            'automatic_transmission' => 'sometimes|required|boolean',
+            'ready_to_get_hired' => 'sometimes|required|boolean'
         ]);
 
         if($validator->fails()) {
@@ -192,6 +193,10 @@ class DriverProfile extends Controller
         }
 
         $driver = $request->auth_driver;
+
+        if($request->has('ready_to_get_hired')) {
+            $driver->ready_to_get_hired = $request->ready_to_get_hired;
+        }
 
         if($request->has('manual_transmission')) {
             $driver->manual_transmission = $request->manual_transmission;

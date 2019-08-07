@@ -126,6 +126,7 @@ class DriverAuth extends Controller
         $driver->vehicle_number = $request->vehicle_number ? strtoupper($request->vehicle_number) : '';
         $driver->manual_transmission = $request->manual_transmission;
         $driver->automatic_transmission = $request->automatic_transmission;
+        $driver->ready_to_get_hired = $request->ready_to_get_hired;
 
         //by default is_approved will be 0
         $driver->is_approved = 0;
