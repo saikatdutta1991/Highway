@@ -156,86 +156,82 @@
                 <div class="body">
                     <div class="alert bg-pink" style="display:none" id="profile-update-alert"></div>
                     <div class="row clearfix">
-                        <div class="col-sm-4">
+                        <div class="col-md-2">
                             <img id="profile-img" src="{{$driver->profilePhotoUrl()}}" class="img-responsive thumbnail" >
                             <i class="material-icons col-green" style="position: absolute;top: -10px;border-radius: 50%;background: white;" data-toggle="tooltip" data-placement="left" title="Avaiable">fiber_manual_record</i>
                         </div>
-                        <form id="driver-profile-form">
+                        <form class="col-md-10" id="driver-profile-form">
                             {!! csrf_field() !!}
-                            <div class="col-sm-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">perm_identity</i>
-                                    </span>
+                            <div class="col-md-3">
+                                <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" placeholder="Frist Name" name="first_name" value="{{$driver->fname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                        <input type="text" class="form-control"  name="first_name" value="{{$driver->fname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                        <label class="form-label">First Name</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="input-group">
+                            <div class="col-md-3">
+                                <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" placeholder="Last Name"  name="last_name" value="{{$driver->lname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                        <input type="text" class="form-control"  name="last_name" value="{{$driver->lname}}" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                        <label class="form-label">Last Name</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">email</i>
-                                    </span>
+                            <div class="col-md-3">
+                                <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" placeholder="Email" name="email" value="{{$driver->email}}">
-                                    </div>
-                                    <span class="input-group-addon">
-                                    @if($driver->is_email_verified)
-                                    <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Email verified">done_all</i>
-                                    @else 
-                                    <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Email not verified">done_all</i>
-                                    @endif
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">phone</i>
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="text" class="form-control" name="mobile_number" value="{{$driver->country_code}}-{{$driver->mobile_number}}"placeholder="Mobile Number" data-toggle="tooltip" data-placement="left" title="+[countrycode][-][mobileno] eg: +91-9093034785">
-                                    </div>
-                                    <span class="input-group-addon">
-                                    @if($driver->is_mobile_number_verified)
-                                    <i class="material-icons col-green"  data-toggle="tooltip" data-placement="left" title="Mobile number verified">done_all</i>
-                                    @else 
-                                    <i class="material-icons col-grey"  data-toggle="tooltip" data-placement="left" title="Mobile number not verified">done_all</i>
-                                    @endif
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">view_headline</i>
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="text" class="form-control" placeholder="Vehicle Number" name="vehicle_number" value="{{$driver->vehicle_number}}" onkeyup="this.value=this.value.toUpperCase()">
+                                        <input type="text" class="form-control" name="email" value="{{$driver->email}}">
+                                        <label class="form-label">Email</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                    <i class="material-icons">directions_bus</i>    
-                                    </span>
+                            <div class="col-md-3">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="mobile_number" value="{{$driver->country_code}}-{{$driver->mobile_number}}" data-toggle="tooltip" data-placement="left" title="+[countrycode][-][mobileno] eg: +91-9093034785">
+                                        <label class="form-label">Mobile</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="vehicle_number" value="{{$driver->vehicle_number}}" onkeyup="this.value=this.value.toUpperCase()">
+                                        <label class="form-label">Vehicle Number</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-float">
                                     <div class="form-line">
                                         <select class="form-control show-tick" name="service_type">
-                                            <option value="">-- Saervice Type --</option>
+                                            <option value="">-- Service Type --</option>
                                             @foreach($vehicleTypes as $type)
-                                            <option @if($type['code'] == $driver->vehicle_type) selected @endif value="{{$type['code']}}">{{$type['name']}}</option>
+                                            <option @if($type["code"] == $driver->vehicle_type) selected @endif value="{{$type['code']}}">{{$type['name']}}</option>
                                             @endforeach
                                         </select>
+                                        <label class="form-label" style="z-index: 1;">Service Type</label>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Choose Driving Skills</label>
+                                    <div class="switch">
+                                        <label><input type="checkbox" id="manual_transmission" @if($driver->manual_transmission) checked @endif><span class="lever switch-col-deep-orange"></span> Manual Transmission</label>
+                                    </div>
+                                    <div class="switch">
+                                        <label><input type="checkbox" id="automatic_transmission" @if($driver->automatic_transmission) checked @endif><span class="lever switch-col-deep-orange"></span>Automatic Transmission</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Driver as parttime or Ready to get hired</label>
+                                    <div class="switch">
+                                        <label><input type="checkbox" id="ready_to_get_hired" @if($driver->ready_to_get_hired) checked @endif><span class="lever switch-col-deep-orange"></span> Ready to get hired ? </label>
+                                    </div>  
                                 </div>
                             </div>
                         </form>
@@ -244,8 +240,6 @@
             </div>
         </div>
     </div>
-
-
     @if($driver->bank)
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -278,7 +272,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-sm-4">
                                 <div class="form-group form-float">
                                     <div class="form-line">
@@ -295,7 +288,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <div class="form-line">
@@ -303,7 +295,6 @@
                                     </div>
                                 </div>
                             </div>
-                           
                         </form>
                     </div>
                 </div>
@@ -311,7 +302,6 @@
         </div>
     </div>
     @endif
-
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
@@ -321,7 +311,6 @@
             </div>
         </div>
     </div>
-
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
@@ -361,7 +350,8 @@
                             </a>
                             <small>Vehicle Registration photo</small>
                         </div>
-                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_contract_permit_photo_url']}}" data-sub-html="Vehicle Contract Permit Photo">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_contract_permit_photo_url']}}">
                             </a>
@@ -384,14 +374,16 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_lease_agreement_photo_url']}}">
                             </a>
                             <small>Vehicle Lease Agreement photo</small>
-                        </div> --}}        
+                        </div>
+                        --}}        
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_photo_1_url']}}" data-sub-html="Vehicle Photo No. 1">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_1_url']}}">
                             </a>
                             <small>Vehicle photo No. 1</small>
                         </div>
-                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_photo_2_url']}}" data-sub-html="Vehicle Photo No. 2">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_2_url']}}">
                             </a>
@@ -408,14 +400,16 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_photo_4_url']}}">
                             </a>
                             <small>Vehicle photo No. 4</small>
-                        </div>--}}
+                        </div>
+                        --}}
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_commercial_driving_license_photo_url']}}" data-sub-html="Driver Commercial Driving Licence(DL)">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_commercial_driving_license_photo_url']}}">
                             </a>
                             <small>Driver Driving License Photo</small>
                         </div>
-                        {{--<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                        {{--
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['vehicle_police_verification_certificate_photo_url']}}" data-sub-html="Vehicle Police Verifiecation Certificate">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['vehicle_police_verification_certificate_photo_url']}}">
                             </a>
@@ -426,7 +420,8 @@
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['bank_passbook_photo_url']}}">
                             </a>
                             <small>Driver Bank Passbook Photo</small>
-                        </div>--}}
+                        </div>
+                        --}}
                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                             <a href="{{$driver->getExtraPhotosUrl()['aadhaar_card_photo_url']}}" data-sub-html="Driver Id Card">
                             <img class="img-responsive thumbnail" src="{{$driver->getExtraPhotosUrl()['aadhaar_card_photo_url']}}">
@@ -441,7 +436,7 @@
 </div>
 </div>
 <div class="modal fade" id="profile-photo-upload-modal" tabindex="-1" role="dialog" data-backdrop="static"
-   data-keyboard="false">
+    data-keyboard="false">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -535,7 +530,15 @@
     
         });
     
-    
+        
+        var arrayCleanEmpty = function(thisArray, thisName) {
+            "use strict";
+            $.each(thisArray, function(index, item) {
+                if (item.name == thisName && item.value == '') {
+                    delete thisArray[index];      
+                }
+            });
+        }
     
     
     
@@ -545,11 +548,15 @@
         $("#profile-update-menu-item").on('click', function(){
     
             var driverId = $(this).data('driver-id');
-
+    
             let driverUpdateApi = "{{route('admin.driver.update', ['driver_id' => '*'])}}";
             var url = driverUpdateApi.replace("*", driverId);
-            
+
             var data = $("#driver-profile-form").serializeArray();
+            data.push({name : 'ready_to_get_hired', value : $("#ready_to_get_hired").is(":checked") ? 1 : 0 });
+            data.push({name : 'manual_transmission', value : $("#manual_transmission").is(":checked") ? 1 : 0 });
+            data.push({name : 'automatic_transmission', value : $("#automatic_transmission").is(":checked") ? 1 : 0 });
+            arrayCleanEmpty(data, 'service_type');
     
             console.log(url, data)
     
@@ -582,9 +589,9 @@
          */
         var xhr = null;
         $("#profile-photo-cancel").on('click', function(){
-
+    
             $("#profile-photo-upload-modal").modal('hide')
-
+    
             try {
                 xhr.abort();
             } catch(e){}
@@ -597,7 +604,7 @@
                 showNotification('bg-black', 'Select photo first', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
                 return;
             }
-
+    
             $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
             $("#photo-upload-progress-status").text('0%');
     
@@ -608,7 +615,7 @@
             var url = '{{route("admin.driver.update.photo", ["driver_id" => $driver->id])}}';
     
             console.log(url)
-
+    
     
             xhr = $.ajax({
                 url: url,
@@ -678,15 +685,15 @@
         });
     
         $("#uploadPhoto").on('change', function(e){
-
+    
             if(e.target.files[0].size > 1024 * 1024 * 2) {
                 $("#uploadPhoto").val('')
                 $("#custom-photo-selcet-text").val('')
                 showNotification('bg-black', 'Photo size must be within 2MB', 'bottom', 'center', 'animated flipInX', 'animated flipOutX');
                 return;
             }
-
-
+    
+    
             $("#custom-photo-selcet-text").val(e.target.files[0].name);   
             $("#photo-upload-progressbar-div").find('.progress > .progress-bar').css('width', '0%')
             $("#photo-upload-progress-status").text('0%');       
@@ -700,7 +707,7 @@
             var csrf_token = "{{csrf_token()}}";
             var driverId = $(this).data('driver-id');
             var isApprove = $(this).data('is-approve');
-
+    
             let driverApproveApi = "{{route('admin.driver.approve', ['driver_id' => '*', 'is_approve' => '**'])}}";
             let url = driverApproveApi.replace('*', driverId).replace("**", isApprove);
             var curElem = this;
@@ -812,13 +819,13 @@
         
         if(data.driver_id == {{$driver->id}} && map) {
             console.log('driver_location_updated',data);
-
+    
             latlng = new google.maps.LatLng(data.latitude, data.longitude);
             latElem.text(data.latitude);
             lngElem.text(data.longitude);
             map.setCenter(latlng);
             marker.setPosition(latlng);
-
+    
         }
     
     });

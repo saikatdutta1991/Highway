@@ -352,8 +352,11 @@ class Driver extends Controller
             'last_name' => 'required|max:128',
             'email' => 'required|email|max:128|unique:'.$this->driver->getTable().',email,'.$driver->id,
             'mobile_number' => 'required|regex:/^[+][0-9]+[-][0-9]+$/',
-            'service_type' => 'required|in:'.implode(',', $this->vehicleType->allCodes()),
-            'vehicle_number' => 'required',
+            'service_type' => 'required_if:ready_to_get_hired,0|in:'.implode(',', $this->vehicleType->allCodes()),
+            'vehicle_number' => 'required_if:ready_to_get_hired,0',
+            'ready_to_get_hired' => 'required|boolean',
+            'manual_transmission' => 'required|boolean',
+            'automatic_transmission' => 'required|boolean',
         ]);
 
         if($validator->fails()) {
@@ -387,6 +390,9 @@ class Driver extends Controller
         $driver->full_mobile_number = $driver->fullMobileNumber();
         $driver->vehicle_type = $request->service_type;
         $driver->vehicle_number = strtoupper($request->vehicle_number);
+        $driver->manual_transmission = $request->manual_transmission;
+        $driver->automatic_transmission = $request->automatic_transmission;
+        $driver->ready_to_get_hired = $request->ready_to_get_hired;
 
         $driver->save();
 
