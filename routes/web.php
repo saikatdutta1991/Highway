@@ -50,6 +50,13 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::group(['middleware' => 'adminAuth'], function(){
 
+
+        Route::group(["prefix" => "hiring"], function(){
+            Route::get("package/add", "Admin\Hiring@showHiringPackageAdd")->name("admin.hiring.package.add.show");
+            Route::post("package/add", "Admin\Hiring@addHiringPackage")->name("admin.hiring.package.add");
+            Route::get("packages", "Admin\Hiring@showHiringPackages")->name("admin.hiring.packages.show");
+        });
+
         Route::group(['prefix' => 'drivers'], function(){
             Route::get('accounts', 'Admin\AccountManagement@showDriverAccounts')->name('admin.drivers.accounts');
             Route::get('accounts/recharge', 'Admin\AccountManagement@showAccountRecharge')->name('admin.drivers.accounts.recharge');

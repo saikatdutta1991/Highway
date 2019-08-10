@@ -29,6 +29,20 @@
                     <span>Dashboard</span>
                     </a>
                 </li>
+                <li class="@yield('hiring_active')">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                    <i class="material-icons">airline_seat_recline_normal</i>
+                    <span>Hire Driver</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="@yield('hiring_package_add_active')">
+                            <a href="{{route('admin.hiring.package.add.show')}}">+ Add Package</a>
+                        </li>
+                        <li class="@yield('hiring_packages_active')">
+                            <a href="{{route('admin.hiring.packages.show')}}">Packages</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="@yield('rides_active')">
                     <a href="javascript:void(0);" class="menu-toggle">
                     <i class="material-icons">send</i>
