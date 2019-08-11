@@ -30,7 +30,15 @@
                         <input type="hidden" value="@if($package){{$package->id}}@endif" name="id">
                         {!! csrf_field() !!}
                         <div class="row clearfix">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <b>Package name</b>
+                                    <div class="form-line">
+                                        <input type="text" required class="form-control" name="name" value="@if($package){{$package->name}}@else{{''}}@endif" placeholder="Enter package name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <b>Duration(Hours)</b>
                                     <div class="form-line">
@@ -38,7 +46,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div class="form-group">
                                     <b>Charge amount ({{$currency_symbol}})</b>
                                     <div class="form-line">
@@ -46,9 +54,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div class="form-group">
-                                    <b>Hourly charge amount after duration ({{$currency_symbol}})</b>
+                                    <b>Hourly charge after duration ({{$currency_symbol}})</b>
                                     <div class="form-line">
                                         <input type="number" required class="form-control" name="per_hour_charge"  value="@if($package){{$package->per_hour_charge}}@else{{'0.00'}}@endif" min="0" onblur="this.value=parseFloat(this.value).toFixed(2)">
                                     </div>

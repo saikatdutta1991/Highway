@@ -15,6 +15,7 @@ class CreateDriverHiringPackagesTable extends Migration
     {
         Schema::create('driver_hiring_packages', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name', 128);
             $table->integer('hours')->default(0)->comment("Pakcge default duration time in hours");
             $table->decimal('charge', 10, 2)->default(0.00)->comment("Default amount for default hours time duration");
             $table->decimal('per_hour_charge', 10, 2)->default(0.00)->comment("Per hour charge after default time exceeded");

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HirePackage;;
 use Validator;
+use App\Repositories\Utill;
 
 
 class Hiring extends Controller
@@ -21,6 +22,7 @@ class Hiring extends Controller
     public function addHiringPackage(Request $request)
     {
         $package = HirePackage::find($request->id) ?: new HirePackage;
+        $package->name = $request->name;
         $package->hours = $request->hours;
         $package->charge = $request->charge;
         $package->per_hour_charge = $request->per_hour_charge;
@@ -34,39 +36,11 @@ class Hiring extends Controller
 
 
 
-
-    /** get hours list */
-    protected function getHoursList() 
-    {
-        $hours = [];
-        for($i = 0; $i <= 23; $i++) {
-
-            $thf = "";
-            if($i == 0) {
-                $thf = "12 AM";
-            } else if($i == 12) {
-                $thf = "12 PM";
-            } else if ($i <= 11) {
-                $h = str_pad($i, 2, '0', STR_PAD_LEFT);
-                $thf = "{$h} AM";
-            } else if ($i >= 13) {
-                $h = str_pad($i - 12, 2, '0', STR_PAD_LEFT);
-                $thf = "{$h} PM";
-            }
-
-            $hours[$i] = $thf;
-        }
-
-        return $hours;
-    }
-
-
-
     /** show view where can package be added */
     public function showHiringPackageAdd(Request $request)
     {
         $package = HirePackage::find($request->id);
-        $hours = $this->getHoursList();
+        $hours = Utill::getHoursList();
         return view("admin.hiring.add_package", [
             'hours' => $hours, "package" => $package
         ]);
@@ -78,7 +52,9 @@ class Hiring extends Controller
     /** show list of packages, where admin can add new packages */
     public function showHiringPackages()
     {
-        dd('showHiringPackages');
+        $packages = HirePackage::orderBy('created_at', 'desc')->get();
+        $hours = Utill::getHoursList();
+        return view("admin.hiring.packages", [ "packages" => $packages, "hours" => $hours ]);
     }
 
 
