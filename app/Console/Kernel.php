@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('trip-bookings:alert')->everyFiveMinutes();
         $schedule->command('driverservice:wakeup')->everyMinute();
+        $schedule->command('DriverBookingBroadcast:Start')->everyMinute();
     }
 
     /**

@@ -75,12 +75,15 @@ class Api
 	*/
 	public function createResponse($success = true, $type = "", $text = "", $data = [])
 	{
-		return [
+		$response = [
 			'success' => $success,
 			'type' => $type,
-			'text' => $text,
-			'data' => $data
+			'text' => $text
 		];
+		if(count($data)) {
+			$response["data"] = $data;
+		}
+		return $response;
 	}
 
 

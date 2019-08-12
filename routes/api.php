@@ -7,6 +7,7 @@
  */
 Route::group(['prefix' => '/v1/user'], function(){
 
+
     /** get coupon code */
     Route::get('coupons', 'Apis\User\Coupon@getCoupons');
 
@@ -37,6 +38,12 @@ Route::group(['prefix' => '/v1/user'], function(){
 
 
     Route::group(['middleware' => ['userApiAuth']], function() {
+
+        Route::group([ "prefix" => "hiring"], function(){
+            Route::get("packages", "Apis\User\Hiring@getHiringPackages");
+            Route::post('request', "Apis\User\Hiring@createRequest");
+            Route::get("bookings", "Apis\User\Hiring@getBookings");
+        });
 
         Route::group(['prefix' => 'support'], function() {
             Route::get('tickets', 'Apis\User\Support@getTickets');
