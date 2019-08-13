@@ -153,6 +153,12 @@ Route::group(['prefix' => '/v1/driver'], function(){
     //driver's authenticated routes
     Route::group(['middleware' => ['driverApiAuth']], function(){
 
+        Route::group([ "prefix" => "hiring"], function(){
+            Route::get('requests/{id?}', "Apis\Driver\Hiring@getRequests");
+            Route::post("request/action", "Apis\Driver\Hiring@actionRequest");
+            Route::get("bookings", "Apis\Driver\Hiring@getBookings");
+        });
+
         Route::get('dashboard-details', 'Apis\Driver\Dashboard@getDetails')->name('driver.dashboard.details');
         Route::get('payouts', 'Apis\Driver\Dashboard@getPayoutDetails')->name('driver.dashboard.payout.details');
         Route::get('account', 'Apis\Driver\Dashboard@getDriverAccount')->name('driver.dashboard.adcount');

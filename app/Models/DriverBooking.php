@@ -36,12 +36,34 @@ class DriverBooking extends Model
             return "Pending";
         } else if($this->status == 'waiting_for_drivers_to_accept') {
             return "Waiting for driver";
+        } else if($this->status == 'driver_assigned') {
+            return "Driver assigned";
         }
     }
 
     public function getCarTransmissionTypeAttribute()
     {
         return $this->car_transmission == "10" ? "Manual" : "Automatic";
+    }
+
+    
+    /** relation with user */
+    public function user()
+    {
+        return $this->belongsTo("App\Models\User", "user_id");
+    }
+
+
+    /** relation with driver */
+    public function driver()
+    {
+        return $this->belongsTo("App\Models\Driver", "driver_id");
+    }
+
+
+    public function package()
+    {
+        return $this->belongsTo("App\Models\HirePackage", "package_id");
     }
 
 

@@ -8,6 +8,7 @@ use App\Models\DriverBookingBroadcast as Broadcast;
 use App\Repositories\PushNotification;
 use App\Repositories\SocketIOClient;
 use App\Models\Driver;
+use Carbon\Carbon;
 
 class DriverBookingBroadcast extends Command
 {
@@ -38,12 +39,16 @@ class DriverBookingBroadcast extends Command
             $devicetokens = $this->getDevicetokens($driverids);
             
             /** send push notifications to drivers */
-            $this->firebase->setTitle("Booking Request")->setBody("You got a new driver booking. Accept before other drivers accept.")->setPriority(PushNotification::HIGH)->setDeviceTokens($devicetokens, false)->push();
+            $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
+            $time = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
+            $this->firebase->setTitle("Temp Driver request")->setBody("You got a new Temp Driver request on {$date} at {$time}. Please accept the request before anyone else does.")->setPriority(PushNotification::HIGH)->setDeviceTokens($devicetokens, false)->push();
+            
             $this->socketIOClient->sendEvent([
                 'to_ids' => implode(",", $driverids),
                 'entity_type' => 'driver', //socket will make it uppercase
                 'event_type' => 'new_driver_booking',
-                'data' => [ "booking_id" => $booking->id ]
+                'data' => [ "booking_id" => $booking->id ],
+                'store_messsage' => true
             ]);
 
             /** insert record to db */
