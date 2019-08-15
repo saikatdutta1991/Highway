@@ -157,6 +157,8 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::get('requests/{id?}', "Apis\Driver\Hiring@getRequests");
             Route::post("request/action", "Apis\Driver\Hiring@actionRequest");
             Route::get("bookings", "Apis\Driver\Hiring@getBookings");
+            Route::post("bookings/action/driver-start", "Apis\Driver\Hiring@driverStart");
+            Route::post("bookings/action/start", "Apis\Driver\Hiring@startRide");
         });
 
         Route::get('dashboard-details', 'Apis\Driver\Dashboard@getDetails')->name('driver.dashboard.details');

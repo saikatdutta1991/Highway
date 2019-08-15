@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class DriverBooking extends Model
 {
@@ -22,8 +23,8 @@ class DriverBooking extends Model
     //driver_canceled, 
     //driver_started
     //driver_reached
-    //started
-    //ended
+    //trip_started
+    //trip_ended
 
     public static function table()
     {
@@ -38,6 +39,10 @@ class DriverBooking extends Model
             return "Waiting for driver";
         } else if($this->status == 'driver_assigned') {
             return "Driver assigned";
+        } else if($this->status == 'driver_started') {
+            return "Driver on the way";
+        } else if($this->status == 'trip_started') {
+            return "Ongoing";
         }
     }
 
@@ -64,6 +69,21 @@ class DriverBooking extends Model
     public function package()
     {
         return $this->belongsTo("App\Models\HirePackage", "package_id");
+    }
+
+
+
+    /** only date */
+    public function onlyDate()
+    {
+        return Carbon::parse($this->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
+    }
+
+
+    /** only time */
+    public function onlyTime()
+    {
+        return Carbon::parse($this->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
     }
 
 

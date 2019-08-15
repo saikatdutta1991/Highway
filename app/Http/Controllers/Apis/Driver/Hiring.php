@@ -105,5 +105,57 @@ class Hiring extends Controller
 
 
 
+    /** when driver starts to go to user's location */
+    public function driverStart(Request $request)
+    {
+        $booking = DriverBooking::where("status", "driver_assigned")
+            ->where("driver_id", $request->auth_driver->id)
+            ->where("id", $request->booking_id)
+            ->first();
+
+
+        if(!$booking) {
+            return $this->api->json(true, "ERROR", "You are not allowed to start this booking.");
+        }
+
+        $booking->status = "driver_started";
+        $booking->driver_started = date("Y-m-d H:i:s");
+        $booking->save();
+
+        $date = $booking->onlyDate(); $time = $booking->onlyTime();
+        $booking->user->sendPushNotification("Driver is on they way", "Your Temp Driver is on the way to your place. Share this OTP to start trip : {$booking->start_otp}");
+
+
+        return $this->api->json(true, "STARTED", "You have set your journey to user's place.");
+    }
+
+
+
+    /** start ride, use otp code */
+    public function startRide(Request $request)
+    {
+        $booking = DriverBooking::where("status", "driver_started")
+            ->where("driver_id", $request->auth_driver->id)
+            ->where("id", $request->booking_id)
+            ->first();
+
+
+        if(!$booking || ($booking && $booking->start_otp != $request->start_otp) ) {
+            return $this->api->json(true, "ERROR", "Entered Otp is not valid.");
+        }
+        
+
+        $booking->status = "trip_started";
+        $booking->trip_started = date("Y-m-d H:i:s");
+        $booking->save();
+
+        $date = $booking->onlyDate(); $time = $booking->onlyTime();
+        $booking->user->sendPushNotification("Trip started", "Your Temp Driver trip started. Have a nice journey !");
+
+
+        return $this->api->json(true, "STARTED", "Trip started successfully.");
+    }
+
+
 
 }
