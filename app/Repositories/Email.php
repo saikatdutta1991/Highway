@@ -9,6 +9,7 @@ use App\Mail\WelcomeDriver;
 use App\Mail\DriverAccountApproved;
 use App\Mail\DriverAccountDisapproved;
 use App\Mail\CommonTemplate;
+use App\Mail\DriverBookingInvoice;
 
 class Email 
 {
@@ -17,6 +18,38 @@ class Email
 	{
 		$this->setting = $setting;
     }
+
+
+
+    /**
+     * send user driver booking request invoice
+     */
+    public function sendDriverBookingInvoiceEmail($booking)
+    {
+        //if email send is not active from admin panel return from here
+        if(!$this->isEmailSendActive()) {
+            \Log::info('EMAIL_SEND_NOT_ACTIVATED');
+            return false;
+        }
+
+        try {
+            
+            $resCode = Mail::to($booking->user->email)->queue(new \App\Mail\DriverBookingInvoice($booking));
+            \Log::info('MAIL PUSHED TO QUEUE, RESCODE :' . $resCode);
+        
+        } catch(\Exception $e) {
+            \Log::info('MAIL PUSHED TO QUEUE ERROR :');
+            \Log::info($e->getMessage());
+            \Log::info($e->getFile());
+            \Log::info($e->getLine());
+            return false;
+        }
+        
+        return true;
+    }
+
+
+
     
 
     /**

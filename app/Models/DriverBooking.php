@@ -87,4 +87,20 @@ class DriverBooking extends Model
     }
 
 
+
+    public function bookingDateTime()
+    {
+        return Carbon::parse($this->created_at, 'UTC')->setTimezone('Asia/Kolkata')->format('d.m.Y h:i A');
+    }
+
+
+    /**
+     *  relatitionship with invoices
+     */
+    public function invoice()
+    {
+        return $this->belongsTo('App\Models\RideRequestInvoice', 'invoice_id');
+    }
+
+
 }

@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 use App\Models\DriverBooking;
 use App\Models\DriverBookingBroadcast;
 use Carbon\Carbon;
+use App\Models\HirePackage;
+use App\Models\Setting;
+use App\Repositories\Utill;
+use App\Models\RideRequestInvoice as Invoice;
+use App\Models\Transaction;
+use DB;
+use App\Repositories\SocketIOClient;
+use App\Models\User;
+use App\Repositories\Email;
 
 
 class Hiring extends Controller
@@ -16,9 +25,11 @@ class Hiring extends Controller
     /**
      * init dependencies
      */
-    public function __construct(Api $api)
+    public function __construct(Api $api, SocketIOClient $socketIOClient, Email $email)
     {
         $this->api = $api;
+        $this->socketIOClient = $socketIOClient;
+        $this->email = $email;
     }
 
     /** get booking requests only that not accepted yet */
@@ -155,6 +166,126 @@ class Hiring extends Controller
 
         return $this->api->json(true, "STARTED", "Trip started successfully.");
     }
+
+
+
+
+    /**  end ride */
+    public function endRide(Request $request)
+    {
+        /** fetch booking from db, if not found return error */
+        $booking = DriverBooking::where("status", "trip_started")->where("driver_id", $request->auth_driver->id)->where("id", $request->booking_id)->first();
+        if(!$booking) {
+            return $this->api->json(true, "FAILED", "End trip failed");
+        }
+
+
+        /** update booking record */
+        $booking->status = "trip_ended";
+        $booking->trip_ended = date("Y-m-d H:i:s");
+
+        /** calculate fare */
+        $tax_percentage = Setting::get('vehicle_ride_fare_tax_percentage') ?: 0;
+        list($fare, $night_charge) = $booking->package->calculateFare($booking->trip_started, $booking->trip_ended);
+        $semi_total = $fare + $night_charge;
+
+        /** calculating tax */
+        $tax = $semi_total * ( $tax_percentage / 100 );
+        $tax = Utill::formatAmountDecimalTwoWithoutRound($tax);
+
+        /** calculaating semi total and total */
+        $total = $semi_total + $tax;
+        $total = Utill::formatAmountDecimalTwoWithoutRound($total);
+
+
+        /** creting invoice */
+        $invoice = new Invoice;
+        $invoice->invoice_reference = $invoice->generateInvoiceReference();
+        $invoice->payment_mode = $booking->payment_mode;
+        $invoice->ride_fare = $fare;
+        $invoice->night_charge = $night_charge;
+        $invoice->access_fee = 0.00;
+        $invoice->tax = $tax;
+        $invoice->total = $total;
+        $invoice->coupon_discount = 0.00;
+        $invoice->cancellation_charge = 0.00;
+        $invoice->referral_bonus_discount = 0.00;
+        $invoice->currency_type = Setting::get('currency_code');
+
+        /** if cash payment mode then payment_status paid */
+        if($booking->payment_mode == "CASH" || $total == 0) {
+            $booking->payment_status = "PAID";
+            $invoice->payment_status = "PAID";
+
+            /** create transaction because payment successfull here */
+            $transaction = new Transaction;
+            $transaction->trans_id = $invoice->invoice_reference;
+            $transaction->amount = $total;
+            $transaction->currency_type = $invoice->currency_type;
+            $transaction->gateway = "CASH";
+            $transaction->payment_method = "COD";
+            $transaction->status = Transaction::SUCCESS;
+        }
+
+
+        /** store everything to db now */
+        try {
+
+            DB::beginTransaction();
+
+            /** if paymnet mode cash, then save transaction */
+            if( isset($transaction) ) {
+                $transaction->save();
+                $invoice->transaction_table_id = $transaction->id;
+            }
+
+            /** save invoice */
+            $invoice->save();
+
+            /** adding invoice id to booking */
+            $booking->invoice_id = $invoice->id;
+            $booking->save();
+
+            DB::commit();
+
+        } catch(\Exception $e) {
+            DB::rollback();
+            return $this->api->json(false,'SEVER_ERROR', 'Internal server error try again.');
+        }
+
+
+        /** send invoice mail to user */
+        $this->email->sendDriverBookingInvoiceEmail($booking);
+
+        /** send push notification to user */
+        $user = User::find($booking->user_id);
+        $currencySymbol = Setting::get('currency_symbol');
+        $user->sendPushNotification("Your trip ended", "We hope you enjoyed our service. Please make payment of {$currencySymbol}".$invoice->total);
+        $user->sendSms("We hope you enjoyed our ride service. Total payable amount is {$currencySymbol}".$invoice->total);
+
+        /** send socket push to user */
+        $this->socketIOClient->sendEvent([
+            'to_ids' => $booking->user_id,
+            'entity_type' => 'user', //socket will make it uppercase
+            'event_type' => 'booking_status_changed',
+            'data' => [
+                'booking_id' => $booking->id,
+                'status' => $booking->status,
+                'invoice' => $invoice->toArray(),
+            ]
+        ]);
+
+
+        //ProcessDriverInvoice::dispatch('city', $rideRequest->id);
+
+        return $this->api->json(true, 'BOOKING_ENDED', 'Booking ended successfully', [
+            'booking' => $booking,
+            'invoice' => $invoice,
+        ]);
+
+
+    }
+
 
 
 
