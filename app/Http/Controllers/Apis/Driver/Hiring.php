@@ -107,7 +107,7 @@ class Hiring extends Controller
     {
         $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
             ->where("driver_id", $request->auth_driver->id)
-            ->with("user", "package")
+            ->with("user", "package", "invoice")
             ->get();
 
         return $this->api->json(true, "BOOKINGS", "Bookings", [ "bookings" => $bookings ]);

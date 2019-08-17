@@ -43,6 +43,10 @@ class DriverBooking extends Model
             return "Driver on the way";
         } else if($this->status == 'trip_started') {
             return "Ongoing";
+        } else if($this->status == 'trip_ended' && $this->payment_status == "PAID") {
+            return "Completed";
+        } else if($this->status == 'trip_ended' && $this->payment_status == "NO_PAID") {
+            return "Payment pending";
         }
     }
 
