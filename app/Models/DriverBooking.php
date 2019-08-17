@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\DriverBookingBroadcast;
 
 class DriverBooking extends Model
 {
@@ -105,6 +106,45 @@ class DriverBooking extends Model
     {
         return $this->belongsTo('App\Models\RideRequestInvoice', 'invoice_id');
     }
+
+
+
+
+    /** get driver booking action with booking */
+    public static function getDriverBookingAction($driverid)
+    {
+
+        /** check driver has any pending request */
+        $booking = DriverBooking::join(DriverBookingBroadcast::table(), DriverBookingBroadcast::table().".booking_id", "=", DriverBooking::table().".id")
+            ->where(DriverBookingBroadcast::table().".driver_id", $driverid)
+            ->where(DriverBookingBroadcast::table().".status", "pending")
+            ->select(DriverBooking::table().".*")
+            ->first();
+
+        if($booking) {
+            return [$booking, "request_to_accept"];
+        }
+
+
+        /** check if driver has any onging booking */
+        $booking = DriverBooking::with("package", "user", "invoice")->where("driver_id", $driverid)->whereIn("status", ["driver_started", "driver_reached", "trip_started"])->first();
+        if($booking) {
+            return [$booking, "ongoing_request"];
+        }
+
+        /** check if driver any booking has to give rating to user */
+        $booking = DriverBooking::where("driver_id", $driverid)->whereIn("status", ["trip_ended"])->where("user_rating", 0)->first();
+        if($booking) {
+            return [$booking, "rating"];
+        }
+
+        return [null, null];
+
+
+    }
+
+
+
 
 
 }

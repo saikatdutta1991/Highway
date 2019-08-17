@@ -23,6 +23,7 @@ use App\Models\Coupons\Coupon;
 use App\Models\Coupons\UserCoupon;
 use App\Repositories\Utill;
 use App\Jobs\ProcessDriverInvoice;
+use App\Models\DriverBooking;
 
 class RideRequest extends Controller
 {
@@ -157,23 +158,45 @@ class RideRequest extends Controller
     public function checkRideRequest(Request $request)
     {
         
+        list($booking, $booking_action) = DriverBooking::getDriverBookingAction($request->auth_driver->id);
+        list($rideRequest, $user, $invoice) = $this->getDriverOngoinRequest($request->auth_driver->id);
+
+        return $this->api->json(true, 'RIDE_REQUEST_INFORMATION', 'Request informations', [
+            "is_ride_request" => !!$rideRequest,
+            'ride_request' => $rideRequest,
+            'user' => $user,
+            'invoice' => $invoice,
+            "is_driver_booking" => !!$booking_action,
+            "driver_booking_action" => $booking_action,
+            "driver_booking" => $booking,
+        ]);
+
+
+    }
+
+
+
+
+    /** get driver ongoing request */
+    protected function getDriverOngoinRequest($driverid)
+    {
         //check any ongoing request is there or not
         $rideRequest = $this->rideRequest
-        ->where('driver_id', $request->auth_driver->id)
+        ->where('driver_id', $driverid)
         ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusListDriver())
         ->first();
 
         if(!$rideRequest) {
             //check for ride complated or trip ended but no user rated
             $rideRequest = $this->rideRequest
-            ->where('driver_id', $request->auth_driver->id)
+            ->where('driver_id', $driverid)
             ->whereIn('ride_status', [Ride::TRIP_ENDED, Ride::COMPLETED])
             ->where('user_rating', 0)
             ->first();
         }
 
         if(!$rideRequest) {
-            return $this->api->json(false, 'NO_ONGOING_REQUEST_FOUND', 'No ongoing request');
+            return [null, null, null];
         }
 
 
@@ -192,17 +215,12 @@ class RideRequest extends Controller
             $invoice = $rideRequest->invoice->toArray();
             unset($rideRequest->invoice);
         }
-        
 
         //removing user object relationship from ride request
         unset($rideRequest->user);
 
-        return $this->api->json(true, 'ONGOING_REQUEST', 'Ongoing request found', [
-            'ride_request' => $rideRequest,
-            'user' => $user,
-            'invoice' => $invoice,
-        ]);
 
+        return [$rideRequest, $user, $invoice];
 
     }
 
