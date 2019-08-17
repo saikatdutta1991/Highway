@@ -42,6 +42,7 @@ class Payout extends Controller
             'highway_ride_admin_commission' => Setting::get('highway_ride_admin_commission'),
             'driver_city_ride_cancellation_charge' => Setting::get('driver_city_ride_cancellation_charge'),
             'driver_highway_ride_cancellation_charge' => Setting::get('driver_highway_ride_cancellation_charge'),
+            'parttime_driver_booking_admin_commission' => Setting::get('parttime_driver_booking_admin_commission'),
         ]);
     }
 
@@ -59,6 +60,7 @@ class Payout extends Controller
         Setting::set('highway_ride_admin_commission', trim($request->highway_ride_admin_commission));
         Setting::set('driver_city_ride_cancellation_charge', trim($request->driver_city_ride_cancellation_charge));
         Setting::set('driver_highway_ride_cancellation_charge', trim($request->driver_highway_ride_cancellation_charge));
+        Setting::set('parttime_driver_booking_admin_commission', trim($request->parttime_driver_booking_admin_commission));
 
         return $this->api->json(true, 'SETTINGS_SAVED', 'Settings saved');
     }

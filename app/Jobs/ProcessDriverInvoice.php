@@ -17,6 +17,7 @@ use App\Repositories\Utill;
 use App\Models\Driver;
 use App\Models\Trip\Trip;
 use App\Models\Trip\TripBooking;
+use App\Models\DriverBooking;
 
 class ProcessDriverInvoice implements ShouldQueue
 {
@@ -39,8 +40,65 @@ class ProcessDriverInvoice implements ShouldQueue
             $this->processCityRide();
         } else if ($this->ridetype == 'highway') {
             $this->processHighwayRide();
+        } else if($this->ridetype == 'driverbook') {
+            $this->processDriverBooking();
         }
     }
+
+
+
+    /** handle driver booking invoice */
+    protected function processDriverBooking()
+    {
+        $booking = DriverBooking::where("id", $this->rideid)->select("id", "invoice_id", "status", "driver_id")->first();
+        $this->driverid = $booking->driver_id;
+
+        /** check if booking ended */
+        if(in_array($booking->status, ["trip_ended"])) {
+            $this->processDriverBookingInvoice($booking->invoice_id);
+        }
+
+    }
+
+
+    /** process booking invoice and deduct from driver account */
+    protected function processDriverBookingInvoice($invoiceid)
+    {
+        $invoice = RideRequestInvoice::where('id', $invoiceid)->select('id', 'tax', 'total')->first();
+        
+        $adminCommissionPercentage = Setting::get('parttime_driver_booking_admin_commission') ?: 0;
+        $adminCommission = ($invoice->total * $adminCommissionPercentage) / 100;
+        $amtDedcAcc = $invoice->tax + $adminCommission;
+        $driverEarnings = $invoice->total - $amtDedcAcc;
+        
+        $remarks = Utill::transMessage('app_messages.driver_account_ride_commission_deduct_remarks', [
+            'appname' => Setting::get('website_name'),
+            'csymbol' => Setting::get('currency_symbol'),
+            'amount' => $amtDedcAcc,
+            'ridetype' => 'Driver Booking',
+            'rideid' => $this->rideid
+        ]);
+       
+        list($account, $transaction) = DriverAccount::updateBalance($this->driverid, Utill::randomChars(16), -$amtDedcAcc, $remarks);
+
+
+
+        $driverInvoice = new DriverInvoice;
+        $driverInvoice->driver_id = $this->driverid;
+        $driverInvoice->ride_id = $this->rideid;
+        $driverInvoice->ride_type = $this->ridetype;    
+        $driverInvoice->ride_cost = $invoice->total;
+        $driverInvoice->tax = $invoice->tax;
+        $driverInvoice->admin_commission = $adminCommission;
+        $driverInvoice->driver_earnings = $driverEarnings;
+        $driverInvoice->save();
+    }
+
+
+
+
+
+
 
 
     /**

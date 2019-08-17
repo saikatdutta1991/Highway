@@ -17,6 +17,7 @@ use DB;
 use App\Repositories\SocketIOClient;
 use App\Models\User;
 use App\Repositories\Email;
+use App\Jobs\ProcessDriverInvoice;
 
 
 class Hiring extends Controller
@@ -276,7 +277,7 @@ class Hiring extends Controller
         ]);
 
 
-        //ProcessDriverInvoice::dispatch('city', $rideRequest->id);
+        ProcessDriverInvoice::dispatch('driverbook', $booking->id);
 
         return $this->api->json(true, 'BOOKING_ENDED', 'Booking ended successfully', [
             'booking' => $booking,

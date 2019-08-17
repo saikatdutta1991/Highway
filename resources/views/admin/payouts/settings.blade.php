@@ -48,7 +48,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <b>Driver City Ride Cancellation Charge ({{$currency_symbol}})</b>
                                     <div class="form-line">
@@ -56,11 +56,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     <b>Driver Highway Cancellation Charge ({{$currency_symbol}})</b>
                                     <div class="form-line">
                                         <input type="number" required class="form-control" name="driver_highway_ride_cancellation_charge" value="{{$driver_highway_ride_cancellation_charge}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <b>Parttime Driver Booking Admin Commission (%)</b>
+                                    <div class="form-line">
+                                        <input type="number" required class="form-control" name="parttime_driver_booking_admin_commission" value="{{$parttime_driver_booking_admin_commission}}">
                                     </div>
                                 </div>
                             </div>
