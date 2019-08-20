@@ -68,7 +68,7 @@ class Hiring extends Controller
 
 
         /** validate coupon code if exists */
-        if($request->coupon_code) {
+        if($request->coupon_code) { 
             $couponCheck = Coupon::isValid($request->coupon_code, $request->auth_user->id, $coupon, 3);
             if( $couponCheck !== true ) {
                 return $this->api->json(false, $couponCheck["errcode"], $couponCheck["errmessage"]);
