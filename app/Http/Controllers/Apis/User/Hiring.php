@@ -104,8 +104,14 @@ class Hiring extends Controller
     public function getBookings(Request $request)
     {
         $bookings = DriverBooking::where('user_id', $request->auth_user->id)
-            ->with(["driver", "package", "invoice"])
-            ->orderBy('datetime', 'desc')->get();
+            ->with(["driver", "package", "invoice"]);
+
+        if($request->booking_id) {
+            $bookings = $bookings->where("id", $request->booking_id);
+        }
+
+        $bookings = $bookings->orderBy('datetime', 'desc')->get();
+        
         return $this->api->json(true, "BOOKINGS", "Bookings fetched", [ "bookings" => $bookings ]);
     }
 
