@@ -84,6 +84,7 @@
                                         <select class="form-control show-tick" name="type">
                                             <option value = "city_ride" @if(isset($coupon) && $coupon->type == 'city_ride') selected @endif>City Ride Only</option>
                                             <option value = "intracity_trip" @if(isset($coupon) && $coupon->type == 'intracity_trip') selected @endif>Intracity Trip Only</option>
+                                            <option value = "driver_booking" @if(isset($coupon) && $coupon->type == 'driver_booking') selected @endif>Driver Booking Only</option>
                                             <option value = "all" @if(isset($coupon) && $coupon->type == 'all') selected @endif>All</option>
                                         </select>
                                     </div>

@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Repositories\Email;
 use App\Jobs\ProcessDriverInvoice;
 use App\Jobs\ProcessUserRating;
+use App\Models\Coupons\Coupon;
 
 
 class Hiring extends Controller
@@ -110,6 +111,7 @@ class Hiring extends Controller
         $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
             ->where("driver_id", $request->auth_driver->id)
             ->with("user", "package", "invoice")
+            ->orderBy("datetime", "desc")
             ->get();
 
         return $this->api->json(true, "BOOKINGS", "Bookings", [ "bookings" => $bookings ]);
@@ -191,6 +193,16 @@ class Hiring extends Controller
         list($fare, $night_charge) = $booking->package->calculateFare($booking->trip_started, $booking->trip_ended);
         $semi_total = $fare + $night_charge;
 
+        /** coupon discount amount calculation */
+        $coupon_discount = 0;
+        $coupon = Coupon::where("code", $booking->coupon_code)->first();
+        if($coupon) {
+            $couponData = $coupon->calculateDiscount($semi_total);
+            $semi_total = $couponData["total"];
+            $coupon_discount = $couponData["coupon_discount"];
+        }
+        /** coupon discount amount calculation end*/
+
         /** calculating tax */
         $tax = $semi_total * ( $tax_percentage / 100 );
         $tax = Utill::formatAmountDecimalTwoWithoutRound($tax);
@@ -198,7 +210,6 @@ class Hiring extends Controller
         /** calculaating semi total and total */
         $total = $semi_total + $tax;
         $total = Utill::formatAmountDecimalTwoWithoutRound($total);
-
 
         /** creting invoice */
         $invoice = new Invoice;
@@ -209,7 +220,7 @@ class Hiring extends Controller
         $invoice->access_fee = 0.00;
         $invoice->tax = $tax;
         $invoice->total = $total;
-        $invoice->coupon_discount = 0.00;
+        $invoice->coupon_discount = $coupon_discount;
         $invoice->cancellation_charge = 0.00;
         $invoice->referral_bonus_discount = 0.00;
         $invoice->currency_type = Setting::get('currency_code');

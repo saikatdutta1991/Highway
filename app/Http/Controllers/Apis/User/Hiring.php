@@ -11,6 +11,7 @@ use App\Repositories\Utill;
 use Carbon\Carbon;
 use App\Models\DriverBooking;
 use App\Jobs\ProcessDriverRating;
+use App\Models\Coupons\Coupon;
 
 
 class Hiring extends Controller
@@ -55,7 +56,8 @@ class Hiring extends Controller
                 }
             }], 
             'payment_mode' => "required|in:CASH,ONLINE",
-            "car_transmission" => "required|in:manual,automatic"
+            "car_transmission" => "required|in:manual,automatic",
+            "coupon_code" => "sometimes|required"
         ]);
 
         if($validator->fails()) {
@@ -63,6 +65,18 @@ class Hiring extends Controller
             $message = $messages[ key($messages) ][0];
             return $this->api->json(false, 'VALIDATION_ERROR', $message);
         }
+
+
+        /** validate coupon code if exists */
+        if($request->has("coupon_code")) {
+            $couponCheck = Coupon::isValid($request->coupon_code, $request->auth_user->id, $coupon, 3);
+            if( $couponCheck !== true ) {
+                return $this->api->json(false, $couponCheck["errcode"], $couponCheck["errmessage"]);
+            }
+        }
+
+
+
 
         /** create new record */
         $booking = new DriverBooking;
@@ -78,6 +92,7 @@ class Hiring extends Controller
         $booking->payment_status = DriverBooking::NOT_PAID;
         $booking->start_otp = rand(1000, 9999);
         $booking->car_transmission = $request->car_transmission == "manual" ? '10' : "01";
+        $booking->coupon_code = $request->coupon_code ?: '';
         $booking->save();
 
         return $this->api->json(true, "BOOKING_CREATED", "Your booking created successfully.");

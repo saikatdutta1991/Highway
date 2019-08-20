@@ -11,6 +11,7 @@ class Coupon extends Model
     const ALL = 'all';
     const CITY_RIDE = 'city_ride';
     const INTRACITY_TRIP = 'intracity_trip';
+    const DRIVER_BOOKING = "driver_booking";
     const FLAT = 'flat';
     const PERCENT = 'percentage';
 
@@ -125,6 +126,10 @@ class Coupon extends Model
             case 'intracity_trip':
                 return 'Intracity Trip';
                 break;
+
+            case 'driver_booking':
+                return 'Driver Booking';
+                break;
             
         }
     }
@@ -143,6 +148,10 @@ class Coupon extends Model
             
             case 2:
                 return [Coupon::ALL, Coupon::INTRACITY_TRIP];
+                break;
+
+            case 3:
+                return [Coupon::ALL, Coupon::DRIVER_BOOKING];
                 break;
 
             default:

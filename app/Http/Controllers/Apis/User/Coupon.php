@@ -22,7 +22,7 @@ class Coupon extends Controller
 
     /**
      * get all couponss
-     * coupon_type : city_ride, intracity_trip
+     * coupon_type : city_ride, intracity_trip, driver_booking
      */
     public function getCoupons(Request $request)
     {
