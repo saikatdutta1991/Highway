@@ -57,7 +57,7 @@ class Hiring extends Controller
             }], 
             'payment_mode' => "required|in:CASH,ONLINE",
             "car_transmission" => "required|in:manual,automatic",
-            "coupon_code" => "sometimes|required"
+            // "coupon_code" => "sometimes|required"
         ]);
 
         if($validator->fails()) {
