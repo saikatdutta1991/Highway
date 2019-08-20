@@ -10,6 +10,7 @@ use Validator;
 use App\Repositories\Utill;
 use Carbon\Carbon;
 use App\Models\DriverBooking;
+use App\Jobs\ProcessDriverRating;
 
 
 class Hiring extends Controller
@@ -93,6 +94,38 @@ class Hiring extends Controller
         return $this->api->json(true, "BOOKINGS", "Bookings fetched", [ "bookings" => $bookings ]);
     }
 
+
+    /** rate driver */
+    public function rateDriver(Request $request)
+    {
+        /** fetch booking from db, if not found return error */
+        $booking = DriverBooking::where("status", "trip_ended")
+            ->where("user_id", $request->auth_user->id)
+            ->where("driver_rating", 0)
+            ->where("payment_status", "PAID")
+            ->where("id", $request->booking_id)
+            ->first();
+
+        if(!$booking) {
+            return $this->api->json(true, "FAILED", "Invalid booking id to rate user.");
+        }
+
+
+        //validate rating number
+        if(!$request->has('rating') || !in_array($request->rating, DriverBooking::RATINGS)) {
+            return $this->api->json(false, 'INVALID_RATING', 'You must have give rating within '.implode(',', DriverBooking::RATINGS));
+        }
+
+        //saving ride request rating
+        $booking->driver_rating = $request->rating;
+        $booking->save();
+
+
+        /** push calcualte driver to job */
+        ProcessDriverRating::dispatch($booking->driver_id);
+
+        return $this->api->json(true, 'RATED', 'Driver rated successfully.');
+    }
 
 
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Repositories\PushNotification;
 use App\Models\RideRequest;
+use App\Models\DriverBooking;
 use App\Models\Trip\TripBooking;
 
 class User extends Model
@@ -244,9 +245,10 @@ SMS_TEXT;
     {
         list($ratingSumRides, $ridesCount) = RideRequest::getUserRideRatingDetails($id);
         list($ratingSumTrips, $tripsCount) = TripBooking::getUserRideRatingDetails($id);
+        list($ratingSumBookings, $bookingsCount) = DriverBooking::getUserRideRatingDetails($id);
 
-        $rating = ($ratingSumRides + $ratingSumTrips) / ($ridesCount + $tripsCount);
-
+        $rating = ($ratingSumRides + $ratingSumTrips + $ratingSumBookings) / ($ridesCount + $tripsCount + $bookingsCount);
+        
         return $rating;
         
     }

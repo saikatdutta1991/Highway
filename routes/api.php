@@ -43,6 +43,7 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::get("packages", "Apis\User\Hiring@getHiringPackages");
             Route::post('request', "Apis\User\Hiring@createRequest");
             Route::get("bookings", "Apis\User\Hiring@getBookings");
+            Route::post("booking/rate/driver", "Apis\User\Hiring@rateDriver");
         });
 
         Route::group(['prefix' => 'support'], function() {
@@ -160,6 +161,7 @@ Route::group(['prefix' => '/v1/driver'], function(){
             Route::post("bookings/action/driver-start", "Apis\Driver\Hiring@driverStart");
             Route::post("bookings/action/start", "Apis\Driver\Hiring@startRide");
             Route::post("bookings/action/end", "Apis\Driver\Hiring@endRide");
+            Route::post("bookings/rate/user", "Apis\Driver\Hiring@rateUser");
         });
 
         Route::get('dashboard-details', 'Apis\Driver\Dashboard@getDetails')->name('driver.dashboard.details');

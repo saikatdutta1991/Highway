@@ -28,7 +28,7 @@ class ProcessDriverRating implements ShouldQueue
     public function handle()
     {
         \Log::info('calculate and savign driver rating');
-        
+
         /** calculate driver rating */
         $rating = Driver::calculateRating($this->driverId);
         \Log::info('calculated rating : ' . $rating);

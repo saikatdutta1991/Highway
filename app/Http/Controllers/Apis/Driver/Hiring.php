@@ -18,6 +18,7 @@ use App\Repositories\SocketIOClient;
 use App\Models\User;
 use App\Repositories\Email;
 use App\Jobs\ProcessDriverInvoice;
+use App\Jobs\ProcessUserRating;
 
 
 class Hiring extends Controller
@@ -287,6 +288,68 @@ class Hiring extends Controller
 
     }
 
+
+
+
+    public function rateUser(Request $request)
+    {
+        /** fetch booking from db, if not found return error */
+        $booking = DriverBooking::where("status", "trip_ended")
+            ->where("driver_id", $request->auth_driver->id)
+            ->where("user_rating", 0)
+            ->where("id", $request->booking_id)
+            ->first();
+
+        if(!$booking) {
+            return $this->api->json(true, "FAILED", "Invalid booking id to rate user.");
+        }
+
+
+        /** validate rating number */
+        if(!$request->has('rating') || !in_array($request->rating, [1, 2, 3, 4, 5])) {
+            return $this->api->json(false, 'INVALID_RATING', 'You must have give rating within '.implode(',', [1, 2, 3, 4, 5]));
+        }
+
+        /** driver cannot give rating until user payment complete */
+        if($booking->payment_status == "NOT_PAID") {
+            return $this->api->json(false, 'USER_NOT_PAID', 'Ask user to pay before give rating');
+        }
+
+
+        /** updatig both driver and ride request table */
+        try {
+
+            \DB::beginTransaction();
+
+            /** saving ride request rating */
+            $booking->user_rating = $request->rating;
+            $booking->save();  
+
+            /** push user rating calculation to job */
+            ProcessUserRating::dispatch($booking->user_id);
+
+            \DB::commit();
+
+        } catch(\Exception $e) {
+            \DB::rollback();
+            \Log::info('USER_RATING');
+            \Log::info($e->getMessage());
+            return $this->api->unknownErrResponse();
+        }
+        
+
+        /** send user that you made the payment message */
+        $user = $booking->user;
+        $currencySymbol = Setting::get('currency_symbol');
+        $websiteName = Setting::get('website_name');
+        $invoice = $booking->invoice;
+        if($booking->payment_status == "PAID") {
+            $user->sendSms("Thank you!! We hope you enjoyed {$websiteName} service. See you next time.");
+        } 
+
+        return $this->api->json(true, 'RATED', 'User rated successfully.');
+
+    }
 
 
 

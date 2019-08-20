@@ -13,6 +13,7 @@ class DriverBooking extends Model
     
     const NOT_PAID = 'NOT_PAID';
     const PAID = 'PAID';
+    const RATINGS = [1, 2, 3, 4, 5];
 
     protected $appends = ["status_text", "car_transmission_type"];
     
@@ -133,7 +134,71 @@ class DriverBooking extends Model
         }
 
         /** check if driver any booking has to give rating to user */
-        $booking = DriverBooking::where("driver_id", $driverid)->whereIn("status", ["trip_ended"])->where("user_rating", 0)->first();
+        $booking = DriverBooking::with("package", "user", "invoice")->where("driver_id", $driverid)->whereIn("status", ["trip_ended"])->where("user_rating", 0)->first();
+        if($booking) {
+            return [$booking, "rating"];
+        }
+
+        return [null, null];
+
+
+    }
+
+
+
+    /** 
+     * calculate driver rating for ride requests
+    */
+    public static function getUserRideRatingDetails($userId)
+    {  
+        $selects = [
+            'SUM('.self::table().'.user_rating) AS user_rating_sum',
+            'COUNT('.self::table().'.id) AS ride_request_count'
+        ];
+
+        //find total number of requests and sum of total ratings
+        $record = self::where('user_id', $userId)
+            ->whereIn('user_rating', self::RATINGS)
+            ->selectRaw(implode(',', $selects))->first();
+        
+        return [(integer)$record->user_rating_sum, $record->ride_request_count];
+
+    }
+    
+
+    /** 
+     * calculate driver rating for ride requests
+    */
+    public static function getDriverRideRatingDetails($driverId)
+    {  
+        $selects = [
+            'SUM('.self::table().'.driver_rating) AS driver_rating_sum',
+            'COUNT('.self::table().'.id) AS ride_request_count'
+        ];
+
+        //find total number of requests and sum of total ratings
+        $record = self::where('driver_id', $driverId)
+            ->whereIn('driver_rating', self::RATINGS)
+            ->selectRaw(implode(',', $selects))->first();
+        
+        return [(integer)$record->driver_rating_sum, $record->ride_request_count];
+
+    }
+
+
+
+    /** get driver booking action with booking */
+    public static function getDriverBookingActionForUser($userid)
+    {
+
+        /** check if driver has any payment pending booking */
+        $booking = DriverBooking::with("package", "user", "invoice")->where("user_id", $userid)->whereIn("status", ["trip_ended"])->where("payment_status", "NOT_PAID")->first();
+        if($booking) {
+            return [$booking, "make_payment"];
+        }
+
+        /** check if driver any booking has to give rating to driver */
+        $booking = DriverBooking::with("package", "user", "invoice")->where("user_id", $userid)->whereIn("status", ["trip_ended"])->where("driver_rating", 0)->first();
         if($booking) {
             return [$booking, "rating"];
         }

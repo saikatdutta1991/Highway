@@ -22,6 +22,7 @@ use Validator;
 use App\Models\VehicleType;
 use App\Models\Coupons\Coupon;
 use App\Models\FakeLocation;
+use App\Models\DriverBooking;
 
 class RideRequest extends Controller
 {
@@ -66,24 +67,36 @@ class RideRequest extends Controller
      */
     public function checkRideRequest(Request $request)
     {
-        ///check any ongoing request is there not 
+
+        list($booking, $booking_action) = DriverBooking::getDriverBookingActionForUser($request->auth_user->id);
+        list($rideRequest, $driver, $invoice) = $this->getUserOngoingRequest($request->auth_user->id);
+        return $this->api->json(true, 'RIDE_REQUEST_INFORMATION', 'Request informations', [
+            "is_ride_request" => !!$rideRequest,
+            'ride_request' => $rideRequest,
+            'driver' => $driver,
+            'invoice' => $invoice,
+            "is_driver_booking" => !!$booking_action,
+            "driver_booking_action" => $booking_action,
+            "driver_booking" => $booking,
+        ]);
+
+    }
+
+    protected function getUserOngoingRequest($userid)
+    {
+        /** check any ongoing request is there not  */
         $rideRequest = $this->rideRequest
-        ->where('user_id', $request->auth_user->id)
-        ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
-        ->first();
-
-
-        if(!$rideRequest) {
-            //check if any ride completd by not driver rated
-            $rideRequest = $this->rideRequest
-            ->where('user_id', $request->auth_user->id)
-            ->where('ride_status', Ride::COMPLETED)
-            ->where('driver_rating', 0)
+            ->where('user_id', $userid)
+            ->whereNotIn('ride_status', $this->rideRequest->notOngoigRideRequestStatusList())
             ->first();
+
+        /** if no ride request, check if any ride completd by not driver rated */
+        if(!$rideRequest) {
+            $rideRequest = $this->rideRequest->where('user_id', $userid)->where('ride_status', Ride::COMPLETED)->where('driver_rating', 0)->first();
         }
 
         if(!$rideRequest) {
-            return $this->api->json(false, 'NO_ONGOING_REQUEST_FOUND', 'No ongoing request');
+            return [null, null, null];
         }
         
 
@@ -111,14 +124,11 @@ class RideRequest extends Controller
         //removing driver object relationship from ride request
         unset($rideRequest->driver);
 
-        return $this->api->json(true, 'ONGOING_REQUEST', 'Ongoing request found', [
-            'ride_request' => $rideRequest,
-            'driver' => $driver,
-            'invoice' => $invoice,
-        ]);
-
+        return [$rideRequest, $driver, $invoice];
 
     }
+
+
 
 
 
