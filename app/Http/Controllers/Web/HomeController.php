@@ -65,7 +65,7 @@ class HomeController extends Controller
             ])
             ->first();
         
-        return $this->api->json(true, "LOCATIONS", "locations", $booking );
+        return $this->api->json(true, "LOCATIONS", "locations", $booking ? $booking->toArray() : [] );
     }
 
 
