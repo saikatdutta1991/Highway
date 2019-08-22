@@ -44,6 +44,8 @@ Route::group(['prefix' => '/v1/user'], function(){
             Route::post('request', "Apis\User\Hiring@createRequest");
             Route::get("bookings", "Apis\User\Hiring@getBookings");
             Route::post("booking/rate/driver", "Apis\User\Hiring@rateDriver");
+            Route::post('booking/razorpay/init', 'Apis\User\Hiring@initRazorpay');
+            Route::post('booking/razorpay/pay', 'Apis\User\Hiring@makeRazorpayPayment');
         });
 
         Route::group(['prefix' => 'support'], function() {
