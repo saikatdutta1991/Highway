@@ -162,7 +162,7 @@
                     bounds.union(directionsDisplay.getDirections().routes[0].bounds);
                     map.setCenter(bounds.getCenter()); 
                     map.fitBounds(bounds);
-                    map.setZoom(map.getZoom() + 0.3)
+                    //map.setZoom(map.getZoom() + 0.3)
                 } 
         
             });
