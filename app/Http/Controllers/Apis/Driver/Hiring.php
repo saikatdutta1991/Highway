@@ -44,10 +44,11 @@ class Hiring extends Controller
             ->where(DriverBookingBroadcast::table() . ".status", "pending")
             ->select(DriverBooking::table() . ".*")
             ->orderBy(DriverBooking::table() . ".datetime", "asc")
+            ->groupBy(DriverBooking::table() . ".id")
             ->with("package");
         
-        if($request->id) {
-            $requests = $requests->where(DriverBooking::table() . ".id", $request->id);
+        if($request->booking_id) {
+            $requests = $requests->where(DriverBooking::table() . ".id", $request->booking_id);
             $requests = $requests->first();
             return $this->api->json(true, "REQUEST", "Request", [ "request" => $requests ]);
         } else {
@@ -111,10 +112,19 @@ class Hiring extends Controller
         $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
             ->where("driver_id", $request->auth_driver->id)
             ->with("user", "package", "invoice")
-            ->orderBy("datetime", "desc")
-            ->get();
+            ->orderBy("datetime", "desc");
 
-        return $this->api->json(true, "BOOKINGS", "Bookings", [ "bookings" => $bookings ]);
+
+        if($request->booking_id) {
+            $bookings = $bookings->where(DriverBooking::table() . ".id", $request->booking_id);
+            $bookings = $bookings->first();
+            return $this->api->json(true, "BOOKING", "Booking", [ "booking" => $bookings ]);
+        } else {
+            $bookings = $bookings->get();
+            return $this->api->json(true, "BOOKINGS", "Bookings", [ "bookings" => $bookings ]);
+        }
+
+        
     }
 
 

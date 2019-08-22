@@ -25,6 +25,8 @@ Route::get('referrals/{referrer_code}', 'Web\HomeController@redirectReferral')->
 Route::get('price-estimate', 'Web\HomeController@showPriceEstimate')->name('priceestimate.show');
 Route::get('price-estimate/list', 'Web\HomeController@getEstimatePrice')->name('priceesimate.list');
 Route::get('common-configs', 'Web\HomeController@getCommonConfigs')->name('common.configs');
+Route::get("hiring/bookings/{booking_id}/track", "Web\HomeController@showTrackDriverBooking")->name("hiring.bookings.track");
+Route::get("hiring/bookings/{booking_id}/track/location", "Web\HomeController@getDriverBookingTrackLocation")->name("hiring.bookings.track.location");
 
 
 

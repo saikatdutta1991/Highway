@@ -12,6 +12,8 @@ use App\Models\Setting;
 use App\Models\Trip\TripPoint;
 use App\Models\RideFare;
 use App\Repositories\Api;
+use App\Models\DriverBooking;
+use App\Models\Driver;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,49 @@ class HomeController extends Controller
     {
         $this->api = $api;
     }
+
+
+    /** show driver booking track page */
+    public function showTrackDriverBooking(Request $request)
+    {
+        $booking = DriverBooking::join(Driver::table(), Driver::table().".id", "=", DriverBooking::table().".driver_id")
+            ->where(DriverBooking::table().".id", $request->booking_id)
+            ->where(DriverBooking::table().".status", "driver_started")
+            ->select([ 
+                DriverBooking::table().".id", 
+                DriverBooking::table().".pickup_latitude", 
+                DriverBooking::table().".pickup_longitude", 
+                DriverBooking::table().".status", 
+                Driver::table().".latitude", 
+                Driver::table().".longitude", 
+            ])
+            ->first();
+        
+        return view("hiring.track_driver", compact("booking"));
+
+    }
+
+
+
+
+    /** get location of driver booking */
+    public function getDriverBookingTrackLocation(Request $request)
+    {
+        $booking = DriverBooking::join(Driver::table(), Driver::table().".id", "=", DriverBooking::table().".driver_id")
+            ->where(DriverBooking::table().".id", $request->booking_id)
+            ->where(DriverBooking::table().".status", "driver_started")
+            ->select([ 
+                DriverBooking::table().".pickup_latitude", 
+                DriverBooking::table().".pickup_longitude", 
+                DriverBooking::table().".status", 
+                Driver::table().".latitude", 
+                Driver::table().".longitude", 
+            ])
+            ->first();
+        
+        return $this->api->json(true, "LOCATIONS", "locations", $booking );
+    }
+
 
 
 

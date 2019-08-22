@@ -15,7 +15,7 @@ class DriverBooking extends Model
     const PAID = 'PAID';
     const RATINGS = [1, 2, 3, 4, 5];
 
-    protected $appends = ["status_text", "car_transmission_type"];
+    protected $appends = ["status_text", "car_transmission_type", "driver_track_url"];
     
     //status can be 
     //pending, 
@@ -32,6 +32,13 @@ class DriverBooking extends Model
     {
         return "driver_bookings";
     }
+
+
+    public function getDriverTrackUrlAttribute()
+    {
+        return route("hiring.bookings.track", [ "booking_id" => $this->id ]);
+    }
+
 
     public function getStatusTextAttribute()
     {
