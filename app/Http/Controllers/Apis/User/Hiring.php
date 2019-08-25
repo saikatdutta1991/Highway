@@ -59,6 +59,8 @@ class Hiring extends Controller
             }], 
             'payment_mode' => "required|in:CASH,ONLINE",
             "car_transmission" => "required|in:manual,automatic",
+            "car_type" => "required|in:Hatchback,Sedan,SUV,Luxury Car", 
+            "is_outstation" => "required|boolean"
             // "coupon_code" => "sometimes|required"
         ]);
 
@@ -94,6 +96,8 @@ class Hiring extends Controller
         $booking->payment_status = DriverBooking::NOT_PAID;
         $booking->start_otp = rand(1000, 9999);
         $booking->car_transmission = $request->car_transmission == "manual" ? '10' : "01";
+        $booking->car_type = $request->car_type;
+        $booking->is_outstation = $request->is_outstation;
         $booking->coupon_code = $request->coupon_code ?: '';
         $booking->save();
 

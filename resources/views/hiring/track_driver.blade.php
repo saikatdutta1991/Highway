@@ -101,19 +101,20 @@
             var start = new google.maps.LatLng(slat, slng);
             var end = new google.maps.LatLng(dlat, dlng);
                 
-            if(sourceMarker) {
-                sourceMarker.setMap(null);
+            if(!sourceMarker) {
+                //sourceMarker.setMap(null);
+                sourceMarker = new google.maps.Marker({
+                    position: start,
+                    map: map,
+                    icon : {            
+                        url: "https://image.flaticon.com/icons/svg/1541/1541400.svg",
+                        scaledSize: new google.maps.Size(50, 50), // scaled size
+                        origin: new google.maps.Point(0,0), // origin
+                        anchor: new google.maps.Point(25, 20) // anchor
+                    }
+                });
             }
-            sourceMarker = new google.maps.Marker({
-                position: start,
-                map: map,
-                icon : {            
-                    url: "https://image.flaticon.com/icons/svg/1541/1541400.svg",
-                    scaledSize: new google.maps.Size(50, 50), // scaled size
-                    origin: new google.maps.Point(0,0), // origin
-                    anchor: new google.maps.Point(25, 20) // anchor
-                }
-            });
+            
 
             if(destMarker) {
                 destMarker.setMap(null);
