@@ -6,6 +6,7 @@ use App\Repositories\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HirePackage;;
+use App\Models\DriverBooking;;
 use Validator;
 use App\Repositories\Utill;
 
@@ -16,6 +17,41 @@ class Hiring extends Controller
     {
         $this->api = $api;
     }
+
+
+    /** show bookings */
+    public function showUserBookings(Request $request)
+    {
+        /** fetch total bookings */
+        $bookingsCount = DriverBooking::getBookingsCount($request->user_id);
+        /** fetch completed bookings count */
+        $completedCount = DriverBooking::getCompletedBookingsCount($request->user_id);
+        /** fetch payment pending bookings count */
+        $paymentPendingCount = DriverBooking::getPendingPaymentBookingsCount($request->user_id);
+        /** get total earnings */
+        $earnings = DriverBooking::getTotalEarnings($request->user_id);
+        /** fetch total cash earnings */
+        $cashEarnings = DriverBooking::getTotalCashEarnings($request->user_id);
+        /** fetch total online earnings */
+        $onlineEarnings = DriverBooking::getTotalOnlineEarnings($request->user_id);
+
+        $bookings = DriverBooking::with([ "driver", "user", "package", "invoice" ])->orderBy("datetime", "desc");
+        if($request->has('user_id')) {
+            $bookings = $bookings->where("user_id", $request->user_id);
+        }
+        $bookings = $bookings->paginate(1000);
+
+        return view("admin.hiring.bookings", [
+            "bookings" => $bookings,
+            "bookingsCount" => $bookingsCount,
+            "completedCount" => $completedCount,
+            "paymentPendingCount" => $paymentPendingCount,
+            "earnings" => $earnings,
+            "cashEarnings" => $cashEarnings,
+            "onlineEarnings" => $onlineEarnings
+        ]);
+    }
+
 
 
     /** add package */

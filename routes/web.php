@@ -57,6 +57,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get("package/add", "Admin\Hiring@showHiringPackageAdd")->name("admin.hiring.package.add.show");
             Route::post("package/add", "Admin\Hiring@addHiringPackage")->name("admin.hiring.package.add");
             Route::get("packages", "Admin\Hiring@showHiringPackages")->name("admin.hiring.packages.show");
+            Route::get("bookings", "Admin\Hiring@showUserBookings")->name("admin.hiring.bookings");
         });
 
         Route::group(['prefix' => 'drivers'], function(){

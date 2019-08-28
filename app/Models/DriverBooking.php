@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Models\DriverBookingBroadcast;
+use App\Models\RideRequestInvoice as Invoice;
 
 class DriverBooking extends Model
 {
@@ -45,7 +46,7 @@ class DriverBooking extends Model
         if($this->status == 'pending') {
             return "Pending";
         } else if($this->status == 'waiting_for_drivers_to_accept') {
-            return "Waiting for driver";
+            return "Requesting";
         } else if($this->status == 'driver_assigned') {
             return "Driver assigned";
         } else if($this->status == 'driver_started') {
@@ -54,7 +55,7 @@ class DriverBooking extends Model
             return "Ongoing";
         } else if($this->status == 'trip_ended' && $this->payment_status == "PAID") {
             return "Completed";
-        } else if($this->status == 'trip_ended' && $this->payment_status == "NO_PAID") {
+        } else if($this->status == 'trip_ended' && $this->payment_status == "NOT_PAID") {
             return "Payment pending";
         }
     }
@@ -113,6 +114,17 @@ class DriverBooking extends Model
     public function invoice()
     {
         return $this->belongsTo('App\Models\RideRequestInvoice', 'invoice_id');
+    }
+
+
+    public function formatedDate($timezone)
+    {
+        return Carbon::parse($this->datetime, 'UTC')->setTimezone($timezone)->format('d/m/Y');
+    }
+
+    public function formatedTime($timezone)
+    {
+        return Carbon::parse($this->datetime, 'UTC')->setTimezone($timezone)->format('h:i a');
     }
 
 
@@ -216,7 +228,72 @@ class DriverBooking extends Model
     }
 
 
+    /** fetch bookings count */
+    public static function getBookingsCount($userid)
+    {
+        $bookingsCount = new DriverBooking;
+        if($userid) {
+            $bookings = $bookingsCount->where("user_id", $userid);
+        }
+        return $bookingsCount->count();
+    }
 
+    /** fetch completed bookings count */
+    public static function getCompletedBookingsCount($userid)
+    {
+        $bookingsCount = DriverBooking::where("status", "trip_ended")->where("payment_status", "PAID");
+        if($userid) {
+            $bookings = $bookingsCount->where("user_id", $userid);
+        }
+        return $bookingsCount->count();
+    }
 
+    /** fetch payment pending bookings count */
+    public static function getPendingPaymentBookingsCount($userid)
+    {
+        $bookingsCount = DriverBooking::where("status", "trip_ended")->where("payment_status", "NO_PAID");
+        if($userid) {
+            $bookings = $bookingsCount->where("user_id", $userid);
+        }
+        return $bookingsCount->count();
+    }
+    
+
+    /** get total earnings */
+    public static function getTotalEarnings($userid)
+    {
+        $total = DriverBooking::join(Invoice::tablename(), Invoice::tablename().".id", "=", DriverBooking::table().".invoice_id");
+        if($userid) {
+            $total = $total->where(DriverBooking::table().".user_id", $userid);
+        }
+
+        return $total->sum(Invoice::tablename().".total");    
+    }
+
+    /** get total cash earnings */
+    public static function getTotalCashEarnings($userid)
+    {
+        $total = DriverBooking::join(Invoice::tablename(), Invoice::tablename().".id", "=", DriverBooking::table().".invoice_id")
+            ->where(DriverBooking::table().".payment_mode", "CASH");
+        if($userid) {
+            $total = $total->where(DriverBooking::table().".user_id", $userid);
+        }
+
+        return $total->sum(Invoice::tablename().".total");    
+    }
+
+    /** get total online earnings */
+    public static function getTotalOnlineEarnings($userid)
+    {
+        $total = DriverBooking::join(Invoice::tablename(), Invoice::tablename().".id", "=", DriverBooking::table().".invoice_id")
+            ->where(DriverBooking::table().".payment_mode", "ONLINE");
+        if($userid) {
+            $total = $total->where(DriverBooking::table().".user_id", $userid);
+        }
+
+        return $total->sum(Invoice::tablename().".total");    
+    }
+
+    
 
 }

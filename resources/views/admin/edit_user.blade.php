@@ -177,7 +177,10 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
-                    <small>See all city rides <a href="{{route('admin.rides.city')."?user_id={$user->id}&name={$user->fullname()}"}}">Click here</a></small>
+                    See all city rides <a href="{{route('admin.rides.city')."?user_id={$user->id}&name={$user->fullname()}"}}">Click here</a>
+                </div>
+                <div class="header">
+                    See all driver bookings <a href="{{route('admin.hiring.bookings')."?user_id={$user->id}&name={$user->fullname()}"}}">Click here</a>
                 </div>
             </div>
         </div>

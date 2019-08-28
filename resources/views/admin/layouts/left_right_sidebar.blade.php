@@ -61,6 +61,9 @@
                         <li class="@yield('canceled_bookings_active')">
                             <a href="{{route('admin.show_canceled_bookings')}}">Canceled Bookings</a>
                         </li>
+                        <li class="@yield('driver_bookings_active')">
+                            <a href="{{route('admin.hiring.bookings')}}">Driver Bookings</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="@yield('users_active')">
