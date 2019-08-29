@@ -4,10 +4,16 @@
 @section('driver_bookings_active', 'active')
 @section('top-header')
 <style>
-.cell-icon {
+    .cell-icon {
     vertical-align: text-top;
     font-size: 15px;
-}
+    }
+    .icon-btn {
+    cursor : pointer;
+    }
+    .text {
+        margin-top:0 !important;
+    }
 </style>
 @endsection
 @section('content')
@@ -102,10 +108,10 @@
                         <th>USER</th>
                         <th>DRIVER</th>
                         <th>PACKAGE</th>
-                        <th>ADDRESS</th>
                         <th>DATE</th>
                         <th>STATUS</th>
                         <th>AMOUNT</th>
+                        <th>ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,8 +124,7 @@
                         @else
                         <td>N/A</td>
                         @endif
-                        <td><i class="material-icons cell-icon">local_mall</i>{{$booking->package->name}}</td>
-                        <td>{{$booking->pickup_address}}</td>
+                        <td>{{$booking->package->name}}</td>
                         <td>
                             <span style="display: inline-flex;align-items: center;"><i class="material-icons cell-icon">date_range</i> {{$booking->formatedDate($default_timezone)}}</span>
                             <br>
@@ -131,19 +136,102 @@
                         @else
                         <td>N/A</td>
                         @endif
+                        <td>
+                            <i class="material-icons icon-btn assign-driver" data-toggle="tooltip" title="Assign driver manually" data-booking-id="{{$booking->id}}">perm_identity</i>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="row pull-right">
-            {!! $bookings->render() !!}
+                {!! $bookings->render() !!}
             </div>
         </div>
     </div>
     <!-- #END# With Material Design Colors -->
 </div>
+<div class="modal" id="assign-model">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">ASSIGN DRIVER MANUALLY</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="booking_id">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                    <i class="material-icons">mail_outline</i>
+                    </span>
+                    <div class="form-line">
+                        <input type="email" class="form-control date" placeholder="Enter driver's email id want to assign and the search">
+                    </div>
+                    <span class="input-group-addon">
+                    <i class="material-icons">search</i>
+                    </span>
+                </div>
+                <div style="color: red;text-align: center;display:none">
+                    <i class="material-icons" style="vertical-align: bottom;color: red;">error_outline</i> No driver found. Try another email please.
+                </div>
+                <div >
+                <p>Driver found in our record, you can assign this driver for following booking <span name="booking_id_text"></span></p>            
+                <table class="table table-dark">
+                    <thead>
+                    <tr>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td rowspan="4">
+                            <img style="width: 100px;height: 100px;" src="http://localhost:8000/drivers/profile/photos/driver__82416747564f2abe2ed0954f1fd91716_1565196476.png" alt="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Saikat Duuta</td>
+                        <td>
+                        <div class="rating"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Eamil</th>
+                        <th>Moible</th>
+                    </tr>
+                    <tr>
+                        <td>saikatdutta1991@gmail.com</td>
+                        <td>+919093036897</td>
+                    </tr>
+                    </tbody>
+                </table>  
+                </div>
+                              
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect">CONFIRM & ASSIGN</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('bottom')
+<script src="http://auxiliary.github.io/rater/scripts/rater.js"></script>
 <script> 
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+    
+        $(".assign-driver").on("click", function(){
+            let bookingid = $(this).data("booking-id");console.log(bookingid)
+            $("#assign-model input[name=booking_id]").val(bookingid);
+            $("#assign-model span[name=booking_id_text]").text(bookingid);
+            $("#assign-model").modal("show");
+        });
+        $("#assign-model").modal("show");
+
+        $(".rating").rate().rate("setValue", 4);;
+    
+    });
 </script>
 @endsection
