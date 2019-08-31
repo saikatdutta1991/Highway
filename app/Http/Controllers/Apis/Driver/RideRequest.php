@@ -210,7 +210,7 @@ class RideRequest extends Controller
         ];
 
         //take invoice if invoice is ready
-        $invoice = []; //init invoice array empty
+        $invoice = null; //init invoice array empty
         if($rideRequest->ride_invoice_id != 0) {
             $invoice = $rideRequest->invoice->toArray();
             unset($rideRequest->invoice);
