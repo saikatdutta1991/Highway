@@ -305,7 +305,7 @@
 </div>
 @endsection
 @section('bottom')
-<script src="http://auxiliary.github.io/rater/scripts/rater.js"></script>
+<script src="https://auxiliary.github.io/rater/scripts/rater.js"></script>
 <script> 
     let searchdriverapi = "{{route('admin.driver.search')}}?querystr=";
     let assigndriverapi = "{{route('admin.hiring.booking.assign.driver')}}";
