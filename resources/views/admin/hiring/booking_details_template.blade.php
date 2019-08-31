@@ -1,22 +1,11 @@
-@extends('admin.layouts.master')
-@section('title', 'Driver Bookings')
-@section('rides_active', 'active')
-@section('driver_bookings_active', 'active')
-@section('content')
-<div class="card">
-    <div class="header">
-        <h2>
-            BOOKING DETAILS
-        </h2>
-    </div>
-    <div class="body table-responsive">
+
         <table class="table table-condensed table-hover">
             <tbody>
                 <tr>
                     <th>Name</th>  
                     <th>Email</th>    
                     <th>Mobile</th>                    
-                    <td rowspan="8"><img src="{{$booking->pickup_location_map}}" alt=""></td>
+                    <td rowspan="10" width="400px" height="400px"><img width="100%" height="100%" src="{{$booking->pickup_location_map}}" alt=""></td>
                 </tr>
                 <tr>
                     <td>{{$booking->user->fname}} {{$booking->user->fname}}</td>
@@ -86,9 +75,52 @@
                 @endif
             </tbody>
         </table>
-    </div>
-</div>
+        
+@if($booking->invoice)
+        <table class="table table-condensed table-hover">
+            <tbody>
+                <tr>
+                    <th>INVOICE DETAILS</th>  
+                </tr>
+                <tr>
+                    <th>Invoice Reference</th>
+                    <th>Payment Mode</th>  
+                    <th>Payment Status</th>  
+                </tr>
+                <tr>
+                    <td>{{$booking->invoice->invoice_reference}}</td>
+                    <td>{{$booking->invoice->payment_mode}}</td>
+                    <td>{{$booking->invoice->payment_status}}</td>
+                </tr>
+                <tr>
+                    <th>Ride Fare</th> 
+                    <th>Night Charge</th>
+                    <th>Coupon Discount</th>
+                    <th>Tax</th>
+                    <th>Total</th>                    
+                </tr>
+                <tr>
+                    <td>{{$booking->invoice->ride_fare}}</td>
+                    <td>{{$booking->invoice->night_charge}}</td>
+                    <td>-{{$booking->invoice->coupon_discount}}</td>
+                    <td>{{$booking->invoice->tax}}</td>
+                    <td>{{$booking->invoice->total}}</td>
+                </tr>
 
-@endsection
-@section('bottom')
-@endsection
+                @if($booking->invoice->transaction)
+                <tr>
+                    <th>Transaction ID</th> 
+                    <th>Payment Method</th>
+                    <th>Transaction Status</th>
+                    <th>Transaction Date</th>                  
+                </tr>
+                <tr>
+                    <td>{{$booking->invoice->transaction->trans_id}}</td>
+                    <td>{{$booking->invoice->transaction->payment_method}}</td>
+                    <td>{{$booking->invoice->transaction->status}}</td>
+                    <td>{{\Carbon\Carbon::parse($booking->invoice->transaction->created_at)->setTimezone($default_timezone)->format('d-m-y @ h:i a')}}</td>
+                </tr>
+                @endif
+
+            </tbody>
+@endif

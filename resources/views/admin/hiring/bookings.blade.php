@@ -28,10 +28,18 @@
     }
     div.details-loader {
         text-align: center;
+        height : 100vh;
     }
     div.details-loader #spinner {
+        transform: translate(-50%, -50%);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+    }
+    div.details-loader #spinner i{
         font-size: 50px;
         -webkit-animation: spin 4s infinite linear;
+        vertical-align:middle;
     }
     #booking-details-modal .modal-dialog {
         margin-left: 0;
@@ -39,6 +47,14 @@
         width: 100vw;
         height : 100vh;
     }
+
+    .close {
+        opacity : initial;
+    }
+
+    /* #booking-details-modal .modal-dialog .modal-content {
+        height : 100%;
+    } */
 </style>
 @endsection
 @section('content')
@@ -274,9 +290,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><i class="material-icons">close</i></button>
+                <button type="button" class="close"><i class="material-icons" style="color:#e74c3c" onclick="printDiv('printarea1')">print</i></button>
                 <h4 class="modal-title">BOOKING DETAILS</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="printarea1">
 
             </div>
             <div class="modal-footer">                
@@ -295,7 +313,7 @@
     $(document).ready(function(){
 
         $(".show-detail-btn").on("click", function(){
-            $("#booking-details-modal .modal-body").html(`<div class="details-loader"><i class="material-icons spin" id="spinner">loop</i></div>`);
+            $("#booking-details-modal .modal-body").html(`<div class="details-loader"><span id="spinner"><i class="material-icons" >loop</i>Loading..</span></div>`);
             $("#booking-details-modal").modal("show");
 
             let bookingid = $(this).data("booking-id");
@@ -397,5 +415,14 @@
         
     
     });
+    
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        window.location.reload();
+    }
 </script>
 @endsection

@@ -38,7 +38,7 @@ class DriverBooking extends Model
     public function getPickupLocationMapAttribute()
     {
         $key = Setting::get('google_maps_api_key');
-        return  "http://maps.google.com/maps/api/staticmap?center={$this->pickup_latitude},{$this->pickup_longitude}&size=350x350&zoom=12&maptype=roadmap&markers=icon:%20http://ijiya.com/images/marker-images/image.png|shadow:true|{$this->pickup_latitude},{$this->pickup_longitude}&sensor=false&key={$key}";
+        return  "http://maps.google.com/maps/api/staticmap?center={$this->pickup_latitude},{$this->pickup_longitude}&size=400x400&zoom=15&maptype=roadmap&markers=icon:%20http://ijiya.com/images/marker-images/image.png|shadow:true|{$this->pickup_latitude},{$this->pickup_longitude}&sensor=false&key={$key}";
     }
 
 
