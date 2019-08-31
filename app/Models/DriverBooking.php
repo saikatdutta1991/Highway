@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Models\DriverBookingBroadcast;
 use App\Models\RideRequestInvoice as Invoice;
+use App\Models\Setting;
 
 class DriverBooking extends Model
 {
@@ -16,7 +17,7 @@ class DriverBooking extends Model
     const PAID = 'PAID';
     const RATINGS = [1, 2, 3, 4, 5];
 
-    protected $appends = ["status_text", "car_transmission_type", "driver_track_url"];
+    protected $appends = ["status_text", "car_transmission_type", "driver_track_url", "trip_type", "pickup_location_map"];
     
     //status can be 
     //pending, 
@@ -34,10 +35,21 @@ class DriverBooking extends Model
         return "driver_bookings";
     }
 
+    public function getPickupLocationMapAttribute()
+    {
+        $key = Setting::get('google_maps_api_key');
+        return  "http://maps.google.com/maps/api/staticmap?center={$this->pickup_latitude},{$this->pickup_longitude}&size=350x350&zoom=12&maptype=roadmap&markers=icon:%20http://ijiya.com/images/marker-images/image.png|shadow:true|{$this->pickup_latitude},{$this->pickup_longitude}&sensor=false&key={$key}";
+    }
+
 
     public function getDriverTrackUrlAttribute()
     {
         return route("hiring.bookings.track", [ "booking_id" => $this->id ]);
+    }
+
+    public function getTripTypeAttribute()
+    {
+        return $this->is_outstation ? "Outstation" : "City";
     }
 
 
@@ -125,6 +137,16 @@ class DriverBooking extends Model
     public function formatedTime($timezone)
     {
         return Carbon::parse($this->datetime, 'UTC')->setTimezone($timezone)->format('h:i a');
+    }
+
+    public function formatedBookingDate($timezone)
+    {
+        return Carbon::parse($this->created_at, 'UTC')->setTimezone($timezone)->format('d/m/Y');
+    }
+
+    public function formatedBookingTime($timezone)
+    {
+        return Carbon::parse($this->created_at, 'UTC')->setTimezone($timezone)->format('h:i a');
     }
 
 

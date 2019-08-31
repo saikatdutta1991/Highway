@@ -58,6 +58,8 @@ Route::group(['prefix' => 'admin'], function(){
             Route::post("package/add", "Admin\Hiring@addHiringPackage")->name("admin.hiring.package.add");
             Route::get("packages", "Admin\Hiring@showHiringPackages")->name("admin.hiring.packages.show");
             Route::get("bookings", "Admin\Hiring@showUserBookings")->name("admin.hiring.bookings");
+            Route::post("bookings/assign/driver", "Admin\Hiring@assignDriver")->name("admin.hiring.booking.assign.driver");
+            Route::get("bookings/{booking_id}/details/template", "Admin\Hiring@getBookingDetails")->name("admin.hiring.booking.details.template");
         });
 
         Route::group(['prefix' => 'drivers'], function(){
@@ -117,6 +119,7 @@ Route::group(['prefix' => 'admin'], function(){
 
         /** driver routes */
         Route::group(["prefix" => 'drivers'], function(){
+            Route::get("search", "Admin\Driver@searchDriver")->name("admin.driver.search");
             Route::get('/', 'Admin\Driver@showDrivers')->name('admin-drivers');
             Route::get('/map', 'Admin\Driver@showDriversOnMap')->name('admin-drivers-map');
             Route::get('/nearby', 'Admin\Driver@getNearbyDrivers')->name('admin-nearby-drivers');

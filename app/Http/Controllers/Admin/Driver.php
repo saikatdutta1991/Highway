@@ -33,6 +33,21 @@ class Driver extends Controller
         $this->driver = $driver;
     }
 
+    /** searchDriver */
+    public function searchDriver(Request $request)
+    {
+        if(!$request->querystr) {
+            return $this->api->json(false, 'DRIVER', 'Driver fetched');
+        }
+
+        $driver = DriverModel::where("email", "like", "{$request->querystr}%")->orWhere("full_mobile_number", "like", "%{$request->querystr}")
+            ->select([ "id", "fname", "lname", "email", "full_mobile_number", "rating", "ready_to_get_hired", "automatic_transmission", "manual_transmission", "profile_photo_path", "profile_photo_name" ])
+            ->first();
+        return $this->api->json(!!$driver, 'DRIVER', 'Driver fetched', $driver);
+    }
+
+
+
 
     /** save fake locations */
     public function saveFakeLocations(Request $request)

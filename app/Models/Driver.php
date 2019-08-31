@@ -62,6 +62,8 @@ class Driver extends Model
         'aadhaar_card_photo_name'
     ];
 
+    protected $appends = ["profile_picture_url"];
+
     public function getTableName()
     {
         return $this->table;
@@ -537,6 +539,13 @@ class Driver extends Model
      * returns profile photo url
      */
     public function profilePhotoUrl()
+    {
+        return url($this->profile_photo_path.'/'.$this->profile_photo_name);
+    }
+
+
+    /** virtual attribute profile picture */
+    public function getProfilePictureUrlAttribute()
     {
         return url($this->profile_photo_path.'/'.$this->profile_photo_name);
     }
