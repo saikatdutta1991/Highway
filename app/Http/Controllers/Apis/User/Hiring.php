@@ -15,6 +15,7 @@ use App\Models\Coupons\Coupon;
 use App\Repositories\Gateway;
 use App\Models\Transaction;
 use App\Models\Setting;
+use DB;
 
 class Hiring extends Controller
 {
