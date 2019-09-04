@@ -112,6 +112,7 @@ class Hiring extends Controller
         $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
             ->where("driver_id", $request->auth_driver->id)
             ->with("user", "package", "invoice")
+            ->orderByRaw("FIELD(status , 'driver_started', 'trip_started', 'driver_assigned', 'trip_ended') ASC")
             ->orderBy("datetime", "desc");
 
 
