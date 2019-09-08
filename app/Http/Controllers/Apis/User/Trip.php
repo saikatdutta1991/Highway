@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use App\Repositories\Email;
 use App\Repositories\Gateway;
-use App\jobs\ProcessDriverRating;
+use App\Jobs\ProcessDriverRating;
 use Illuminate\Http\Request;
 use App\Models\RideRequestInvoice as Invoice;
 use App\Models\Setting;
