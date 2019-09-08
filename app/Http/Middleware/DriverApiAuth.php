@@ -28,7 +28,6 @@ class DriverApiAuth
             $request->request->add(['auth_driver' => $driver, 'access_token' => $accessToken]);
             return $next($request);
         }
-        Log::info("DriverApiAuth@handle, {$accessToken}");
         return $this->api->unAuthrizedResponse();
 
     }
