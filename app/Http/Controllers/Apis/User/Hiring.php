@@ -117,7 +117,9 @@ class Hiring extends Controller
             $bookings = $bookings->where("id", $request->booking_id);
         }
 
-        $bookings = $bookings->orderBy('datetime', 'desc')->get();
+        $bookings = $bookings->orderByRaw("FIELD(status , 'pending', 'waiting_for_drivers_to_accept', 'driver_started', 'trip_started', 'driver_assigned', 'trip_ended') ASC")
+            ->orderBy("datetime", "desc")
+            ->get();
         
         return $this->api->json(true, "BOOKINGS", "Bookings fetched", [ "bookings" => $bookings ]);
     }
