@@ -167,7 +167,7 @@ class Hiring extends Controller
 
 
         if(!$booking || ($booking && $booking->start_otp != $request->start_otp) ) {
-            return $this->api->json(true, "ERROR", "Entered Otp is not valid.");
+            return $this->api->json(false, "ERROR", "Entered Otp is not valid.");
         }
         
 
