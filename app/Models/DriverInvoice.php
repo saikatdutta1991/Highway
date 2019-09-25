@@ -21,8 +21,10 @@ class DriverInvoice extends Model
     {
         if($this->ride_type == 'city') {
             return $this->belongsTo(\App\Models\RideRequest::class, 'ride_id');
-        } else {
+        } else if($this->ride_type == 'highway')  {
             return $this->belongsTo(\App\Models\Trip\Trip::class, 'ride_id');
+        } else if($this->ride_type == 'driverbook')  {
+            return $this->belongsTo(\App\Models\DriverBooking::class, 'ride_id');
         }
     }
 

@@ -69,10 +69,14 @@ class Dashboard extends Controller
                 $from = $record->ride->source_address;
                 $to = $record->ride->destination_address;
                 $rideStatus = $record->ride->ride_status;
-            } else {
+            } else if($record->ride_type == 'highway') {
                 $from = $record->ride->from;
                 $to = $record->ride->to;
                 $rideStatus = $record->ride->status;
+            } else if($record->ride_type == 'driverbook') {
+                $from = $record->ride->pickup_address;
+                $to = "";
+                $rideStatus = $record->ride->status_text;
             }
             
             $invoices[] = [
