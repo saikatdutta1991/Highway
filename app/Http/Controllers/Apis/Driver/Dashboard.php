@@ -75,7 +75,7 @@ class Dashboard extends Controller
                 $rideStatus = $record->ride->status;
             } else if($record->ride_type == 'driverbook') {
                 $from = $record->ride->pickup_address;
-                $to = "";
+                $to = "N/A";
                 $rideStatus = $record->ride->status_text;
             }
             
