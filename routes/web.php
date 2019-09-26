@@ -42,9 +42,7 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::group(['middleware' => 'adminGuest'], function(){
         
-        Route::get('/', function(){ 
-            return redirect()->route('admin-login'); 
-        });
+        Route::get('/', 'Admin\AuthController@redirectLogin')->name("admin.redirect.login");
         Route::get('/login', 'Admin\AuthController@showLogin')->name('admin-login');
         Route::post('/login', 'Admin\AuthController@doLogin')->name('admin-login');
 

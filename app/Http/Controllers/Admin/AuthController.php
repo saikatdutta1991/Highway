@@ -25,6 +25,13 @@ class AuthController extends Controller
 
 
 
+    /** redirect to login page when /admin entered */
+    public function redirectLogin()
+    {
+        return redirect()->route('admin-login'); 
+    }
+
+
     /**
      * shows login page
      */
