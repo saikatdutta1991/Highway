@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CreateAdmin::class,
         \App\Console\Commands\ChangeAdminPassword::class,
         \App\Console\Commands\AlertTripBookings::class,
-        \App\Console\Commands\DriverServerWakeup::class
+        \App\Console\Commands\DriverServerWakeup::class,
+        \App\Console\Commands\DeletePendingDriverBookings::class,
     ];
 
     /**
@@ -30,6 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('trip-bookings:alert')->everyFiveMinutes();
         $schedule->command('driverservice:wakeup')->everyMinute();
         $schedule->command('DriverBookingBroadcast:Start')->everyMinute();
+        $schedule->command('delete:pendingdriverbookings')->daily();
     }
 
     /**
