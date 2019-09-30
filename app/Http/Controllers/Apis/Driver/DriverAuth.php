@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\VehicleType;
 use Validator;
+use App\Models\DeviceToken;
 
 
 class DriverAuth extends Controller
@@ -459,11 +460,14 @@ class DriverAuth extends Controller
      */
     public function getLogout(Request $request)
     {
-        $this->api->removeAccessToken(
-            $request->auth_driver->id, 
-            'DRIVER', 
-            $request->logout_all_devices ? false : $request->access_token
-        );
+        // remove access tokens
+        $this->api->removeAccessToken($request->auth_driver->id, 'DRIVER', false);
+
+        // remove push tokens
+        DeviceToken::where("entity_id", $request->auth_driver->id)->where("entity_type", "DRIVER")->forceDelete();
+
+        // make driver unavailable
+        Driver::where("id", $request->auth_driver->id)->update([ "is_available" => false ]);
 
         return $this->api->json(true, 'LOGOUT', "Logged out successfully");
             

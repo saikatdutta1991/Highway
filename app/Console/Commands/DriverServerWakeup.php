@@ -25,7 +25,7 @@ class DriverServerWakeup extends Command
         /** fetch driver push device tokens, those are availabe but not connected to sockets */
         $drivers = Driver::select(['id', 'email'])
         ->where('is_approved', true)
-        //->where('is_available', true)
+        ->where('is_available', true)
         ->where('is_connected_to_socket', false)
         ->with('deviceTokens:device_token,entity_id')
         ->chunk(50, function($drivers){
