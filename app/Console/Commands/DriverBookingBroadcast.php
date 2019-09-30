@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\DriverBooking;
 use App\Models\DriverBookingBroadcast as Broadcast;
+use App\Models\DeviceToken;
 use App\Repositories\PushNotification;
 use App\Repositories\SocketIOClient;
 use App\Models\Driver;
@@ -76,10 +77,7 @@ class DriverBookingBroadcast extends Command
     /** fetch driver device tokens */
     protected function getDevicetokens($driverids) 
     {
-        return Driver::select(['id'])
-        ->whereIn('id', $driverids)
-        ->get()
-        ->pluck('deviceTokens.*.device_token')->flatten()->toArray();
+        return DeviceToken::select(["device_token"])->whereIn("entity_id", $driverids)->where("entity_type", "DRIVER")->get()->pluck("device_token")->toArray();
     }
 
 

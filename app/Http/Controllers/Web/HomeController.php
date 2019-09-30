@@ -57,6 +57,7 @@ class HomeController extends Controller
             ->where(DriverBooking::table().".id", $request->booking_id)
             ->where(DriverBooking::table().".status", "driver_started")
             ->select([ 
+                DriverBooking::table().".id",
                 DriverBooking::table().".pickup_latitude", 
                 DriverBooking::table().".pickup_longitude", 
                 DriverBooking::table().".status", 
