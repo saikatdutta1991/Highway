@@ -30,15 +30,15 @@ class DriverBookingBroadcast extends Command
         $this->info("DriverBookingBroadcast --> start");
 
         /** fetch all pending bookings */
-        $bookings = DriverBooking::where('status', 'pending')->orderBy('datetime')->get(); //waiting_for_drivers_to_accept
+        $bookings = DriverBooking::whereIn('status', ['pending', 'waiting_for_drivers_to_accept'])->orderBy('datetime')->get(); //waiting_for_drivers_to_accept
         
         /** loop through all bookings */
         foreach($bookings as $booking) {
-
+            
             /** fetch nearby drivers */
             $driverids = $this->getNearbyDriverIds($booking);
             $devicetokens = $this->getDevicetokens($driverids);
-            
+           
             /** send push notifications to drivers */
             $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
             $time = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
