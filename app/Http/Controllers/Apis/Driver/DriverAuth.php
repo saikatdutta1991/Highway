@@ -15,6 +15,7 @@ use App\Models\Setting;
 use App\Models\VehicleType;
 use Validator;
 use App\Models\DeviceToken;
+use Illuminate\Support\Facades\Cache;
 
 
 class DriverAuth extends Controller
@@ -468,6 +469,8 @@ class DriverAuth extends Controller
 
         // make driver unavailable
         Driver::where("id", $request->auth_driver->id)->update([ "is_available" => false ]);
+
+        Cache::forget("DRIVER{$request->access_token}");
 
         return $this->api->json(true, 'LOGOUT', "Logged out successfully");
             

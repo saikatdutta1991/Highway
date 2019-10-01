@@ -15,6 +15,7 @@ namespace App\Repositories;
 use App\Models\AccessToken;
 use App\Models\User;
 use App\Models\Driver;
+use Illuminate\Support\Facades\Cache;
 
 class Api
 {
@@ -176,33 +177,39 @@ class Api
 
 			case 'USER':
 
-				return $this->user->join(
-					$this->accessToken->getTableName(), 
-					$this->user->getTableName().'.id', 
-					'=', 
-					$this->accessToken->getTableName().'.entity_id'
-				)
-				->where('entity_type', $eType)
-				->where('access_token', $token)
-				->select($this->user->getTableName().'.*')
-				->first();
+				return Cache::remember("{$eType}{$token}", 5, function () use($eType, $token) {
+					
+					return $this->user->join(
+						$this->accessToken->getTableName(), 
+						$this->user->getTableName().'.id', 
+						'=', 
+						$this->accessToken->getTableName().'.entity_id'
+					)
+					->where('entity_type', $eType)
+					->where('access_token', $token)
+					->select($this->user->getTableName().'.*')
+					->first();
+				});
 
 				break;
 
 			case 'DRIVER':
 
-				return $this->driver->join(
-					$this->accessToken->getTableName(), 
-					$this->driver->getTableName().'.id', 
-					'=', 
-					$this->accessToken->getTableName().'.entity_id'
-				)
-				->where('entity_type', $eType)
-				->where('access_token', $token)
-				->select($this->driver->getTableName().'.*')
-				->first();
-				break;
-		
+				return Cache::remember("{$eType}{$token}", 5, function () use($eType, $token) {
+						
+					return $this->driver->join(
+						$this->accessToken->getTableName(), 
+						$this->driver->getTableName().'.id', 
+						'=', 
+						$this->accessToken->getTableName().'.entity_id'
+					)
+					->where('entity_type', $eType)
+					->where('access_token', $token)
+					->select($this->driver->getTableName().'.*')
+					->first();
+				});
+
+				break;		
 		}
 
 		return false;
