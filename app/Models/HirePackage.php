@@ -34,7 +34,7 @@ class HirePackage extends Model
     {
         $sdatetime = Carbon::parse($sdatetime);
         $edatetime = Carbon::parse($edatetime);
-        $minutes = 345;//$sdatetime->diffInMinutes($edatetime);
+        $minutes = $sdatetime->diffInMinutes($edatetime);
 
         $ridefare = $this->charge;
         $minutes = $minutes - ($this->hours * 60) - $this->grace_time; // removing package hours and grace minutes from total minutes
