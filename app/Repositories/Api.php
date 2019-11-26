@@ -177,37 +177,31 @@ class Api
 
 			case 'USER':
 
-				return Cache::remember("{$eType}{$token}", 5, function () use($eType, $token) {
-					
-					return $this->user->join(
-						$this->accessToken->getTableName(), 
-						$this->user->getTableName().'.id', 
-						'=', 
-						$this->accessToken->getTableName().'.entity_id'
-					)
-					->where('entity_type', $eType)
-					->where('access_token', $token)
-					->select($this->user->getTableName().'.*')
-					->first();
-				});
+				return $this->user->join(
+					$this->accessToken->getTableName(), 
+					$this->user->getTableName().'.id', 
+					'=', 
+					$this->accessToken->getTableName().'.entity_id'
+				)
+				->where('entity_type', $eType)
+				->where('access_token', $token)
+				->select($this->user->getTableName().'.*')
+				->first();
 
 				break;
 
 			case 'DRIVER':
 
-				return Cache::remember("{$eType}{$token}", 5, function () use($eType, $token) {
-						
-					return $this->driver->join(
-						$this->accessToken->getTableName(), 
-						$this->driver->getTableName().'.id', 
-						'=', 
-						$this->accessToken->getTableName().'.entity_id'
-					)
-					->where('entity_type', $eType)
-					->where('access_token', $token)
-					->select($this->driver->getTableName().'.*')
-					->first();
-				});
+				return $this->driver->join(
+					$this->accessToken->getTableName(), 
+					$this->driver->getTableName().'.id', 
+					'=', 
+					$this->accessToken->getTableName().'.entity_id'
+				)
+				->where('entity_type', $eType)
+				->where('access_token', $token)
+				->select($this->driver->getTableName().'.*')
+				->first();
 
 				break;		
 		}
