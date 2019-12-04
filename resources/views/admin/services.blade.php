@@ -66,19 +66,21 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>SERVICE NAME</th>
+                                <th>Service Name</th>
+                                <th>Description</th>
                                 <th>Order Number</th>
-                                <th>CREATED</th>
-                                <th>NO. DRIVERS</th>
-                                <th>HIGHWAY</th>
-                                <th>ACTION</th>
+                                <th>Created</th>
+                                <th>No. Drivers</th>
+                                <th>Highway</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($services as $service)
-                            <tr id="service_row_{{$service['id']}}" data-service-name="{{$service['name']}}" data-service-code="{{$service['code']}}">
+                            <tr id="service_row_{{$service['id']}}" data-service-name="{{$service['name']}}" data-service-code="{{$service['code']}}" data-service-desc="{{$service['desc']}}">
                                 <td>{{$service['id']}}</td>
                                 <td>{{$service['name']}}</td>
+                                <td>{{$service['desc']}}</td>
                                 <td class="order">{{isset($service['order']) ? $service['order'] : 0}}</td>
                                 <td>{{date('d M, Y', strtotime($service['created_at']))}}</td>
                                 <td>{{$service['used_by_driver']}}</td>
@@ -123,7 +125,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <div class="form-line">
-                                    <b>Service Name</b>
+                                    <b>Service Type</b>
                                     <input type="text" class="form-control" placeholder="Ex: AUTO" name="service_code" onkeyup="this.value=this.value.toUpperCase()">
                                 </div>
                                 <div class="form-line">
@@ -131,7 +133,11 @@
                                     <input type="hidden" class="form-control" name="_token" value="{{csrf_token()}}">
                                     <input type="hidden" class="form-control" name="service_id" value="">
                                     <input type="hidden" class="form-control" name="_action" value="">
-                                    <input type="text" class="form-control" placeholder="Ex: Prime" name="service_name" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                    <input type="text" class="form-control" placeholder="Ex: Auto" name="service_name" onkeyup="this.value=this.value.charAt(0).toUpperCase() + this.value.slice(1)">
+                                </div>
+                                <div class="form-line">
+                                    <b>Description</b>
+                                    <input type="text" required class="form-control" placeholder="An auto can carry upto 3 people" name="service_description" >
                                 </div>
                             </div>
                         </div>
@@ -806,10 +812,12 @@
         hideMessageErrorResDiv()
         var service_id = $(this).data('service-id');
         var service_name = $('#service_row_'+service_id).data('service-name');
-        var service_code = $('#service_row_'+service_id).data('service-code')
+        var service_code = $('#service_row_'+service_id).data('service-code');
+        var service_desc = $('#service_row_'+service_id).data('service-desc')
         $("#service_modal input[name='service_id']").val(service_id)
         $("#service_modal input[name='service_name']").val(service_name)
         $("#service_modal input[name='service_code']").val(service_code)
+        $("#service_modal input[name='service_description']").val(service_desc)
         $("#service_modal input[name='_action']").val('update')
         $("#service_modal").modal('show');
         setTimeout(function(){

@@ -116,7 +116,7 @@ class VehicleType extends Model
     /**
      * update service type by id
      */
-    public function updateServiceType($newName, &$errorCode = '')
+    public function updateServiceType($newName, $desc, &$errorCode = '')
     {
         //check new service new name exists or not for other services
         $service = VehicleType::where('name', $newName)->where('id', '<>', $this->id)->exists();
@@ -127,6 +127,7 @@ class VehicleType extends Model
         }
 
         $this->name = ucfirst($newName);
+        $this->desc = $desc;
         $this->save();
 
         /** updating cache */
@@ -177,7 +178,7 @@ class VehicleType extends Model
     /**
      * add new vehicle type and save to settings file
      */
-    public function addType($code, $type, &$errorCode = '')
+    public function addType($code, $type, $desc, &$errorCode = '')
     {
         //$code = app('UtillRepo')->randomChars(8); //generate code for service type        
         if(VehicleType::where('code', $code)->orWhere('name', $type)->exists()) {
@@ -189,6 +190,7 @@ class VehicleType extends Model
         $vType = new $this;
         $vType->code = $code;
         $vType->name = ucfirst($type);
+        $vType->desc = $desc;
         $vType->save();
 
         /** updating cache */

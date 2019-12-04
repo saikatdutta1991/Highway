@@ -132,7 +132,7 @@ class Service extends Controller
             case 'add':
                 
                 $error = '';
-                $serviceType = $this->vehicleType->addType($request->service_code, $request->service_name, $error);
+                $serviceType = $this->vehicleType->addType($request->service_code, $request->service_name, $request->service_description, $error);
 
                 //check if service already exists
                 if($serviceType === false && $error == 'EXISTS') {
@@ -148,7 +148,7 @@ class Service extends Controller
             case 'update':
                 $error = '';
                 $serviceType = $this->vehicleType->find($request->service_id);                
-                $serviceType = $serviceType->updateServiceType($request->service_name, $error);
+                $serviceType = $serviceType->updateServiceType($request->service_name, $request->service_description, $error);
                 
                 //check if service already exists
                 if($serviceType === false && $error == 'EXISTS') {
