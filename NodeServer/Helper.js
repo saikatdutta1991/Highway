@@ -19,7 +19,7 @@ module.exports = function (dbConn) {
 
     module.updateDriverLocation = function (driverId, latitude, longitude) {
         var sql = "UPDATE drivers "
-            + "SET latitude = " + latitude + ", longitude = " + longitude + ", location_updated_at = " + moment.utc().format('YYYY-MM-DD HH:mm:ss')
+            + "SET latitude = " + latitude + ", longitude = " + longitude + ", location_updated_at = '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "'"
             + " WHERE id = " + driverId;
 
         console.log('update driver location query : ' + sql);
