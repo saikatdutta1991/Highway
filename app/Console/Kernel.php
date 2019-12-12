@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\AlertTripBookings::class,
         \App\Console\Commands\DriverServerWakeup::class,
         \App\Console\Commands\DeletePendingDriverBookings::class,
+        \App\Console\Commands\MakeDriverOffline::class,
     ];
 
     /**
@@ -32,6 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('driverservice:wakeup')->everyMinute();
         $schedule->command('DriverBookingBroadcast:Start')->everyMinute();
         $schedule->command('delete:pendingdriverbookings')->daily();
+        $schedule->command('driver:offline')->hourly();
     }
 
     /**
