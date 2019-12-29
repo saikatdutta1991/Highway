@@ -212,7 +212,7 @@ class PushNotification
 		$notification['title'] = $this->notifTitle;
 		$notification['body'] = $this->notifBody;
 		$notification['icon'] = $this->notifIcon;
-		$notification['click_action'] = $this->notifClickAction;
+		$notification['activity_name'] = $this->notifClickAction;
 
 		return array_filter($notification);
 	}
@@ -241,7 +241,7 @@ class PushNotification
 		if(!empty($notification)) {
 			$params['data']['notification'] = $notification;
 		}
-	
+
 	    $fields = json_encode($params);
 	    $headers = [
 	        'Authorization: key=' . $this->serverKey,

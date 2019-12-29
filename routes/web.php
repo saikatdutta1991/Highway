@@ -237,3 +237,10 @@ Route::group(['prefix' => 'admin'], function(){
 
 
 });
+
+
+Route::get("push-test", function(){
+    
+    $user = \App\Models\User::find(request()->user_id);
+    $user->sendPushNotification("title", "body", [], request()->activity);
+});
