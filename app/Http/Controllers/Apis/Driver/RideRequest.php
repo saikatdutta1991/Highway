@@ -129,7 +129,7 @@ class RideRequest extends Controller
         $user = $this->user->find($rideRequest->user_id);
         $acceptTitle = Utill::transMessage('app_messages.accept_ride_title');
         $acceptMessage = Utill::transMessage('app_messages.accept_ride_message', ['drivername' => $authDriver->fname, 'vehicleno' => $authDriver->vehicle_number]);
-        $user->sendPushNotification($acceptTitle, $acceptMessage);
+        $user->sendPushNotification($acceptTitle, $acceptMessage, [], "com.capefox.cabrider.ui.activities.NavigationActivity");
 
 
         /**
@@ -292,7 +292,7 @@ class RideRequest extends Controller
         }
 
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification($pushNotificationTitle, $pushNotificationText);
+        $user->sendPushNotification($pushNotificationTitle, $pushNotificationText, [], "com.capefox.cabrider.ui.activities.NavigationActivity");
 
 
         /**
@@ -385,7 +385,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification(Utill::transMessage('app_messages.driver_cancel_ride_title'), Utill::transMessage('app_messages.driver_cancel_ride_message'));
+        $user->sendPushNotification(Utill::transMessage('app_messages.driver_cancel_ride_title'), Utill::transMessage('app_messages.driver_cancel_ride_message'),  [], "com.capefox.cabrider.ui.activities.NavigationActivity");
 
 
         /**
@@ -452,7 +452,7 @@ class RideRequest extends Controller
          * send push notification to user
          */
         $user = $this->user->find($rideRequest->user_id);
-        $user->sendPushNotification(Utill::transMessage('app_messages.ride_start_title'), Utill::transMessage('app_messages.ride_start_message'));
+        $user->sendPushNotification(Utill::transMessage('app_messages.ride_start_title'), Utill::transMessage('app_messages.ride_start_message'),  [], "com.capefox.cabrider.ui.activities.NavigationActivity");
 
 
         /**
@@ -623,7 +623,7 @@ class RideRequest extends Controller
          */
         $user = $this->user->find($rideRequest->user_id);
         $currencySymbol = $this->setting->get('currency_symbol');
-        $user->sendPushNotification("Your ride ended", "We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
+        $user->sendPushNotification("Your ride ended", "We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total,  [], "com.capefox.cabrider.ui.activities.NavigationActivity");
         //$user->sendSms("We hope you enjoyed our ride service. Please make payment of {$currencySymbol}".$invoice->total);
 
         /**

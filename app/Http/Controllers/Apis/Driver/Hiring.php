@@ -92,7 +92,7 @@ class Hiring extends Controller
             /** find user and send push notification */
             $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
             $time = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
-            $booking->user->sendPushNotification("Driver Booking Confirmed", "Your Temp Driver request on {$date} at {$time} accepted by one driver.");
+            $booking->user->sendPushNotification("Driver Booking Confirmed", "Your Temp Driver request on {$date} at {$time} accepted by one driver.", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
 
         } else if($request->action == "reject") {
 
@@ -149,7 +149,7 @@ class Hiring extends Controller
         $booking->save();
 
         $date = $booking->onlyDate(); $time = $booking->onlyTime();
-        $booking->user->sendPushNotification("Driver is on they way", "Your Temp Driver is on the way to your place. Share this OTP to start trip : {$booking->start_otp}");
+        $booking->user->sendPushNotification("Driver is on they way", "Your Temp Driver is on the way to your place. Share this OTP to start trip : {$booking->start_otp}", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
 
 
         return $this->api->json(true, "STARTED", "You have set your journey to user's place.");
@@ -176,7 +176,7 @@ class Hiring extends Controller
         $booking->save();
 
         $date = $booking->onlyDate(); $time = $booking->onlyTime();
-        $booking->user->sendPushNotification("Trip started", "Your Temp Driver trip started. Have a nice journey !");
+        $booking->user->sendPushNotification("Trip started", "Your Temp Driver trip started. Have a nice journey !", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
 
 
         return $this->api->json(true, "STARTED", "Trip started successfully.");
@@ -284,7 +284,7 @@ class Hiring extends Controller
         /** send push notification to user */
         $user = User::find($booking->user_id);
         $currencySymbol = Setting::get('currency_symbol');
-        $user->sendPushNotification("Your trip ended", "We hope you enjoyed our service. Please make payment of {$currencySymbol}".$invoice->total);
+        $user->sendPushNotification("Your trip ended", "We hope you enjoyed our service. Please make payment of {$currencySymbol}".$invoice->total, [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
         $user->sendSms("We hope you enjoyed our ride service. Total payable amount is {$currencySymbol}".$invoice->total);
 
         /** send socket push to user */
