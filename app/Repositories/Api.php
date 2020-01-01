@@ -131,7 +131,7 @@ class Api
 	 */
 	public function saveAccessToken($eId, $etype)
 	{
-		//$at = $this->accessToken->where('entity_id', $eId)->where('entity_type', $etype)->first() ?: new $this->accessToken;
+		$at = $this->accessToken->where('entity_id', $eId)->where('entity_type', $etype)->first() ?: new $this->accessToken;
 		$at = new $this->accessToken;
 		$at->entity_id = $eId;
 		$at->entity_type = strtoupper($etype);
