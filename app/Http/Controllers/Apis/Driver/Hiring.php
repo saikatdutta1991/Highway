@@ -44,6 +44,7 @@ class Hiring extends Controller
             ->where(DriverBookingBroadcast::table() . ".status", "pending")
             ->select(DriverBooking::table() . ".*")
             ->orderBy(DriverBooking::table() . ".datetime", "asc")
+            ->whre(DriverBooking::table() . ".datetime", ">=", Carbon::now())
             ->groupBy(DriverBooking::table() . ".id")
             ->with("package");
         
