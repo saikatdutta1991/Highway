@@ -30,7 +30,10 @@ class DriverBookingBroadcast extends Command
         $this->info("DriverBookingBroadcast --> start");
 
         /** fetch all pending bookings */
-        $bookings = DriverBooking::whereIn('status', ['pending'])->orderBy('datetime')->get(); //waiting_for_drivers_to_accept
+        $bookings = DriverBooking::whereIn('status', ['pending'])
+            ->where("datetime", ">=", Carbon::now())
+            ->orderBy('datetime')
+            ->get(); //waiting_for_drivers_to_accept
         
         /** loop through all bookings */
         foreach($bookings as $booking) {
