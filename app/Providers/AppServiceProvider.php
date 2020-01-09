@@ -18,22 +18,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->setting = app('App\Models\Setting');
         $this->setEmailSettings();
-
-        Driver::saved(function ($driver) {
-            Api::forgetDriverTokensCache($driver->id);
-        });
-
-        Driver::updated(function ($driver) {
-            Api::forgetDriverTokensCache($driver->id);
-        });
-
-        
-
-        User::saved(function ($user) {
-            Api::forgetUserTokensCache($user->id);
-        });
-
-
     }
 
     /**

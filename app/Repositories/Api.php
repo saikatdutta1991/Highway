@@ -198,12 +198,7 @@ class Api
 
 			case 'USER':
 
-				/** if user cache exits then return user model stored */
-				if(Cache::has("user_{$token}")) {
-					return Cache::get("user_{$token}");
-				}
-
-				$user = $this->user->join(
+				return $this->user->join(
 					$this->accessToken->getTableName(), 
 					$this->user->getTableName().'.id', 
 					'=', 
@@ -214,24 +209,11 @@ class Api
 				->select($this->user->getTableName().'.*')
 				->first();
 
-				if($user) {
-					Cache::forever("user_id_{$user->id}_token", $token);
-					Cache::forever("user_{$token}", $user);
-				}
-
-				return $user;
-
 				break;
 
 			case 'DRIVER':
 
-				/** if user cache exits then return user model stored */
-				if(Cache::has("driver_{$token}")) {
-					return Cache::get("driver_{$token}");
-				}
-
-				
-				$driver = $this->driver->join(
+				return $this->driver->join(
 					$this->accessToken->getTableName(), 
 					$this->driver->getTableName().'.id', 
 					'=', 
@@ -241,13 +223,6 @@ class Api
 				->where('access_token', $token)
 				->select($this->driver->getTableName().'.*')
 				->first();
-
-				if($driver) {
-					Cache::forever("driver_id_{$driver->id}_token", $token);
-					Cache::forever("driver_{$token}", $driver);
-				}
-				
-				return $driver;
 
 				break;		
 		}
