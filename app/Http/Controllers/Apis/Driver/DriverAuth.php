@@ -470,7 +470,7 @@ class DriverAuth extends Controller
         // make driver unavailable
         Driver::where("id", $request->auth_driver->id)->update([ "is_available" => false ]);
 
-        Cache::forget("DRIVER{$request->access_token}");
+        Api::forgetDriverTokensCache($request->auth_driver->id);
 
         return $this->api->json(true, 'LOGOUT', "Logged out successfully");
             

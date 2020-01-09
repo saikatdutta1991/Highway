@@ -23,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
             Api::forgetDriverTokensCache($driver->id);
         });
 
+        Driver::updated(function ($driver) {
+            Api::forgetDriverTokensCache($driver->id);
+        });
+
+        
+
         User::saved(function ($user) {
             Api::forgetUserTokensCache($user->id);
         });
