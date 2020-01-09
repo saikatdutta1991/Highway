@@ -162,7 +162,28 @@ class Api
 
 
 
+	/** remove user cachec token and user id  */
+	public static function forgetUserTokensCache($userid)
+	{
+		if(Cache::has("user_id_{$userid}_token")) {
+			$token = Cache::get("user_id_{$userid}_token");
+			Cache::forget("user_id_{$userid}_token");
+			Cache::forget("user_{$token}");
+		}
 
+	}
+
+
+	/** remove driver cachec token and user id  */
+	public static function forgetDriverTokensCache($driverid)
+	{
+		if(Cache::has("driver_id_{$driverid}_token")) {
+			$token = Cache::get("driver_id_{$driverid}_token");
+			Cache::forget("driver_id_{$driverid}_token");
+			Cache::forget("driver_{$driverid}");
+		}
+
+	}
 
 
 
@@ -177,7 +198,12 @@ class Api
 
 			case 'USER':
 
-				return $this->user->join(
+				/** if user cache exits then return user model stored */
+				if(Cache::has("user_{$token}")) {
+					return Cache::get("user_{$token}");
+				}
+
+				$user = $this->user->join(
 					$this->accessToken->getTableName(), 
 					$this->user->getTableName().'.id', 
 					'=', 
@@ -188,11 +214,24 @@ class Api
 				->select($this->user->getTableName().'.*')
 				->first();
 
+				if($user) {
+					Cache::forever("user_id_{$user->id}_token", $token);
+					Cache::forever("user_{$token}", $user);
+				}
+
+				return $user;
+
 				break;
 
 			case 'DRIVER':
 
-				return $this->driver->join(
+				/** if user cache exits then return user model stored */
+				if(Cache::has("driver_{$token}")) {
+					return Cache::get("driver_{$token}");
+				}
+
+				
+				$driver = $this->driver->join(
 					$this->accessToken->getTableName(), 
 					$this->driver->getTableName().'.id', 
 					'=', 
@@ -202,6 +241,13 @@ class Api
 				->where('access_token', $token)
 				->select($this->driver->getTableName().'.*')
 				->first();
+
+				if($driver) {
+					Cache::forever("driver_id_{$driver->id}_token", $token);
+					Cache::forever("driver_{$token}", $driver);
+				}
+				
+				return $driver;
 
 				break;		
 		}

@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Api;
+use App\Models\Driver;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +18,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->setting = app('App\Models\Setting');
         $this->setEmailSettings();
+
+        Driver::saved(function ($driver) {
+            Api::forgetDriverTokensCache($driver->id);
+        });
+
+        User::saved(function ($user) {
+            Api::forgetUserTokensCache($user->id);
+        });
+
+
     }
 
     /**
