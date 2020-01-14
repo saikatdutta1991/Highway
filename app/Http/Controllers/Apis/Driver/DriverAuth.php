@@ -42,7 +42,7 @@ class DriverAuth extends Controller
     public function getVehicleTypes()
     {
         return $this->api->json(true, 'VEHICLE_TYPES', 'Vehicle types', [
-            'vtypes' => $this->vehicleType->allTypes()
+            'vtypes' => $this->vehicleType->allTypes()->where('is_activated', true)
         ]);
     }
 

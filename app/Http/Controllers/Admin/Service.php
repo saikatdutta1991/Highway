@@ -110,7 +110,7 @@ class Service extends Controller
     {
 
         //validation service name
-        if($request->service_name == '' || !in_array($request->_action, ["update", 'add', 'delete', 'set_order', 'enable_highway'])) {
+        if($request->service_name == '' || !in_array($request->_action, ["update", 'add', 'delete', 'set_order', 'enable_highway', 'activate'])) {
             return $this->api->json(false, 'MISSING_PARAMTERS', 'Missing parameters');
         }
 
@@ -120,6 +120,12 @@ class Service extends Controller
 
                 $this->vehicleType->enableHighway($request->service_id, $request->enable == 'true');            
                 return $this->api->json(true, 'UPDATED', 'Service highway enable status updated successfully');
+                break;
+
+            case 'activate' : 
+
+                $this->vehicleType->activate($request->service_id, $request->enable == 'true');            
+                return $this->api->json(true, 'UPDATED', $request->enable == 'true' ? "Service enabled." : "Service disabled.");
                 break;
 
 

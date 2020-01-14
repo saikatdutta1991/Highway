@@ -139,6 +139,22 @@ class VehicleType extends Model
     }
 
 
+    /**
+     * activate or deactivate service
+     */
+    public static function activate($serviceid, $isActivate)
+    {
+        $service = VehicleType::find($serviceid);
+        $service->is_activated = $isActivate;
+        $service->save();
+ 
+        /** updating cache */
+        VehicleType::updateServicesCache();
+
+        return true;
+    }
+
+
 
     /**
      * set is_highway_enabled 

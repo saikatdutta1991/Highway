@@ -271,7 +271,7 @@ class UserRegister extends Controller
     public function getVehicleTypes()
     {
         return $this->api->json(true, 'VEHICLE_TYPES', 'Vehicle types', [
-            'vtypes' => app('App\Models\VehicleType')->allTypes()
+            'vtypes' => app('App\Models\VehicleType')->allTypes()->where('is_activated', true)
         ]);
     }
 

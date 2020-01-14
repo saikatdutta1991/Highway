@@ -1,5 +1,7 @@
 <?php
 
+/** Note: don't make driver offline for now. just send push notification. */
+
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
@@ -35,8 +37,8 @@ class MakeDriverOffline extends Command
         ->chunk(50, function($drivers){
 
             /** make offline drivers */
-            $driverids = $drivers->pluck('id')->toArray();
-            Driver::whereIn("id", $driverids)->update([ "is_available" => false ]);
+            // $driverids = $drivers->pluck('id')->toArray();
+            // Driver::whereIn("id", $driverids)->update([ "is_available" => false ]);
 
 
             /** get only tokens */
@@ -44,8 +46,8 @@ class MakeDriverOffline extends Command
 
             /** send push message */
             $this->firebase
-                ->setTitle("Location update paused")
-                ->setBody("Sorry!! Your location was not updated for more than 2 hours, so we are making you offline. You can make youself online back by pressing online button.")
+                ->setTitle("GPS Paused")
+                ->setBody("Your GPS update stopped more than 2 hours. Open the app to receive requests further.")
                 ->setPriority(PushNotification::HIGH)
                 ->setDeviceTokens($deviceTokens, false)
                 ->push();

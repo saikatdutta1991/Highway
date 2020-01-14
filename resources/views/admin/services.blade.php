@@ -72,6 +72,7 @@
                                 <th>Created</th>
                                 <th>No. Drivers</th>
                                 <th>Highway</th>
+                                <th>Activated</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -87,6 +88,11 @@
                                 <td>
                                     <div class="switch enable-highway-switch">
                                         <label><input type="checkbox" data-service-id="{{$service['id']}}" @if(isset($service['is_highway_enabled']) && $service['is_highway_enabled']==1) checked @endif><span class="lever switch-col-deep-orange"></span></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="switch enable-switch">
+                                        <label><input type="checkbox" data-service-id="{{$service['id']}}" @if(isset($service['is_activated']) && $service['is_activated']==1) checked @endif><span class="lever switch-col-deep-orange"></span></label>
                                     </div>
                                 </td>
                                 <td style="">
@@ -453,6 +459,35 @@
         }).fail(function(){
             showNotification('bg-black', 'Internal server error. Contact to developer', 'top', 'right', 'animated flipInX', 'animated flipOutX');
         })
+
+    })
+
+    $(".enable-switch input[type='checkbox']").on('change', function(){
+
+        var btnELem = $(this);       
+        var enable = $(this).is(":checked") ? 'true' : 'false';
+        var service_id = btnELem.data('service-id')
+        var service_name = $('#service_row_'+service_id).data('service-name')
+
+        var data = {
+            service_id : service_id,
+            service_name : service_name,
+            enable : enable,
+            _token : csrf_token,
+            _action : 'activate'
+        };
+
+        $.post(service_add_url, data, function(response){
+            if(response.success) {
+                return;
+            } 
+            btnELem.prop('checked', !btnELem.is(":checked"))
+
+        }).fail(function(){
+            swal("Internal server error. Try later.", "", "error");
+            btnELem.prop('checked', !btnELem.is(":checked"))
+        });
+
 
     })
 
