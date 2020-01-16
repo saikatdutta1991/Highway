@@ -37,8 +37,8 @@ class MakeDriverOffline extends Command
         ->chunk(50, function($drivers){
 
             /** make offline drivers */
-            // $driverids = $drivers->pluck('id')->toArray();
-            // Driver::whereIn("id", $driverids)->update([ "is_available" => false ]);
+            $driverids = $drivers->pluck('id')->toArray();
+            Driver::whereIn("id", $driverids)->update([ "is_available" => false ]);
 
 
             /** get only tokens */
