@@ -110,11 +110,16 @@ class Hiring extends Controller
     /** get bookings */
     public function getBookings(Request $request)
     {
-        $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
+        $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept", "driver_assigned"])
             ->where("driver_id", $request->auth_driver->id)
             ->with("user", "package", "invoice")
             ->orderByRaw("FIELD(status , 'driver_started', 'trip_started', 'driver_assigned', 'trip_ended') ASC")
-            ->orderBy("datetime", "desc");
+            ->orderBy("datetime", "desc")
+            ->orWhere(function ($query) use( $request ) {
+                return $query->where( "status", "driver_assigned" )
+                ->where("driver_id", $request->auth_driver->id)
+                ->where(DriverBooking::table() . ".datetime", ">=", Carbon::now());
+            });
 
 
         if($request->booking_id) {
@@ -141,7 +146,7 @@ class Hiring extends Controller
             ->first();
 
 
-        if(!$booking || $booking->datetime > Carbon::now() ) {
+        if(!$booking || $booking->datetime < Carbon::now() ) {
             return $this->api->json(true, "ERROR", "You are not allowed to start this booking.");
         }
 
@@ -150,7 +155,7 @@ class Hiring extends Controller
         $booking->save();
 
         $date = $booking->onlyDate(); $time = $booking->onlyTime();
-        $booking->user->sendPushNotification("Driver is on they way", "Your Temp Driver is on the way to your place. Share this OTP to start trip : {$booking->start_otp}", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
+        $booking->user->sendPushNotification("Driver is on they way", "Your Driver is on the way to your place. Share this OTP to start trip : {$booking->start_otp}", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
 
 
         return $this->api->json(true, "STARTED", "You have set your journey to user's place.");
