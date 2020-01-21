@@ -110,10 +110,14 @@ class Hiring extends Controller
     /** get bookings */
     public function getBookings(Request $request)
     {
-        $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept"])
+        $bookings = DriverBooking::whereNotIn("status", ["pending", "waiting_for_drivers_to_accept", "driver_assigned"])
             ->where("driver_id", $request->auth_driver->id)
             ->with("user", "package", "invoice")
             ->orderByRaw("FIELD(status , 'driver_started', 'trip_started', 'driver_assigned', 'trip_ended') ASC")
+            ->where(function( $query ) {
+                $query->where( "status", "driver_assigned" )
+                    ->where(DriverBooking::table() . ".datetime", ">=", Carbon::now()->addMinutes(10));
+            })
             ->orderBy("datetime", "desc");
 
 
