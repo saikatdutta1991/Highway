@@ -251,7 +251,7 @@
                             @endif
                             @if($invoice->night_charge != 0)
                             <tr style="">
-                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">Cancellation Charge</td>
+                                <td bgcolor="#ffffff" style="text-align:left;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">Night Charge</td>
                                 <td bgcolor="#ffffff" style="text-align:right;font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">{{$currency_symbol}}{{$invoice->night_charge}}</td>
                             </tr>
                             @endif
