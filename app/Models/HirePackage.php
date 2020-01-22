@@ -32,12 +32,12 @@ class HirePackage extends Model
     /** calculate package cost */
     public function calculateFare($sdatetime, $edatetime, $timezone = "Asia\Kolkata")
     {
-        $sdatetime = Carbon::parse($sdatetime);
-        $edatetime = Carbon::parse($edatetime);
-        $minutes = $sdatetime->diffInMinutes($edatetime);
+        $sdatetime = Carbon::parse($sdatetime)->setTimezone( $timezone );
+        $edatetime = Carbon::parse($edatetime)->setTimezone( $timezone );
+        $minutes = $sdatetime->diffInMinutes( $edatetime );
 
         $ridefare = $this->charge;
-        $minutes = $minutes - ($this->hours * 60) - $this->grace_time; // removing package hours and grace minutes from total minutes
+        $minutes = $minutes - ( $this->hours * 60 ) - $this->grace_time; // removing package hours and grace minutes from total minutes
         $minutes = $minutes < 0 ? 0 : $minutes; // if minutes less 0 then make 0 
 
         /** calculte per hour charge */
@@ -47,7 +47,7 @@ class HirePackage extends Model
 
         /** calculate night charge */
         $nightCharge = 0;
-        if($this->shouldNightChargeApply($this->night_hours, $sdatetime) || $this->shouldNightChargeApply($this->night_hours, $edatetime)) {
+        if($this->shouldNightChargeApply($this->night_hours, $sdatetime, $timezone) || $this->shouldNightChargeApply($this->night_hours, $edatetime, $timezone)) {
             $nightCharge = $this->night_charge;
         }
 
@@ -59,7 +59,7 @@ class HirePackage extends Model
 
 
     /** should night charge apply */
-    protected function shouldNightChargeApply($hours, $datetime)
+    protected function shouldNightChargeApply($hours, $datetime, $timezone = "Asia\Kolkata")
     {
         
         list($starthour, $stophour) = explode("-", $hours);
