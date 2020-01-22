@@ -207,7 +207,7 @@ class Hiring extends Controller
 
         /** calculate fare */
         $tax_percentage = Setting::get('vehicle_ride_fare_tax_percentage') ?: 0;
-        list($fare, $night_charge) = $booking->package->calculateFare($booking->trip_started, $booking->trip_ended);
+        list($fare, $night_charge) = $booking->package->calculateFare($booking->trip_started, $booking->trip_ended, $booking->user->timezone);
         $semi_total = $fare + $night_charge;
 
         /** coupon discount amount calculation */

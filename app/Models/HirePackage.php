@@ -30,7 +30,7 @@ class HirePackage extends Model
 
 
     /** calculate package cost */
-    public function calculateFare($sdatetime, $edatetime, $timezone = "Asia\Kolkata")
+    public function calculateFare($sdatetime, $edatetime, $timezone = "Asia/Kolkata")
     {
         $sdatetime = Carbon::parse($sdatetime)->setTimezone( $timezone );
         $edatetime = Carbon::parse($edatetime)->setTimezone( $timezone );
@@ -59,7 +59,7 @@ class HirePackage extends Model
 
 
     /** should night charge apply */
-    protected function shouldNightChargeApply($hours, $datetime, $timezone = "Asia\Kolkata")
+    protected function shouldNightChargeApply($hours, $datetime, $timezone = "Asia/Kolkata")
     {
         
         list($starthour, $stophour) = explode("-", $hours);
