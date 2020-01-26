@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\DriverBooking;
 use App\Jobs\ProcessDriverRating;
 use App\Models\Coupons\Coupon;
+use App\Models\Coupons\UserCoupon;
 use App\Repositories\Gateway;
 use App\Models\Transaction;
 use App\Models\Setting;
@@ -101,6 +102,10 @@ class Hiring extends Controller
         $booking->is_outstation = $request->is_outstation;
         $booking->coupon_code = $request->coupon_code ?: '';
         $booking->save();
+
+
+        /** insert coupon used by user in db */
+        UserCoupon::markUsed( $booking->user_id, $booking->coupon_code );
 
         return $this->api->json(true, "BOOKING_CREATED", "Your booking created successfully.");
     }

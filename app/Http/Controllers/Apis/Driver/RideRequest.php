@@ -524,12 +524,7 @@ class RideRequest extends Controller
             DB::beginTransaction();
 
             /** insert coupon used by user in db */
-            if($rideRequest->applied_coupon_id) {
-                $userCoupon = new $this->userCoupon;
-                $userCoupon->user_id = $rideRequest->user_id;
-                $userCoupon->coupon_id = $rideRequest->applied_coupon_id;
-                $userCoupon->save();
-            }
+            UserCoupon::markUsed( $rideRequest->user_id, $rideRequest->applied_coupon_id );
 
 
             //updating ride request table
