@@ -26,6 +26,11 @@ class Coupon extends Controller
      */
     public function getCoupons(Request $request)
     {
+
+        \Log::info("getCoupons");
+        \Log::info($request->all());
+
+
         $type = $request->coupon_type;
 
         $coupons = $this->coupon->withCount('userCoupons')
