@@ -26,12 +26,8 @@ class Coupon extends Controller
      */
     public function getCoupons(Request $request)
     {
-
-        \Log::info("getCoupons");
-        \Log::info($request->all());
-
-
         $type = $request->coupon_type;
+        $userid = $request->user_id;
 
         $coupons = $this->coupon->withCount('userCoupons')
         ->where('starts_at', '<=', date('Y-m-d H:i:s'))
@@ -42,6 +38,17 @@ class Coupon extends Controller
         })
         ->orderBy('created_at', 'desc')
         ->get();
+
+
+        /** filter only valid coupons if user id exists */
+        if( $userid ) {
+            
+            $coupons = $coupons->filter(function( $coupon ) use( $userid ) { 
+                return CouponModel::isValid( $coupon->code, $userid, $coupon, CouponModel::getCouponTypeReverse( $coupon->type ) ) === true;
+            });
+
+        }
+
 
         return $this->api->json(true, 'COUPONS', 'Coupons fetched', $coupons);
     }

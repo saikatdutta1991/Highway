@@ -160,6 +160,18 @@ class Coupon extends Model
         }
     }
 
+    
+    public static function getCouponTypeReverse( $type ) 
+    {
+        if( in_array( $type, [ Coupon::ALL, Coupon::CITY_RIDE ] ) ) {
+            return 1;
+        } else if( in_array( $type, [ Coupon::ALL, Coupon::INTRACITY_TRIP ] ) ) {
+            return 2;
+        } else if( in_array($type, [ Coupon::ALL, Coupon::DRIVER_BOOKING ] ) ) {
+            return 3;
+        }
+    }
+
 
 
 
