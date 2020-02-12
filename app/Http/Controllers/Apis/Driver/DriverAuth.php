@@ -16,6 +16,7 @@ use App\Models\VehicleType;
 use Validator;
 use App\Models\DeviceToken;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 
 
 class DriverAuth extends Controller
@@ -56,10 +57,16 @@ class DriverAuth extends Controller
         $validator = Validator::make($request->all(), [
             'fname' => 'required|max:128',
             'lname' => 'required|max:128',
-            'email' => 'required|email|max:128',
+            'email' => 'required|email|max:128|unique:drivers,email',
             'password' => 'required|min:6|max:100',
             'country_code' => 'required|regex:/^[+].+$/', 
-            'mobile_number' => 'required|numeric',
+            'mobile_number' => [ 
+                "required_with:country_code", 
+                "numeric",
+                Rule::unique('drivers')->where( function ($query) use( $request ) {
+                    return $query->where( 'country_code', $request->country_code );
+                })
+            ],
             'photo' => 'required|image|mimes:jpg,jpeg,png',
             'vehicle_type' => 'required_if:ready_to_get_hired,0|in:'.implode(',', $this->vehicleType->allCodes()),
             'vehicle_number' => 'required_if:ready_to_get_hired,0',
@@ -100,16 +107,16 @@ class DriverAuth extends Controller
         
 
         //check mobile number already exists
-        $full_mobile_number = $request->country_code.$request->mobile_number;
-        if($this->driver->where('full_mobile_number', $full_mobile_number)->exists()) {
-            return $this->api->json(false, 'MOBILE_NUMBER_DUPLICATE', 'Mobile number is already registered. Try another mobile number.');
-        }
+        // $full_mobile_number = $request->country_code.$request->mobile_number;
+        // if($this->driver->where('full_mobile_number', $full_mobile_number)->exists()) {
+        //     return $this->api->json(false, 'MOBILE_NUMBER_DUPLICATE', 'Mobile number is already registered. Try another mobile number.');
+        // }
 
 
         //check email number already exists
-        if($this->driver->where('email', $request->email)->exists()) {
-            return $this->api->json(false, 'EMAIL_DUPLICATE', 'Email is already registered. Try another email address.');
-        }
+        // if($this->driver->where('email', $request->email)->exists()) {
+        //     return $this->api->json(false, 'EMAIL_DUPLICATE', 'Email is already registered. Try another email address.');
+        // }
 
 
         $driver = new $this->driver;
