@@ -49,9 +49,13 @@ class Trip extends Controller
      */
     public function getAllLocations()
     {
-        $locations = $this->adminTripLocation->orderBy('name', 'asc')->get()->toArray();
+        $locations = $this->adminTripLocation->orderBy('name', 'asc')->get();
+
         return $this->api->json(true, 'LOCATIONS', 'Locations fetched', [
-            'locations' => $locations
+            'locations' => [
+                "sources" => $locations->where("is_pickup", true),
+                "destinations" => $locations->where("is_pickup", false)
+            ]
         ]);
     }
 

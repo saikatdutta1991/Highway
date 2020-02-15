@@ -98,17 +98,28 @@
                 </div>
                 <div class="body">
                     <div class="row clearfix">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <b>Location Name</b>
                             <div class="input-group">
                                 <div class="form-line">
                                     <input required name="location_id" type="hidden" value="{{$location->id}}">
                                     <input required name="location_name" type="text" class="form-control" placeholder="" value="{{$location->name}}">
                                 </div>
-                                <span class="input-group-addon">
-                                <button type="submit" id="update-location-btn" class="btn bg-pink waves-effect">SAVE</button>
-                                </span>
                             </div>
+                        </div>
+                        <div class="col-md-3">
+                            <b>Location Type</b>
+                            <div class="input-group">
+                                <div class="form-line">
+                                    <select class="form-control show-tick" name="location_type" id="location_type">
+                                        <option value="source" @if($location->is_pickup) selected @endif>Source</option>
+                                        <option value="destination" @if(!$location->is_pickup) selected @endif>Destination</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" id="update-location-btn" class="btn bg-pink waves-effect">SAVE</button>
                         </div>
                     </div>
                     <form id="add-new-point-form" action="{{route('admin.add-locatin-points', ['location_id' => $location->id])}}" method="POST">
@@ -475,7 +486,8 @@
             var data = {
                 _token : csrf_token,
                 id : $('input[name="location_id"]').val(),
-                name : $('input[name="location_name"]').val()
+                name : $('input[name="location_name"]').val(),
+                location_type : $("select#location_type :selected").val()
             }
             console.log(data)
 

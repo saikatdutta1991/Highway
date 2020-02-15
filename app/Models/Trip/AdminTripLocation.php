@@ -9,9 +9,17 @@ class AdminTripLocation extends Model
 
     protected $table = 'admin_trip_locations';
 
+    const SOURCE = "source";
+    const DESTINATION = "destination";
+
     public function getTableName()
     {
         return $this->table;
+    }
+
+    public function getLocationType() 
+    {
+        return $this->is_pickup ? ucfirst( self::SOURCE ) : ucfirst( self::DESTINATION );
     }
 
 

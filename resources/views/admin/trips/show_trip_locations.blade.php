@@ -43,6 +43,7 @@
                             <tr>
                                 <th>#ID</th>
                                 <th>Name</th>
+                                <th>Type</th>
                                 <th>Points Count</th>
                                 <th>Created</th>
                             </tr>
@@ -52,6 +53,7 @@
                             <tr>
                             <td>{{$location->id}}</td>
                             <td>{{$location->name}}</td>
+                            <td>{{$location->getLocationType()}}</td>
                             <td>{{$location->points->count()}}</td>
                             <td>{{$location->createdOn($default_timezone)}}</td>
                             <td>

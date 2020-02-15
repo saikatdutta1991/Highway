@@ -136,8 +136,8 @@ class Trip extends Controller
      */
     public function updateLocation(Request $request)
     {
-        if($this->location->where('name', $request->name)->where('id', '<>', $request->id)->exists()) {
-            return $this->api->json(false, 'LOCATION_EXISTS', 'Location exists with same name');
+        if($this->location->where('name', $request->name)->where('id', '<>', $request->id)->where("is_pickup", $request->location_type === AdminTripLocation::SOURCE)->exists()) {
+            return $this->api->json(false, 'LOCATION_EXISTS', 'Location exists with same name and same type');
         }
 
         if($request->name == '') {
@@ -147,6 +147,7 @@ class Trip extends Controller
 
         $location = $this->location->find($request->id);
         $location->name = ucfirst($request->name);
+        $location->is_pickup = $request->location_type === AdminTripLocation::SOURCE ? 1 : 0; // location type can be source or destination
         $location->save();
 
         return $this->api->json(true, 'LOCATION_UPDATED', 'Location updated', [
