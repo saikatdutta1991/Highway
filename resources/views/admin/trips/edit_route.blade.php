@@ -36,7 +36,7 @@
                                     </span>
                                     <div class="form-line">
                                         <select class="form-control show-tick" name="from_location">
-                                            @foreach($locations as $location)
+                                            @foreach($locations->where("is_pickup", true) as $location)
                                             <option @if($route->from_location == $location->id) selected @endif value="{{$location->id}}">{{$location->name}}</option>
                                             @endforeach
                                         </select>
@@ -51,7 +51,7 @@
                                     </span>
                                     <div class="form-line">
                                         <select class="form-control show-tick" name="to_location">
-                                            @foreach($locations as $location)
+                                            @foreach($locations->where("is_pickup", false) as $location)
                                             <option @if($route->to_location == $location->id) selected @endif value="{{$location->id}}">{{$location->name}}</option>
                                             @endforeach
                                         </select>
