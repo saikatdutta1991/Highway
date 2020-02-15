@@ -17,6 +17,7 @@ use App\Models\Trip\TripBooking;
 use App\Models\Trip\TripPoint;
 use App\Models\Coupons\Coupon;
 use App\Models\Coupons\UserCoupon;
+use App\Models\Trip\AdminTripLocation as Location;
 
 
 class Trip extends Controller
@@ -48,10 +49,11 @@ class Trip extends Controller
      */
     public function getSourceDestList()
     {
+        $locations = Location::orderBy('name', 'asc')->get();
 
-        $sourceList = $this->trip->select('from')->groupBy('from')->get()->pluck('from')->toArray();
-        $destList = $this->trip->select('to')->groupBy('to')->get()->pluck('to')->toArray();
-        
+        $sourceList = $locations->where("is_pickup", true)->pluck("name");
+        $destList = $locations->where("is_pickup", false)->pluck("name");
+
         return $this->api->json(true, 'SOURCE_DEST_LIST', 'Source and destination list', [
             'source' => $sourceList,
             'dest' => $destList
