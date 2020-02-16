@@ -53,8 +53,8 @@ class Trip extends Controller
 
         return $this->api->json(true, 'LOCATIONS', 'Locations fetched', [
             'locations' => [
-                "sources" => $locations->where("is_pickup", true),
-                "destinations" => $locations->where("is_pickup", false)
+                "sources" => $locations->where("is_pickup", true)->values(),
+                "destinations" => $locations->where("is_pickup", false)->values()
             ]
         ]);
     }
