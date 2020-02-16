@@ -72,6 +72,10 @@ class Trip extends Controller
             ->where('is_ac_enabled', true)
             ->first();
 
+        
+        if( !$routeRecord ) {
+            return $this->api->json( false, "NO_ROUTE_FOUND", "No route found, contact to admin." );
+        }
 
         $routeDetails = [];
         $routeDetails['source'] = $routeRecord->from->name;
