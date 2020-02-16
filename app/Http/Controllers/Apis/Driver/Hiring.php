@@ -72,6 +72,7 @@ class Hiring extends Controller
             ->where(DriverBooking::table() . ".id", $request->request_id)
             ->select(DriverBooking::table() . ".*")
             ->with('user')
+            ->lockForUpdate()
             ->first();
         
         if(!$booking) {
@@ -81,19 +82,29 @@ class Hiring extends Controller
 
         if($request->action == "accept") {
 
-            // update booking record
-            $booking->driver_id = $request->auth_driver->id;
-            $booking->status = "driver_assigned";
-            $booking->save();
-            
-            // update booking broadcaasts
-            DriverBookingBroadcast::where("booking_id", $request->request_id)->update(["status" => "rejected"]);
-            DriverBookingBroadcast::where("booking_id", $request->request_id)->where("driver_id", $request->auth_driver->id)->update(["status" => "accepted"]);
+            DB::beginTransaction();
+            try {
 
-            /** find user and send push notification */
-            $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
-            $time = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
-            $booking->user->sendPushNotification("Driver Booking Confirmed", "Your Temp Driver request on {$date} at {$time} accepted by one driver.", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
+                // update booking record
+                $booking->driver_id = $request->auth_driver->id;
+                $booking->status = "driver_assigned";
+                $booking->save();
+
+                // update booking broadcaasts
+                DriverBookingBroadcast::where("booking_id", $request->request_id)->update(["status" => "rejected"]);
+                DriverBookingBroadcast::where("booking_id", $request->request_id)->where("driver_id", $request->auth_driver->id)->update(["status" => "accepted"]);
+
+                DB::commit();
+
+                /** find user and send push notification */
+                $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
+                $time = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('h:i A');
+                $booking->user->sendPushNotification("Driver Booking Confirmed", "Your Temp Driver request on {$date} at {$time} accepted by one driver.", [], "com.capefox.cabrider.ui.activities.hireDriver.DriverPackagesActivity");
+
+            } catch(\Exception $e) {
+                DB::rollback();
+                return $this->api->unknownErrResponse();
+            }
 
         } else if($request->action == "reject") {
 
