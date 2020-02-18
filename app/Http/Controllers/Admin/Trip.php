@@ -109,17 +109,20 @@ class Trip extends Controller
      */
     public function createLocation(Request $request)
     {
-        if($this->location->where('name', $request->name)->exists()) {
-            return $this->api->json(false, 'LOCATION_EXISTS', 'Location exists with same name');
-        }
-
         if($request->name == '') {
             return $this->api->json(false, 'LOCATION_NAME_EMPTY', 'Enter location name');
         }
 
+        $location = $this->location->where( "name", $request->name )->first();
+
+        $isSource = true;
+        if( $location ) {
+            $isSource = !$location->is_pickup; // location type can be source or destination
+        }
 
         $location = new $this->location;
         $location->name = ucfirst($request->name);
+        $location->is_pickup = $isSource;
         $location->save();
 
         return $this->api->json(true, 'LOCATION_CREATED', 'Location created', [
