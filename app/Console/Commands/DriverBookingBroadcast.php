@@ -30,17 +30,30 @@ class DriverBookingBroadcast extends Command
         $this->info("DriverBookingBroadcast --> start");
 
         /** fetch all pending bookings */
-        $bookings = DriverBooking::whereIn('status', ['pending'])
+        $bookings = DriverBooking::whereIn('status', ['pending', 'waiting_for_drivers_to_accept'])
             ->where("datetime", ">=", Carbon::now())
             ->orderBy('datetime')
-            ->get(); //waiting_for_drivers_to_accept
+            ->get(); 
         
         /** loop through all bookings */
         foreach($bookings as $booking) {
             
             /** fetch nearby drivers */
             $driverids = $this->getNearbyDriverIds($booking);
-            $devicetokens = $this->getDevicetokens($driverids);
+
+            /** get driver ids to whom request already broadcasted */
+            $existingBroadcastedDriverIds = Broadcast::where('booking_id', $booking->id)->get()->pluck('driver_id')->toArray();
+
+            /** filter which drivers to send request now */
+            $updateDriverIds = [];
+            foreach($driverids as $id) {
+                if(!in_array($id, $existingBroadcastedDriverIds)) {
+                    $updateDriverIds[] = $id;
+                }
+            }
+
+
+            $devicetokens = $this->getDevicetokens($updateDriverIds);
            
             /** send push notifications to drivers */
             $date = Carbon::parse($booking->datetime, 'UTC')->setTimezone('Asia/Kolkata')->format('d/m/Y');
@@ -48,7 +61,7 @@ class DriverBookingBroadcast extends Command
             $this->firebase->setTitle("Temp Driver request")->setBody("You got a new Temp Driver request on {$date} at {$time}. Please accept the request before anyone else does.")->setPriority(PushNotification::HIGH)->setDeviceTokens($devicetokens, false)->push();
             
             $this->socketIOClient->sendEvent([
-                'to_ids' => implode(",", $driverids),
+                'to_ids' => implode(",", $updateDriverIds),
                 'entity_type' => 'driver', //socket will make it uppercase
                 'event_type' => 'new_driver_booking',
                 'data' => [ "booking_id" => $booking->id ],
@@ -57,7 +70,7 @@ class DriverBookingBroadcast extends Command
 
             /** insert record to db */
             $insertData = [];
-            foreach($driverids as $id) {
+            foreach($updateDriverIds as $id) {
                 $insertData[] = [
                     "booking_id" => $booking->id,
                     "driver_id" => $id,
