@@ -51,7 +51,10 @@ class DriverBookingBroadcast extends Command
                     $updateDriverIds[] = $id;
                 }
             }
-
+            
+            if(!count($updateDriverIds)) {
+                continue;
+            }
 
             $devicetokens = $this->getDevicetokens($updateDriverIds);
            
