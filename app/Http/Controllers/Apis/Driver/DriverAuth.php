@@ -83,10 +83,11 @@ class DriverAuth extends Controller
             'vehicle_police_verification_certificate_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'bank_passbook_or_canceled_check_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
             'aadhaar_card_photo' => 'sometimes|required|image|mimes:jpg,jpeg,png',
-            'bank_name' => 'required|max:128',
-            'bank_account_holder_name' => 'required|max:256',
-            'bank_ifsc_code' => 'required|max:50',
-            'bank_account_number' => 'required|max:50',
+            'skipBankData' => 'required|boolean',
+            'bank_name' => 'required_if:skipBankData,==,0|max:128',
+            'bank_account_holder_name' => 'required_if:skipBankData,==,0|max:256',
+            'bank_ifsc_code' => 'required_if:skipBankData,==,0|max:50',
+            'bank_account_number' => 'required_if:skipBankData,==,0|max:50',
             'bank_extra_info' => 'min:5|max:256',
             'manual_transmission' => 'required|boolean',
             'automatic_transmission' => 'required|boolean',
@@ -162,12 +163,21 @@ class DriverAuth extends Controller
 
 
         //add driver bank details
-        $bank = new DriverBank;
-        $bank->bank_name = ucwords($request->bank_name);
-        $bank->account_holder_name = ucwords($request->bank_account_holder_name);
-        $bank->ifsc_code = ucfirst($request->bank_ifsc_code);
-        $bank->account_number = strtoupper($request->bank_account_number);
-        $bank->extra_info = $request->bank_extra_info ?: '';
+        if($request->skipBankData) {
+            $bank = new DriverBank;
+            $bank->bank_name = '';
+            $bank->account_holder_name = '';
+            $bank->ifsc_code = '';
+            $bank->account_number = '';
+            $bank->extra_info = '';
+        } else {
+            $bank = new DriverBank;
+            $bank->bank_name = ucwords($request->bank_name);
+            $bank->account_holder_name = ucwords($request->bank_account_holder_name);
+            $bank->ifsc_code = ucfirst($request->bank_ifsc_code);
+            $bank->account_number = strtoupper($request->bank_account_number);
+            $bank->extra_info = $request->bank_extra_info ?: '';
+        }
 
 
         DB::beginTransaction();
