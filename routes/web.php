@@ -124,6 +124,7 @@ Route::group(['prefix' => 'admin'], function(){
             Route::get('/send-pushnotification', 'Admin\Driver@sendPushnotification')->name('admin.drivers.pushnotification.send');
             Route::post('/{driver_id}/approve/{is_approve}', 'Admin\Driver@approveDriver')->name('admin.driver.approve');
             Route::get('/{driver_id}', 'Admin\Driver@showDriver')->name('admin.show.driver');
+            Route::post('/{driver_id}/bank', 'Admin\Driver@updateBank')->name('admin.driver.bank.update');
             Route::post('/{driver_id}/change-photo', 'Admin\Driver@changeDriverPhoto')->name('admin.driver.update.photo');
             Route::post('/{driver_id}/update', 'Admin\Driver@updateDriverProfile')->name('admin.driver.update');
             Route::post('/{driver_id}/reset-password', 'Admin\Driver@resetDriverPassword')->name('admin.driver.password.reset');

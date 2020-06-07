@@ -14,6 +14,7 @@ use Validator;
 use App\Models\VehicleType;
 use App\Models\Setting;
 use App\Models\FakeLocation;
+use App\Models\DriverBank;
 
 
 class Driver extends Controller
@@ -31,6 +32,39 @@ class Driver extends Controller
         $this->email = $email;
         $this->api = $api;
         $this->driver = $driver;
+    }
+
+    public function updateBank(Request $request) 
+    {
+        $validator = Validator::make($request->all(), [
+            'bank_name' => 'required|max:128',
+            'bank_account_holder_name' => 'required|max:256',
+            'bank_ifsc_code' => 'required|max:50',
+            'bank_account_number' => 'required|max:50',
+            'bank_extra_info' => 'min:5|max:256'
+        ]);
+
+        if($validator->fails()) {
+
+            $messages = [];
+            foreach($validator->errors()->getMessages() as $attr => $errArray) {
+                $messages[$attr] = $errArray[0];
+            }
+
+            return $this->api->json(false, 'VALIDATION_ERROR', 'Enter all the mandatory fields', $messages);
+        }
+
+        $bank = DriverBank::where("driver_id", $request->driver_id)->first();
+        $bank = $bank ? $bank : new DriverBank;
+        $bank->bank_name = $request->bank_name;
+        $bank->account_holder_name = $request->bank_account_holder_name;
+        $bank->ifsc_code = $request->bank_ifsc_code;
+        $bank->account_number = $request->bank_account_number;
+        $bank->extra_info = $request->bank_extra_info;
+        $bank->driver_id = $request->driver_id;
+        $bank->save();
+
+        return $this->api->json(true, 'SUCCESS', 'Driver bank details updated successfully');
     }
 
     /** searchDriver */

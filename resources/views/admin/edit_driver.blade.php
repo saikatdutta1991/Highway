@@ -259,7 +259,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" value="{{$driver->bank->account_holder_name}}">
+                                        <input type="text" class="form-control" name="bank_name" value="{{$driver->bank->account_holder_name}}">
                                         <label class="form-label">Account Holder Name</label>
                                     </div>
                                 </div>
@@ -267,7 +267,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" value="{{$driver->bank->bank_name}}">
+                                        <input type="text" class="form-control" name="bank_account_holder_name" value="{{$driver->bank->bank_name}}">
                                         <label class="form-label">Bank Name</label>
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@
                             <div class="col-sm-4">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" value="{{$driver->bank->ifsc_code}}">
+                                        <input type="text" class="form-control" name="bank_ifsc_code" value="{{$driver->bank->ifsc_code}}">
                                         <label class="form-label">IFSC Code</label>
                                     </div>
                                 </div>
@@ -283,7 +283,7 @@
                             <div class="col-sm-8">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" value="{{$driver->bank->account_number}}">
+                                        <input type="text" class="form-control" name="bank_account_number" value="{{$driver->bank->account_number}}">
                                         <label class="form-label">Account Number</label>
                                     </div>
                                 </div>
@@ -291,10 +291,20 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <div class="form-line">
-                                        <textarea rows="1" class="form-control no-resize" placeholder="Extra information">{{$driver->bank->extra_info}}</textarea>
+                                        <textarea rows="1" class="form-control no-resize" placeholder="Extra information" name="bank_extra_info">{{$driver->bank->extra_info}}</textarea>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row clearfix">
+                                <div class="col-sm-12 text-right">
+                                    <button type="submit" id="bank-save-btn" class="btn bg-pink waves-effect">
+                                    <i class="material-icons">save</i>
+                                    <span>SAVE</span>
+                                    </button>
+                                </div>
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -487,6 +497,24 @@
     var driverId = {{$driver->id}};
     var csrf_token = "{{csrf_token()}}";
     $(function () {
+
+        $("#bank-save-btn").on('click', function(event){
+            event.preventDefault();
+            const data = $("#bank-form").serializeArray();
+            const bankUpdateAPI = "{{route('admin.driver.bank.update', ['driver_id' => $driver->id])}}";
+            
+            $.post(bankUpdateAPI, data, function(response){
+                console.log(response);
+                if(response.success) {
+                   return showNotification('bg-black', 'Bank information udpated successfully', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                }
+                return showNotification('bg-black', response.text, 'top', 'right', 'animated flipInX', 'animated flipOutX');
+                            
+            }).fail(function(response) {
+                showNotification('bg-black', 'Unknown server error.', 'top', 'right', 'animated flipInX', 'animated flipOutX');
+            });
+
+        });
     
     
         /**
