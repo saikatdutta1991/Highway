@@ -1,8 +1,5 @@
 FROM php:7.4-fpm
 
-# Copy existing application directory contents
-COPY . /var/www
-
 # Set working directory
 WORKDIR /var/www
 
@@ -34,6 +31,9 @@ RUN docker-php-ext-install gd
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy existing application directory contents
+COPY . /var/www
 
 # Installing dependencies
 RUN composer update
