@@ -9,6 +9,8 @@ services:
     container_name: app
     restart: unless-stopped
     tty: true
+    depends_on:
+      - db
     environment:
       SERVICE_NAME: app
     working_dir: /var/www
@@ -36,24 +38,23 @@ services:
     networks:
       - app-network
 
-  #MySQL Service
-  # db:
-  #   image: mysql:5.7.22
-  #   container_name: db
-  #   restart: unless-stopped
-  #   tty: true
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_DATABASE: laravel
-  #     MYSQL_ROOT_PASSWORD: your_mysql_root_password
-  #     SERVICE_TAGS: dev
-  #     SERVICE_NAME: mysql
-  #   volumes:
-  #     - dbdata:/var/lib/mysql/
-  #     - ./mysql/my.cnf:/etc/mysql/my.cnf
-  #   networks:
-  #     - app-network
+  # MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    env_file: .env
+    environment:
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+    volumes:
+      - dbdata:/var/lib/mysql/
+      # - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
 
 #Docker Networks
 networks:
@@ -62,5 +63,5 @@ networks:
 #Volumes
 volumes:
   vendor:
-  # dbdata:
-  #   driver: local
+  dbdata:
+    driver: local

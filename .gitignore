@@ -18,3 +18,4 @@ composer.lock
 /NodeServer/node_modules
 /NodeServer/package-lock.json
 /public
+.env
