@@ -1,4 +1,4 @@
-## Configure .evn file
+## Configure .env file
 
 ## Build docker services and run:
 ```
