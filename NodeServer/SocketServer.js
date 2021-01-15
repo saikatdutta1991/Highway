@@ -54,7 +54,7 @@ io.on('connection', function (socket) {
 	/**
 	 * authenticate socket client and if from internal server them make auth true default
 	 */
-
+	console.log({ query: socket.handshake.query })
 	if (socket.handshake.query
 		&& socket.handshake.query.server_key
 		&& socket.handshake.query.server_key == config.SERVER_INTERNAL_COMMUNICATION_KEY) {
