@@ -4,12 +4,9 @@ const fs = require('fs');
 const request = require('request');
 const mysql = require('mysql');
 const socketio = require('socket.io');
-const config = require('./SocketServerConfig').getConfig();
+const config = require('./SocketServerConfig');
 const messageStorage = require("./MessageStorage");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-
-
 
 /** configurating server ssl options */
 var server;
@@ -238,7 +235,7 @@ io.on('connection', function (socket) {
 	/** 
 	 * send drivers that request is canceled or accepted
 	 */
-	socket.on("stop_incoming_request", function(data){
+	socket.on("stop_incoming_request", function (data) {
 
 		console.log('stop_incoming_request', data);
 
@@ -255,7 +252,7 @@ io.on('connection', function (socket) {
 			console.log("stop_incoming_request", room);
 
 			/** emit to driver room */
-			io.sockets.in(room).emit("stop_incoming_request", { request_id : data.request_id });
+			io.sockets.in(room).emit("stop_incoming_request", { request_id: data.request_id });
 
 		});
 

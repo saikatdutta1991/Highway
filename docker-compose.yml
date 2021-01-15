@@ -55,7 +55,7 @@ services:
       - ./:/var/www
       - vendor:/var/www/vendor
       - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    command: php artisan queue:work --sleep=3 --tries=3 --timeout=60
+    command: php artisan queue:listen --sleep=3 --tries=3 --timeout=60
     networks:
       - app-network
 
@@ -73,6 +73,27 @@ services:
     volumes:
       - ./:/var/www
       - ./conf/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  # Node Service
+  node:
+    build:
+      context: .
+      dockerfile: NodeDockerfile
+    image: node-socket
+    container_name: node
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - db
+    env_file: .env
+    working_dir: /usr/src/app
+    volumes:
+      - ./NodeServer:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    ports:
+      - "3000:3000"
     networks:
       - app-network
 
@@ -101,5 +122,6 @@ networks:
 #Volumes
 volumes:
   vendor:
+  node_modules:
   dbdata:
     driver: local
