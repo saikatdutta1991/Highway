@@ -1,0 +1,127 @@
+version: "3"
+services:
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php-app
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - db
+    environment:
+      SERVICE_NAME: app
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - vendor:/var/www/vendor
+      - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Scheduler
+  scheduler:
+    image: php-app
+    depends_on:
+      - app
+      - webserver
+      - db
+    container_name: scheduler
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - vendor:/var/www/vendor
+      - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    command: sh .bin/run-scheduler.sh
+    networks:
+      - app-network
+
+  # Queue Worker
+  worker:
+    image: php-app
+    depends_on:
+      - app
+      - webserver
+      - db
+    container_name: worker
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - vendor:/var/www/vendor
+      - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    command: php artisan queue:listen --sleep=3 --tries=3 --timeout=60
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    depends_on:
+      - app
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./conf/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  # Node Service
+  node:
+    build:
+      context: .
+      dockerfile: NodeDockerfile
+    image: node-socket
+    container_name: node
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - db
+    env_file: .env
+    working_dir: /usr/src/app
+    volumes:
+      - ./NodeServer:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+  # MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    env_file: .env
+    environment:
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+    volumes:
+      - dbdata:/var/lib/mysql/
+      # - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  vendor:
+  node_modules:
+  dbdata:
+    driver: local
